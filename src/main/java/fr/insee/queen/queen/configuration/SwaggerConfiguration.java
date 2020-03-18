@@ -1,4 +1,4 @@
-package fr.insee.queen.configuration;
+package fr.insee.queen.queen.configuration;
 
 import java.net.MalformedURLException;
 import java.net.URL;

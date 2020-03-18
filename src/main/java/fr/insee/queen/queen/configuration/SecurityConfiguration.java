@@ -1,4 +1,4 @@
-package fr.insee.queen.configuration;
+package fr.insee.queen.queen.configuration;
 
 import javax.servlet.http.HttpServletResponse;
 

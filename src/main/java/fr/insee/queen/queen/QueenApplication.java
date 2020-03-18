@@ -1,10 +1,10 @@
-package fr.insee.queen;
+package fr.insee.queen.queen;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import fr.insee.queen.repository.OperationRepository;
+import fr.insee.queen.queen.repository.OperationRepository;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackageClasses = OperationRepository.class)

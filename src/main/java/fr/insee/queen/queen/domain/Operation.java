@@ -1,22 +1,23 @@
-package fr.insee.queen.domain;
+package fr.insee.queen.queen.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Index;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(indexes = @Index(columnList = "code", unique = true) )
+@Table
 public class Operation extends AbstractEntity {
-	private String code;
+	@Id
+	private String id;
 	@Column(nullable = false)
 	private String label;
 	
-	public String getCode() {
-		return code;
+	public String getId() {
+		return id;
 	}
-	public void setCode(String code) {
-		this.code = code;
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getLabel() {
 		return label;

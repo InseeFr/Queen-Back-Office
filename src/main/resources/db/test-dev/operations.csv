@@ -1,3 +1,3 @@
-id,version,label,code
-1,1,Mobilité,MOBTST
-2,1,Travail,TRVTST
+id,label
+MOBTST,Mobilité
+TRVTST,Travail

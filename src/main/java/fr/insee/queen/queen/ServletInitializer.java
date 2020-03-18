@@ -1,4 +1,4 @@
-package fr.insee.queen;
+package fr.insee.queen.queen;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
