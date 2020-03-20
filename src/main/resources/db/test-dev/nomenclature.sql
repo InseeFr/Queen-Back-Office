@@ -1,0 +1,1 @@
+INSERT INTO nomenclature(id, label, value) VALUES('MOBTST', 'Mobilité', '{ "phones":[ {"type": "mobile", "phone": "001001"} , {"type": "fix", "phone": "002002"} ] }');

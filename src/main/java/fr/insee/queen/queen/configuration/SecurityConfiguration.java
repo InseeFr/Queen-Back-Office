@@ -63,8 +63,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	    	http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
 	    }
         
-        http.authorizeRequests()
-        .antMatchers("/api/operation/**").hasRole("enqueteur")
+		http.authorizeRequests()
+        .antMatchers("/operations").hasRole("enqueteur")
+        .antMatchers("/operation/{idOperation}/reporting-units").hasRole("enqueteur")
+        .antMatchers("/operation/{idOperation}/questionnaire").hasRole("enqueteur")
+        .antMatchers("/operation/{id}/required-nomenclatures").hasRole("enqueteur")
+                
+        .antMatchers("/reporting-unit/{id}/data").hasRole("enqueteur")
+        .antMatchers("/reporting-unit/{id}/comment").hasRole("enqueteur")
+        
+        .antMatchers("/nomenclature/{id}").hasRole("enqueteur")
+
         .anyRequest().denyAll();
     }
 	@Override

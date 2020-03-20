@@ -11,15 +11,14 @@ import fr.insee.queen.queen.dto.operation.OperationDto;
 import fr.insee.queen.queen.repository.OperationRepository;
 
 @RestController
-@RequestMapping(path = "/api/operation")
+@RequestMapping
 public class OperationController {
 	@Autowired
 	private OperationRepository operationRepository;
 	
-	@GetMapping
+	@GetMapping(path = "/operations")
 	public List<OperationDto> listOperation(){
 		return operationRepository.findDtoBy();
 	}
-	
 	
 }

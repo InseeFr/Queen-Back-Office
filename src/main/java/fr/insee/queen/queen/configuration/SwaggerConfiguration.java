@@ -53,7 +53,7 @@ public class SwaggerConfiguration {
                 		.forPaths(PathSelectors.regex("/.*")).build()))
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.regex("/api/.*"))
+                .paths(PathSelectors.regex("/.*"))
                 .build();
     }
     private PathProvider absolutePathProvider() {

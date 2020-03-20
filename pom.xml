@@ -95,6 +95,15 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-java8</artifactId>
 		</dependency>
+		<dependency>
+		    <groupId>com.vladmihalcea</groupId>
+		    <artifactId>hibernate-types-52</artifactId>
+		    <version>2.3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+   			<artifactId>jackson-module-jaxb-annotations</artifactId>
+		</dependency>
 		<dependency><!-- To add h2 console -->
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -164,14 +173,14 @@
 					<configuration>
 						<changeLogFile>src/main/resources/db/master.xml</changeLogFile>
 						<diffChangeLogFile>src/main/resources/db/changelog/new_changelog.xml</diffChangeLogFile>
-						<driver>org.h2.Driver</driver>
-						<url>jdbc:h2:mem:queen;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS queen\;SET SCHEMA queen;</url>
-						<defaultSchemaName>queen</defaultSchemaName>
+						<driver>org.postgresql.Driver</driver>
+						<url>jdbc:postgresql://localhost:5433/queen_api</url>
+						<defaultSchemaName>public</defaultSchemaName>
 						<contexts>test</contexts>
-						<username>queen</username>
-						<password>queen</password>
+						<username>user_capi3g</username>
+						<password>Capi3g1234</password>
 						<referenceUrl>hibernate:spring:fr.insee.queen.queen.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
-						<referenceDefaultSchemaName>queen</referenceDefaultSchemaName>
+						<referenceDefaultSchemaName>public</referenceDefaultSchemaName>
 						<verbose>true</verbose>
 						<logging>debug</logging>
 					</configuration>
