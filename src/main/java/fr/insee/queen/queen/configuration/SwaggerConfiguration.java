@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,13 +29,29 @@ import springfox.documentation.spring.web.paths.AbstractPathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+* SwaggerConfiguration is the class using to configure swagger
+* 3 ways to authenticated : 
+* 	- without authentication,
+* 	- basic authentication 
+* 	- and keycloak authentication 
+* 
+* @author Claudel Benjamin
+* 
+*/
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
-   
+	/**
+	 * The name of Spring application.<br>
+	 * Generate with the application property spring.application.name
+	 */
+    @Value("${spring.application.name}")
+    private String name;
+    
     @Bean
     public Docket api() {
-        String urlString = "/queen";
+        String urlString = "/" + name;
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .ignoredParameterTypes(HttpServletRequest.class, HttpServletResponse.class, HttpSession.class)
@@ -47,15 +64,16 @@ public class SwaggerConfiguration {
         }
         return docket
                 .pathProvider(absolutePathProvider())
-                .securitySchemes(List.of(new BasicAuth("queen")))
+                .securitySchemes(List.of(new BasicAuth(name)))
                 .securityContexts(List.of(SecurityContext.builder()
-                		.securityReferences(List.of(new SecurityReference("queen", new AuthorizationScope[0])))
+                		.securityReferences(List.of(new SecurityReference(name, new AuthorizationScope[0])))
                 		.forPaths(PathSelectors.regex("/.*")).build()))
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.regex("/.*"))
                 .build();
     }
+    
     private PathProvider absolutePathProvider() {
         return new AbstractPathProvider() {
             @Override

@@ -15,18 +15,37 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 
+/**
+* SecurityConfiguration is the class using to configure security.<br>
+* 3 ways to authenticated : <br>
+* 	0 - without authentication,<br>
+* 	1 - basic authentication <br>
+* 	2 - and keycloak authentication <br>
+* 
+* @author Claudel Benjamin
+* 
+*/
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+	/**
+	 * The environment define in Spring application
+	 * Generate with the application property environment
+	 */
 	@Autowired
 	private Environment environment;
 
+    /**
+     * This method check if environment is development or test
+     * @return true if environment matchs 
+     */
 	protected boolean isDevelopment() {
 		return ArrayUtils.contains(environment.getActiveProfiles(), "dev") || ArrayUtils.contains(environment.getActiveProfiles(), "test");
 	}
-	protected boolean isSercureCookie() {
-		return true;
-	}
+	
+    /**
+     * This method configure the WEB security access
+     */
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
@@ -45,6 +64,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         	.antMatchers("/");
     }
 
+    /**
+     * This method configure the HTTP security access
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 	    http
@@ -67,15 +89,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers("/operations").hasRole("enqueteur")
         .antMatchers("/operation/{idOperation}/reporting-units").hasRole("enqueteur")
         .antMatchers("/operation/{idOperation}/questionnaire").hasRole("enqueteur")
-        .antMatchers("/operation/{id}/required-nomenclatures").hasRole("enqueteur")
-                
+        .antMatchers("/operation/{id}/required-nomenclatures").hasRole("enqueteur")  
         .antMatchers("/reporting-unit/{id}/data").hasRole("enqueteur")
         .antMatchers("/reporting-unit/{id}/comment").hasRole("enqueteur")
-        
         .antMatchers("/nomenclature/{id}").hasRole("enqueteur")
-
         .anyRequest().denyAll();
     }
+    
+    /**
+     * This method configure the authentication manager for DEV and TEST accesses
+     */
 	@Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		if (isDevelopment()) 
@@ -86,6 +109,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         }
     }
 
+    /**
+     * This method configure the unauthorized accesses
+     */
 	public AuthenticationEntryPoint unauthorizedEntryPoint() {
 		return (request, response, authException) -> {
 			response.addHeader("WWW-Authenticate", "BasicCustom realm=\"MicroService\"");

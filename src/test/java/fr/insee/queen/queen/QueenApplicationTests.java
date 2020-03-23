@@ -1,14 +1,13 @@
 package fr.insee.queen.queen;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
-import fr.insee.queen.queen.domain.Nomenclature;
 import fr.insee.queen.queen.domain.Comment;
 import fr.insee.queen.queen.domain.Data;
+import fr.insee.queen.queen.domain.Nomenclature;
 import fr.insee.queen.queen.domain.Operation;
 import fr.insee.queen.queen.domain.QuestionnaireModel;
 import fr.insee.queen.queen.domain.ReportingUnit;
