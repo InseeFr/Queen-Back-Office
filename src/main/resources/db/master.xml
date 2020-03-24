@@ -28,5 +28,8 @@
 	
 	
 	<!-- Data for tests  -->
-	<include file="test-dev/test_data.xml" relativeToChangelogFile="true"/>
+<!-- 	<include file="test-dev/test_data.xml" relativeToChangelogFile="true"/> -->
+	
+	<include file="test-dev/insert_data.xml" relativeToChangelogFile="true"/>
+	
 </databaseChangeLog>
