@@ -23,13 +23,12 @@
 	
 	
 	
+	<!-- Data for dev on POSTGRES DB  -->
+	<include file="dev/insert_dev_data.xml" relativeToChangelogFile="true"/>
 	
 	
 	
-	
-	<!-- Data for tests  -->
-<!-- 	<include file="test-dev/test_data.xml" relativeToChangelogFile="true"/> -->
-	
-	<include file="test-dev/insert_data.xml" relativeToChangelogFile="true"/>
-	
+	<!-- Data for tests on H2 DB  -->
+	<include file="changelog/000_init_test.xml" relativeToChangelogFile="true"/>
+	<include file="test/insert_test_data.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

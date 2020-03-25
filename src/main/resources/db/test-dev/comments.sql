@@ -1,2 +1,0 @@
-INSERT INTO comment(id, value, reporting_unit_id) VALUES(1, '{ "phones":[ {"type": "mobile", "phone": "001001"} , {"type": "fix", "phone": "002002"} ] }',1);
-INSERT INTO comment(id, value, reporting_unit_id) VALUES(2, '{ "phones":[ {"type": "mobile", "phone": "001001"} , {"type": "fix", "phone": "002002"} ] }',2);

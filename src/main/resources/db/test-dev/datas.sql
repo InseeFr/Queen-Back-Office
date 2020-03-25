@@ -1,2 +1,0 @@
-INSERT INTO data(id, version, value, reporting_unit_id) VALUES(1,'INIT', '{ "phones":[ {"type": "mobile", "phone": "001001"} , {"type": "fix", "phone": "002002"} ] }',1);
-INSERT INTO data(id, version, value, reporting_unit_id) VALUES(2,'INIT', '{ "phones":[ {"type": "mobile", "phone": "001001"} , {"type": "fix", "phone": "002002"} ] }',2);
