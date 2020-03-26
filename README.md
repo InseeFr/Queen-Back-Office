@@ -1,5 +1,5 @@
 # Queen-Back-Office
-Back-office services for Queen
+Back-office services for Queen  
 REST API for communication between QUEEN DB and QUEEN Form (Frontend).
 
 ## Requirements
@@ -18,6 +18,10 @@ Use the [Spring Boot Maven plugin](https://docs.spring.io/spring-boot/docs/curre
 ```shell
 mvn spring-boot:run
 ```
+
+## Application Accesses
+To access to swagger-ui, use this url : [http://localhost:8080/api/swagger-ui.html](http://localhost:8080/api/swagger-ui.html)  
+To access to h2 console, use this url : [http://localhost:8080/api/h2-console](http://localhost:8080/api/h2-console)
 
 ## Before you commit
 Before committing code please ensure,
