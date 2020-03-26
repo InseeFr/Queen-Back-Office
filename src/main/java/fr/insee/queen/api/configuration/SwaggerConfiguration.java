@@ -87,8 +87,7 @@ public class SwaggerConfiguration {
         };
     }
     
-    // TODO : to complete
     private ApiInfo apiInfo() {
-        return new ApiInfo("Queen", "queen", "test", "benjamin.claudel@keyconsulting.fr", new Contact("", "", ""), "", "", List.of());
+        return new ApiInfo("Queen-Back-Office", "Back-office services for Queen", "1.0", "", new Contact("Metallica", "", "dr59-sndi-metallica@outlook.fr"), "LICENSEE", "https://github.com/InseeFr/Queen-Back-Office/blob/master/LICENSE", List.of());
     }
 }
