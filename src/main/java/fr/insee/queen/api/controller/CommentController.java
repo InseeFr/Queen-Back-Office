@@ -45,18 +45,18 @@ public class CommentController {
 	/**
 	* This method is using to update the comment associated to a specific reporting unit 
 	* 
-	* @param comment	the comment of update
+	* @param commentValue the value to update
 	* @param id	the id of reporting unit
 	* @return {@link HttpStatus 404} if comment is not found, else {@link HttpStatus 200}
 	* 
 	*/
 	@PutMapping(path = "/reporting-unit/{id}/comment")
-	public ResponseEntity<Object> setComment(@RequestBody CommentDto comment,@PathVariable(value = "id") Long id) {
+	public ResponseEntity<Object> setComment(@RequestBody String commentValue, @PathVariable(value = "id") Long id) {
 		Optional<Comment> commentOptional = commentRepository.findByReportingUnit_id(id);
 		if (!commentOptional.isPresent())
 			return ResponseEntity.notFound().build();
 		else {
-			commentOptional.get().setValue(comment.getValue());
+			commentOptional.get().setValue(commentValue);
 			commentRepository.save(commentOptional.get());
 			return ResponseEntity.ok().build();
 		}

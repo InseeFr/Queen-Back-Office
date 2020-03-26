@@ -33,6 +33,10 @@ public abstract class AbstractTests {
         HttpEntity<Void> requestEntity = new HttpEntity<>(null, headers);
         return restTemplate.exchange(uri, HttpMethod.GET, requestEntity, clazz);
     }
+    public <T, P> ResponseEntity<T> put(String uri, P o, Class<T> clazz) {
+        HttpEntity<P> requestEntity = new HttpEntity<>(o, headers);
+        return restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, clazz);
+    }
     public <T,P> ResponseEntity<T> post(String uri, P o, Class<T> clazz) {
         HttpEntity<P> requestEntity = new HttpEntity<>(o, headers);
         return restTemplate.exchange(uri, HttpMethod.POST, requestEntity, clazz);

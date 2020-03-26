@@ -46,18 +46,18 @@ public class DataController {
 	/**
 	* This method is using to update the data associated to a specific reporting unit 
 	* 
-	* @param data	the data to update
+	* @param dataValue	the value to update
 	* @param id	the id of reporting unit
 	* @return {@link HttpStatus 404} if comment is not found, else {@link HttpStatus 200}
 	* 
 	*/
 	@PutMapping(path = "/reporting-unit/{id}/data")
-	public ResponseEntity<Object> setVersion(@RequestBody DataDto data, @PathVariable(value = "id") Long id) {
+	public ResponseEntity<Object> setData(@RequestBody String dataValue, @PathVariable(value = "id") Long id) {
 		Optional<Data> dataOptional = dataRepository.findByReportingUnit_id(id);
 		if (!dataOptional.isPresent())
 			return ResponseEntity.notFound().build();
 		else {
-			dataOptional.get().setValue(data.getValue());
+			dataOptional.get().setValue(dataValue);
 			dataOptional.get().setVersion(Version.COLLECTED);
 			dataRepository.save(dataOptional.get());
 			return ResponseEntity.ok().build();

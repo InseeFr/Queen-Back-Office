@@ -32,7 +32,7 @@ public class OperationController {
 	* @return List of all {@link OperationDto}
 	*/
 	@GetMapping(path = "/operations")
-	public List<OperationDto> listOperation(){
+	public List<OperationDto> getListOperation(){
 		return operationRepository.findDtoBy();
 	}
 	

@@ -12,7 +12,7 @@
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="commentPK"/>
             </column>
-            <column name="value" type="TEXT"/>
+            <column name="value" type="VARCHAR(255)"/>
             <column name="reporting_unit_id" type="BIGINT"/>
         </createTable>
     </changeSet>
@@ -21,7 +21,7 @@
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="dataPK"/>
             </column>
-            <column name="value" type="TEXT"/>
+            <column name="value" type="VARCHAR(255)"/>
             <column defaultValue="INIT" name="version" type="VARCHAR(9)"/>
             <column name="reporting_unit_id" type="BIGINT"/>
         </createTable>

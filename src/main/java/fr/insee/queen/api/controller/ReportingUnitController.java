@@ -34,7 +34,7 @@ public class ReportingUnitController {
 	* @return List of {@link ReportingUnitDto}
 	*/
 	@GetMapping(path = "/operation/{id}/reporting-units")
-	public List<ReportingUnitDto> listReportingUnitByOperation(@PathVariable(value = "id") String id){
+	public List<ReportingUnitDto> getListReportingUnitByOperation(@PathVariable(value = "id") String id){
 		return reportingUnitRepository.findDtoByOperation_id(id);
 	}
 	
