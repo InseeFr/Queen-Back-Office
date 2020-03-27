@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.insee.queen.api.domain.Operation;
 import fr.insee.queen.api.dto.operation.OperationDto;
 import fr.insee.queen.api.repository.OperationRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
 * OperationController is the Controller using to manage {@link Operation} entity
@@ -31,6 +34,7 @@ public class OperationController {
 	* 
 	* @return List of all {@link OperationDto}
 	*/
+	@ApiOperation(value = "Get list of operations")
 	@GetMapping(path = "/operations")
 	public List<OperationDto> getListOperation(){
 		return operationRepository.findDtoBy();

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.insee.queen.api.domain.ReportingUnit;
 import fr.insee.queen.api.dto.reportingunit.ReportingUnitDto;
 import fr.insee.queen.api.repository.ReportingUnitRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
 * ReportingUnitController is the Controller using to manage {@link ReportingUnit} entity
@@ -33,6 +36,7 @@ public class ReportingUnitController {
 	* @param id the id of operation
 	* @return List of {@link ReportingUnitDto}
 	*/
+	@ApiOperation(value = "Get list of reporting units by operation Id ")
 	@GetMapping(path = "/operation/{id}/reporting-units")
 	public List<ReportingUnitDto> getListReportingUnitByOperation(@PathVariable(value = "id") String id){
 		return reportingUnitRepository.findDtoByOperation_id(id);

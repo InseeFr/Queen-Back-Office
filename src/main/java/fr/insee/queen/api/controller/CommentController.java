@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.insee.queen.api.domain.Comment;
 import fr.insee.queen.api.dto.comment.CommentDto;
 import fr.insee.queen.api.repository.CommentRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
 * CommentController is the Controller using to manage {@link Comment} entity
@@ -37,6 +40,7 @@ public class CommentController {
 	* @param id the id of reporting unit
 	* @return {@link CommentDto} the comment associated to the reporting unit
 	*/
+	@ApiOperation(value = "Get comment by reporting unit Id ")
 	@GetMapping(path = "/reporting-unit/{id}/comment")
 	public CommentDto getCommentByReportingUnit(@PathVariable(value = "id") Long id){
 		return commentRepository.findDtoByReportingUnit_id(id);
@@ -50,6 +54,7 @@ public class CommentController {
 	* @return {@link HttpStatus 404} if comment is not found, else {@link HttpStatus 200}
 	* 
 	*/
+	@ApiOperation(value = "Update the comment by reporting unit Id ")
 	@PutMapping(path = "/reporting-unit/{id}/comment")
 	public ResponseEntity<Object> setComment(@RequestBody String commentValue, @PathVariable(value = "id") Long id) {
 		Optional<Comment> commentOptional = commentRepository.findByReportingUnit_id(id);

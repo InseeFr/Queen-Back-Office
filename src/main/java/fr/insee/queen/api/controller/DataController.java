@@ -16,6 +16,9 @@ import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.domain.Version;
 import fr.insee.queen.api.dto.data.DataDto;
 import fr.insee.queen.api.repository.DataRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
 * DataController is the Controller using to manage {@link Data} entity
@@ -38,6 +41,7 @@ public class DataController {
 	* @param id the id of reporting unit
 	* @return {@link DataDto} the data associated to the reporting unit
 	*/
+	@ApiOperation(value = "Get data by reporting unit Id ")
 	@GetMapping(path = "/reporting-unit/{id}/data")
 	public DataDto getDataByReportingUnit(@PathVariable(value = "id") Long id){
 		return dataRepository.findDtoByReportingUnit_id(id);
@@ -51,6 +55,7 @@ public class DataController {
 	* @return {@link HttpStatus 404} if comment is not found, else {@link HttpStatus 200}
 	* 
 	*/
+	@ApiOperation(value = "Update data by reporting unit Id ")
 	@PutMapping(path = "/reporting-unit/{id}/data")
 	public ResponseEntity<Object> setData(@RequestBody String dataValue, @PathVariable(value = "id") Long id) {
 		Optional<Data> dataOptional = dataRepository.findByReportingUnit_id(id);
