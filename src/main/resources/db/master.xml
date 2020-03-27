@@ -4,29 +4,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 	<include file="changelog/000_init.xml" relativeToChangelogFile="true"/>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	<!-- Data for dev on POSTGRES DB  -->
 	<include file="dev/insert_dev_data.xml" relativeToChangelogFile="true"/>
-	
-	
 	
 	<!-- Data for tests on H2 DB  -->
 	<include file="changelog/000_init_test.xml" relativeToChangelogFile="true"/>

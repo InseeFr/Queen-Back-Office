@@ -126,6 +126,8 @@
 					<jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
 					<profiles>
 						<profile>dev</profile>
+						<profile>insee</profile>
+						<profile>prod</profile>
 					</profiles>
 				</configuration>
 			</plugin>
@@ -180,17 +182,11 @@
 						<driver>org.h2.Driver</driver>
 						<url>jdbc:h2:mem:queen;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS queen\;SET SCHEMA queen;</url>
 						<defaultSchemaName>public</defaultSchemaName>
-						<contexts>test</contexts>
+						<contexts>test,dev,prod</contexts>
 						<username>queen</username>
 						<password>queen</password>
-						<referenceUrl>hibernate:spring:fr.insee.queen.queen.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
+						<referenceUrl>hibernate:spring:fr.insee.queen.api.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
 						<referenceDefaultSchemaName>public</referenceDefaultSchemaName>
-						<!-- <driver>org.postgresql.Driver</driver> -->
-						<!-- <url>jdbc:postgresql://localhost:5433/queen_api</url> -->
-						<!-- <defaultSchemaName>queen</defaultSchemaName> -->
-						<!-- <username>user_capi3g</username> -->
-						<!-- <password>Capi3g1234</password> -->
-						<!-- <referenceDefaultSchemaName>queen</referenceDefaultSchemaName> -->
  						<verbose>true</verbose>
 						<logging>debug</logging>
 					</configuration>
