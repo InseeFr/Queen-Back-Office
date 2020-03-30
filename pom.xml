@@ -108,6 +108,18 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
+		
+		<!-- Keycloak -->
+		<dependency>
+		    <groupId>org.keycloak</groupId>
+		    <artifactId>keycloak-spring-boot-2-starter</artifactId>
+		    <version>4.0.0.Final</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.keycloak</groupId>
+		    <artifactId>keycloak-spring-security-adapter</artifactId>
+		    <version>7.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -46,6 +46,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
+	
 	/**
 	 * The name of Spring application.<br>
 	 * Generate with the application property spring.application.name
@@ -75,16 +76,18 @@ public class SwaggerConfiguration {
         } catch (MalformedURLException e) {
             docket = docket.pathMapping(urlString);
         }
-        return docket
+        	docket
                 .pathProvider(absolutePathProvider())
                 .securitySchemes(List.of(new BasicAuth(name)))
                 .securityContexts(List.of(SecurityContext.builder()
-                		.securityReferences(List.of(new SecurityReference(name, new AuthorizationScope[0])))
-                		.forPaths(PathSelectors.regex("/.*")).build()))
+        		.securityReferences(List.of(new SecurityReference(name, new AuthorizationScope[0])))
+        		.forPaths(PathSelectors.regex("/.*")).build()))
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.regex("/.*"))
                 .build();
+        return docket;
+       
     }
     
     private PathProvider absolutePathProvider() {

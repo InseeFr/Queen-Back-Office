@@ -16,8 +16,6 @@ import fr.insee.queen.api.domain.Comment;
 import fr.insee.queen.api.dto.comment.CommentDto;
 import fr.insee.queen.api.repository.CommentRepository;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 /**
 * CommentController is the Controller using to manage {@link Comment} entity
