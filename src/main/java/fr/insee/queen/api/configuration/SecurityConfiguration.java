@@ -90,13 +90,13 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 		switch (this.applicationProperties.getMode()) {
 			case Basic:
 				http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
-				http.authorizeRequests().antMatchers("/operations").hasRole("enqueteur")
-					.antMatchers("/operation/{idOperation}/reporting-units").hasRole("enqueteur")
-					.antMatchers("/operation/{idOperation}/questionnaire").hasRole("enqueteur")
-					.antMatchers("/operation/{id}/required-nomenclatures").hasRole("enqueteur")
-					.antMatchers("/reporting-unit/{id}/data").hasRole("enqueteur")
-					.antMatchers("/reporting-unit/{id}/comment").hasRole("enqueteur")
-					.antMatchers("/nomenclature/{id}").hasRole("enqueteur")
+				http.authorizeRequests().antMatchers("/operations").hasRole("investigator")
+					.antMatchers("/operation/{idOperation}/reporting-units").hasRole("investigator")
+					.antMatchers("/operation/{idOperation}/questionnaire").hasRole("investigator")
+					.antMatchers("/operation/{id}/required-nomenclatures").hasRole("investigator")
+					.antMatchers("/reporting-unit/{id}/data").hasRole("investigator")
+					.antMatchers("/reporting-unit/{id}/comment").hasRole("investigator")
+					.antMatchers("/nomenclature/{id}").hasRole("investigator")
 					.anyRequest().denyAll(); 
 				break;
 			case Keycloak:
@@ -106,9 +106,9 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 		        	.and()
 		        	.authorizeRequests()
 		    		.antMatchers("/")
-		    		.hasRole("enqueteur")
+		    		.hasRole("investigator")
 		    		.antMatchers("/swagger-ui.html")
-		    		.hasRole("enqueteur")
+		    		.hasRole("investigator")
 		    		.antMatchers("/**")
 		        	.authenticated();
 				break;
@@ -134,7 +134,7 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 		if (isDevelopment()) {
 			switch (this.applicationProperties.getMode()) {
 			case Basic:
-				auth.inMemoryAuthentication().withUser("admin").password("{noop}a").roles("enqueteur").and()
+				auth.inMemoryAuthentication().withUser("admin").password("{noop}a").roles("investigator").and()
 				.withUser("noWrite").password("{noop}a").roles();
 				break;
 			case Keycloak:
