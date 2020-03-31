@@ -87,10 +87,8 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().headers().frameOptions().disable().and().requestCache()
 				.requestCache(new NullRequestCache());
-		if (isDevelopment()) {
-			switch (this.applicationProperties.getMode()) {
+		switch (this.applicationProperties.getMode()) {
 			case Basic:
-				System.out.println(ApplicationProperties.Mode.Basic);
 				http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
 				http.authorizeRequests().antMatchers("/operations").hasRole("enqueteur")
 					.antMatchers("/operation/{idOperation}/reporting-units").hasRole("enqueteur")
@@ -102,7 +100,6 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 					.anyRequest().denyAll(); 
 				break;
 			case Keycloak:
-				System.out.println(ApplicationProperties.Mode.Keycloak);
 				super.configure(http);
 		        http.logout()
 		        	.logoutSuccessUrl("/logout/successful")
@@ -116,7 +113,6 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 		        	.authenticated();
 				break;
 			default:
-				System.out.println(ApplicationProperties.Mode.NoAuth);
 				http.httpBasic().disable();
 				http.authorizeRequests()
 				.antMatchers("/operations",
@@ -127,22 +123,7 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 						"/reporting-unit/{id}/comment",
 						"/nomenclature/{id}").permitAll();
 				break;
-			}
-			
-		} else {
-			switch (this.applicationProperties.getMode()) {
-			case Basic:
-				http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
-				break;
-			case Keycloak:
-				System.out.println(ApplicationProperties.Mode.Keycloak);
-				break;
-			default:
-				System.out.println(ApplicationProperties.Mode.NoAuth);
-				break;
-			}
 		}
-
 	}
 
 	/**
