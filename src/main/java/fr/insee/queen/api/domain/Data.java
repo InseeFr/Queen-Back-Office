@@ -11,8 +11,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import org.json.simple.JSONObject;
 
 /**
 * Entity Data : represent the entity table in DB
@@ -24,7 +23,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 @Table
 @TypeDef(
 	    name = "jsonb",
-	    typeClass = JsonBinaryType.class
+	    typeClass = JSONObject.class
 	)
 public class Data extends AbstractEntity {
 	/**
@@ -46,7 +45,7 @@ public class Data extends AbstractEntity {
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private String value;
+	private JSONObject value;
 	
 	/**
 	* The ReportingUnit associated to the comment
@@ -81,13 +80,13 @@ public class Data extends AbstractEntity {
 	/**
 	 * @return value of comment
 	 */
-	public String getValue() {
+	public JSONObject getValue() {
 		return value;
 	}
 	/**
 	 * @param value value to set
 	 */
-	public void setValue(String value) {
+	public void setValue(JSONObject value) {
 		this.value = value;
 	}
 	/**

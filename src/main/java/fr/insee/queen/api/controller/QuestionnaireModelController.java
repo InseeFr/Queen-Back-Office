@@ -1,5 +1,7 @@
 package fr.insee.queen.api.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,8 +12,6 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 /**
 * QuestionnaireModelController is the Controller using to manage {@link QuestionnaireModel} entity
@@ -22,6 +22,8 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping
 public class QuestionnaireModelController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionnaireModelController.class);
+
 	/**
 	* The questionnaire model repository using to access to table 'questionnaire_model' in DB 
 	*/
@@ -37,6 +39,7 @@ public class QuestionnaireModelController {
 	@ApiOperation(value = "Get questionnnaire model by operation Id ")
 	@GetMapping(path = "/operation/{id}/questionnaire")
 	public QuestionnaireModelDto getQuestionnaireModelByOperationId(@PathVariable(value = "id") String id){
+		LOGGER.info("GET questionnaire for operation with id {}", id);
 		return questionnaireModelRepository.findDtoByOperationId(id);
 	}
 	

@@ -3,12 +3,13 @@
 	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+	<changeSet author="bclaudel" id="1" context="not prod">
+	    <sql dbms="postgresql" endDelimiter=";">
+	        CREATE SCHEMA IF NOT EXISTS public
+	    </sql>
+	</changeSet>
 	<include file="changelog/000_init.xml" relativeToChangelogFile="true"/>
 		
 	<!-- Data for dev on POSTGRES DB  -->
-	<include file="dev/insert_dev_data.xml" relativeToChangelogFile="true"/>
-	
-	<!-- Data for tests on H2 DB  -->
-	<include file="changelog/000_init_test.xml" relativeToChangelogFile="true"/>
-	<include file="test/insert_test_data.xml" relativeToChangelogFile="true"/>
+	<include file="changelog/data/insert_data.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

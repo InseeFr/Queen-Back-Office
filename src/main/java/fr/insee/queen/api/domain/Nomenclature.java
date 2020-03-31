@@ -7,6 +7,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.json.simple.JSONObject;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 /**
@@ -39,7 +40,7 @@ public class Nomenclature {
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private String value;
+	private JSONObject value;
 
 	/**
 	 * @return id of nomenclature
@@ -68,13 +69,13 @@ public class Nomenclature {
 	/**
 	 * @return value of nomenclature
 	 */
-	public String getValue() {
+	public JSONObject getValue() {
 		return value;
 	}
 	/**
 	 * @param value value to set
 	 */
-	public void setValue(String value) {
+	public void setValue(JSONObject value) {
 		this.value = value;
 	}
 

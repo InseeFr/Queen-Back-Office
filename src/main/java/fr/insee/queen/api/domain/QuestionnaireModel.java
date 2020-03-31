@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.json.simple.JSONObject;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 /**
@@ -46,7 +47,7 @@ public class QuestionnaireModel {
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private String model;
+	private JSONObject model;
 	
 	/**
 	* The list of required of required nomenclature 
@@ -81,13 +82,13 @@ public class QuestionnaireModel {
 	/**
 	 * @return model of nomenclature
 	 */
-	public String getModel() {
+	public JSONObject getModel() {
 		return model;
 	}
 	/**
 	 * @param model model to set
 	 */
-	public void setModel(String model) {
+	public void setModel(JSONObject model) {
 		this.model = model;
 	}
 

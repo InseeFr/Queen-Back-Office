@@ -25,10 +25,7 @@ public interface NomenclatureRepository extends JpaRepository<Nomenclature, Stri
 	* @param id id of the operation
 	* @return{@link NomenclatureDto}
 	*/
-	@Query("SELECT nm " 
-			+ "FROM Nomenclature nm " 
-			+ "WHERE nm.id=?1 ")
-	public NomenclatureDto findNomenclatureById(String id);
+	public NomenclatureDto findDtoById(String id);
 	/**
 	* This method retrieve all Nomenclature ids for a specific operation
 	* 

@@ -2,6 +2,8 @@ package fr.insee.queen.api.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,8 +14,6 @@ import fr.insee.queen.api.domain.ReportingUnit;
 import fr.insee.queen.api.dto.reportingunit.ReportingUnitDto;
 import fr.insee.queen.api.repository.ReportingUnitRepository;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 /**
 * ReportingUnitController is the Controller using to manage {@link ReportingUnit} entity
@@ -24,6 +24,8 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping
 public class ReportingUnitController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReportingUnitController.class);
+
 	/**
 	* The reporting unit repository using to access to table 'reporting_unit' in DB 
 	*/
@@ -39,6 +41,7 @@ public class ReportingUnitController {
 	@ApiOperation(value = "Get list of reporting units by operation Id ")
 	@GetMapping(path = "/operation/{id}/reporting-units")
 	public List<ReportingUnitDto> getListReportingUnitByOperation(@PathVariable(value = "id") String id){
+		LOGGER.info("GET reporting-units for operation with id {}", id);
 		return reportingUnitRepository.findDtoByOperation_id(id);
 	}
 	
