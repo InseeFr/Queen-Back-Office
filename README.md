@@ -24,6 +24,16 @@ To access to swagger-ui, use this url : [http://localhost:8080/api/swagger-ui.ht
 To access to h2 console, use this url : [http://localhost:8080/api/h2-console](http://localhost:8080/api/h2-console)  
 
 
+## Keycloak Configuration 
+1. To start the server on port 8180 execute in the bin folder of your keycloak :
+```shell
+standalone.bat -Djboss.socket.binding.port-offset=100 (on Windows)
+
+standalone.sh -Djboss.socket.binding.port-offset=100 (on Unix-based systems)
+```  
+2. Go to the console administration and create role investigator and a user with this role.
+
+
 ## Deploy application on Tomcat server
 ### 1. Package the application
 Use the [Spring Boot Maven plugin]  (https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html) like so:  
@@ -40,27 +50,30 @@ Copy your WAR file from target/ to the tomcat/webapps/ folder
 ### 3. Tomcat config
 Before to startup the tomcat server, some configurations are needed : 
  
-#### Define the external properties path
-In your tomcat/conf folder, open catalina.properties file and add in shared.loader the classpath to your properties folder  
-Exemple :  
+  
+#### Define the JAVA_OPTS
+Set the value of JAVA_OPTS  
 ```shell
-shared.loader=D:/config
-```  
-#### Define the profile used
-In your tomcat folder, open create setenv.sh file with the following command :  
-```shell
-JAVA_OPTS="$JAVA_OPTS -Dspring.profiles.active=prod,insee"
-```  
+JAVA_OPTS=-Dspring.profiles.active=prod -Dspring.config.location=classpath:/,${catalina.base}/webapps/insee.properties
+``` 
+This line will define the profile to use and the location of external properties.  
 
 #### Properties file
-In the classpath define before, create application-insee.properties and complete the folowing properties:  
+In the classpath define before, create insee.properties and complete the following properties:  
 ```shell  
 database.url=jdbc:postgresql://your/path/to/DB  
 database.username=username  
 database.password=password  
   
 defaultSchema=schema  
-application.mode=Basic #define the authentication mode (Basic, Keycloak or NoAuth)  
+application.mode=Basic #define the authentication mode (Basic, Keycloak or NoAuth) 
+
+keycloak.realm=QueenAPI
+keycloak.resource=QueenAPI
+keycloak.auth-server-url=http://localhost:8180/auth
+keycloak.ssl-required=external
+keycloak.public-client=true
+keycloak.principal-attribute:preferred_username	 
 ```  
 
 ### 4. Tomcat start
@@ -74,6 +87,7 @@ catalina.sh run (on Unix-based systems)
 
 ### 5. Application Access
 To access to swagger-ui, use this url : [http://localhost:8080/queen-0.0.1-SNAPSHOT/swagger-ui.html](http://localhost:8080/queen-0.0.1-SNAPSHOT/swagger-ui.html)  
+To access to keycloak, use this url : [http://localhost:8180](http://localhost:8180)  
 
 ## Before you commit
 Before committing code please ensure,  
@@ -119,6 +133,7 @@ Before committing code please ensure,
 - springfox-swagger2
 - hibernate
 - hibernate-types-52 (for jsonb type)
+- keycloak 
 
 ## Developers
 - Benjamin Claudel (benjamin.claudel@keyconsulting.fr)
