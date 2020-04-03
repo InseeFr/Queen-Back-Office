@@ -26,9 +26,9 @@ public class ApiApplication {
 		SpringApplication.run(ApiApplication.class, args);
 	}
 
-
 	@EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
+
         final Environment env = event.getApplicationContext().getEnvironment();
         LOGGER.info("================================ Properties =================================");
         final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
@@ -38,7 +38,7 @@ public class ApiApplication {
                 .flatMap(Arrays::stream)
                 .distinct()
                 .filter(prop -> !(prop.contains("credentials") || prop.contains("password")))
-                .filter(prop -> prop.startsWith("fr.insee") || prop.startsWith("logging") || prop.startsWith("keycloak") || prop.startsWith("spring"))
+                .filter(prop -> prop.startsWith("fr.insee") || prop.startsWith("logging") || prop.startsWith("keycloak") || prop.startsWith("spring") || prop.startsWith("application"))
                 .sorted()
                 .forEach(prop -> LOGGER.info("{}: {}", prop, env.getProperty(prop)));
         LOGGER.info("============================================================================");

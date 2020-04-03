@@ -152,6 +152,11 @@
 		    <artifactId>keycloak-spring-security-adapter</artifactId>
 		    <version>7.0.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.keycloak</groupId>
+		    <artifactId>keycloak-spring-boot-starter</artifactId>
+		    <version>7.0.0</version>
+		</dependency>
 		
 		<!--  Commons -->
 		<dependency>
@@ -177,6 +182,7 @@
 					<profiles>
 						<profile>insee</profile>
 						<profile>prod</profile>
+						<profile>dev</profile>
 					</profiles>
 				</configuration>
 			</plugin>

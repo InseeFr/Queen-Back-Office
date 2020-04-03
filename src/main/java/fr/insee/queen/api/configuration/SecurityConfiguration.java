@@ -3,11 +3,9 @@ package fr.insee.queen.api.configuration;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.keycloak.adapters.springsecurity.management.HttpSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +15,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 
+import fr.insee.queen.api.configuration.ApplicationProperties.Mode;
 
 
 /**
@@ -38,8 +37,8 @@ import org.springframework.security.web.savedrequest.NullRequestCache;
  */
 @Configuration
 @EnableWebSecurity
-@KeycloakConfiguration
-public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter {
+@ConditionalOnExpression( "'${application.mode}' == 'Basic' or '${application.mode}' == 'NoAuth'" )
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	/**
 	 * The environment define in Spring application Generate with the application
 	 * property environment
@@ -65,6 +64,7 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 	 */
 	@Override
 	public void configure(WebSecurity web) throws Exception {
+		System.setProperty("keycloak.enabled", applicationProperties.getMode() != Mode.Keycloak?"false":"true");
 		web.ignoring()
 			.antMatchers(HttpMethod.OPTIONS, "/**")
 			.antMatchers("/i18n/**")
@@ -77,7 +77,7 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 			.antMatchers("/actuator/**")
 			.antMatchers("/login.html")
 			.antMatchers("/login")
-			;
+			.antMatchers("/swagger-ui.html");
 	}
 
 	/**
@@ -98,19 +98,6 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 					.antMatchers("/reporting-unit/{id}/comment").hasRole("investigator")
 					.antMatchers("/nomenclature/{id}").hasRole("investigator")
 					.anyRequest().denyAll(); 
-				break;
-			case Keycloak:
-				super.configure(http);
-		        http.logout()
-		        	.logoutSuccessUrl("/logout/successful")
-		        	.and()
-		        	.authorizeRequests()
-		    		.antMatchers("/")
-		    		.hasRole("investigator")
-		    		.antMatchers("/swagger-ui.html")
-		    		.hasRole("investigator")
-		    		.antMatchers("/**")
-		        	.authenticated();
 				break;
 			default:
 				http.httpBasic().disable();
@@ -137,14 +124,6 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 				auth.inMemoryAuthentication().withUser("admin").password("{noop}a").roles("investigator").and()
 				.withUser("noWrite").password("{noop}a").roles();
 				break;
-			case Keycloak:
-				 SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
-				    grantedAuthorityMapper.setPrefix("ROLE_");
-
-				    KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-				    keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
-				    auth.authenticationProvider(keycloakAuthenticationProvider);
-			    break;
 			case NoAuth:
 				break;
 			default:
@@ -153,34 +132,12 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
 		}
 	}
 	
-	/**
-	 * Defines the keycloak authentication provider
-	 */
-	/*@Override
-    @Bean
-    public KeycloakUserDetailsAuthenticationProvider keycloakAuthenticationProvider() {
-        //log.info("adding keycloak authentication provider");
-        return new KeycloakUserDetailsAuthenticationProvider();
-    }*/
-	
-	/**
-	 * Defines the keycloak configuration
-	 */
-   /* @Bean
-	public KeycloakConfigResolver keycloakConfigResolver() {
-		//log.info("adding RMeS keycloak config resolver");
-        return new KeycloakConfigResolver keycloakConfigResolver();
-	}*/
-	
-	
-	
 	@Bean
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
 		 return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
 	}
 
     @Bean
-    @Override
     @ConditionalOnMissingBean(HttpSessionManager.class)
     protected HttpSessionManager httpSessionManager() {
     	return new HttpSessionManager();
