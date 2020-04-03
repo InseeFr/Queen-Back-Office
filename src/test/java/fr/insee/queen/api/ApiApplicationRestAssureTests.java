@@ -51,38 +51,38 @@ class ApiApplicationRestAssureTests {
 
 	@Test
 	public void testFindOperation() throws InterruptedException {
-		get("/operations").then().assertThat().body("id", hasItem("simpsons2020x00"));
+		get("api/operations").then().assertThat().body("id", hasItem("simpsons2020x00"));
 	}
 
 	@Test
 	public void testFindQuestionnaireByOperation() {
-		get("/operation/simpsons2020x00/questionnaire").then().assertThat().body("isEmpty()", Matchers.is(false));
+		get("api/operation/simpsons2020x00/questionnaire").then().assertThat().body("isEmpty()", Matchers.is(false));
 	}
 
 	@Test
 	public void testFindReportUnitsByOperation() {
-		get("/operation/simpsons2020x00/reporting-units").then().assertThat().body("id", hasItem(11));
+		get("api/operation/simpsons2020x00/reporting-units").then().assertThat().body("id", hasItem(11));
 	}
 
 	
 	@Test
 	public void testFindNomenclatureById() {
-		get("/nomenclature/cities2019").then().assertThat().body("isEmpty()", Matchers.is(false));
+		get("api/nomenclature/cities2019").then().assertThat().body("isEmpty()", Matchers.is(false));
 	}
 	
 	@Test
 	public void testFindCommentByReportingUnit() {
-		get("/reporting-unit/22/comment").then().assertThat().body("isEmpty()", Matchers.is(false));
+		get("api/reporting-unit/22/comment").then().assertThat().body("isEmpty()", Matchers.is(false));
 	}
 
 	@Test
 	public void testFindDataByReportingUnit() {
-		get("/reporting-unit/22/data").then().assertThat().body("isEmpty()", Matchers.is(false));
+		get("api/reporting-unit/22/data").then().assertThat().body("isEmpty()", Matchers.is(false));
 	}
 
 	@Test
 	public void testFindRequiredNomenclatureByOperation() {
-		get("/operation/vqs2021x00/required-nomenclatures").then().assertThat().body("$", hasItem("cities2019"));
+		get("api/operation/vqs2021x00/required-nomenclatures").then().assertThat().body("$", hasItem("cities2019"));
 	}
 
 }
