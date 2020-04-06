@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiOperation;
 * 
 */
 @RestController
-@RequestMapping
+@RequestMapping(path = "/api")
 public class NomenclatureController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NomenclatureController.class);
 	

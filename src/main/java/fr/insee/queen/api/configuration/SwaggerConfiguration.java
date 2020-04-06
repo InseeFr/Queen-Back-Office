@@ -61,7 +61,7 @@ public class SwaggerConfiguration {
     	messages.add(new ResponseMessageBuilder().code(401).message("Not authorized!").build());
     	messages.add(new ResponseMessageBuilder().code(403).message("Forbidden!").build());
     	messages.add(new ResponseMessageBuilder().code(404).message("Not found!").build());
-    	String urlString = "/" + name;
+    	String urlString = "/";
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
         		.useDefaultResponseMessages(false)
         		.globalResponseMessage(RequestMethod.GET, messages)

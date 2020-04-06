@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiOperation;
 * 
 */
 @RestController
-@RequestMapping
+@RequestMapping(path = "/api")
 public class OperationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OperationController.class);
 

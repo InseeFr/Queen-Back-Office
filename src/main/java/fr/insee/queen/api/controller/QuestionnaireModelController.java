@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiOperation;
 * 
 */
 @RestController
-@RequestMapping
+@RequestMapping(path = "/api")
 public class QuestionnaireModelController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionnaireModelController.class);
 

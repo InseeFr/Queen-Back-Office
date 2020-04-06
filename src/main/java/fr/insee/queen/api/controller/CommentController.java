@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 * 
 */
 @RestController
-@RequestMapping
+@RequestMapping(path = "/api")
 public class CommentController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommentController.class);
 	
