@@ -79,4 +79,10 @@
 			relativeToChangelogFile="true" encoding="UTF-8"
 			file="vqs_2021_requiredNomenclature.csv"></loadData>
 	</changeSet>
+	<changeSet author="scorcaud" id="testData13" context="not prod">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="simpsons_2020_comments.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
 </databaseChangeLog>
