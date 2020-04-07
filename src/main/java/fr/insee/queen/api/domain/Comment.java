@@ -11,6 +11,8 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.json.simple.JSONObject;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+
 /**
 * Entity Comment : represent the entity table in DB
 * 
@@ -21,7 +23,7 @@ import org.json.simple.JSONObject;
 @Table
 @TypeDef(
 	    name = "jsonb",
-	    typeClass = JSONObject.class
+	    typeClass = JsonBinaryType.class
 	)
 public class Comment extends AbstractEntity {
 	/**

@@ -3,6 +3,7 @@ package fr.insee.queen.api.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.simple.JSONObject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,9 +39,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	* @return {@link Comment}
 	*/
 	Optional<Comment> findByReportingUnit_id(Long id);
-	
-	@Transactional
-	@Modifying
-	@Query(value="UPDATE comment SET value=to_json(?1) WHERE id=?2", nativeQuery=true)
-	void updateValue(String value ,Long id);
 }

@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Comment;
+import fr.insee.queen.api.domain.ReportingUnit;
 import fr.insee.queen.api.dto.comment.CommentDto;
 import fr.insee.queen.api.repository.CommentRepository;
+import fr.insee.queen.api.repository.ReportingUnitRepository;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -40,6 +42,12 @@ public class CommentController {
 	private CommentRepository commentRepository;
 	
 	/**
+	* The reporting unit repository using to access to table 'reporting_unit' in DB 
+	*/
+	@Autowired
+	private ReportingUnitRepository reportingUnitRepository;
+	
+	/**
 	* This method is using to get the comment associated to a specific reporting unit 
 	* 
 	* @param id the id of reporting unit
@@ -47,9 +55,20 @@ public class CommentController {
 	*/
 	@ApiOperation(value = "Get comment for reporting unit Id ")
 	@GetMapping(path = "/reporting-unit/{id}/comment")
-	public CommentDto getCommentByReportingUnit(@PathVariable(value = "id") Long id){
-		LOGGER.info("GET comment for reporting unit with id {}", id);
-		return commentRepository.findDtoByReportingUnit_id(id);
+	public ResponseEntity<Object> getCommentByReportingUnit(@PathVariable(value = "id") Long id){
+		Optional<ReportingUnit> reportingUnitOptional = reportingUnitRepository.findById(id);
+		if (!reportingUnitOptional.isPresent()) {
+			LOGGER.info("GET comment for reporting unit with id {} resulting in 404", id);
+			return ResponseEntity.notFound().build();
+		} else {
+			LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
+			Optional<Comment> commentOptional = commentRepository.findByReportingUnit_id(id);
+			if (!commentOptional.isPresent()) {
+				return new ResponseEntity<>(new JSONObject(), HttpStatus.OK);
+			}else {
+				return new ResponseEntity<>(commentOptional.get().getValue(), HttpStatus.OK);
+			}
+		}
 	}
 	
 	/**
@@ -65,14 +84,21 @@ public class CommentController {
 	@ApiOperation(value = "Update the comment by reporting unit Id ")
 	@PutMapping(path = "/reporting-unit/{id}/comment")
 	public ResponseEntity<Object> setComment(@RequestBody JSONObject commentValue, @PathVariable(value = "id") Long id) throws ParseException, SQLException {
-		Optional<Comment> commentOptional = commentRepository.findByReportingUnit_id(id);
-		if (!commentOptional.isPresent()) {
+		Optional<ReportingUnit> reportingUnitOptional = reportingUnitRepository.findById(id);
+		if (!reportingUnitOptional.isPresent()) {
 			LOGGER.info("PUT comment for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
-		} else {  
-			commentRepository.updateValue(commentValue.toJSONString().toString(), commentOptional.get().getId());
-			LOGGER.info("PUT comment for reporting unit with id {} resulting in 200", id);
-			return ResponseEntity.ok().build();
+		} else {
+			Optional<Comment> commentOptional = commentRepository.findByReportingUnit_id(id);
+			if (!commentOptional.isPresent()) {
+				LOGGER.info("PUT comment for reporting unit with id {} resulting in 404", id);
+				return ResponseEntity.notFound().build();
+			}else {
+				commentOptional.get().setValue(commentValue);
+				commentRepository.save(commentOptional.get());
+				LOGGER.info("PUT comment for reporting unit with id {} resulting in 200", id);
+				return ResponseEntity.ok().build();
+			}
 		}
 	}	
 }

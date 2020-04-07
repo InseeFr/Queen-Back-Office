@@ -1,5 +1,7 @@
 package fr.insee.queen.api.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -40,7 +42,7 @@ public class Nomenclature {
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private JSONObject value;
+	private List<JSONObject> value;
 
 	/**
 	 * @return id of nomenclature
@@ -69,13 +71,13 @@ public class Nomenclature {
 	/**
 	 * @return value of nomenclature
 	 */
-	public JSONObject getValue() {
+	public List<JSONObject> getValue() {
 		return value;
 	}
 	/**
 	 * @param value value to set
 	 */
-	public void setValue(JSONObject value) {
+	public void setValue(List<JSONObject> value) {
 		this.value = value;
 	}
 

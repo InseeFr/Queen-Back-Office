@@ -181,7 +181,6 @@
 					<jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
 					<profiles>
 						<profile>insee</profile>
-						<profile>prod</profile>
 						<profile>dev</profile>
 					</profiles>
 				</configuration>

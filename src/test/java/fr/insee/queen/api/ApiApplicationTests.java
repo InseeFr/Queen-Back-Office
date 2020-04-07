@@ -1,21 +1,5 @@
 package fr.insee.queen.api;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import fr.insee.queen.api.domain.Comment;
-import fr.insee.queen.api.domain.Data;
-import fr.insee.queen.api.domain.Nomenclature;
-import fr.insee.queen.api.domain.Operation;
-import fr.insee.queen.api.domain.QuestionnaireModel;
-import fr.insee.queen.api.domain.ReportingUnit;
-import fr.insee.queen.api.domain.Version;
-import fr.insee.queen.api.repository.CommentRepository;
-import fr.insee.queen.api.repository.DataRepository;
-import fr.insee.queen.api.repository.ReportingUnitRepository;
-
 class ApiApplicationTests extends AbstractTests {
 	
 //	@Autowired

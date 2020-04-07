@@ -13,6 +13,8 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.json.simple.JSONObject;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+
 /**
 * Entity Data : represent the entity table in DB
 * 
@@ -23,7 +25,7 @@ import org.json.simple.JSONObject;
 @Table
 @TypeDef(
 	    name = "jsonb",
-	    typeClass = JSONObject.class
+	    typeClass = JsonBinaryType.class
 	)
 public class Data extends AbstractEntity {
 	/**

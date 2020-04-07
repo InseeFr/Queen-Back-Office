@@ -1,10 +1,10 @@
 package fr.insee.queen.api.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,9 +38,9 @@ public class OperationController {
 	*/
 	@ApiOperation(value = "Get list of operations")
 	@GetMapping(path = "/operations")
-	public List<OperationDto> getListOperation(){
-		LOGGER.info("GET operations");
-		return operationRepository.findDtoBy();
+	public ResponseEntity<Object> getListOperation(){
+		LOGGER.info("GET operations resulting in 200");
+		return new ResponseEntity<Object>(operationRepository.findDtoBy(), HttpStatus.OK);
 	}
 	
 }
