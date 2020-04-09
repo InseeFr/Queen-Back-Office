@@ -1,0 +1,88 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+	
+	<!-- Données de test réels -->
+	
+	<!-- Nomenclature -->
+	<changeSet author="scorcaud" id="testData1" context="not prod" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="cities_2019_nomenclature.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
+	<changeSet author="scorcaud" id="testData2" context="not prod" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="regions_2019_nomenclature.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
+	
+	<!-- 	Operation n°1 : simpsons 2020 -->
+	<changeSet author="scorcaud" id="testData3" context="not prod" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="simpsons_2020_questionnaire_models.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
+	<changeSet author="scorcaud" id="testData4" context="not prod">
+		<loadData tableName="operation" schemaName="public"
+			relativeToChangelogFile="true" encoding="UTF-8"
+			file="simpsons_2020_operation.csv"></loadData>
+	</changeSet>
+	<changeSet author="scorcaud" id="testData5" context="not prod">
+		<loadData tableName="reporting_unit" schemaName="public"
+			relativeToChangelogFile="true" encoding="UTF-8"
+			file="simpsons_2020_reportingunits.csv"></loadData>
+	</changeSet>
+	<changeSet author="scorcaud" id="testData6" context="not prod">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="simpsons_2020_datas.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
+	
+	<!-- 	Operation n°2 : vqs 2021 -->
+	<changeSet author="scorcaud" id="testData7" context="not prod" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="vqs_2021_questionnaire_models.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
+	<changeSet author="scorcaud" id="testData8" context="not prod">
+		<loadData tableName="operation" schemaName="public"
+			relativeToChangelogFile="true" encoding="UTF-8"
+			file="vqs_2021_operation.csv"></loadData>
+	</changeSet>
+	<changeSet author="scorcaud" id="testData9" context="not prod">
+		<loadData tableName="reporting_unit" schemaName="public"
+			relativeToChangelogFile="true" encoding="UTF-8"
+			file="vqs_2021_reportingunits.csv"></loadData>
+	</changeSet>
+	<changeSet author="scorcaud" id="testData10" context="not prod">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="vqs_2021_datas.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
+	<changeSet author="scorcaud" id="testData11" context="not prod">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="vqs_2021_comments.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
+	<changeSet author="scorcaud" id="testData12" context="not prod">
+		<loadData tableName="required_nomenclature" schemaName="public"
+			relativeToChangelogFile="true" encoding="UTF-8"
+			file="vqs_2021_requiredNomenclature.csv"></loadData>
+	</changeSet>
+	<changeSet author="scorcaud" id="testData13" context="not prod">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="simpsons_2020_comments.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
+</databaseChangeLog>

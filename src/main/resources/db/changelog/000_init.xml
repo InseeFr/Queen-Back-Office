@@ -1,0 +1,110 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+	<changeSet author="admin (generated)" id="1584711839954-1">
+        <createSequence sequenceName="hibernate_sequence"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-1">
+        <createTable tableName="comment">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="commentPK"/>
+            </column>
+            <column name="value" type="JSONB"/>
+            <column name="reporting_unit_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-2">
+        <createTable tableName="data">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="dataPK"/>
+            </column>
+            <column name="value" type="JSONB"/>
+            <column defaultValue="INIT" name="version" type="VARCHAR(9)"/>
+            <column name="reporting_unit_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-3">
+        <createTable tableName="nomenclature">
+            <column name="id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="JSONB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-4">
+        <createTable tableName="operation">
+            <column name="id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="questionnaire_model_id" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-5">
+        <createTable tableName="questionnaire_model">
+            <column name="id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model" type="JSONB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-6">
+        <createTable tableName="reporting_unit">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="reporting_unitPK"/>
+            </column>
+            <column name="operation_id" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-7">
+        <createTable tableName="required_nomenclature">
+            <column name="id_required_nomenclature" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-8">
+        <addPrimaryKey columnNames="id_required_nomenclature, code" tableName="required_nomenclature"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-9">
+        <addPrimaryKey columnNames="id" constraintName="nomenclaturePK" tableName="nomenclature"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-10">
+        <addPrimaryKey columnNames="id" constraintName="operationPK" tableName="operation"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-11">
+        <addPrimaryKey columnNames="id" constraintName="questionnaire_modelPK" tableName="questionnaire_model"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-12">
+        <addForeignKeyConstraint baseColumnNames="operation_id" baseTableName="reporting_unit" constraintName="FK5npgv34xrt4sot2mv05ij3tse" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="operation"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-13">
+        <addForeignKeyConstraint baseColumnNames="reporting_unit_id" baseTableName="data" constraintName="FK7ym9pbkxwahn9vpf2fgoaxxuq" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="reporting_unit"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-14">
+        <addForeignKeyConstraint baseColumnNames="id_required_nomenclature" baseTableName="required_nomenclature" constraintName="FKcjxyxys9mk6ym2kmwignxw7kp" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="questionnaire_model"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-15">
+        <addForeignKeyConstraint baseColumnNames="questionnaire_model_id" baseTableName="operation" constraintName="FKkgwvclt3vox54o7kr50mu6w49" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="questionnaire_model"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-16">
+        <addForeignKeyConstraint baseColumnNames="code" baseTableName="required_nomenclature" constraintName="FKlusjrt37f9351fracyajgflj2" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="nomenclature"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1584714533258-17">
+        <addForeignKeyConstraint baseColumnNames="reporting_unit_id" baseTableName="comment" constraintName="FKmp8mo44go4vhohovjaxxg8140" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="reporting_unit"/>
+    </changeSet>
+</databaseChangeLog>
