@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: queen-bo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: queen-bo
+  template:
+    metadata:
+      labels:
+        app: queen-bo
+    spec:
+      containers:
+        - name: queen-bo
+          image: inseefr/queen-bo:latest
+          env:
+           - name: JAVA_OPTS
+             value: '-Dspring.profiles.active=prod -Dspring.config.location=classpath:/,${CATALINA_BASE}/webapps/queen-bo.properties'
