@@ -30,17 +30,12 @@ public interface DataRepository extends JpaRepository<Data, Long> {
 	* @param id the id of reporting unit
 	* @return {@link DataDto}
 	*/
-	DataDto findDtoByReportingUnit_id(Long id);
+	DataDto findDtoByReportingUnit_id(String id);
 	/**
 	* This method retrieve the Data for a specific reporting_unit
 	* 
 	* @param id the id of reporting unit
 	* @return {@link Data}
 	*/
-	Optional<Data> findByReportingUnit_id(Long id);
-	
-	@Transactional
-	@Modifying
-	@Query(value="UPDATE data SET value=to_json(?1) WHERE id=?2", nativeQuery=true)
-	void updateValue(String value ,Long id);
+	Optional<Data> findByReportingUnit_id(String id);
 }

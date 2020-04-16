@@ -31,12 +31,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	* @param id the id of reporting unit
 	* @return {@link CommentDto}
 	*/
-	CommentDto findDtoByReportingUnit_id(Long id);
+	CommentDto findDtoByReportingUnit_id(String id);
 	/**
 	* This method retrieve the Comment for a specific reporting_unit
 	* 
 	* @param id the id of reporting unit
 	* @return {@link Comment}
 	*/
-	Optional<Comment> findByReportingUnit_id(Long id);
+	Optional<Comment> findByReportingUnit_id(String id);
 }
