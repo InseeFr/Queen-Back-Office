@@ -66,7 +66,9 @@ database.username=username
 database.password=password  
   
 defaultSchema=schema  
+
 application.mode=Basic #define the authentication mode (Basic, Keycloak or NoAuth) 
+application.crosOrigin=* # define the CROS origin url
 
 keycloak.realm=QueenAPI
 keycloak.resource=QueenAPI
