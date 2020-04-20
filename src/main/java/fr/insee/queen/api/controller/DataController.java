@@ -55,7 +55,7 @@ public class DataController {
 	*/
 	@ApiOperation(value = "Get data by reporting unit Id ")
 	@GetMapping(path = "/reporting-unit/{id}/data")
-	public ResponseEntity<Object>  getDataByReportingUnit(@PathVariable(value = "id") Long id){
+	public ResponseEntity<Object>  getDataByReportingUnit(@PathVariable(value = "id") String id){
 		Optional<ReportingUnit> reportingUnitOptional = reportingUnitRepository.findById(id);
 		if (!reportingUnitOptional.isPresent()) {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 404", id);
@@ -81,7 +81,7 @@ public class DataController {
 	*/
 	@ApiOperation(value = "Update data by reporting unit Id ")
 	@PutMapping(path = "/reporting-unit/{id}/data")
-	public ResponseEntity<Object> setData(@RequestBody JSONObject dataValue, @PathVariable(value = "id") Long id) throws ParseException, SQLException {
+	public ResponseEntity<Object> setData(@RequestBody JSONObject dataValue, @PathVariable(value = "id") String id) throws ParseException, SQLException {
 		Optional<ReportingUnit> reportingUnitOptional = reportingUnitRepository.findById(id);
 		if (!reportingUnitOptional.isPresent()) {
 			LOGGER.info("PUT data for reporting unit with id {} resulting in 404", id);

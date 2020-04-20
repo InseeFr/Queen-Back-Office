@@ -1,7 +1,6 @@
 package fr.insee.queen.api.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -18,8 +17,7 @@ public class ReportingUnit extends AbstractEntity {
 	* The id of reportingUnit 
 	*/
 	@Id
-	@GeneratedValue
-	private Long id;
+	private String id;
 	
 	/**
 	* The operation associated to the reporting unit
@@ -29,13 +27,13 @@ public class ReportingUnit extends AbstractEntity {
 	/**
 	 * @return id of reportingUnit
 	 */
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 	/**
 	 * @param id id to set
 	 */
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	/**

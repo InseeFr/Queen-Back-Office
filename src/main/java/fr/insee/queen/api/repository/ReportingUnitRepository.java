@@ -12,7 +12,7 @@ import fr.insee.queen.api.dto.reportingunit.ReportingUnitDto;
 * @author Claudel Benjamin
 * 
 */
-public interface ReportingUnitRepository extends JpaRepository<ReportingUnit, Long> {
+public interface ReportingUnitRepository extends JpaRepository<ReportingUnit, String> {
 	/**
 	* This method retrieve all ReportingUnit in DB
 	* 

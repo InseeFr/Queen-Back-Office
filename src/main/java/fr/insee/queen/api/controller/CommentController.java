@@ -55,7 +55,7 @@ public class CommentController {
 	*/
 	@ApiOperation(value = "Get comment for reporting unit Id ")
 	@GetMapping(path = "/reporting-unit/{id}/comment")
-	public ResponseEntity<Object> getCommentByReportingUnit(@PathVariable(value = "id") Long id){
+	public ResponseEntity<Object> getCommentByReportingUnit(@PathVariable(value = "id") String id){
 		Optional<ReportingUnit> reportingUnitOptional = reportingUnitRepository.findById(id);
 		if (!reportingUnitOptional.isPresent()) {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 404", id);
@@ -83,7 +83,7 @@ public class CommentController {
 	*/
 	@ApiOperation(value = "Update the comment by reporting unit Id ")
 	@PutMapping(path = "/reporting-unit/{id}/comment")
-	public ResponseEntity<Object> setComment(@RequestBody JSONObject commentValue, @PathVariable(value = "id") Long id) throws ParseException, SQLException {
+	public ResponseEntity<Object> setComment(@RequestBody JSONObject commentValue, @PathVariable(value = "id") String id) throws ParseException, SQLException {
 		Optional<ReportingUnit> reportingUnitOptional = reportingUnitRepository.findById(id);
 		if (!reportingUnitOptional.isPresent()) {
 			LOGGER.info("PUT comment for reporting unit with id {} resulting in 404", id);

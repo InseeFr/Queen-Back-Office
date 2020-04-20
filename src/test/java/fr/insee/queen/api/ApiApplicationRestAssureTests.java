@@ -128,7 +128,7 @@ class ApiApplicationRestAssureTests {
 	
 	@Test
 	public void testFindCommentByUnexistReportingUnit() {
-		get("api/reporting-unit/toto/comment").then().statusCode(400);
+		get("api/reporting-unit/toto/comment").then().statusCode(404);
 		get("api/reporting-unit/0/comment").then().statusCode(404);
 	}
 
@@ -158,7 +158,7 @@ class ApiApplicationRestAssureTests {
 	
 	@Test
 	public void testFindDataByUnexistReportingUnit() {
-		get("api/reporting-unit/toto/data").then().statusCode(400);
+		get("api/reporting-unit/toto/data").then().statusCode(404);
 		get("api/reporting-unit/0/data").then().statusCode(404);
 	}
 
