@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: queen
+data:
+  postgres_user: queen
+  postgres_password: queen
+  postgres_host : queen-db
+
