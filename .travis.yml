@@ -10,7 +10,7 @@ install:
   - mvn install
 
 script:
-  - docker build -t inseefr/queen-bo .
+  - docker build -t inseefr/queen-back-office .
 
 before_script:
   - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
@@ -20,7 +20,7 @@ deploy:
     provider: script
     script:
       echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-      && docker push inseefr/queen-bo
+      && docker push inseefr/queen-back-office
     on:
       branch: master
 

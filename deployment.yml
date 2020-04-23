@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: queen-bo
-          image: inseefr/queen-bo:latest
+          image: inseefr/queen-back-office:latest
           env:
            - name: JAVA_OPTS
              value: '-Dspring.profiles.active=prod -Dspring.config.location=classpath:/,${CATALINA_BASE}/webapps/queen-bo.properties'
