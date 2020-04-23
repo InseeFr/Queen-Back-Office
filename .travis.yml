@@ -6,7 +6,7 @@ services:
   - docker
 
 script:
-  - mvn install -B -V
+  - mvn install
   - docker build -t inseefr/queen-bo .
 
 before_script:
