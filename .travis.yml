@@ -20,7 +20,7 @@ deploy:
     provider: script
     script:
       echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-      && docker push inseefrlab/queen-bo
+      && docker push inseefr/queen-bo
     on:
       branch: master
 
