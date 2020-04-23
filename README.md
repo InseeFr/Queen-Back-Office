@@ -1,10 +1,10 @@
 # Queen-Back-Office
 Back-office services for Queen  
-REST API for communication between QUEEN DB and QUEEN Form (Frontend).
+REST API for communication between Queen DB and Queen UI.
 
 ## Requirements
 For building and running the application you need:
-- [JDK 1.11](https://jdk.java.net/archive/)
+- [JDK 11](https://jdk.java.net/archive/)
 - Maven 3  
 
 ## Install and excute unit tests
