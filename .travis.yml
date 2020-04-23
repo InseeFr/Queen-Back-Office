@@ -6,8 +6,10 @@ sudo: required
 services:
   - docker
 
-script:
+install:
   - mvn install
+
+script:
   - docker build -t inseefr/queen-bo .
 
 before_script:
