@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/InseeFr/Queen-Back-Office.svg?branch=master)](https://travis-ci.org/InseeFr/Queen-Back-Office)
+
 # Queen-Back-Office
 Back-office services for Queen  
 REST API for communication between Queen DB and Queen UI.
