@@ -85,4 +85,10 @@
 			relativeToChangelogFile="true" splitStatements="true"
 			stripComments="true" />
 	</changeSet>
+	<changeSet author="scorcaud" id="testData14" context="not prod">
+		<sqlFile dbms="postgresql, oracle" encoding="UTF-8"
+			endDelimiter="\nGO" path="vqs_2021_data_and_comment.sql"
+			relativeToChangelogFile="true" splitStatements="true"
+			stripComments="true" />
+	</changeSet>
 </databaseChangeLog>
