@@ -68,7 +68,8 @@ database.username=username
 database.password=password  
   
 defaultSchema=schema  
-
+fr.insee.queen.api.logging.path=path/to/external/log4j2.xml   
+#define the path to external log4j2 if different of catalina.base/webapps/log4j2.xml
 application.mode=Basic #define the authentication mode (Basic, Keycloak or NoAuth) 
 application.crosOrigin=* # define the CROS origin url
 
