@@ -21,7 +21,7 @@ import org.springframework.security.web.savedrequest.NullRequestCache;
 
 
 @Configuration
-@ConditionalOnExpression( "'${application.mode}' == 'KeyCloak'")
+@ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
 @ComponentScan(
         basePackageClasses = KeycloakSecurityComponents.class,
         excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"))

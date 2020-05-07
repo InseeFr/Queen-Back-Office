@@ -81,7 +81,7 @@ class ApiApplicationRestAssureTests {
 	public void testFindReportUnitsByOperation() {
 		get("api/operation/simpsons2020x00/reporting-units").then()
 		.statusCode(200).and()
-		.assertThat().body("id", hasItem(11));
+		.assertThat().body("id", hasItem("11"));
 	}
 	
 	@Test
