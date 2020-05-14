@@ -14,7 +14,7 @@ public class CorsConfig {
 	 * The url to allowed
 	 * Generate with the application property applcation.cros_origin
 	 */
-    @Value("${application.crosOrigin}")
+    @Value("${fr.insee.queen.application.crosOrigin}")
     private String crosOrigin;
     
     @Bean

@@ -63,14 +63,18 @@ This line will define the profile to use and the location of external properties
 #### Properties file
 In the classpath define before, create insee.properties and complete the following properties:  
 ```shell  
-database.url=jdbc:postgresql://your/path/to/DB  
-database.username=username  
-database.password=password  
-  
-defaultSchema=schema  
+fr.insee.queen.application.mode=NoAuth #or KeyCloak or Basic
+fr.insee.queen.application.crosOrigin=*
 
-application.mode=Basic #define the authentication mode (Basic, Keycloak or NoAuth) 
-application.crosOrigin=* # define the CROS origin url
+fr.insee.queen.persistence.database.host = localhost
+fr.insee.queen.persistence.database.port = 5433
+fr.insee.queen.persistence.database.schema = schema_name
+fr.insee.queen.persistence.database.user = user_name
+fr.insee.queen.persistence.database.password = password
+fr.insee.queen.persistence.database.driver = org.postgresql.Driver
+
+fr.insee.queen.logging.path=classpath:log4j2.xml
+fr.insee.queen.defaultSchema=public
 
 keycloak.realm=QueenAPI
 keycloak.resource=QueenAPI
