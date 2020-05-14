@@ -54,6 +54,9 @@ public class SwaggerConfiguration {
     @Value("${spring.application.name}")
     private String name;
     
+	 @Value("${fr.insee.queen.version}")
+	 private String version;
+    
     @Bean
     public Docket api() {
     	List<ResponseMessage> messages = new ArrayList<ResponseMessage>();
@@ -104,6 +107,6 @@ public class SwaggerConfiguration {
     }
     
     private ApiInfo apiInfo() {
-        return new ApiInfo("Queen-Back-Office", "Back-office services for Queen", "1.0", "", new Contact("Metallica", "https://github.com/InseeFr/Queen-Back-Office", ""), "LICENSEE", "https://github.com/InseeFr/Queen-Back-Office/blob/master/LICENSE", List.of());
+        return new ApiInfo("Queen-Back-Office", "Back-office services for Queen", version, "", new Contact("Metallica", "https://github.com/InseeFr/Queen-Back-Office", ""), "LICENSEE", "https://github.com/InseeFr/Queen-Back-Office/blob/master/LICENSE", List.of());
     }
 }

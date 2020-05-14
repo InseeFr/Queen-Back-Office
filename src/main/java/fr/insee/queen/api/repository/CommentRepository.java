@@ -3,11 +3,7 @@ package fr.insee.queen.api.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.json.simple.JSONObject;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
 
 import fr.insee.queen.api.domain.Comment;
 import fr.insee.queen.api.dto.comment.CommentDto;

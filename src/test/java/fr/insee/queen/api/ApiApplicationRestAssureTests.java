@@ -43,6 +43,7 @@ class ApiApplicationRestAssureTests {
 		RestAssured.port = port;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Container
 	public static PostgreSQLContainer postgreSQLContainer = (PostgreSQLContainer) new PostgreSQLContainer("postgres")
 			.withDatabaseName("queen").withUsername("queen").withPassword("queen");
