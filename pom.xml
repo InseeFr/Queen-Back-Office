@@ -9,7 +9,7 @@
 	<version>1.0.2</version>
 	<packaging>war</packaging>
 	<name>Queen-Back-Office</name>
-	<description>Queen-Back-Office</description>
+	<description>Back-office services for Queen</description>
 	
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -226,6 +226,14 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				 <executions>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
 				<configuration>
 					<executable>true</executable>
 					<fork>true</fork>

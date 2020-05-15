@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,9 +55,9 @@ public class SwaggerConfiguration {
 	 */
     @Value("${spring.application.name}")
     private String name;
-    
-	 @Value("${fr.insee.queen.version}")
-	 private String version;
+	 
+	@Autowired
+	BuildProperties buildProperties;
     
     @Bean
     public Docket api() {
@@ -107,6 +109,6 @@ public class SwaggerConfiguration {
     }
     
     private ApiInfo apiInfo() {
-        return new ApiInfo("Queen-Back-Office", "Back-office services for Queen", version, "", new Contact("Metallica", "https://github.com/InseeFr/Queen-Back-Office", ""), "LICENSEE", "https://github.com/InseeFr/Queen-Back-Office/blob/master/LICENSE", List.of());
+        return new ApiInfo(buildProperties.getName(), "Back-office services for Queen", buildProperties.getVersion(), "", new Contact("Metallica", "https://github.com/InseeFr/Queen-Back-Office", ""), "LICENSEE", "https://github.com/InseeFr/Queen-Back-Office/blob/master/LICENSE", List.of());
     }
 }
