@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.AbstractEnvironment;
@@ -17,13 +19,25 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import fr.insee.queen.api.repository.OperationRepository;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "fr.insee.queen.api")
 @EnableJpaRepositories(basePackageClasses = OperationRepository.class)
-public class ApiApplication {
+public class ApiApplication extends SpringBootServletInitializer{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApiApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApiApplication.class, args);
+	}
+	
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		setProperties(application); 
+		return application.sources(ApiApplication.class);
+	}
+	
+	public static void setProperties(SpringApplicationBuilder application) {
+		System.setProperty("spring.config.location",
+				"classpath:/,"
+				+ "file:///${catalina.base}/webapps/queen-bo.properties");
 	}
 
 	@EventListener

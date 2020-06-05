@@ -52,37 +52,36 @@ Copy your WAR file from target/ to the tomcat/webapps/ folder
 ### 3. Tomcat config
 Before to startup the tomcat server, some configurations are needed : 
  
-  
-#### Define the JAVA_OPTS
-Set the value of JAVA_OPTS  
-```shell
-JAVA_OPTS=-Dspring.profiles.active=prod -Dspring.config.location=classpath:/,${catalina.base}/webapps/insee.properties
-``` 
-This line will define the profile to use and the location of external properties.  
 
-#### Properties file
-In the classpath define before, create insee.properties and complete the following properties:  
+#### External Properties file
+Create queen-bo.properties near war file and complete the following properties:  
 ```shell  
-fr.insee.queen.application.mode=NoAuth #or KeyCloak or Basic
+spring.application.name=api
+
+fr.insee.queen.logging.path=${catalina.base}/webapps/log4j2.xml
+fr.insee.queen.env=prod
+fr.insee.queen.application.mode=NoAuth
 fr.insee.queen.application.crosOrigin=*
 
-fr.insee.queen.persistence.database.host = localhost
-fr.insee.queen.persistence.database.port = 5433
-fr.insee.queen.persistence.database.schema = schema_name
-fr.insee.queen.persistence.database.user = user_name
-fr.insee.queen.persistence.database.password = password
+fr.insee.queen.persistence.database.host = queen-db
+fr.insee.queen.persistence.database.port = 5432
+fr.insee.queen.persistence.database.schema = queen
+fr.insee.queen.persistence.database.user = queen
+fr.insee.queen.persistence.database.password = queen
 fr.insee.queen.persistence.database.driver = org.postgresql.Driver
-
-fr.insee.queen.logging.path=classpath:log4j2.xml
 fr.insee.queen.defaultSchema=public
 
-keycloak.realm=QueenAPI
-keycloak.resource=QueenAPI
+keycloak.realm=Queen
+keycloak.resource=Queen
 keycloak.auth-server-url=http://localhost:8180/auth
 keycloak.ssl-required=external
 keycloak.public-client=true
-keycloak.principal-attribute:preferred_username	 
-```  
+keycloak.principal-attribute:preferred_username
+keycloak.enabled=false	 
+```
+
+#### External log file
+Create log4j2.xml near war file and define your  external config for logs.  
 
 ### 4. Tomcat start
 From a terminal navigate to tomcat/bin folder and execute  

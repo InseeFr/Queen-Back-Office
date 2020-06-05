@@ -1,5 +1,5 @@
 INSERT INTO public.questionnaire_model(id, label, model) VALUES('vqs2021x00', 'Questionnaire of the Everyday life and health survey 2021', '
-  { "id" : "k1g74w11",
+    { "id" : "k1g74w11",
     "label" : "Enquête Vie quotidienne et Santé",
     "components" : 
     [ 
