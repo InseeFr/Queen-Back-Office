@@ -56,13 +56,18 @@ Before to startup the tomcat server, some configurations are needed :
 #### External Properties file
 Create queen-bo.properties near war file and complete the following properties:  
 ```shell  
-spring.application.name=api
+#Profile configuration
+spring.profiles.active=prod
 
+#Logs configuration
 fr.insee.queen.logging.path=${catalina.base}/webapps/log4j2.xml
-fr.insee.queen.env=prod
+fr.insee.queen.logging.level=DEBUG
+
+#Application configuration
 fr.insee.queen.application.mode=NoAuth
 fr.insee.queen.application.crosOrigin=*
 
+#Database configuration
 fr.insee.queen.persistence.database.host = queen-db
 fr.insee.queen.persistence.database.port = 5432
 fr.insee.queen.persistence.database.schema = queen
@@ -71,13 +76,14 @@ fr.insee.queen.persistence.database.password = queen
 fr.insee.queen.persistence.database.driver = org.postgresql.Driver
 fr.insee.queen.defaultSchema=public
 
+#Keycloak configuration
 keycloak.realm=Queen
 keycloak.resource=Queen
 keycloak.auth-server-url=http://localhost:8180/auth
 keycloak.ssl-required=external
 keycloak.public-client=true
 keycloak.principal-attribute:preferred_username
-keycloak.enabled=false	 
+keycloak.enabled=false
 ```
 
 #### External log file

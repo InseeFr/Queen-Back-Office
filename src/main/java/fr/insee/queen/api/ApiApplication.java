@@ -25,16 +25,17 @@ public class ApiApplication extends SpringBootServletInitializer{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApiApplication.class);
 
 	public static void main(String[] args) {
-		SpringApplication.run(ApiApplication.class, args);
+		SpringApplication app = new SpringApplication(ApiApplication.class);
+		app.run(args);
 	}
 	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		setProperties(application); 
+		setProperties(); 
 		return application.sources(ApiApplication.class);
 	}
 	
-	public static void setProperties(SpringApplicationBuilder application) {
+	public static void setProperties() {
 		System.setProperty("spring.config.location",
 				"classpath:/,"
 				+ "file:///${catalina.base}/webapps/queen-bo.properties");
@@ -42,7 +43,6 @@ public class ApiApplication extends SpringBootServletInitializer{
 
 	@EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
-
         final Environment env = event.getApplicationContext().getEnvironment();
         LOGGER.info("================================ Properties =================================");
         final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
