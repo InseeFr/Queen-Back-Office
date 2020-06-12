@@ -99,7 +99,7 @@ catalina.sh run (on Unix-based systems)
 ```  
 
 ### 5. Application Access
-To access to swagger-ui, use this url : [http://localhost:8080/queen-0.0.1-SNAPSHOT/swagger-ui.html](http://localhost:8080/queen-0.0.1-SNAPSHOT/swagger-ui.html)  
+To access to swagger-ui, use this url : [http://localhost:8080/queen-1.1.0/swagger-ui.html](http://localhost:8080/queen-1.1.0/swagger-ui.html)  
 To access to keycloak, use this url : [http://localhost:8180](http://localhost:8180)  
 
 ## Before you commit
