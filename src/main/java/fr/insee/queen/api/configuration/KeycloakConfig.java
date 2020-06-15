@@ -59,7 +59,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
                            response.setStatus(HttpServletResponse.SC_OK)
         		   )
                .and()
-                   	// manage routes securisation here
+                   	// manage routes securisation
                    	.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
                    	// configuration for Swagger
        				.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
