@@ -77,13 +77,12 @@ fr.insee.queen.persistence.database.driver = org.postgresql.Driver
 fr.insee.queen.defaultSchema=public
 
 #Keycloak configuration
-keycloak.realm=Queen
-keycloak.resource=Queen
+keycloak.realm=insee-realm
+keycloak.resource=queen-web
 keycloak.auth-server-url=http://localhost:8180/auth
-keycloak.ssl-required=external
 keycloak.public-client=true
+keycloak.bearer-only=true
 keycloak.principal-attribute:preferred_username
-keycloak.enabled=false
 ```
 
 #### External log file
