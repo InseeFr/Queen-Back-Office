@@ -102,7 +102,6 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
     @Override
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         // required for bearer-only applications.
-//        return new NullAuthenticatedSessionStrategy();
 		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
 
     }
