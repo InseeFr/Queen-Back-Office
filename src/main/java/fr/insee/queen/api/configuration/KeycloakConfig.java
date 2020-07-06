@@ -1,49 +1,78 @@
 package fr.insee.queen.api.configuration;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
-import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
+import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.savedrequest.NullRequestCache;
 
 
-@Configuration
+
 @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
-@ComponentScan(
-        basePackageClasses = KeycloakSecurityComponents.class,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"))
-@EnableWebSecurity
+@KeycloakConfiguration
 public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 
-	
+	/**
+     * Specific configuration for keycloak(add filter, etc)
+     * @param http
+     * @throws Exception
+     */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().headers().frameOptions().disable().and().requestCache()
-				.requestCache(new NullRequestCache());
-				super.configure(http);
-		        http.logout()
-		        	.logoutSuccessUrl("/logout/successful")
-		        	.and()
-		        	.authorizeRequests()
-		    		.antMatchers("/")
-		    		.hasRole("investigator")
-		    		.antMatchers("/swagger-ui.html")
-		    		.hasRole("investigator")
-		    		.antMatchers("/**")
-		        	.authenticated();
+		http
+			// disable csrf because of API mode
+			.csrf().disable()
+			.sessionManagement()
+            // use previously declared bean
+               .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
+               .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            // keycloak filters for securisation
+               .and()
+                   .addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
+                   .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class)
+                   .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+               
+            // delegate logout endpoint to spring security
+
+               .and()
+                   .logout()
+                   .addLogoutHandler(keycloakLogoutHandler())
+                   .logoutUrl("/logout").logoutSuccessHandler(
+                   // logout handler for API
+                   (HttpServletRequest request, HttpServletResponse response, Authentication authentication) ->
+                           response.setStatus(HttpServletResponse.SC_OK)
+        		   )
+               .and()
+                   	// manage routes securisation
+                   	.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
+                   	// configuration for Swagger
+       				.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
+       				.antMatchers("/environnement", "/healthcheck").permitAll()
+                   	// configuration for endpoints
+       				.antMatchers("/api/operations").hasRole("investigator")
+       				.antMatchers("/api/operation/{idOperation}/reporting-units").hasRole("investigator")
+					.antMatchers("/api/operation/{idOperation}/questionnaire").hasRole("investigator")
+					.antMatchers("/api/operation/{id}/required-nomenclatures").hasRole("investigator")
+					.antMatchers("/api/reporting-unit/{id}/data").hasRole("investigator")
+					.antMatchers("/api/reporting-unit/{id}/comment").hasRole("investigator")
+					.antMatchers("/api/nomenclature/{id}").hasRole("investigator")
+					.anyRequest().denyAll(); 
 	}
 	
 	/**
@@ -57,14 +86,29 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 		auth.authenticationProvider(keycloakAuthenticationProvider);
 	}
 	
+	/**
+     * Required to handle spring boot configurations
+     * @return
+     */
     @Bean
     public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
    }
-
-
-	@Override
-	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+    
+    /**
+     * Defines the session authentication strategy.
+     */
+    @Bean
+    @Override
+    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        // required for bearer-only applications.
 		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-	}
+
+    }
+
+
+//	@Override
+//	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+//		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+//	}
 }

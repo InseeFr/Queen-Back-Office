@@ -77,13 +77,12 @@ fr.insee.queen.persistence.database.driver = org.postgresql.Driver
 fr.insee.queen.defaultSchema=public
 
 #Keycloak configuration
-keycloak.realm=Queen
-keycloak.resource=Queen
+keycloak.realm=insee-realm
+keycloak.resource=queen-web
 keycloak.auth-server-url=http://localhost:8180/auth
-keycloak.ssl-required=external
 keycloak.public-client=true
+keycloak.bearer-only=true
 keycloak.principal-attribute:preferred_username
-keycloak.enabled=false
 ```
 
 #### External log file
@@ -99,7 +98,7 @@ catalina.sh run (on Unix-based systems)
 ```  
 
 ### 5. Application Access
-To access to swagger-ui, use this url : [http://localhost:8080/queen-0.0.1-SNAPSHOT/swagger-ui.html](http://localhost:8080/queen-0.0.1-SNAPSHOT/swagger-ui.html)  
+To access to swagger-ui, use this url : [http://localhost:8080/queen-1.1.1/swagger-ui.html](http://localhost:8080/queen-1.1.1/swagger-ui.html)  
 To access to keycloak, use this url : [http://localhost:8180](http://localhost:8180)  
 
 ## Before you commit

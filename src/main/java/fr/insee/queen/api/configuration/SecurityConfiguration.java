@@ -90,7 +90,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		switch (this.applicationProperties.getMode()) {
 			case Basic:
 				http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
-				http.authorizeRequests().antMatchers("/operations").hasRole("investigator")
+				http.authorizeRequests()
+					.antMatchers(HttpMethod.OPTIONS).permitAll()
+					.antMatchers("/operations").hasRole("investigator")
 					.antMatchers("/operation/{idOperation}/reporting-units").hasRole("investigator")
 					.antMatchers("/operation/{idOperation}/questionnaire").hasRole("investigator")
 					.antMatchers("/operation/{id}/required-nomenclatures").hasRole("investigator")
@@ -102,6 +104,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 			default:
 				http.httpBasic().disable();
 				http.authorizeRequests()
+				.antMatchers(HttpMethod.OPTIONS).permitAll()
 				.antMatchers("/operations",
 						"/operation/{idOperation}/reporting-units",
 						"/operation/{idOperation}/questionnaire",
