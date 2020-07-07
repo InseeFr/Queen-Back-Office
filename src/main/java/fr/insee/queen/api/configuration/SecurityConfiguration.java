@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.ArrayUtils;
 import org.keycloak.adapters.springsecurity.management.HttpSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +14,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistryImpl;
@@ -23,7 +23,6 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.savedrequest.NullRequestCache;
 
 import fr.insee.queen.api.configuration.ApplicationProperties.Mode;
-
 
 /**
  * SecurityConfiguration is the class using to configure security.<br>
@@ -35,10 +34,10 @@ import fr.insee.queen.api.configuration.ApplicationProperties.Mode;
  * @author Claudel Benjamin
  * 
  */
+@ConditionalOnExpression("'${fr.insee.queen.application.mode}'=='Basic' or '${fr.insee.queen.application.mode}'=='NoAuth'")
 @Configuration
 @EnableWebSecurity
-@ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'Basic' or '${fr.insee.queen.application.mode}' == 'NoAuth'" )
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	/**
 	 * The environment define in Spring application Generate with the application
 	 * property environment
@@ -48,6 +47,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 
 	@Autowired
 	private ApplicationProperties applicationProperties;
+
+	@Value("${fr.insee.queen.interviewer.role:#{null}}")
+	private String role;
 
 	/**
 	 * This method check if environment is development or test
@@ -60,59 +62,41 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	}
 
 	/**
-	 * This method configure the WEB security access
-	 */
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		System.setProperty("keycloak.enabled", applicationProperties.getMode() != Mode.Keycloak?"false":"true");
-		web.ignoring()
-			.antMatchers(HttpMethod.OPTIONS, "/**")
-			.antMatchers("/i18n/**")
-			.antMatchers("/content/**")
-			.antMatchers("/test/**")
-			.antMatchers("/h2-console/**")
-			.antMatchers("/v2/**")
-			.antMatchers("/swagger-resources/**")
-			.antMatchers("/webjars/**")
-			.antMatchers("/actuator/**")
-			.antMatchers("/login.html")
-			.antMatchers("/login")
-			.antMatchers("/swagger-ui.html");
-	}
-
-	/**
 	 * This method configure the HTTP security access
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		System.setProperty("keycloak.enabled", applicationProperties.getMode() != Mode.Keycloak ? "false" : "true");
 		http.csrf().disable().headers().frameOptions().disable().and().requestCache()
 				.requestCache(new NullRequestCache());
-		switch (this.applicationProperties.getMode()) {
-			case Basic:
-				http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
-				http.authorizeRequests()
+		if (this.applicationProperties.getMode() == Mode.Basic) {
+			http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
+			http.authorizeRequests()
+					// manage routes securisation
+		           	.antMatchers(HttpMethod.OPTIONS).permitAll()
+		           	// configuration for Swagger
+					.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
+					.antMatchers("/environnement", "/healthcheck").permitAll()
+					.antMatchers("/api/operations").hasRole(role)
+					.antMatchers("/api/operation/{idOperation}/reporting-units").hasRole(role)
+					.antMatchers("/api/operation/{idOperation}/questionnaire").hasRole(role)
+					.antMatchers("/api/operation/{id}/required-nomenclatures").hasRole(role)
+					.antMatchers("/api/reporting-unit/{id}/data").hasRole(role)
+					.antMatchers("/api/reporting-unit/{id}/comment").hasRole(role)
+					.antMatchers("/api/nomenclature/{id}").hasRole(role).anyRequest().denyAll();
+		} else {
+			http.httpBasic().disable();
+			http.authorizeRequests()
+					// manage routes securisation
 					.antMatchers(HttpMethod.OPTIONS).permitAll()
-					.antMatchers("/operations").hasRole("investigator")
-					.antMatchers("/operation/{idOperation}/reporting-units").hasRole("investigator")
-					.antMatchers("/operation/{idOperation}/questionnaire").hasRole("investigator")
-					.antMatchers("/operation/{id}/required-nomenclatures").hasRole("investigator")
-					.antMatchers("/reporting-unit/{id}/data").hasRole("investigator")
-					.antMatchers("/reporting-unit/{id}/comment").hasRole("investigator")
-					.antMatchers("/nomenclature/{id}").hasRole("investigator")
-					.anyRequest().denyAll(); 
-				break;
-			default:
-				http.httpBasic().disable();
-				http.authorizeRequests()
-				.antMatchers(HttpMethod.OPTIONS).permitAll()
-				.antMatchers("/operations",
-						"/operation/{idOperation}/reporting-units",
-						"/operation/{idOperation}/questionnaire",
-						"/operation/{id}/required-nomenclatures",
-						"/reporting-unit/{id}/data",
-						"/reporting-unit/{id}/comment",
-						"/nomenclature/{id}").permitAll();
-				break;
+					// configuration for Swagger
+					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**", "/swagger-resources/**") .permitAll()
+					.antMatchers("/environnement", "/healthcheck").permitAll()
+					.antMatchers("/api/operations", "/api/operation/{idOperation}/reporting-units",
+					"/api/operation/{idOperation}/questionnaire", "/api/operation/{id}/required-nomenclatures",
+					"/api/reporting-unit/{id}/data", "/api/reporting-unit/{id}/comment",
+					"/api/nomenclature/{id}")
+			.permitAll();
 		}
 	}
 
@@ -124,8 +108,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		if (isDevelopment()) {
 			switch (this.applicationProperties.getMode()) {
 			case Basic:
-				auth.inMemoryAuthentication().withUser("admin").password("{noop}a").roles("investigator").and()
-				.withUser("noWrite").password("{noop}a").roles();
+				auth.inMemoryAuthentication().withUser("INTW1").password("{noop}a").roles(role).and()
+						.withUser("noWrite").password("{noop}a").roles();
 				break;
 			case NoAuth:
 				break;
@@ -134,17 +118,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 			}
 		}
 	}
-	
+
 	@Bean
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-		 return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
 	}
 
-    @Bean
-    @ConditionalOnMissingBean(HttpSessionManager.class)
-    protected HttpSessionManager httpSessionManager() {
-    	return new HttpSessionManager();
-    }
+	@Bean
+	@ConditionalOnMissingBean(HttpSessionManager.class)
+	protected HttpSessionManager httpSessionManager() {
+		return new HttpSessionManager();
+	}
+
 	/**
 	 * This method configure the unauthorized accesses
 	 */
