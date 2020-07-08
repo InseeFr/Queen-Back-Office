@@ -8,6 +8,7 @@ import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,9 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @KeycloakConfiguration
 public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 
+	@Value("${fr.insee.queen.interviewer.role:#{null}}")
+	private String role;
+	
 	/**
      * Specific configuration for keycloak(add filter, etc)
      * @param http
@@ -35,6 +39,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
      */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		
 		http
 			// disable csrf because of API mode
 			.csrf().disable()
@@ -65,13 +70,13 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
        				.antMatchers("/environnement", "/healthcheck").permitAll()
                    	// configuration for endpoints
-       				.antMatchers("/api/operations").hasRole("investigator")
-       				.antMatchers("/api/operation/{idOperation}/reporting-units").hasRole("investigator")
-					.antMatchers("/api/operation/{idOperation}/questionnaire").hasRole("investigator")
-					.antMatchers("/api/operation/{id}/required-nomenclatures").hasRole("investigator")
-					.antMatchers("/api/reporting-unit/{id}/data").hasRole("investigator")
-					.antMatchers("/api/reporting-unit/{id}/comment").hasRole("investigator")
-					.antMatchers("/api/nomenclature/{id}").hasRole("investigator")
+       				.antMatchers("/api/operations").hasRole(role)
+       				.antMatchers("/api/operation/{idOperation}/reporting-units").hasRole(role)
+					.antMatchers("/api/operation/{idOperation}/questionnaire").hasRole(role)
+					.antMatchers("/api/operation/{id}/required-nomenclatures").hasRole(role)
+					.antMatchers("/api/reporting-unit/{id}/data").hasRole(role)
+					.antMatchers("/api/reporting-unit/{id}/comment").hasRole(role)
+					.antMatchers("/api/nomenclature/{id}").hasRole(role)
 					.anyRequest().denyAll(); 
 	}
 	
@@ -91,6 +96,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
      * @return
      */
     @Bean
+    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
     public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
    }
@@ -99,16 +105,11 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
      * Defines the session authentication strategy.
      */
     @Bean
+    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
     @Override
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         // required for bearer-only applications.
 		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
 
     }
-
-
-//	@Override
-//	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-//		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-//	}
 }
