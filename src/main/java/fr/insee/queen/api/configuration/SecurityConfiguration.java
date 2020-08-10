@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.savedrequest.NullRequestCache;
 
 import fr.insee.queen.api.configuration.ApplicationProperties.Mode;
+import fr.insee.queen.api.constants.Constants;
 
 /**
  * SecurityConfiguration is the class using to configure security.<br>
@@ -77,13 +78,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		           	// configuration for Swagger
 					.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
 					.antMatchers("/environnement", "/healthcheck").permitAll()
-					.antMatchers("/api/operations").hasRole(role)
-					.antMatchers("/api/operation/{idOperation}/reporting-units").hasRole(role)
-					.antMatchers("/api/operation/{idOperation}/questionnaire").hasRole(role)
-					.antMatchers("/api/operation/{id}/required-nomenclatures").hasRole(role)
-					.antMatchers("/api/reporting-unit/{id}/data").hasRole(role)
-					.antMatchers("/api/reporting-unit/{id}/comment").hasRole(role)
-					.antMatchers("/api/nomenclature/{id}").hasRole(role).anyRequest().denyAll();
+					.antMatchers(Constants.API_OPERATIONS).hasRole(role)
+					.antMatchers(Constants.API_OPERATIONS_REPORTING_UNITS).hasRole(role)
+					.antMatchers(Constants.API_OPERATIONS_QUESTIONAIRE).hasRole(role)
+					.antMatchers(Constants.API_OPERATIONS_REQUIRED_NOMENCLATURE).hasRole(role)
+					.antMatchers(Constants.API_REPORTING_UNIT_DATA).hasRole(role)
+					.antMatchers(Constants.API_REPORTING_UNIT_COMMENT).hasRole(role)
+					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role).anyRequest().denyAll();
 		} else {
 			http.httpBasic().disable();
 			http.authorizeRequests()
@@ -92,10 +93,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					// configuration for Swagger
 					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**", "/swagger-resources/**") .permitAll()
 					.antMatchers("/environnement", "/healthcheck").permitAll()
-					.antMatchers("/api/operations", "/api/operation/{idOperation}/reporting-units",
-					"/api/operation/{idOperation}/questionnaire", "/api/operation/{id}/required-nomenclatures",
-					"/api/reporting-unit/{id}/data", "/api/reporting-unit/{id}/comment",
-					"/api/nomenclature/{id}")
+					.antMatchers(Constants.API_OPERATIONS, Constants.API_OPERATIONS_REPORTING_UNITS,
+							Constants.API_OPERATIONS_QUESTIONAIRE, Constants.API_OPERATIONS_REQUIRED_NOMENCLATURE,
+							Constants.API_REPORTING_UNIT_DATA, Constants.API_REPORTING_UNIT_COMMENT,
+							Constants.API_NOMENCLATURE)
 			.permitAll();
 		}
 	}
