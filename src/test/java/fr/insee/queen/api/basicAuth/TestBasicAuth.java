@@ -3,6 +3,8 @@ package fr.insee.queen.api.basicAuth;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.with;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,9 @@ import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
+import org.mockserver.model.Header;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -27,6 +32,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import fr.insee.queen.api.constants.Constants;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -112,6 +118,38 @@ class TestBasicAuth {
 	 */
 	@Test
 	public void testFindReportUnitsByOperation() {
+		String expectedBody = "["
+				+ "{"
+					+ "\"id\":\"11\", "
+					+ "\"campaign\":\"simpsons2020x00\", "
+					+ "\"campaignLabel\":\"Survey on the Simpsons tv show 2020\", "
+					+ "\"collectionStartDate\":\"1577836800000\", "
+					+ "\"collectionEndDate\":\"1622035845000\""
+				+ "}, "
+				+ "{"
+					+ "\"id\":\"12\", "
+					+ "\"campaign\":\"simpsons2020x00\", "
+					+ "\"campaignLabel\":\"Survey on the Simpsons tv show 2020\", "
+					+ "\"collectionStartDate\":\"1577836800000\", "
+					+ "\"collectionEndDate\":\"1622035845000\""
+				+ "}, "
+				+ "{"
+					+ "\"id\":\"20\", "
+					+ "\"campaign\":\"vqs2021x00\", "
+					+ "\"campaignLabel\":\"Everyday life and health survey 2021\", "
+					+ "\"collectionStartDate\":\"1577836800000\", "
+					+ "\"collectionEndDate\":\"1622035845000\""
+				+ "}]";
+		ClientAndServer clientAndServer = ClientAndServer.startClientAndServer(8081);
+		MockServerClient mockServerClient = new MockServerClient("127.0.0.1", 8081);
+		mockServerClient.when(request()
+	        .withPath(Constants.API_PEARLJAM_SURVEY_UNIT))
+	    .respond(response()
+    		.withStatusCode(200)
+    		.withHeaders(
+	            new Header("Content-Type", "application/json; charset=utf-8"),
+	            new Header("Cache-Control", "public, max-age=86400"))
+	        .withBody(expectedBody));
 		given().auth().preemptive().basic("INTW1", "a")
 		.get("api/operation/simpsons2020x00/reporting-units").then()
 		.statusCode(200).and()

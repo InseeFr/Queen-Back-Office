@@ -16,4 +16,7 @@ public class Constants {
 	public static final String API_REPORTING_UNIT_DATA = "/api/reporting-unit/{id}/data";
 	public static final String API_REPORTING_UNIT_COMMENT = "/api/reporting-unit/{id}/comment";
 	public static final String API_NOMENCLATURE = "/api/nomenclature/{id}";
+	
+	//PearlJam filter url
+	public static final String API_PEARLJAM_SURVEY_UNIT = "/api/survey-units";
 }

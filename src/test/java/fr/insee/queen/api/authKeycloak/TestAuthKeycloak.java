@@ -3,6 +3,8 @@ package fr.insee.queen.api.authKeycloak;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.with;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,9 @@ import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
+import org.mockserver.model.Header;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -28,6 +33,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
+import fr.insee.queen.api.constants.Constants;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -67,7 +73,7 @@ class TestAuthKeycloak {
 					.of("spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
 							"spring.datasource.username=" + postgreSQLContainer.getUsername(),
 							"spring.datasource.password=" + postgreSQLContainer.getPassword(),
-					"keycloak.auth-server-url=" + keycloak.getAuthServerUrl())
+							"keycloak.auth-server-url=" + keycloak.getAuthServerUrl())
 					.applyTo(configurableApplicationContext.getEnvironment());
 		}
 	}
@@ -143,6 +149,38 @@ class TestAuthKeycloak {
 	 */
 	@Test
 	public void testFindReportUnitsByOperation() throws JSONException {
+		String expectedBody = "["
+				+ "{"
+					+ "\"id\":\"11\", "
+					+ "\"campaign\":\"simpsons2020x00\", "
+					+ "\"campaignLabel\":\"Survey on the Simpsons tv show 2020\", "
+					+ "\"collectionStartDate\":\"1577836800000\", "
+					+ "\"collectionEndDate\":\"1622035845000\""
+				+ "}, "
+				+ "{"
+					+ "\"id\":\"12\", "
+					+ "\"campaign\":\"simpsons2020x00\", "
+					+ "\"campaignLabel\":\"Survey on the Simpsons tv show 2020\", "
+					+ "\"collectionStartDate\":\"1577836800000\", "
+					+ "\"collectionEndDate\":\"1622035845000\""
+				+ "}, "
+				+ "{"
+					+ "\"id\":\"20\", "
+					+ "\"campaign\":\"vqs2021x00\", "
+					+ "\"campaignLabel\":\"Everyday life and health survey 2021\", "
+					+ "\"collectionStartDate\":\"1577836800000\", "
+					+ "\"collectionEndDate\":\"1622035845000\""
+				+ "}]";
+		ClientAndServer clientAndServer = ClientAndServer.startClientAndServer(8081);
+		MockServerClient mockServerClient = new MockServerClient("127.0.0.1", 8081);
+		mockServerClient.when(request()
+	        .withPath(Constants.API_PEARLJAM_SURVEY_UNIT))
+	    .respond(response()
+    		.withStatusCode(200)
+    		.withHeaders(
+	            new Header("Content-Type", "application/json; charset=utf-8"),
+	            new Header("Cache-Control", "public, max-age=86400"))
+	        .withBody(expectedBody));
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
 		given().auth().oauth2(accessToken).when().get("api/operation/simpsons2020x00/reporting-units").then()
 		.statusCode(200).and()
@@ -227,6 +265,31 @@ class TestAuthKeycloak {
 	}
 	
 	/**
+	 * Test that the PUT endpoint "api/reporting-unit/{id}/data"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPutDataByReportingUnit() throws JSONException {
+		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
+		Map<String,String> putData = new HashMap<>();
+		putData.put("data", "value");
+		JSONObject data = new JSONObject(putData);
+
+		with()
+			.contentType(ContentType.JSON)
+			.body(data.toString()).
+			given().auth().oauth2(accessToken).when()
+		.put("api/reporting-unit/21/data")
+			.then()
+			.statusCode(200);
+		Response response = given().auth().oauth2(accessToken).when().get("api/reporting-unit/21/data");
+		response.then().statusCode(200);
+		Assert.assertEquals(response.getBody().asString(), data.toString());
+	}
+	
+	/**
 	 * Test that the GET endpoint "api/reporting-unit/{id}/comment"
 	 * return 404 with wrong reporting-unit Id
 	 * @throws InterruptedException
@@ -253,30 +316,6 @@ class TestAuthKeycloak {
 		Assert.assertEquals(response.getBody().asString(), new JSONObject().toString());
 	}
 	
-	/**
-	 * Test that the PUT endpoint "api/reporting-unit/{id}/data"
-	 * return 200
-	 * @throws InterruptedException
-	 * @throws JSONException 
-	 */
-	@Test
-	public void testPutDataByReportingUnit() throws JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		Map<String,String> putData = new HashMap<>();
-		putData.put("data", "value");
-		JSONObject data = new JSONObject(putData);
-
-		with()
-			.contentType(ContentType.JSON)
-			.body(data.toString()).
-			given().auth().oauth2(accessToken).when()
-		.put("api/reporting-unit/21/data")
-			.then()
-			.statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("api/reporting-unit/21/data");
-		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString(), data.toString());
-	}
 	
 	/**
 	 * Test that the GET endpoint "api/reporting-unit/{id}/data"
