@@ -23,6 +23,8 @@ import org.springframework.security.web.authentication.preauth.x509.X509Authenti
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
+import fr.insee.queen.api.constants.Constants;
+
 
 
 @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
@@ -70,13 +72,13 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
        				.antMatchers("/environnement", "/healthcheck").permitAll()
                    	// configuration for endpoints
-       				.antMatchers("/api/operations").hasRole(role)
-       				.antMatchers("/api/operation/{idOperation}/reporting-units").hasRole(role)
-					.antMatchers("/api/operation/{idOperation}/questionnaire").hasRole(role)
-					.antMatchers("/api/operation/{id}/required-nomenclatures").hasRole(role)
-					.antMatchers("/api/reporting-unit/{id}/data").hasRole(role)
-					.antMatchers("/api/reporting-unit/{id}/comment").hasRole(role)
-					.antMatchers("/api/nomenclature/{id}").hasRole(role)
+       				.antMatchers(Constants.API_OPERATIONS).hasRole(role)
+       				.antMatchers(Constants.API_OPERATIONS_REPORTING_UNITS).hasRole(role)
+					.antMatchers(Constants.API_OPERATIONS_QUESTIONAIRE).hasRole(role)
+					.antMatchers(Constants.API_OPERATIONS_REQUIRED_NOMENCLATURE).hasRole(role)
+					.antMatchers(Constants.API_REPORTING_UNIT_DATA).hasRole(role)
+					.antMatchers(Constants.API_REPORTING_UNIT_COMMENT).hasRole(role)
+					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
 					.anyRequest().denyAll(); 
 	}
 	

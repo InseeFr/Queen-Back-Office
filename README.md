@@ -85,7 +85,12 @@ keycloak.bearer-only=true
 keycloak.principal-attribute:preferred_username
 
 #Keycloak roles
-fr.insee.queen.interviewer.role=interviewer
+fr.insee.queen.interviewer.role=investigator
+
+#PearlJam Api
+fr.insee.queen.pearljam.scheme.url=http
+fr.insee.queen.pearljam.host.url=localhost
+fr.insee.queen.pearljam.port.url=8081
 
 ```
 

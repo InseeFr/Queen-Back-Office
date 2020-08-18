@@ -19,6 +19,7 @@ public interface ReportingUnitRepository extends JpaRepository<ReportingUnit, St
 	* @return List of all {@link ReportingUnit}
 	*/
 	List<ReportingUnitDto> findDtoBy();
+	
 	/**
 	* This method retrieve all reporting units associated to a specific operation
 	* 
@@ -26,4 +27,12 @@ public interface ReportingUnitRepository extends JpaRepository<ReportingUnit, St
 	* @return {@link ReportingUnitDto}
 	*/
 	List<ReportingUnitDto> findDtoByOperation_id(String id);
+	
+	/**
+	* This method retrieve a reporting unit by his id
+	* 
+	* @param id id of the reporting unit
+	* @return {@link ReportingUnitDto}
+	*/
+	ReportingUnitDto findDtoById(String id);
 }
