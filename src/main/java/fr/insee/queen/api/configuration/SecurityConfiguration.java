@@ -81,7 +81,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(Constants.API_OPERATIONS).hasRole(role)
 					.antMatchers(Constants.API_OPERATIONS_REPORTING_UNITS).hasRole(role)
 					.antMatchers(Constants.API_OPERATIONS_QUESTIONAIRE).hasRole(role)
-					.antMatchers(Constants.API_OPERATIONS_REQUIRED_NOMENCLATURE).hasRole(role)
+					.antMatchers(Constants.API_OPERATIONS_REQUIRED_NOMENCLATURES).hasRole(role)
 					.antMatchers(Constants.API_REPORTING_UNIT_DATA).hasRole(role)
 					.antMatchers(Constants.API_REPORTING_UNIT_COMMENT).hasRole(role)
 					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role).anyRequest().denyAll();
@@ -94,7 +94,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**", "/swagger-resources/**") .permitAll()
 					.antMatchers("/environnement", "/healthcheck").permitAll()
 					.antMatchers(Constants.API_OPERATIONS, Constants.API_OPERATIONS_REPORTING_UNITS,
-							Constants.API_OPERATIONS_QUESTIONAIRE, Constants.API_OPERATIONS_REQUIRED_NOMENCLATURE,
+							Constants.API_OPERATIONS_QUESTIONAIRE, Constants.API_OPERATIONS_REQUIRED_NOMENCLATURES,
 							Constants.API_REPORTING_UNIT_DATA, Constants.API_REPORTING_UNIT_COMMENT,
 							Constants.API_NOMENCLATURE)
 			.permitAll();

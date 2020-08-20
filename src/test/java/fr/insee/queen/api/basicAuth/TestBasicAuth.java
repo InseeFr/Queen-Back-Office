@@ -143,7 +143,7 @@ class TestBasicAuth {
 		ClientAndServer clientAndServer = ClientAndServer.startClientAndServer(8081);
 		MockServerClient mockServerClient = new MockServerClient("127.0.0.1", 8081);
 		mockServerClient.when(request()
-	        .withPath(Constants.API_PEARLJAM_SURVEY_UNIT))
+	        .withPath(Constants.API_PEARLJAM_SURVEY_UNITS))
 	    .respond(response()
     		.withStatusCode(200)
     		.withHeaders(
