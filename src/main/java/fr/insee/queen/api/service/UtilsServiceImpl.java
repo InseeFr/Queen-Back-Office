@@ -22,14 +22,14 @@ import liquibase.pro.packaged.T;
 @Service
 public class UtilsServiceImpl implements UtilsService{
 	
-	@Value("${fr.insee.queen.pearljam.scheme.url:#{null}}")
-	private String pearlJamSchemeUrl;
+	@Value("${fr.insee.queen.pearljam.url.scheme:#{null}}")
+	private String pearlJamScheme;
 	
-	@Value("${fr.insee.queen.pearljam.host.url:#{null}}")
-	private String pearlJamHostUrl;
+	@Value("${fr.insee.queen.pearljam.url.host:#{null}}")
+	private String pearlJamHost;
 	
-	@Value("${fr.insee.queen.pearljam.port.url:#{null}}")
-	private String pearlJamPortUrl;
+	@Value("${fr.insee.queen.pearljam.url.port:#{null}}")
+	private String pearlJamPort;
 		
 	@Autowired
 	ApplicationProperties applicationProperties;
@@ -64,11 +64,12 @@ public class UtilsServiceImpl implements UtilsService{
 	
 	/**
 	 * This method retrieve the data from the PearlJam API for the current user
+	 * @param <T>
 	 * @param HttpServletRequest
 	 * @return String of UserId
 	 */
 	public ResponseEntity<Object> getSuFromPearlJam(HttpServletRequest request){
-		final String uriPearlJamFilter = pearlJamSchemeUrl + "://" + pearlJamHostUrl + ":" + pearlJamPortUrl + Constants.API_PEARLJAM_SURVEY_UNIT;
+		final String uriPearlJamFilter = pearlJamScheme + "://" + pearlJamHost + ":" + pearlJamPort + Constants.API_PEARLJAM_SURVEY_UNITS;
 		String authTokenHeader = request.getHeader("Authorization");
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
