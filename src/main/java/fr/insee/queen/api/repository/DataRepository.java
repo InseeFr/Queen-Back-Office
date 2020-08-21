@@ -27,12 +27,12 @@ public interface DataRepository extends JpaRepository<Data, Long> {
 	* @param id the id of reporting unit
 	* @return {@link DataDto}
 	*/
-	DataDto findDtoByReportingUnit_id(String id);
+	DataDto findDtoBySurveyUnit_id(String id);
 	/**
 	* This method retrieve the Data for a specific reporting_unit
 	* 
 	* @param id the id of reporting unit
 	* @return {@link Data}
 	*/
-	Optional<Data> findByReportingUnit_id(String id);
+	Optional<Data> findBySurveyUnit_id(String id);
 }

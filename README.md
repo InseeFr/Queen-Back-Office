@@ -117,25 +117,25 @@ Before committing code please ensure,
 4 - All newly added properties are documented  
 
 ## End-Points
-- Operation
-	- `GET /operations` : get the operation list
+- Campaign
+	- `GET /campaigns` : get the campaign list
 
 - Questionnaire
-	- `GET /operation/{id}/questionnaire` : get the model json 
+	- `GET /campaign/{id}/questionnaire` : get the model json 
 
-- ReportingUnit
-	- `GET /operation/{id}/reporting-units` : get the list of reporting unit of operation id
+- SurveyUnit
+	- `GET /campaign/{id}/survey-units` : get the list of reporting unit of campaign id
 
 - Data
-	- `GET /reporting-unit/{id}/data` : get the data of reporting unit id
-	- `PUT /reporting-unit/{id}/data` : update the data of reporting unit id
+	- `GET /survey-unit/{id}/data` : get the data of reporting unit id
+	- `PUT /survey-unit/{id}/data` : update the data of reporting unit id
 
 - Comment
-	- `GET /reporting-unit/{id}/comment` : get the comment of reporting unit id 
-	- `PUT /reporting-unit/{id}/comment` : update the comment of reporting unit id
+	- `GET /survey-unit/{id}/comment` : get the comment of reporting unit id 
+	- `PUT /survey-unit/{id}/comment` : update the comment of reporting unit id
 
 - RequiredNomenclature
-	- `GET /operation/{id}/required-nomenclatures` : list of nomenclature codes use for operation
+	- `GET /campaign/{id}/required-nomenclatures` : list of nomenclature codes use for campaign
 
 - Nomenclatures
 	- `GET /nomenclature/{id}` : get the nomenclature json

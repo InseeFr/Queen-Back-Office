@@ -17,10 +17,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import fr.insee.queen.api.repository.OperationRepository;
+import fr.insee.queen.api.repository.CampaignRepository;
 
 @SpringBootApplication(scanBasePackages = "fr.insee.queen.api")
-@EnableJpaRepositories(basePackageClasses = OperationRepository.class)
+@EnableJpaRepositories(basePackageClasses = CampaignRepository.class)
 public class ApiApplication extends SpringBootServletInitializer{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApiApplication.class);
 

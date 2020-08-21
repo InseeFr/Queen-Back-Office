@@ -72,52 +72,52 @@ class TestBasicAuth {
 	}
 
 	/**
-	 * Test that the GET endpoint "api/operations"
+	 * Test that the GET endpoint "api/campaigns"
 	 * return 200
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindOperation() throws InterruptedException {
-		given().auth().preemptive().basic("INTW1", "a").when().get("api/operations").then()
+	public void testFindCampaign() throws InterruptedException {
+		given().auth().preemptive().basic("INTW1", "a").when().get("api/campaigns").then()
 			.statusCode(200).and()
 			.assertThat().body("id", hasItem("simpsons2020x00"));
 		
 	}
 
 	/**
-	 * Test that the GET endpoint "api/operations/{id}/questionnaire"
+	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire"
 	 * return 200
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindQuestionnaireByOperation() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/operation/simpsons2020x00/questionnaire").then()
+	public void testFindQuestionnaireByCampaign() {
+		given().auth().preemptive().basic("INTW1", "a").get("api/campaign/simpsons2020x00/questionnaire").then()
 		.statusCode(200).and()
 		.assertThat().body("isEmpty()", Matchers.is(false));
 	}
 	
 	/**
-	 * Test that the GET endpoint "api/operations/{id}/questionnaire"
+	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire"
 	 * return 404 with wrong questionnaire Id
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindQuestionnaireByUnexistOperation() {
+	public void testFindQuestionnaireByUnexistCampaign() {
 		given().auth().preemptive().basic("INTW1", "a")
-		.get("api/operation/toto/questionnaire").then().statusCode(404);
+		.get("api/campaign/toto/questionnaire").then().statusCode(404);
 	}
 
 	/**
-	 * Test that the GET endpoint "api/operations/{id}/reporting-units"
+	 * Test that the GET endpoint "api/campaigns/{id}/survey-units"
 	 * return 200
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindReportUnitsByOperation() {
+	public void testFindSurveyUnitsByCampaign() {
 		String expectedBody = "["
 				+ "{"
 					+ "\"id\":\"11\", "
@@ -151,21 +151,21 @@ class TestBasicAuth {
 	            new Header("Cache-Control", "public, max-age=86400"))
 	        .withBody(expectedBody));
 		given().auth().preemptive().basic("INTW1", "a")
-		.get("api/operation/simpsons2020x00/reporting-units").then()
+		.get("api/campaign/simpsons2020x00/survey-units").then()
 		.statusCode(200).and()
 		.assertThat().body("id", hasItem("11"));
 	}
 	
 	/**
-	 * Test that the GET endpoint "api/operations/{id}/questionnaire"
+	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire"
 	 * return 404 with wrong questionnaire Id
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindReportUnitsByUnexistOperation() {
+	public void testFindSurveyUnitsByUnexistCampaign() {
 		given().auth().preemptive().basic("INTW1", "a")
-		.get("api/operation/toto/reporting-units").then().statusCode(404);
+		.get("api/campaign/toto/survey-units").then().statusCode(404);
 	}
 
 	/**
@@ -195,26 +195,26 @@ class TestBasicAuth {
 	}
 	
 	/**
-	 * Test that the GET endpoint "api/reporting-unit/{id}/comment"
+	 * Test that the GET endpoint "api/survey-unit/{id}/comment"
 	 * return 200
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindCommentByReportingUnit() {
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/reporting-unit/22/comment");
+	public void testFindCommentBySurveyUnit() {
+		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/22/comment");
 		response.then().statusCode(200);
 		Assert.assertEquals(response.getBody().asString(), new JSONObject().toJSONString());
 	}
 	
 	/**
-	 * Test that the PUT endpoint "api/reporting-unit/{id}/comment"
+	 * Test that the PUT endpoint "api/survey-unit/{id}/comment"
 	 * return 200
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testPutCommentByReportingUnit() {
+	public void testPutCommentBySurveyUnit() {
 		Map<String,String> putComment = new HashMap<>();
 		putComment.put("comment", "value");
 		JSONObject comment = new JSONObject(putComment);
@@ -223,47 +223,47 @@ class TestBasicAuth {
 			.contentType(ContentType.JSON)
 			.body(comment.toJSONString())
 			.given().auth().preemptive().basic("INTW1", "a")
-		.put("api/reporting-unit/21/comment")
+		.put("api/survey-unit/21/comment")
 			.then()
 			.statusCode(200);
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/reporting-unit/21/comment");
+		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/21/comment");
 		response.then().statusCode(200);
 		Assert.assertEquals(response.getBody().asString(), comment.toJSONString());
 	}
 	
 	/**
-	 * Test that the GET endpoint "api/reporting-unit/{id}/comment"
-	 * return 404 with wrong reporting-unit Id
+	 * Test that the GET endpoint "api/survey-unit/{id}/comment"
+	 * return 404 with wrong survey-unit Id
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindCommentByUnexistReportingUnit() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/reporting-unit/toto/comment").then().statusCode(404);
-		given().auth().preemptive().basic("INTW1", "a").get("api/reporting-unit/0/comment").then().statusCode(404);
+	public void testFindCommentByUnexistSurveyUnit() {
+		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/toto/comment").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/0/comment").then().statusCode(404);
 	}
 
 	/**
-	 * Test that the GET endpoint "api/reporting-unit/{id}/data"
+	 * Test that the GET endpoint "api/survey-unit/{id}/data"
 	 * return 200
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindDataByReportingUnit() {
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/reporting-unit/22/data");
+	public void testFindDataBySurveyUnit() {
+		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/22/data");
 		response.then().statusCode(200);
 		Assert.assertEquals(response.getBody().asString(), new JSONObject().toJSONString());
 	}
 	
 	/**
-	 * Test that the PUT endpoint "api/reporting-unit/{id}/data"
+	 * Test that the PUT endpoint "api/survey-unit/{id}/data"
 	 * return 200
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testPutDataByReportingUnit() {
+	public void testPutDataBySurveyUnit() {
 		Map<String,String> putData = new HashMap<>();
 		putData.put("data", "value");
 		JSONObject data = new JSONObject(putData);
@@ -272,50 +272,50 @@ class TestBasicAuth {
 			.contentType(ContentType.JSON)
 			.body(data.toJSONString())
 			.given().auth().preemptive().basic("INTW1", "a")
-		.put("api/reporting-unit/21/data")
+		.put("api/survey-unit/21/data")
 			.then()
 			.statusCode(200);
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/reporting-unit/21/data");
+		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/21/data");
 		response.then().statusCode(200);
 		Assert.assertEquals(response.getBody().asString(), data.toJSONString());
 	}
 	
 	/**
-	 * Test that the GET endpoint "api/reporting-unit/{id}/data"
-	 * return 404 with wrong reporting-unit Id
+	 * Test that the GET endpoint "api/survey-unit/{id}/data"
+	 * return 404 with wrong survey-unit Id
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindDataByUnexistReportingUnit() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/reporting-unit/toto/data").then().statusCode(404);
-		given().auth().preemptive().basic("INTW1", "a").get("api/reporting-unit/0/data").then().statusCode(404);
+	public void testFindDataByUnexistSurveyUnit() {
+		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/toto/data").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/0/data").then().statusCode(404);
 	}
 
 	/**
-	 * Test that the GET endpoint "api/operation/{id}/required-nomenclature"
+	 * Test that the GET endpoint "api/campaign/{id}/required-nomenclature"
 	 * return 200
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindRequiredNomenclatureByOperation() {
+	public void testFindRequiredNomenclatureByCampaign() {
 		given().auth().preemptive().basic("INTW1", "a")
-		.get("api/operation/vqs2021x00/required-nomenclatures").then()
+		.get("api/campaign/vqs2021x00/required-nomenclatures").then()
 		.statusCode(200).and()
 		.assertThat().body("$", hasItem("cities2019"));
 	}
 	
 	/**
-	 * Test that the GET endpoint "api/operation/{id}/required-nomenclature"
-	 * return 404 with wrong operation Id
+	 * Test that the GET endpoint "api/campaign/{id}/required-nomenclature"
+	 * return 404 with wrong campaign Id
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindRequiredNomenclatureByUnexistOperation() {
+	public void testFindRequiredNomenclatureByUnexistCampaign() {
 		given().auth().preemptive().basic("INTW1", "a")
-		.get("api/operation/toto/required-nomenclatures").then().statusCode(404);
+		.get("api/campaign/toto/required-nomenclatures").then().statusCode(404);
 	}
 
 }

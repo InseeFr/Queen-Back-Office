@@ -74,30 +74,31 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
 			http.authorizeRequests()
 					// manage routes securisation
-		           	.antMatchers(HttpMethod.OPTIONS).permitAll()
-		           	// configuration for Swagger
-					.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
-					.antMatchers("/environnement", "/healthcheck").permitAll()
-					.antMatchers(Constants.API_OPERATIONS).hasRole(role)
-					.antMatchers(Constants.API_OPERATIONS_REPORTING_UNITS).hasRole(role)
-					.antMatchers(Constants.API_OPERATIONS_QUESTIONAIRE).hasRole(role)
-					.antMatchers(Constants.API_OPERATIONS_REQUIRED_NOMENCLATURES).hasRole(role)
-					.antMatchers(Constants.API_REPORTING_UNIT_DATA).hasRole(role)
-					.antMatchers(Constants.API_REPORTING_UNIT_COMMENT).hasRole(role)
-					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role).anyRequest().denyAll();
+					.antMatchers(HttpMethod.OPTIONS).permitAll()
+					// configuration for Swagger
+					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**",
+							"/swagger-resources/**")
+					.permitAll().antMatchers("/environnement", "/healthcheck").permitAll()
+					.antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
+					.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS).hasRole(role)
+					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE).hasRole(role)
+					.antMatchers(Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_DATA).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
+					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+					.anyRequest().denyAll();
 		} else {
 			http.httpBasic().disable();
 			http.authorizeRequests()
-					// manage routes securisation
-					.antMatchers(HttpMethod.OPTIONS).permitAll()
-					// configuration for Swagger
-					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**", "/swagger-resources/**") .permitAll()
-					.antMatchers("/environnement", "/healthcheck").permitAll()
-					.antMatchers(Constants.API_OPERATIONS, Constants.API_OPERATIONS_REPORTING_UNITS,
-							Constants.API_OPERATIONS_QUESTIONAIRE, Constants.API_OPERATIONS_REQUIRED_NOMENCLATURES,
-							Constants.API_REPORTING_UNIT_DATA, Constants.API_REPORTING_UNIT_COMMENT,
-							Constants.API_NOMENCLATURE)
-			.permitAll();
+					.antMatchers(
+						Constants.API_CAMPAIGNS, 
+						Constants.API_CAMPAIGN_SURVEY_UNITS,
+						Constants.API_CAMPAIGN_QUESTIONAIRE, 
+						Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES,
+						Constants.API_SURVEY_UNIT_DATA, 
+						Constants.API_SURVEY_UNIT_COMMENT, 
+						Constants.API_NOMENCLATURE)
+					.permitAll();
 		}
 	}
 

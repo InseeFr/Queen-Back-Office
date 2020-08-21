@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Data;
-import fr.insee.queen.api.domain.ReportingUnit;
+import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.data.DataDto;
 import fr.insee.queen.api.repository.DataRepository;
-import fr.insee.queen.api.repository.ReportingUnitRepository;
+import fr.insee.queen.api.repository.SurveyUnitRepository;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -45,7 +45,7 @@ public class DataController {
 	* The reporting unit repository using to access to table 'reporting_unit' in DB 
 	*/
 	@Autowired
-	private ReportingUnitRepository reportingUnitRepository;
+	private SurveyUnitRepository surveyUnitRepository;
 	
 	/**
 	* This method is using to get the data associated to a specific reporting unit 
@@ -54,15 +54,15 @@ public class DataController {
 	* @return {@link DataDto} the data associated to the reporting unit
 	*/
 	@ApiOperation(value = "Get data by reporting unit Id ")
-	@GetMapping(path = "/reporting-unit/{id}/data")
-	public ResponseEntity<Object>  getDataByReportingUnit(@PathVariable(value = "id") String id){
-		Optional<ReportingUnit> reportingUnitOptional = reportingUnitRepository.findById(id);
-		if (!reportingUnitOptional.isPresent()) {
+	@GetMapping(path = "/survey-unit/{id}/data")
+	public ResponseEntity<Object>  getDataBySurveyUnit(@PathVariable(value = "id") String id){
+		Optional<SurveyUnit> surveyUnitOptional = surveyUnitRepository.findById(id);
+		if (!surveyUnitOptional.isPresent()) {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
-			Optional<Data> dataOptional = dataRepository.findByReportingUnit_id(id);
+			Optional<Data> dataOptional = dataRepository.findBySurveyUnit_id(id);
 			if (!dataOptional.isPresent()) {
 				return new ResponseEntity<>(new JSONObject(), HttpStatus.OK);
 			}else {
@@ -80,14 +80,14 @@ public class DataController {
 	* 
 	*/
 	@ApiOperation(value = "Update data by reporting unit Id ")
-	@PutMapping(path = "/reporting-unit/{id}/data")
+	@PutMapping(path = "/survey-unit/{id}/data")
 	public ResponseEntity<Object> setData(@RequestBody JSONObject dataValue, @PathVariable(value = "id") String id) throws ParseException, SQLException {
-		Optional<ReportingUnit> reportingUnitOptional = reportingUnitRepository.findById(id);
-		if (!reportingUnitOptional.isPresent()) {
+		Optional<SurveyUnit> surveyUnitOptional = surveyUnitRepository.findById(id);
+		if (!surveyUnitOptional.isPresent()) {
 			LOGGER.info("PUT data for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
-			Optional<Data> dataOptional = dataRepository.findByReportingUnit_id(id);
+			Optional<Data> dataOptional = dataRepository.findBySurveyUnit_id(id);
 			if (!dataOptional.isPresent()) {
 				LOGGER.info("PUT data for reporting unit with id {} resulting in 404", id);
 				return ResponseEntity.notFound().build();

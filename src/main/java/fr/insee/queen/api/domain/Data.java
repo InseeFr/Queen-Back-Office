@@ -50,10 +50,10 @@ public class Data extends AbstractEntity {
 	private JSONObject value;
 	
 	/**
-	* The ReportingUnit associated to the comment
+	* The SurveyUnit associated to the comment
 	*/
 	@OneToOne
-	private ReportingUnit reportingUnit;
+	private SurveyUnit surveyUnit;
 	
 	/**
 	 * @return id of comment
@@ -92,16 +92,16 @@ public class Data extends AbstractEntity {
 		this.value = value;
 	}
 	/**
-	 * @return ReportingUnit associated to the comment
+	 * @return SurveyUnit associated to the comment
 	 */
-	public ReportingUnit getReportingUnit() {
-		return reportingUnit;
+	public SurveyUnit getSurveyUnit() {
+		return surveyUnit;
 	}
 	/**
-	 * @param reportingUnit reportingUnit to set
+	 * @param surveyUnit surveyUnit to set
 	 */
-	public void setReportingUnit(ReportingUnit reportingUnit) {
-		this.reportingUnit = reportingUnit;
+	public void setSurveyUnit(SurveyUnit surveyUnit) {
+		this.surveyUnit = surveyUnit;
 	}
 	
 }
