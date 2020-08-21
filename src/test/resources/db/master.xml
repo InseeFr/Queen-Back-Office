@@ -12,4 +12,7 @@
 		
 	<!-- Data for dev on POSTGRES DB  -->
 	<include file="changelog/data/insert_data.xml" relativeToChangelogFile="true"/>
+	
+	<include file="changelog/200_rename_entities.xml" relativeToChangelogFile="true"/>
+	
 </databaseChangeLog>

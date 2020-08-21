@@ -72,12 +72,12 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
        				.antMatchers("/environnement", "/healthcheck").permitAll()
                    	// configuration for endpoints
-       				.antMatchers(Constants.API_OPERATIONS).hasRole(role)
-       				.antMatchers(Constants.API_OPERATIONS_REPORTING_UNITS).hasRole(role)
-					.antMatchers(Constants.API_OPERATIONS_QUESTIONAIRE).hasRole(role)
-					.antMatchers(Constants.API_OPERATIONS_REQUIRED_NOMENCLATURES).hasRole(role)
-					.antMatchers(Constants.API_REPORTING_UNIT_DATA).hasRole(role)
-					.antMatchers(Constants.API_REPORTING_UNIT_COMMENT).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS).hasRole(role)
+					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE).hasRole(role)
+					.antMatchers(Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_DATA).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
 					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
 					.anyRequest().denyAll(); 
 	}

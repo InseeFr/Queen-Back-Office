@@ -1,0 +1,71 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+	<changeSet author="admin" id="200_dropFK_reporting_unit">
+        <dropForeignKeyConstraint baseTableName="reporting_unit" constraintName="FK5npgv34xrt4sot2mv05ij3tse" />
+    </changeSet>
+    <changeSet author="admin" id="200_dropFK_data">
+        <dropForeignKeyConstraint baseTableName="data" constraintName="FK7ym9pbkxwahn9vpf2fgoaxxuq"/>
+    </changeSet>
+    <changeSet author="admin" id="200_dropFK_comment">
+        <dropForeignKeyConstraint baseTableName="comment" constraintName="FKmp8mo44go4vhohovjaxxg8140"/>
+    </changeSet>
+	<changeSet author="admin" id="200_dropPK_operation">
+        <dropPrimaryKey constraintName="operationPK" tableName="operation"/>
+    </changeSet>
+	<changeSet author="admin" id="200_dropPK_reporting_unit">
+        <dropPrimaryKey constraintName="reporting_unitPK" tableName="reporting_unit"/>
+    </changeSet>
+    
+	
+	<changeSet  author="admin"  id="200_rename_entity_operation">  
+	    <renameTable 
+	            oldTableName="operation"  
+	            newTableName="campaign"/>  
+	</changeSet>
+
+	<changeSet  author="admin"  id="200_rename_entity_reporting_unit_1">  
+	    <renameTable 
+	            oldTableName="reporting_unit" 
+	            newTableName="survey_unit"/>  
+	</changeSet>
+	<changeSet  author="admin"  id="200_rename_entity_reporting_unit_2">  
+	    <renameColumn 
+	            oldColumnName="operation_id"  
+	            newColumnName="campaign_id"  
+	            tableName="survey_unit"/>  
+	</changeSet>
+	<changeSet  author="admin"  id="200_rename_entity_comment">  
+	    <renameColumn 
+	            oldColumnName="reporting_unit_id"  
+	            newColumnName="survey_unit_id"  
+	            tableName="comment"/>  
+	</changeSet>
+	<changeSet  author="admin"  id="200_rename_entity_data">  
+	    <renameColumn 
+	            oldColumnName="reporting_unit_id"  
+	            newColumnName="survey_unit_id"  
+	            tableName="data"/>  
+	</changeSet>
+    
+    
+    <changeSet author="admin" id="200_PK_campaign">
+        <addPrimaryKey columnNames="id" constraintName="campaignPK" tableName="campaign"/>
+    </changeSet>
+    <changeSet author="admin" id="200_PK_survey_unit">
+        <addPrimaryKey columnNames="id" constraintName="survey_unitPK" tableName="survey_unit"/>
+    </changeSet>
+    <changeSet author="admin" id="200_FK_survey_unit">
+        <addForeignKeyConstraint baseColumnNames="campaign_id" baseTableName="survey_unit" constraintName="FK5npgv34xrt4sot2mv05ij3tse" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="campaign"/>
+    </changeSet>
+    <changeSet author="admin" id="200_FK_comment">
+        <addForeignKeyConstraint baseColumnNames="survey_unit_id" baseTableName="data" constraintName="FK7ym9pbkxwahn9vpf2fgoaxxuq" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="survey_unit"/>
+    </changeSet>
+    <changeSet author="admin" id="200_FK_data">
+        <addForeignKeyConstraint baseColumnNames="survey_unit_id" baseTableName="comment" constraintName="FKmp8mo44go4vhohovjaxxg8140" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="survey_unit"/>
+    </changeSet>
+    
+</databaseChangeLog>

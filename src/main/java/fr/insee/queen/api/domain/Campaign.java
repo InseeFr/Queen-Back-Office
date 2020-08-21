@@ -6,28 +6,28 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 /**
-* Entity Operation : represent the entity table in DB
+* Entity Campaign : represent the entity table in DB
 * 
 * @author Claudel Benjamin
 * 
 */
 @Entity
 @Table
-public class Operation {
+public class Campaign {
 	/**
-	* The id of operation 
+	* The id of campaign 
 	*/
 	@Id
 	@Column(length=50)
 	private String id;
 	/**
-	* The label of operation 
+	* The label of campaign 
 	*/
 	@Column(length=255, nullable = false)
 	private String label;
 	 
 	/**
-	* The QuestionnaireModel associated to operation
+	* The QuestionnaireModel associated to campaign
 	*/
 	@ManyToOne
 	private QuestionnaireModel questionnaireModel;
@@ -56,7 +56,7 @@ public class Operation {
 		this.label = label;
 	}
 	/**
-	 * @return QuestionnaireModel associated to operation
+	 * @return QuestionnaireModel associated to campaign
 	 */
 	public QuestionnaireModel getQuestionnaireModel() {
 		return questionnaireModel;
