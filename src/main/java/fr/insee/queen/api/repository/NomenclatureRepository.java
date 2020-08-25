@@ -22,20 +22,20 @@ public interface NomenclatureRepository extends JpaRepository<Nomenclature, Stri
 	/**
 	* This method retrieve the NomenclatureDto by id
 	* 
-	* @param id id of the operation
+	* @param id id of the campaign
 	* @return{@link NomenclatureDto}
 	*/
 	public NomenclatureDto findDtoById(String id);
 	/**
-	* This method retrieve all Nomenclature ids for a specific operation
+	* This method retrieve all Nomenclature ids for a specific campaign
 	* 
-	* @param id id of the operation
+	* @param id id of the campaign
 	* @return List of {@link String}
 	*/
 	@Query(value="SELECT rn.code " 
 			+ "FROM required_nomenclature rn "
 			+ "JOIN questionnaire_model qm ON qm.id = rn.id_required_nomenclature "
-			+ "JOIN operation op ON op.questionnaire_model_id = qm.id "
+			+ "JOIN campaign op ON op.questionnaire_model_id = qm.id "
 			+ "WHERE op.id=?1 ", nativeQuery=true)
-	public List<String> findRequiredNomenclatureByOperation(String id);
+	public List<String> findRequiredNomenclatureByCampaign(String id);
 }

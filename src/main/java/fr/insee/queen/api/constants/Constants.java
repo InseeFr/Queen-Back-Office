@@ -9,12 +9,12 @@ public class Constants {
 	public static final String GUEST = "GUEST";
 	
 	//API url for endpoints
-	public static final String API_OPERATIONS = "/api/operations";
-	public static final String API_OPERATIONS_REPORTING_UNITS = "/api/operation/{idOperation}/reporting-units";
-	public static final String API_OPERATIONS_QUESTIONAIRE = "/api/operation/{idOperation}/questionnaire";
-	public static final String API_OPERATIONS_REQUIRED_NOMENCLATURES = "/api/operation/{id}/required-nomenclatures";
-	public static final String API_REPORTING_UNIT_DATA = "/api/reporting-unit/{id}/data";
-	public static final String API_REPORTING_UNIT_COMMENT = "/api/reporting-unit/{id}/comment";
+	public static final String API_CAMPAIGNS = "/api/campaigns";
+	public static final String API_CAMPAIGN_SURVEY_UNITS = "/api/campaign/{idCampaign}/survey-units";
+	public static final String API_CAMPAIGN_QUESTIONAIRE = "/api/campaign/{idCampaign}/questionnaire";
+	public static final String API_CAMPAIGN_REQUIRED_NOMENCLATURES = "/api/campaign/{id}/required-nomenclatures";
+	public static final String API_SURVEY_UNIT_DATA = "/api/survey-unit/{id}/data";
+	public static final String API_SURVEY_UNIT_COMMENT = "/api/survey-unit/{id}/comment";
 	public static final String API_NOMENCLATURE = "/api/nomenclature/{id}";
 	
 	//PearlJam filter url

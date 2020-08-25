@@ -7,23 +7,23 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 
 /**
-* OperationRepository is the repository using to access to Operation table in DB
+* CampaignRepository is the repository using to access to Campaign table in DB
 * 
 * @author Claudel Benjamin
 * 
 */
 public interface QuestionnaireModelRepository extends JpaRepository<QuestionnaireModel, String> {
 	/**
-	* This method retrieve questionnaire model for a specific operation
+	* This method retrieve questionnaire model for a specific campaign
 	* 
-	* @param id id of the operation
+	* @param id id of the campaign
 	* @return {@link QuestionnaireModelDto}
 	*/
 	@Query("SELECT qm " 
 			+ "FROM QuestionnaireModel qm "
-			+ "INNER JOIN Operation op "
+			+ "INNER JOIN Campaign op "
 			+ "ON op.questionnaireModel = qm.id "
 			+ "WHERE op.id=?1 ")
-	QuestionnaireModelDto findDtoByOperationId(String id);
+	QuestionnaireModelDto findDtoByCampaignId(String id);
 
 }
