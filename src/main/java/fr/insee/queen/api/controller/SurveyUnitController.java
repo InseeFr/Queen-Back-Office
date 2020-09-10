@@ -83,6 +83,7 @@ public class SurveyUnitController {
 						+ "- User not authorized ", id);
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			}
+			@SuppressWarnings("unchecked")
 			List<LinkedHashMap<String,String>> objects = (List<LinkedHashMap<String, String>>) result.getBody();
 			if(objects.isEmpty()) {
 				LOGGER.info("GET survey-units for campaign with id {} resulting in 404", id);

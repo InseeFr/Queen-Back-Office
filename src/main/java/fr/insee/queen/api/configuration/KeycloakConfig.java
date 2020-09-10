@@ -75,6 +75,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
        				.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE).hasRole(role)
+					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE_ID).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES).hasRole(role)
 					.antMatchers(Constants.API_SURVEY_UNIT_DATA).hasRole(role)
 					.antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
