@@ -3,6 +3,7 @@ package fr.insee.queen.api.noAuth;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.with;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.containsString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -269,6 +270,31 @@ class TestNoAuth {
 	@Test
 	public void testFindRequiredNomenclatureByUnexistCampaign() {
 		get("api/campaign/toto/required-nomenclatures").then().statusCode(404);
+	}
+	
+	/**
+	 * Test that the GET endpoint "api/campaign/{id}/questionnaire-id"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testFindQuestionnaireIdByCampaign() throws JSONException {
+		get("api/campaign/simpsons2020x00/questionnaire-id")
+		.then().statusCode(200).and()
+		.assertThat().body(containsString("\"questionnaireId\"" + ":" + "\"simpsons\""));
+	}
+
+	/**
+	 * Test that the GET endpoint "api/campaign/{id}/questionnaire-id"
+	 * return 404 with wrong campaign Id
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testFindQuestionnaireIdByUnexistCampaign() throws JSONException {
+		get("api/campaign/test/questionnaire-id")
+		.then().statusCode(404);
 	}
 
 }

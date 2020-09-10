@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import fr.insee.queen.api.domain.QuestionnaireModel;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 
 /**
@@ -24,6 +25,19 @@ public interface QuestionnaireModelRepository extends JpaRepository<Questionnair
 			+ "INNER JOIN Campaign op "
 			+ "ON op.questionnaireModel = qm.id "
 			+ "WHERE op.id=?1 ")
-	QuestionnaireModelDto findDtoByCampaignId(String id);
+	QuestionnaireModelDto findQuestionnaireModelDtoByCampaignId(String id);
+
+	/**
+	* This method retrieve questionnaire Id for a specific campaign
+	* 
+	* @param id id of the campaign
+	* @return {@link QuestionnaireModelDto}
+	*/
+	@Query(value="SELECT qm.id as questionnaireId " 
+			+ "FROM questionnaire_model qm "
+			+ "INNER JOIN campaign op "
+			+ "ON op.questionnaire_model_id = qm.id "
+			+ "WHERE op.id=?1 ", nativeQuery=true)
+	QuestionnaireIdDto findQuestionnaireIdDtoByCampaignId(String id);
 
 }
