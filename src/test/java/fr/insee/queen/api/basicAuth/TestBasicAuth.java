@@ -2,6 +2,7 @@ package fr.insee.queen.api.basicAuth;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.with;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
@@ -154,6 +155,8 @@ class TestBasicAuth {
 		.get("api/campaign/simpsons2020x00/survey-units").then()
 		.statusCode(200).and()
 		.assertThat().body("id", hasItem("11"));
+		mockServerClient.close();
+		clientAndServer.close();
 	}
 	
 	/**
@@ -316,6 +319,33 @@ class TestBasicAuth {
 	public void testFindRequiredNomenclatureByUnexistCampaign() {
 		given().auth().preemptive().basic("INTW1", "a")
 		.get("api/campaign/toto/required-nomenclatures").then().statusCode(404);
+	}
+	
+	/**
+	 * Test that the GET endpoint "api/campaign/{id}/questionnaire-id"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testFindQuestionnaireIdByCampaign() throws JSONException {
+		given().auth().preemptive().basic("INTW1", "a")
+		.when().get("api/campaign/simpsons2020x00/questionnaire-id")
+		.then().statusCode(200).and()
+		.assertThat().body(containsString("\"questionnaireId\"" + ":" + "\"simpsons\""));
+	}
+
+	/**
+	 * Test that the GET endpoint "api/campaign/{id}/questionnaire-id"
+	 * return 404 with wrong campaign Id
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testFindQuestionnaireIdByUnexistCampaign() throws JSONException {
+		given().auth().preemptive().basic("INTW1", "a")
+		.when().get("api/campaign/test/questionnaire-id")
+		.then().statusCode(404);
 	}
 
 }

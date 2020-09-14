@@ -2,6 +2,7 @@ package fr.insee.queen.api.authKeycloak;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.with;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
@@ -138,7 +139,7 @@ class TestAuthKeycloak {
 	@Test
 	public void testFindQuestionnaireByUnexistCampaign() throws JSONException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().get("api/campaign/toto/questionnaire").then().statusCode(404);
+		given().auth().oauth2(accessToken).when().get("api/campaign/test/questionnaire").then().statusCode(404);
 	}
 
 	/**
@@ -185,6 +186,8 @@ class TestAuthKeycloak {
 		given().auth().oauth2(accessToken).when().get("api/campaign/simpsons2020x00/survey-units").then()
 		.statusCode(200).and()
 		.assertThat().body("id", hasItem("11"));
+		mockServerClient.close();
+		clientAndServer.close();
 	}
 	
 	/**
@@ -196,7 +199,7 @@ class TestAuthKeycloak {
 	@Test
 	public void testFindSurveyUnitsByUnexistCampaign() throws JSONException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().get("api/campaign/toto/survey-units").then().statusCode(404);
+		given().auth().oauth2(accessToken).when().get("api/campaign/test/survey-units").then().statusCode(404);
 	}
 
 	/**
@@ -222,7 +225,7 @@ class TestAuthKeycloak {
 	@Test
 	public void testFindUnexistNomenclatureById() throws JSONException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().get("api/nomenclature/toto").then().statusCode(404);
+		given().auth().oauth2(accessToken).when().get("api/nomenclature/test").then().statusCode(404);
 	}
 	
 	/**
@@ -298,7 +301,7 @@ class TestAuthKeycloak {
 	@Test
 	public void testFindCommentByUnexistSurveyUnit() throws JSONException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().get("api/survey-unit/toto/comment").then().statusCode(404);
+		given().auth().oauth2(accessToken).when().get("api/survey-unit/test/comment").then().statusCode(404);
 		given().auth().oauth2(accessToken).when().get("api/survey-unit/0/comment").then().statusCode(404);
 	}
 
@@ -326,7 +329,7 @@ class TestAuthKeycloak {
 	@Test
 	public void testFindDataByUnexistSurveyUnit() throws JSONException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().get("api/survey-unit/toto/data").then().statusCode(404);
+		given().auth().oauth2(accessToken).when().get("api/survey-unit/test/data").then().statusCode(404);
 		given().auth().oauth2(accessToken).when().get("api/survey-unit/0/data").then().statusCode(404);
 	}
 
@@ -345,15 +348,28 @@ class TestAuthKeycloak {
 	}
 	
 	/**
-	 * Test that the GET endpoint "api/campaign/{id}/required-nomenclature"
+	 * Test that the GET endpoint "api/campaign/{id}/questionnaire-id"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testFindQuestionnaireIdByCampaign() throws JSONException {
+		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "USR1", "a");
+		given().auth().oauth2(accessToken).when().get("api/campaign/simpsons2020x00/questionnaire-id").then()
+		.statusCode(200).and()
+		.assertThat().body(containsString("\"questionnaireId\"" + ":" + "\"simpsons\""));
+	}
+
+	/**
+	 * Test that the GET endpoint "api/campaign/{id}/questionnaire-id"
 	 * return 404 with wrong campaign Id
 	 * @throws InterruptedException
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindRequiredNomenclatureByUnexistCampaign() throws JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().get("api/campaign/toto/required-nomenclatures").then().statusCode(404);
+	public void testFindQuestionnaireIdByUnexistCampaign() throws JSONException {
+		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "USR1", "a");
+		given().auth().oauth2(accessToken).when().get("api/campaign/test/questionnaire-id").then().statusCode(404);
 	}
-
 }
