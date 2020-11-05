@@ -86,6 +86,8 @@ keycloak.principal-attribute:preferred_username
 
 #Keycloak roles
 fr.insee.queen.interviewer.role=investigator
+fr.insee.queen.user.local.role=manager_local
+fr.insee.queen.user.national.role=manager_national
 
 #PearlJam Api
 fr.insee.queen.pearljam.url.scheme=http
@@ -122,6 +124,7 @@ Before committing code please ensure,
 
 - Questionnaire
 	- `GET /campaign/{id}/questionnaire` : get the model json 
+	- `GET /campaign/{idCampaign}/questionnaire-id` : id of the questionnaire associated to the campaign
 
 - SurveyUnit
 	- `GET /campaign/{id}/survey-units` : get the list of reporting unit of campaign id
