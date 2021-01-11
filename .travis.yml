@@ -12,25 +12,12 @@ install:
 script:
   - docker build -t inseefr/queen-back-office .
 
-before_script:
-  - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
-
-after_success:
-    - .ci/comment-pr.sh
-
 deploy:
   - skip_cleanup: true
     provider: script
     script:
       echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
       && docker push inseefr/queen-back-office
-    on:
-      branch: master
-
-  - skip_cleanup: true
-    provider: script
-    script:
-      kubectl --token $K8S_TOKEN --server $K8S_SERVER --insecure-skip-tls-verify rollout restart deployment/queen-bo -n queen
     on:
       branch: master
 
