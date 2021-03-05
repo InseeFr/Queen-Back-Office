@@ -34,6 +34,7 @@ public class Campaign {
 	@OneToMany(targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
 	private Set<QuestionnaireModel> questionnaireModels = new HashSet<>();
 	 
+  
 	/**
 	 * @return id of nomenclature
 	 */

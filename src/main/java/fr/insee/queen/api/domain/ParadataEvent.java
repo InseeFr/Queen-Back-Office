@@ -28,7 +28,7 @@ public class ParadataEvent {
 	private JSONObject value;
 	
 	public ParadataEvent() {
-		
+		super();
 	}
 
 	/**
