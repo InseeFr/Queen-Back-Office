@@ -34,7 +34,10 @@ public class Campaign {
 	@OneToMany(targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
 	private Set<QuestionnaireModel> questionnaireModels = new HashSet<>();
 	 
+<<<<<<< HEAD
   
+=======
+>>>>>>> feature: liquibase diff for data model
 	/**
 	 * @return id of nomenclature
 	 */
