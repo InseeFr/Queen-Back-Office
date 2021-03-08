@@ -1,9 +1,6 @@
 package fr.insee.queen.api.domain;
 
-<<<<<<< HEAD
-=======
 import java.util.Collection;
->>>>>>> feat: endpoints campaigns and questionnaire model
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +8,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 /**

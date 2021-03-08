@@ -1,9 +1,7 @@
 package fr.insee.queen.api.controller;
 
-<<<<<<< HEAD
-=======
 import java.util.ArrayList;
->>>>>>> feat: endpoints campaigns and questionnaire model
+
 import java.util.List;
 import java.util.stream.Collectors;
 
