@@ -1,5 +1,6 @@
 package fr.insee.queen.api.controller;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,7 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Campaign;
@@ -32,6 +36,7 @@ import fr.insee.queen.api.dto.campaign.CampaignDto;
 import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
+import fr.insee.queen.api.pdfutils.ExportPdf;
 import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import fr.insee.queen.api.repository.SurveyUnitRepository;
@@ -182,6 +187,25 @@ public class SurveyUnitController {
 			return new ResponseEntity<>(resp, HttpStatus.OK);
 			
 		}
+	}
+	
+	@ApiOperation(value = "Get deposit proof for a SU ")
+	@RequestMapping(value = "/survey-unit/{id}/deposit-proof", method = RequestMethod.GET)
+	public void getDepositProof(@PathVariable(value = "id") String id, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException{
+		
+		ExportPdf exp = new ExportPdf();
+		HttpServletResponse resp = null;
+		//FileOutputStream outputStream = new FileOutputStream();
+		try {
+			exp.doGet(null, response);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//return ResponseEntity.ok().build();
 	}
 	
 	

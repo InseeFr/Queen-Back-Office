@@ -1,0 +1,97 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="paulguillemet (generated)" id="1614955912067-1">
+        <createTable tableName="campaign_questionnaire_model">
+            <column name="campaign_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="questionnaire_model_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-2">
+        <createTable tableName="metadata">
+            <column name="id_metadata" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="JSONB"/>
+            <column name="campaign_id" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-3">
+        <createTable tableName="paradata_event">
+            <column name="id_paradata_event" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="JSONB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-4">
+        <createTable tableName="personnalization">
+            <column name="id_personnalization" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="JSONB"/>
+            <column name="survey_unit_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-5">
+        <createTable tableName="state_data">
+            <column name="id_state_data" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_page" type="INT"/>
+            <column name="date" type="BIGINT"/>
+            <column name="state" type="VARCHAR(8)"/>
+            <column name="survey_unit_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-6">
+        <addColumn tableName="survey_unit">
+            <column name="questionnaire_model_id" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-7">
+        <addPrimaryKey columnNames="campaign_id, questionnaire_model_id" tableName="campaign_questionnaire_model"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-8">
+        <addPrimaryKey columnNames="id_metadata" constraintName="metadataPK" tableName="metadata"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-9">
+        <addPrimaryKey columnNames="id_paradata_event" constraintName="paradata_eventPK" tableName="paradata_event"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-10">
+        <addPrimaryKey columnNames="id_personnalization" constraintName="personnalizationPK" tableName="personnalization"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-11">
+        <addPrimaryKey columnNames="id_state_data" constraintName="state_dataPK" tableName="state_data"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-12">
+        <addUniqueConstraint columnNames="questionnaire_model_id" constraintName="UK_b840fvfgevac218kg0fu0m7b5" tableName="campaign_questionnaire_model"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-13">
+        <addForeignKeyConstraint baseColumnNames="campaign_id" baseTableName="metadata" constraintName="FK13bif89tkws06lu6kdo3nye0t" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="campaign"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-14">
+        <addForeignKeyConstraint baseColumnNames="survey_unit_id" baseTableName="personnalization" constraintName="FK9aonche3cbcolkeuacv4v6hk" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="survey_unit"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-15">
+        <addForeignKeyConstraint baseColumnNames="campaign_id" baseTableName="campaign_questionnaire_model" constraintName="FKbdu604x9bsgsn0c46qtbqsho5" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="campaign"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-16">
+        <addForeignKeyConstraint baseColumnNames="questionnaire_model_id" baseTableName="campaign_questionnaire_model" constraintName="FKcp7uji1t6sgr1ufdihnb5xar4" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="questionnaire_model"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-17">
+        <addForeignKeyConstraint baseColumnNames="survey_unit_id" baseTableName="state_data" constraintName="FKkjjh680qs400ap1dko1kmqh0s" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="survey_unit"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-18">
+        <addForeignKeyConstraint baseColumnNames="questionnaire_model_id" baseTableName="survey_unit" constraintName="FKmxuurbuictd8h1b56n700585p" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="questionnaire_model"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-19">
+        <dropForeignKeyConstraint baseTableName="campaign" constraintName="FKkgwvclt3vox54o7kr50mu6w49"/>
+    </changeSet>
+    <changeSet author="paulguillemet (generated)" id="1614955912067-20">
+        <dropColumn columnName="questionnaire_model_id" tableName="campaign"/>
+    </changeSet>
+</databaseChangeLog>

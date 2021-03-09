@@ -1,5 +1,7 @@
 package fr.insee.queen.api.constants;
 
+import java.io.InputStream;
+
 public class Constants {
 	private Constants() {
 		throw new IllegalStateException("Constants class");
@@ -25,4 +27,6 @@ public class Constants {
 
 	//PearlJam filter url
 	public static final String API_PEARLJAM_SURVEY_UNITS = "/api/survey-units";
+	
+
 }
