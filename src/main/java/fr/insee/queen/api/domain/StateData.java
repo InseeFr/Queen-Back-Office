@@ -6,8 +6,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import fr.insee.queen.api.dto.stateData.StateDataDto;
 
 @Entity
 @Table
@@ -43,6 +46,7 @@ public class StateData extends AbstractEntity{
 	* The SurveyUnit associated to the StateData
 	*/
 	@OneToOne
+	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;
 
 	/**

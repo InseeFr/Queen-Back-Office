@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -53,6 +54,7 @@ public class Data extends AbstractEntity {
 	* The SurveyUnit associated to the comment
 	*/
 	@OneToOne
+	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;
 	
 	/**

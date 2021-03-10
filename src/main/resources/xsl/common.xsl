@@ -77,7 +77,9 @@
                         height="7mm">
                         <fo:block font-family="Liberation Sans" font-size="16pt" font-weight="bold"
                             text-align="center">
-                            <xsl:call-template name="titre"/> </fo:block>
+                            <!-- <xsl:call-template name="titre"/>  -->
+                            <xsl:value-of select="$campaignLabel"/>
+                        </fo:block>
                     </fo:block-container>
                     
                     <!--    Bloc Consignes retour -->
@@ -199,14 +201,14 @@
                             <xsl:text>Questionnaire </xsl:text>
                             <xsl:choose>
                                 <xsl:when
-                                    test="//stromae/util/expedie/text()='oui'">
+                                    test="$date!=''">
                                     <xsl:text>expédié le </xsl:text>
                                     <xsl:value-of
-                                        select="//stromae/util/dateHeure/text()"
+                                        select="$date"
                                     />
                                 </xsl:when>
                                 <xsl:when
-                                    test="//stromae/util/expedie/text()='non'">
+                                    test="$date=''">
                                     <xsl:text>non expédié</xsl:text>
                                 </xsl:when>
                             </xsl:choose>
@@ -220,7 +222,7 @@
                     </fo:table-cell>
                 </fo:table-row>
                 <xsl:if
-                    test="//stromae/util/expedie/text()='oui'">
+                    test="$date!=''">
                     <fo:table-row>
                         <fo:table-cell number-columns-spanned="2">
                             <fo:block font-family="Liberation Sans" font-size="11pt">

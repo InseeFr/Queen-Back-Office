@@ -2,11 +2,15 @@ package fr.insee.queen.api.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 @Entity
@@ -17,6 +21,7 @@ public class Personnalization extends AbstractEntity{
 	* The id of personnalization 
 	*/
 	@Id
+	@GeneratedValue
 	private int idPersonnalization;
 	
 	/**
@@ -24,12 +29,14 @@ public class Personnalization extends AbstractEntity{
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private JSONObject value;
+	private JSONArray value;
+	
 	
 	/**
 	* The SurveyUnit associated to the personnalization
 	*/
 	@OneToOne
+	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;
 
 	/**
@@ -49,14 +56,14 @@ public class Personnalization extends AbstractEntity{
 	/**
 	 * @return the value
 	 */
-	public JSONObject getValue() {
+	public JSONArray getValue() {
 		return value;
 	}
 
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(JSONObject value) {
+	public void setValue(JSONArray value) {
 		this.value = value;
 	}
 

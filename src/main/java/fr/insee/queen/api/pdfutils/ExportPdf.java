@@ -44,33 +44,17 @@ public class ExportPdf extends HttpServlet {
         depositProofService = new PDFDepositProofService(urlApi);
     }
     
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doExport(HttpServletResponse response,
+    		String date, String campaignId, String campaignLabel, String idec)
             throws ServletException, IOException {
 
-        //HttpSession httpSession = ((HttpServletRequest) request).getSession();
-        String idec = "AAAAA";//((String) httpSession.getAttribute("idec-pdf")).toUpperCase();
-        String idUe = "BBBBB";//request.getParameter("survey-unit");
-        String survey = "CCCCCCCC";//request.getParameter("survey");
-        String model = "DDDDDDDDD";//request.getParameter("model");
-        
-        logger.info("////////////////");
-        logger.info("idec {}", idec);
-        logger.info("idUe {}", idUe);
-        logger.info("survey {}", survey);
-        logger.info("model {}", model);
-
-        String filename = String.format("%s_%s.pdf", survey, idec);
-//        response.setContentType("application/pdf");
-//        response.setHeader("Content-disposition", "attachment; filename=\""+filename+"\"");
+        String filename = String.format("%s_%s.pdf", campaignId, idec);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-disposition", "attachment; filename=\""+filename+"\"");
 
         try(OutputStream out = response.getOutputStream()){
-        	logger.info("In try",model);
-        	logger.info("deposit proof serv", depositProofService);
-        	
-        	//logger.info("L'url de l'api exist est la suivante : ".concat(urlApi));
             depositProofService = new PDFDepositProofService("http:/");
-            File pdfFile = depositProofService.generatePdf(idUe,survey,model,idec);
-            logger.info("after pdfFile",model);
+            File pdfFile = depositProofService.generatePdf(date,campaignLabel, idec);
             out.write(Files.readAllBytes(pdfFile.toPath()));
             pdfFile.delete();
         } catch (Exception exception) {

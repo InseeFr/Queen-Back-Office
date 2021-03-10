@@ -14,12 +14,10 @@ public class PDFDepositProofService {
         this.formAndDataService = new FormAndDataServiceImpl(urlApi);
     }
 
-    public File generatePdf(String surveyUnit, String survey, String surveyModel, String idec) throws Exception {
-        File form = formAndDataService.getForm(survey,surveyModel);
-        File data = formAndDataService.getSurveyUnitData(surveyUnit, survey, surveyModel);
-        File foFile = generateFoService.generateFo(form,data,idec);
+    public File generatePdf(String date, String campaignLabel, String idec) throws Exception {
+        File foFile = generateFoService.generateFo(date, campaignLabel, idec);
         File pdfFile = foToPDFTransformation.transformFoToPdf(foFile);
-        form.delete(); data.delete(); foFile.delete();
+        foFile.delete();
         return pdfFile;
     }
 }

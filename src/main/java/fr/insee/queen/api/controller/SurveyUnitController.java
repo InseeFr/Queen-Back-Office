@@ -2,6 +2,9 @@ package fr.insee.queen.api.controller;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,7 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +35,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Campaign;
+import fr.insee.queen.api.domain.Data;
+import fr.insee.queen.api.domain.Personnalization;
 import fr.insee.queen.api.domain.QuestionnaireModel;
+import fr.insee.queen.api.domain.StateData;
+import fr.insee.queen.api.domain.StateStateData;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.campaign.CampaignDto;
 import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
+import fr.insee.queen.api.dto.stateData.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 import fr.insee.queen.api.pdfutils.ExportPdf;
@@ -79,12 +89,18 @@ public class SurveyUnitController {
 	@ApiOperation(value = "Get survey-unit")
 	@GetMapping(path = "/survey-unit/{id}")
 	public ResponseEntity<Object> getSurveyUnitById(HttpServletRequest request, @PathVariable(value = "id") String id) throws ParseException, IOException{
-		Optional<SurveyUnit> su = surveyUnitRepository.findById(id);
-		if(!su.isPresent()) {
+		Optional<SurveyUnit> suOpt = surveyUnitRepository.findById(id);
+		if(!suOpt.isPresent()) {
 			LOGGER.info("GET survey-units with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
-		SurveyUnitResponseDto resp = new SurveyUnitResponseDto(su.get().getId(), su.get().getQuestionnaireModelId(), su.get().getCampaign().getId());
+		SurveyUnit su = suOpt.get();
+		SurveyUnitResponseDto resp = new SurveyUnitResponseDto(
+				null, 
+				null, 
+				su.getPersonnalization()==null ? null :su.getPersonnalization().getValue(), 
+				su.getData()==null ? null : su.getData().getValue(), 
+				new StateDataDto(su.getStateData()));
 		LOGGER.info("GET survey-unit resulting in 200");
 		return new ResponseEntity<Object>(resp, HttpStatus.OK);
 	}
@@ -104,21 +120,82 @@ public class SurveyUnitController {
 		}
 		
 		try {
-			String campaignId = (String) surveyUnit.get("campaignId");
-			String questionnaireId = (String) surveyUnit.get("questionnaireId");
 			SurveyUnit newSU = su.get();
-			if(campaignId != null) {
-				Campaign camp = campaignRepository.findById(campaignId).get();
-				newSU.setCampaign(camp);
+			
+			JSONArray personnalization = null;
+			JSONObject data = null;
+			JSONObject statedata = null;
+			if(surveyUnit.get("personnalization") != null) {
+				personnalization = new JSONArray();
+				
+				personnalization.addAll(
+						(List<JSONObject>)((List) surveyUnit.get("personnalization")).stream()
+						.map(o -> new JSONObject((Map)o))
+						.collect(Collectors.toList())
+				);
+				
+				LOGGER.info(personnalization.toJSONString());
+				if(newSU.getPersonnalization()!=null) {
+					newSU.getPersonnalization().setValue(personnalization);
+				}
+				else {
+					Personnalization pers = new Personnalization();
+					pers.setValue(personnalization);
+					pers.setSurveyUnit(newSU);
+					newSU.setPersonnalization(pers);
+				}
+
+			}
+			if(surveyUnit.get("data") != null) {
+				data = new JSONObject((Map) surveyUnit.get("data"));
+				if(newSU.getData()!=null) {
+					newSU.getData().setValue(data);
+				}
+				else {
+					Data dat = new Data();
+					dat.setValue(data);
+					dat.setSurveyUnit(newSU);
+					newSU.setData(dat);
+				}
+			}
+			if(surveyUnit.get("stateData") != null) {
+				statedata = new JSONObject((Map) surveyUnit.get("stateData"));
+				
+				Long date = (Long) statedata.get("date");
+				String state = (String) statedata.get("state");
+				Integer currentPage = (Integer) statedata.get("currentPage");
+				
+				if(newSU.getStateData()!=null) {
+					if(date != null) {
+						newSU.getStateData().setDate(date);
+					}
+					if(state != null) {
+						newSU.getStateData().setState(StateStateData.valueOf(state));
+					}
+					if(currentPage != null) {
+						newSU.getStateData().setCurrentPage(currentPage);
+					}
+				}
+				else {
+					StateData statedat = new StateData();
+					if(date != null) {
+						statedat.setDate(date);
+					}
+					if(state != null) {
+						statedat.setState(StateStateData.valueOf(state));
+					}
+					if(currentPage != null) {
+						statedat.setCurrentPage(currentPage);
+					}
+					statedat.setSurveyUnit(newSU);
+					newSU.setStateData(statedat);
+				}
 			}
 			
-			if(questionnaireId != null) {
-				QuestionnaireModel questModel = questionnaireRepository.findById(questionnaireId).get();
-				newSU.setQuestionnaireModel(questModel);
-			}
 			surveyUnitRepository.save(newSU);
 		}
 		catch(Exception e) {
+			LOGGER.info(e.getMessage());
 			LOGGER.info("PUT survey-units resulting in 400");
 			return ResponseEntity.badRequest().build();
 		}
@@ -171,7 +248,7 @@ public class SurveyUnitController {
 					Optional<SurveyUnit> su = surveyUnitRepository.findById(map.get("id"));
 					if(su.isPresent() && surveyUnitMap.get(su.get().getId())==null) {
 						LOGGER.info("ID is present");
-						surveyUnitMap.put(su.get().getId(), new SurveyUnitResponseDto(su.get().getId(), su.get().getQuestionnaireModelId(),null));
+						surveyUnitMap.put(su.get().getId(), new SurveyUnitResponseDto(su.get().getId(), su.get().getQuestionnaireModelId(), null, null, null));
 					}
 				}
 			}
@@ -182,7 +259,7 @@ public class SurveyUnitController {
 			LOGGER.info("GET survey-units for campaign with id {} resulting in 200", id);
 			List<SurveyUnit> results = surveyUnitRepository.findByCampaign_id(id);
 			List<SurveyUnitResponseDto> resp = results.stream()
-					.map(su -> new SurveyUnitResponseDto(su.getId(), su.getQuestionnaireModelId(),null))
+					.map(su -> new SurveyUnitResponseDto(su.getId(), su.getQuestionnaireModelId(),null, null, null))
 					.collect(Collectors.toList());
 			return new ResponseEntity<>(resp, HttpStatus.OK);
 			
@@ -191,21 +268,33 @@ public class SurveyUnitController {
 	
 	@ApiOperation(value = "Get deposit proof for a SU ")
 	@RequestMapping(value = "/survey-unit/{id}/deposit-proof", method = RequestMethod.GET)
-	public void getDepositProof(@PathVariable(value = "id") String id, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException{
+	public ResponseEntity<Object> getDepositProof(@PathVariable(value = "id") String id, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException{
 		
-		ExportPdf exp = new ExportPdf();
-		HttpServletResponse resp = null;
-		//FileOutputStream outputStream = new FileOutputStream();
-		try {
-			exp.doGet(null, response);
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Optional<SurveyUnit> suOpt = surveyUnitRepository.findById(id);
+		if(!suOpt.isPresent()) {
+			LOGGER.info("GET deposit-proof with id {} resulting in 404", id);
+			return ResponseEntity.notFound().build();
 		}
-		//return ResponseEntity.ok().build();
+		else {
+			SurveyUnit su = suOpt.get();
+			if (su.getStateData()!=null) {
+				String userId = utilsService.getUserId(request);
+				String campaignId = su.getCampaign().getId();
+				String campaignLabel = su.getCampaign().getLabel();
+				String date = "";
+				if(su.getStateData().getState().equals(StateStateData.EXPORTED)) {
+					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy à HH:mm"); 
+					date = dateFormat.format(new Date(su.getStateData().getDate()));
+				}
+				ExportPdf exp = new ExportPdf();
+				try {
+					exp.doExport(response, date, campaignId, campaignLabel, userId);
+				} catch (ServletException | IOException e) {
+					return new ResponseEntity<>(new JSONObject(), HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+			return ResponseEntity.ok().build();
+		}
 	}
 	
 	

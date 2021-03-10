@@ -23,12 +23,19 @@ public class XslTransformation {
         transformer.transform(new StreamSource(form), new StreamResult(outputStream));
     }
 
-    public void xslGenerateFo(InputStream input, InputStream xslSheet, OutputStream outputStream, String surveyUnit) throws  TransformerException {
-        TransformerFactory tFactory = new TransformerFactoryImpl();
+    public void xslGenerateFo(InputStream input, 
+    		InputStream xslSheet, 
+    		OutputStream outputStream, 
+    		String date,
+			String campaignLabel,
+			String idec) throws  TransformerException {
+    	TransformerFactory tFactory = new TransformerFactoryImpl();
         tFactory.setURIResolver(new ClasspathURIResolver());
         Transformer transformer = tFactory.newTransformer(new StreamSource(xslSheet));
         transformer.setURIResolver(new ClasspathURIResolver());
-        transformer.setParameter(XslParameters.UNITE, surveyUnit);
+        transformer.setParameter(XslParameters.CAMPAIGN_LABEL, idec);
+        transformer.setParameter(XslParameters.TITRE, campaignLabel);
+        transformer.setParameter(XslParameters.DATE, date);
         transformer.transform(new StreamSource(input), new StreamResult(outputStream));
     }
 }

@@ -9,11 +9,8 @@ public class GenerateFoServiceImpl implements GenerateFoService {
     private XslTransformation transformationService = new XslTransformation();
 
     @Override
-    public File generateFo(File form, File surveyUnitData, String idec) throws Exception {
-        File temp = mergeFormAndData(form, surveyUnitData);
-        File fo = createFoFromFormWithData(temp, idec);
-        temp.delete();
-        return fo;
+    public File generateFo(String date, String campaignLabel, String idec) throws Exception {
+        return createFoFromFormWithData(date, campaignLabel, idec);
     }
 
     public File mergeFormAndData(File form, File surveyUnitData) throws Exception{
@@ -37,15 +34,16 @@ public class GenerateFoServiceImpl implements GenerateFoService {
         return outputFile;
     }
 
-    public File createFoFromFormWithData(File formData, String idec) throws Exception{
+    public File createFoFromFormWithData(String date,
+    									String campaignLabel,
+    									String idec) throws Exception{
         File outputFile = File.createTempFile("fo-file",".fo");
-
-        InputStream inputStream = new FileInputStream(formData);
+        InputStream inputStream =  Constants.getEmptyXml();
         OutputStream outputStream = new FileOutputStream(outputFile);
         InputStream XSL = Constants.getInputStreamFromPath(Constants.TRANSFORMATION_XSL_COMMON);
 
         try {
-            transformationService.xslGenerateFo(inputStream, XSL, outputStream, idec);
+            transformationService.xslGenerateFo(inputStream, XSL, outputStream, date, campaignLabel, idec);
         }catch(Exception e) {
             throw new Exception(e.getMessage());
         }

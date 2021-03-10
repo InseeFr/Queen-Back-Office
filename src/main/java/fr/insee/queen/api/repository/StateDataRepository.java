@@ -17,19 +17,7 @@ import fr.insee.queen.api.dto.stateData.StateDataDto;
 * 
 */
 public interface StateDataRepository extends JpaRepository<StateData, Long> {
-	/**
-	* This method retrieve all Data in DB
-	* 
-	* @return List of all {@link DataDto}
-	*/
-	List<DataDto> findDtoBy();
-	/**
-	* This method retrieve the Data for a specific reporting_unit
-	* 
-	* @param id the id of reporting unit
-	* @return {@link DataDto}
-	*/
-	Optional<StateDataDto> findDtoBySurveyUnit_id(String id);
+
 	/**
 	* This method retrieve the Data for a specific reporting_unit
 	* 

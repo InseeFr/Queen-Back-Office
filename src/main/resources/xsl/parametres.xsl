@@ -5,6 +5,8 @@
                 xmlns:saxon="http://saxon.sf.net/" xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:xhtml="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xs" version="2.0">
 
+    <xsl:param name="campaignLabel"/>
+    <xsl:param name="date"/>
     <xsl:param name="unite"/>
     <xsl:param name="style" select="string('any')"/>
     <xsl:param name="imgPathAQuoi" select="'img/Insee_formulaire-recensement-bleunuance2.png'"/>

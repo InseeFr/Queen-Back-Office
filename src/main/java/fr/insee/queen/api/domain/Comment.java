@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -44,6 +45,7 @@ public class Comment extends AbstractEntity {
 	* The SurveyUnit associated to the comment
 	*/
 	@OneToOne
+	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;
 	
 	/**

@@ -66,11 +66,10 @@ public class StateDataController {
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
-			Optional<StateDataDto> stateDataOptional = stateDataRepository.findDtoBySurveyUnit_id(id);
-			if (!stateDataOptional.isPresent()) {
+			if (surveyUnitOptional.get().getStateData() == null) {
 				return new ResponseEntity<>(new JSONObject(), HttpStatus.OK);
 			}else {
-				return new ResponseEntity<>(stateDataOptional.get(), HttpStatus.OK);
+				return new ResponseEntity<>(new StateDataDto(surveyUnitOptional.get().getStateData()), HttpStatus.OK);
 			}
 		}
 	}

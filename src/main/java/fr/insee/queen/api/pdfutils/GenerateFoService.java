@@ -4,5 +4,5 @@ import java.io.File;
 
 public interface GenerateFoService {
 
-    public abstract File generateFo(File form, File surveyUnitData, String idec) throws Exception;
+    public abstract File generateFo(String date, String campaignLabel, String idec) throws Exception;
 }
