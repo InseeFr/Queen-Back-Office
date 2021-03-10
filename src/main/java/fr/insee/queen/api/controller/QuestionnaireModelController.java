@@ -16,7 +16,7 @@ import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
-import fr.insee.queen.api.repository.CampaignRepository;
+//import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import io.swagger.annotations.ApiOperation;
 
@@ -40,8 +40,8 @@ public class QuestionnaireModelController {
 	/**
 	* The campaign repository using to access to table 'campaign' in DB 
 	*/
-	@Autowired
-	private CampaignRepository campaignRepository;
+//	@Autowired
+//	private CampaignRepository campaignRepository;
 	
 	/**
 	* This method is using to get the questionnaireModel associated to a specific campaign 
@@ -49,35 +49,54 @@ public class QuestionnaireModelController {
 	* @param id the id of campaign
 	* @return the {@link QuestionnaireModelDto} associated to the campaign
 	*/
-	@ApiOperation(value = "Get questionnnaire model by campaign Id ")
-	@GetMapping(path = "/campaign/{id}/questionnaire")
-	public ResponseEntity<QuestionnaireModelDto> getQuestionnaireModelByCampaignId(@PathVariable(value = "id") String id){
-		Optional<Campaign> campaignOptional = campaignRepository.findById(id);
-		if (!campaignOptional.isPresent()) {
-			LOGGER.info("GET questionnaire model for campaign with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		} else {
-			LOGGER.info("GET questionnaire model for campaign with id {} resulting in 200", id);
-			return new ResponseEntity<>(questionnaireModelRepository.findQuestionnaireModelDtoByCampaignId(id), HttpStatus.OK);
-		}
-	}
-	
+//	@ApiOperation(value = "Get questionnnaire model by campaign Id ")
+//	@GetMapping(path = "/campaign/{id}/questionnaire")
+//	public ResponseEntity<QuestionnaireModelDto> getQuestionnaireModelByCampaignId(@PathVariable(value = "id") String id){
+//		Optional<Campaign> campaignOptional = campaignRepository.findById(id);
+//		if (!campaignOptional.isPresent()) {
+//			LOGGER.info("GET questionnaire model for campaign with id {} resulting in 404", id);
+//			return ResponseEntity.notFound().build();
+//		} else {
+//			LOGGER.info("GET questionnaire model for campaign with id {} resulting in 200", id);
+//			return new ResponseEntity<>(questionnaireModelRepository.findQuestionnaireModelDtoByCampaignId(id), HttpStatus.OK);
+//		}
+//	}
+//	
+//	/**
+//	* This method is using to get the questionnaireModel Id associated to a specific campaign 
+//	* 
+//	* @param id the id of campaign
+//	* @return the {@link QuestionnaireIdDto} associated to the campaign
+//	*/
+//	@ApiOperation(value = "Get questionnnaire id by campaign Id ")
+//	@GetMapping(path = "/campaign/{id}/questionnaire-id")
+//	public ResponseEntity<QuestionnaireIdDto> getQuestionnaireModelIdByCampaignId(@PathVariable(value = "id") String id){
+//		Optional<Campaign> campaignOptional = campaignRepository.findById(id);
+//		if (!campaignOptional.isPresent()) {
+//			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 404", id);
+//			return ResponseEntity.notFound().build();
+//		} else {
+//			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 200", id);
+//			return new ResponseEntity<>(questionnaireModelRepository.findQuestionnaireIdDtoByCampaignId(id), HttpStatus.OK);
+//		}
+//	}
+//	
 	/**
-	* This method is using to get the questionnaireModel Id associated to a specific campaign 
+	* This method is used to retrieve a questionnaireModel by Id
 	* 
-	* @param id the id of campaign
-	* @return the {@link QuestionnaireIdDto} associated to the campaign
+	* @param id the id of questionnaire
+	* @return the {@link QuestionnaireModelResponseDto} associated to the id
 	*/
-	@ApiOperation(value = "Get questionnnaire id by campaign Id ")
-	@GetMapping(path = "/campaign/{id}/questionnaire-id")
-	public ResponseEntity<QuestionnaireIdDto> getQuestionnaireModelIdByCampaignId(@PathVariable(value = "id") String id){
-		Optional<Campaign> campaignOptional = campaignRepository.findById(id);
-		if (!campaignOptional.isPresent()) {
-			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 404", id);
+	@ApiOperation(value = "Get a questionnnaire model by Id ")
+	@GetMapping(path = "/api/questionnaire/{id}")
+	public ResponseEntity<QuestionnaireModelDto> getQuestionnaireModelById(@PathVariable(value = "id") String id){
+		Optional<QuestionnaireModelDto> questMod = questionnaireModelRepository.findDtoById(id);
+		if (!questMod.isPresent()) {
+			LOGGER.info("GET questionnaire for id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
-			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 200", id);
-			return new ResponseEntity<>(questionnaireModelRepository.findQuestionnaireIdDtoByCampaignId(id), HttpStatus.OK);
+			LOGGER.info("GET questionnaire for id {} resulting in 200", id);
+			return new ResponseEntity<>(questMod.get(), HttpStatus.OK);
 		}
 	}
 }

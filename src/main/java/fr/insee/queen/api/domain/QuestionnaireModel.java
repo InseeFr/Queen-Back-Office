@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -55,6 +56,13 @@ public class QuestionnaireModel {
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "required_nomenclature", joinColumns = { @JoinColumn(name = "id_required_nomenclature") }, inverseJoinColumns = { @JoinColumn(name = "code") })
 	private Set<Nomenclature> nomenclatures;
+	
+	/**
+	 * The campaign associated to the questionnaireModel
+	 */
+	@ManyToOne
+	private Campaign campaign;
+	
 	/**
 	 * @return id of nomenclature
 	 */
@@ -90,6 +98,30 @@ public class QuestionnaireModel {
 	 */
 	public void setModel(JSONObject model) {
 		this.model = model;
+	}
+	/**
+	 * @return the campaign
+	 */
+	public Campaign getCampaign() {
+		return campaign;
+	}
+	/**
+	 * @param campaign the campaign to set
+	 */
+	public void setCampaign(Campaign campaign) {
+		this.campaign = campaign;
+	}
+	/**
+	 * @return the nomenclatures
+	 */
+	public Set<Nomenclature> getNomenclatures() {
+		return nomenclatures;
+	}
+	/**
+	 * @param nomenclatures the nomenclatures to set
+	 */
+	public void setNomenclatures(Set<Nomenclature> nomenclatures) {
+		this.nomenclatures = nomenclatures;
 	}
 
 }

@@ -35,7 +35,6 @@ public interface NomenclatureRepository extends JpaRepository<Nomenclature, Stri
 	@Query(value="SELECT rn.code " 
 			+ "FROM required_nomenclature rn "
 			+ "JOIN questionnaire_model qm ON qm.id = rn.id_required_nomenclature "
-			+ "JOIN campaign op ON op.questionnaire_model_id = qm.id "
-			+ "WHERE op.id=?1 ", nativeQuery=true)
+			+ "WHERE qm.campaign_id=?1 ", nativeQuery=true)
 	public List<String> findRequiredNomenclatureByCampaign(String id);
 }

@@ -1,9 +1,13 @@
 package fr.insee.queen.api.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 /**
 * Entity Campaign : represent the entity table in DB
@@ -20,17 +24,16 @@ public class Campaign {
 	@Id
 	@Column(length=50)
 	private String id;
+  
 	/**
 	* The label of campaign 
 	*/
 	@Column(length=255, nullable = false)
 	private String label;
+  
+	@OneToMany(targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
+	private Set<QuestionnaireModel> questionnaireModels = new HashSet<>();
 	 
-	/**
-	* The QuestionnaireModel associated to campaign
-	*/
-	@ManyToOne
-	private QuestionnaireModel questionnaireModel;
 	/**
 	 * @return id of nomenclature
 	 */
@@ -55,16 +58,12 @@ public class Campaign {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	/**
-	 * @return QuestionnaireModel associated to campaign
-	 */
-	public QuestionnaireModel getQuestionnaireModel() {
-		return questionnaireModel;
+	
+	public Set<QuestionnaireModel> getQuestionnaireModels(){
+		return questionnaireModels;
 	}
-	/**
-	 * @param questionnaireModel questionnaireModel to set
-	 */
-	public void setQuestionnaireModel(QuestionnaireModel questionnaireModel) {
-		this.questionnaireModel = questionnaireModel;
+	public void getQuestionnaireModels(Set<QuestionnaireModel> questionnaireModels){
+		this.questionnaireModels = questionnaireModels;
 	}
+	
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Comment;
+import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.comment.CommentDto;
 import fr.insee.queen.api.repository.CommentRepository;
@@ -91,8 +92,12 @@ public class CommentController {
 		} else {
 			Optional<Comment> commentOptional = commentRepository.findBySurveyUnit_id(id);
 			if (!commentOptional.isPresent()) {
-				LOGGER.info("PUT comment for reporting unit with id {} resulting in 404", id);
-				return ResponseEntity.notFound().build();
+				Comment newComment = new Comment();
+				newComment.setSurveyUnit(surveyUnitOptional.get());
+				newComment.setValue(commentValue);
+				commentRepository.save(newComment);
+				LOGGER.info("PUT comment for reporting unit with id {} resulting in 200", id);
+				return ResponseEntity.ok().build();
 			}else {
 				commentOptional.get().setValue(commentValue);
 				commentRepository.save(commentOptional.get());

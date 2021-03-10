@@ -1,5 +1,8 @@
 package fr.insee.queen.api.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Campaign;
+import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.campaign.CampaignDto;
+import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
 import fr.insee.queen.api.repository.CampaignRepository;
 import io.swagger.annotations.ApiOperation;
 
@@ -39,8 +44,19 @@ public class CampaignController {
 	@ApiOperation(value = "Get list of campaigns")
 	@GetMapping(path = "/campaigns")
 	public ResponseEntity<Object> getListCampaign(){
+		List<Campaign> campaigns = campaignRepository.findAll();
+
+		List<CampaignResponseDto> resp = campaigns.stream()
+				.map(camp -> new CampaignResponseDto(
+					camp.getId(), 
+					camp.getQuestionnaireModels().stream()
+						.map(QuestionnaireModel::getId)
+						.collect(Collectors.toList())
+					)
+				)
+				.collect(Collectors.toList());
 		LOGGER.info("GET campaigns resulting in 200");
-		return new ResponseEntity<Object>(campaignRepository.findDtoBy(), HttpStatus.OK);
+		return new ResponseEntity<Object>(resp, HttpStatus.OK);
 	}
 	
 }

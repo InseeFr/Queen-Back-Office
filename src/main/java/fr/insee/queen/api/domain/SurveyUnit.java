@@ -3,6 +3,7 @@ package fr.insee.queen.api.domain;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 /**
 * Entity SurveyUnit : represent the entity table in DB
@@ -24,6 +25,24 @@ public class SurveyUnit extends AbstractEntity {
 	*/
 	@ManyToOne
     private Campaign campaign ;
+	
+	/**
+	* The questionnaire model associated to the reporting unit
+	*/
+	@ManyToOne
+	private QuestionnaireModel questionnaireModel;
+	
+//	@OneToOne
+//	private Comment comment;
+//	
+//	@OneToOne
+//	private Data data;
+//	
+//	@OneToOne
+//	private StateData stateData;
+	
+	
+	
 	/**
 	 * @return id of surveyUnit
 	 */
@@ -47,6 +66,25 @@ public class SurveyUnit extends AbstractEntity {
 	 */
 	public void setCampaign(Campaign campaign) {
 		this.campaign = campaign;
+	}
+	/**
+	 * @return the questionnaireModel
+	 */
+	public QuestionnaireModel getQuestionnaireModel() {
+		return questionnaireModel;
+	}
+	
+	/**
+	 * @return the questionnaireModelId
+	 */
+	public String getQuestionnaireModelId() {
+		return questionnaireModel== null ? null : questionnaireModel.getId();
+	}
+	/**
+	 * @param questionnaireModel the questionnaireModel to set
+	 */
+	public void setQuestionnaireModel(QuestionnaireModel questionnaireModel) {
+		this.questionnaireModel = questionnaireModel;
 	}
 	
 }

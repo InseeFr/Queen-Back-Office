@@ -11,6 +11,8 @@
 	<include file="changelog/000_init.xml" relativeToChangelogFile="true"/>
 	<!-- Data for dev on POSTGRES DB  -->
 	<include file="changelog/data/insert_data.xml" relativeToChangelogFile="true"/>
-	
+	<!-- Rename table names in db -->
 	<include file="changelog/200_rename_entities.xml" relativeToChangelogFile="true"/>
+	<!-- Update data model in db -->
+	<include file="changelog/300_update_data_model.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

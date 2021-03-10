@@ -2,6 +2,7 @@ package fr.insee.queen.api.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +20,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Campaign;
+import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.dto.campaign.CampaignDto;
+import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
+import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 import fr.insee.queen.api.repository.CampaignRepository;
+import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import fr.insee.queen.api.repository.SurveyUnitRepository;
 import fr.insee.queen.api.service.UtilsService;
 import io.swagger.annotations.ApiOperation;
@@ -53,7 +62,67 @@ public class SurveyUnitController {
 	private CampaignRepository campaignRepository;
 	
 	@Autowired
+	private QuestionnaireModelRepository questionnaireRepository;
+	
+	@Autowired
 	private UtilsService utilsService;
+	
+	
+	/**
+	* This method is used to get a survey-unit by id
+	*/
+	@ApiOperation(value = "Get survey-unit")
+	@GetMapping(path = "/survey-unit/{id}")
+	public ResponseEntity<Object> getSurveyUnitById(HttpServletRequest request, @PathVariable(value = "id") String id) throws ParseException, IOException{
+		Optional<SurveyUnit> su = surveyUnitRepository.findById(id);
+		if(!su.isPresent()) {
+			LOGGER.info("GET survey-units with id {} resulting in 404", id);
+			return ResponseEntity.notFound().build();
+		}
+		SurveyUnitResponseDto resp = new SurveyUnitResponseDto(su.get().getId(), su.get().getQuestionnaireModelId(), su.get().getCampaign().getId());
+		LOGGER.info("GET survey-unit resulting in 200");
+		return new ResponseEntity<Object>(resp, HttpStatus.OK);
+	}
+	
+	
+	
+	/**
+	* This method is used to update a survey-unit by id
+	*/
+	@ApiOperation(value = "Put survey-unit")
+	@PutMapping(path = "/survey-unit/{id}")
+	public ResponseEntity<Object> getSurveyUnitById(@RequestBody JSONObject surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) throws ParseException, IOException{
+		Optional<SurveyUnit> su = surveyUnitRepository.findById(id);
+		if(!su.isPresent()) {
+			LOGGER.info("PUT survey-unit with id {} resulting in 404", id);
+			return ResponseEntity.notFound().build();
+		}
+		
+		try {
+			String campaignId = (String) surveyUnit.get("campaignId");
+			String questionnaireId = (String) surveyUnit.get("questionnaireId");
+			SurveyUnit newSU = su.get();
+			if(campaignId != null) {
+				Campaign camp = campaignRepository.findById(campaignId).get();
+				newSU.setCampaign(camp);
+			}
+			
+			if(questionnaireId != null) {
+				QuestionnaireModel questModel = questionnaireRepository.findById(questionnaireId).get();
+				newSU.setQuestionnaireModel(questModel);
+			}
+			surveyUnitRepository.save(newSU);
+		}
+		catch(Exception e) {
+			LOGGER.info("PUT survey-units resulting in 400");
+			return ResponseEntity.badRequest().build();
+		}
+		
+		
+		
+		LOGGER.info("PUT survey-units resulting in 200");
+		return ResponseEntity.ok().build();
+	}
 	
 	/**
 	* This method is using to get all survey units associated to a specific campaign 
@@ -73,7 +142,7 @@ public class SurveyUnitController {
 				LOGGER.info("GET survey-units for campaign with id {} resulting in 404", id);
 				return ResponseEntity.notFound().build();
 			}
-			Map<String, SurveyUnitDto> surveyUnitMap = new HashMap<>();
+			Map<String, SurveyUnitResponseDto> surveyUnitMap = new HashMap<>();
 			ResponseEntity<Object> result = utilsService.getSuFromPearlJam(request);
 			LOGGER.info("GET survey-units from PearJam API resulting in {}", result.getStatusCode());
 			if(result.getStatusCode()!=HttpStatus.OK) {
@@ -93,9 +162,11 @@ public class SurveyUnitController {
 			LOGGER.info("Detail : {}", displayDetail(objects));
 			for(LinkedHashMap<String, String> map : objects) {
 				if(map.get("campaign").equals(id)) {
-					SurveyUnitDto su = surveyUnitRepository.findDtoById(map.get("id"));
-					if(su != null && surveyUnitMap.get(su.getId())==null) {
-						surveyUnitMap.put(su.getId(), su);
+					LOGGER.info("ID : {}", map.get("id"));
+					Optional<SurveyUnit> su = surveyUnitRepository.findById(map.get("id"));
+					if(su.isPresent() && surveyUnitMap.get(su.get().getId())==null) {
+						LOGGER.info("ID is present");
+						surveyUnitMap.put(su.get().getId(), new SurveyUnitResponseDto(su.get().getId(), su.get().getQuestionnaireModelId(),null));
 					}
 				}
 			}
@@ -104,14 +175,16 @@ public class SurveyUnitController {
 			return new ResponseEntity<>(surveyUnitMap.values(), HttpStatus.OK);			
 		} else {
 			LOGGER.info("GET survey-units for campaign with id {} resulting in 200", id);
-			List<SurveyUnitDto> results = surveyUnitRepository.findDtoByCampaign_id(id);
-			if(results.isEmpty()) {
-				return ResponseEntity.notFound().build();
-			}else {
-				return new ResponseEntity<>(results, HttpStatus.OK);
-			}
+			List<SurveyUnit> results = surveyUnitRepository.findByCampaign_id(id);
+			List<SurveyUnitResponseDto> resp = results.stream()
+					.map(su -> new SurveyUnitResponseDto(su.getId(), su.getQuestionnaireModelId(),null))
+					.collect(Collectors.toList());
+			return new ResponseEntity<>(resp, HttpStatus.OK);
+			
 		}
 	}
+	
+	
 
 	private String displayDetail(List<LinkedHashMap<String, String>> objects) {
 		Map<String,Integer> nbSUbyCampaign = new HashMap<>();

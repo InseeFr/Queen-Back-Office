@@ -18,9 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Data;
+import fr.insee.queen.api.domain.StateData;
+import fr.insee.queen.api.domain.StateStateData;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.data.DataDto;
+import fr.insee.queen.api.dto.stateData.StateDataDto;
 import fr.insee.queen.api.repository.DataRepository;
+import fr.insee.queen.api.repository.StateDataRepository;
 import fr.insee.queen.api.repository.SurveyUnitRepository;
 import io.swagger.annotations.ApiOperation;
 
@@ -32,14 +36,14 @@ import io.swagger.annotations.ApiOperation;
 */
 @RestController
 @RequestMapping(path = "/api")
-public class DataController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataController.class);
+public class StateDataController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(StateDataController.class);
 	
 	/**
 	* The data repository using to access to table 'data' in DB 
 	*/
 	@Autowired
-	private DataRepository dataRepository;
+	private StateDataRepository stateDataRepository;
 	
 	/**
 	* The reporting unit repository using to access to table 'reporting_unit' in DB 
@@ -54,7 +58,7 @@ public class DataController {
 	* @return {@link DataDto} the data associated to the reporting unit
 	*/
 	@ApiOperation(value = "Get data by reporting unit Id ")
-	@GetMapping(path = "/survey-unit/{id}/data")
+	@GetMapping(path = "/survey-unit/{id}/state-data")
 	public ResponseEntity<Object>  getDataBySurveyUnit(@PathVariable(value = "id") String id){
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitRepository.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
@@ -62,11 +66,11 @@ public class DataController {
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
-			Optional<Data> dataOptional = dataRepository.findBySurveyUnit_id(id);
-			if (!dataOptional.isPresent()) {
+			Optional<StateDataDto> stateDataOptional = stateDataRepository.findDtoBySurveyUnit_id(id);
+			if (!stateDataOptional.isPresent()) {
 				return new ResponseEntity<>(new JSONObject(), HttpStatus.OK);
 			}else {
-				return new ResponseEntity<>(dataOptional.get().getValue(), HttpStatus.OK);
+				return new ResponseEntity<>(stateDataOptional.get(), HttpStatus.OK);
 			}
 		}
 	}
@@ -80,27 +84,44 @@ public class DataController {
 	* 
 	*/
 	@ApiOperation(value = "Update data by reporting unit Id ")
-	@PutMapping(path = "/survey-unit/{id}/data")
+	@PutMapping(path = "/survey-unit/{id}/state-data")
 	public ResponseEntity<Object> setData(@RequestBody JSONObject dataValue, @PathVariable(value = "id") String id) throws ParseException, SQLException {
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitRepository.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
 			LOGGER.info("PUT data for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
-			Optional<Data> dataOptional = dataRepository.findBySurveyUnit_id(id);
-			if (!dataOptional.isPresent()) {
-				Data newData = new Data();
-				newData.setSurveyUnit(surveyUnitOptional.get());
-				newData.setValue(dataValue);
-				dataRepository.save(newData);
-				LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);
-				return ResponseEntity.ok().build();
+			Optional<StateData> stateDataOptional = stateDataRepository.findBySurveyUnit_id(id);
+			StateData stateData;
+			if (!stateDataOptional.isPresent()) {
+				stateData = new StateData();
+				stateData.setSurveyUnit(surveyUnitOptional.get());
 			}else {
-				dataOptional.get().setValue(dataValue);
-				dataRepository.save(dataOptional.get());
-				LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);
-				return ResponseEntity.ok().build();
+				stateData = stateDataOptional.get();
 			}
+			
+			try {
+				Long date = (Long) dataValue.get("date");
+				String state = (String) dataValue.get("state");
+				Integer currentPage = (Integer) dataValue.get("currentPage");
+				if(date != null) {
+					stateData.setDate(date);
+				}
+				if(state != null) {
+					stateData.setState(StateStateData.valueOf(state));
+				}
+				if(currentPage != null) {
+					stateData.setCurrentPage(currentPage);
+				}
+				stateDataRepository.save(stateData);
+			}
+			catch(Exception e) {
+				LOGGER.info("PUT state-data resulting in 400");
+				return ResponseEntity.badRequest().build();
+			}
+			
+			LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);
+			return ResponseEntity.ok().build();
 		}
 	}
 }

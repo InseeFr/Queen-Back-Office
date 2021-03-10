@@ -78,8 +78,12 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE_ID).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES).hasRole(role)
 					.antMatchers(Constants.API_SURVEY_UNIT_DATA).hasRole(role)
-					.antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
-					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+          .antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
+          .antMatchers(Constants.API_SURVEY_UNIT_STATE_DATA).hasRole(role)
+                    .antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+                    .antMatchers(Constants.API_QUESTIONNAIRE).hasRole(role)
+                    .antMatchers(Constants.API_PARADATAEVENT).hasRole(role)
+                    .antMatchers(Constants.API_QUESTIONNAIRE_NOMENCLATURE).hasRole(role)
 					.anyRequest().denyAll(); 
 	}
 	

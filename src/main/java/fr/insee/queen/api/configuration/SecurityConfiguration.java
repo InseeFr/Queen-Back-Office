@@ -85,8 +85,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE_ID).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES).hasRole(role)
 					.antMatchers(Constants.API_SURVEY_UNIT_DATA).hasRole(role)
-					.antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
+          .antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
+          .antMatchers(Constants.API_SURVEY_UNIT_STATE_DATA).hasRole(role)
 					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+					.antMatchers(Constants.API_QUESTIONNAIRE).hasRole(role)
+					.antMatchers(Constants.API_PARADATAEVENT).hasRole(role)
+					.antMatchers(Constants.API_QUESTIONNAIRE_NOMENCLATURE).hasRole(role)
 					.anyRequest().denyAll();
 		} else {
 			http.httpBasic().disable();
@@ -98,8 +102,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 						Constants.API_CAMPAIGN_QUESTIONAIRE_ID,
 						Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES,
 						Constants.API_SURVEY_UNIT_DATA, 
-						Constants.API_SURVEY_UNIT_COMMENT, 
-						Constants.API_NOMENCLATURE)
+            Constants.API_SURVEY_UNIT_COMMENT, 
+            Constants.API_SURVEY_UNIT_STATE_DATA,
+						Constants.API_NOMENCLATURE,
+						Constants.API_PARADATAEVENT,
+						Constants.API_QUESTIONNAIRE_NOMENCLATURE,
+						Constants.API_QUESTIONNAIRE)
 					.permitAll();
 		}
 	}

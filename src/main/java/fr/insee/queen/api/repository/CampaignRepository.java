@@ -20,4 +20,6 @@ public interface CampaignRepository extends JpaRepository<Campaign, String> {
 	* @return List of all {@link CampaignDto}
 	*/
 	List<CampaignDto> findDtoBy();
+
+	List<Campaign> findAll();
 }
