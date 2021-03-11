@@ -2,7 +2,7 @@
 <Configuration monitorInterval="60">
 
 	<Properties>
-		<property name="logRepo">/Users/paulguillemet/Desktop/KC/old/insee-sonor</property>
+		<property name="logRepo">/var/log</property>
 		<property name="logFileName">queen-bo</property>
 	</Properties>
 
