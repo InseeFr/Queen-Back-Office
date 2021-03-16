@@ -54,7 +54,7 @@ Before to startup the tomcat server, some configurations are needed :
  
 
 #### External Properties file
-Create queen-bo.properties near war file and complete the following properties:  
+Create queenbo.properties or colemcobo.properties near war file and complete the following properties:  
 ```shell  
 #Profile configuration
 spring.profiles.active=prod
