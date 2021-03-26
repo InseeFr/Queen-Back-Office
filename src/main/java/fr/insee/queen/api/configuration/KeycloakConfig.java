@@ -74,12 +74,23 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
                    	// configuration for endpoints
        				.antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
        				.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS_CREATE).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE_ID).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT).hasRole(role)
 					.antMatchers(Constants.API_SURVEY_UNIT_DATA).hasRole(role)
 					.antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
-					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_STATE_DATA).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_DEPOSIT_PROOF).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_PERSONALIZATION).hasRole(role)
+                    .antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+					.antMatchers(Constants.API_NOMENCLATURE_POST).hasRole(role)
+                    .antMatchers(Constants.API_QUESTIONNAIRE).hasRole(role)
+                    .antMatchers(Constants.API_PARADATAEVENT).hasRole(role)
+                    .antMatchers(Constants.API_QUESTIONNAIRE_NOMENCLATURE).hasRole(role)
+                    .antMatchers(Constants.API_QUESTIONNAIRE_CREATE_QUESTIONNAIRE).hasRole(role)
+                    .antMatchers(Constants.API_CREATE_DATASET).hasRole(role)
 					.anyRequest().denyAll(); 
 	}
 	

@@ -2,7 +2,10 @@ package fr.insee.queen.api.repository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Repository;
+
 
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.dto.campaign.CampaignDto;
@@ -13,11 +16,15 @@ import fr.insee.queen.api.dto.campaign.CampaignDto;
 * @author Claudel Benjamin
 * 
 */
-public interface CampaignRepository extends JpaRepository<Campaign, String> {
+@Transactional
+@Repository
+public interface CampaignRepository extends ApiRepository<Campaign, String> {
 	/**
 	* This method retrieve all Campaign in DB
 	* 
 	* @return List of all {@link CampaignDto}
 	*/
 	List<CampaignDto> findDtoBy();
+
+	List<Campaign> findAll();
 }

@@ -9,7 +9,7 @@
     </changeSet>
     <changeSet author="admin (generated)" id="1587050082650-2">
         <createTable tableName="comment">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column name="id" type="UUID">
                 <constraints primaryKey="true" primaryKeyName="commentPK"/>
             </column>
             <column name="value" type="JSONB"/>
@@ -18,7 +18,7 @@
     </changeSet>
     <changeSet author="admin (generated)" id="1587050082650-3">
         <createTable tableName="data">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column name="id" type="UUID">
                 <constraints primaryKey="true" primaryKeyName="dataPK"/>
             </column>
             <column name="value" type="JSONB"/>

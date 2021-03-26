@@ -5,9 +5,19 @@ import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -15,15 +25,31 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import fr.insee.queen.api.repository.CampaignRepository;
+import fr.insee.queen.api.service.DataSetInjectorService;
+import fr.insee.queen.api.service.impl.DataSetInjectorServiceImpl;
 
-@SpringBootApplication(scanBasePackages = "fr.insee.queen.api")
-@EnableJpaRepositories(basePackageClasses = CampaignRepository.class)
+@SpringBootApplication(scanBasePackages = "fr.insee.queen.api",
+		exclude = {
+        // Jpa Hibernate auto config off
+        DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class,
+        JpaRepositoriesAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class,
+
+        // Mongo auto config off
+        MongoAutoConfiguration.class,
+        MongoDataAutoConfiguration.class,
+        MongoRepositoriesAutoConfiguration.class})
 public class ApiApplication extends SpringBootServletInitializer{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApiApplication.class);
 
+	@Autowired
+    private DataSetInjectorService injector;
+	
+	@Value("${spring.profiles.active}")
+    private String profile;
+	
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(ApiApplication.class);
 		app.run(args);
@@ -62,4 +88,11 @@ public class ApiApplication extends SpringBootServletInitializer{
                 .forEach(prop -> LOGGER.info("{}: {}", prop, env.getProperty(prop)));
         LOGGER.info("============================================================================");
     }
+	
+	@EventListener(ApplicationReadyEvent.class)
+	public void doSomethingAfterStartup() {
+	    if(profile.contains("dev") && !profile.contains("test")) {
+	    	injector.createDataSet();
+	    }
+	}
 }

@@ -2,8 +2,11 @@ package fr.insee.queen.api.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Repository;
 
 import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.dto.data.DataDto;
@@ -14,7 +17,9 @@ import fr.insee.queen.api.dto.data.DataDto;
 * @author Claudel Benjamin
 * 
 */
-public interface DataRepository extends JpaRepository<Data, Long> {
+@Transactional
+@Repository
+public interface DataRepository extends ApiRepository<Data, UUID> {
 	/**
 	* This method retrieve all Data in DB
 	* 
@@ -27,12 +32,12 @@ public interface DataRepository extends JpaRepository<Data, Long> {
 	* @param id the id of reporting unit
 	* @return {@link DataDto}
 	*/
-	DataDto findDtoBySurveyUnit_id(String id);
+	DataDto findDtoBySurveyUnitId(String id);
 	/**
 	* This method retrieve the Data for a specific reporting_unit
 	* 
 	* @param id the id of reporting unit
 	* @return {@link Data}
 	*/
-	Optional<Data> findBySurveyUnit_id(String id);
+	Optional<Data> findBySurveyUnitId(String id);
 }
