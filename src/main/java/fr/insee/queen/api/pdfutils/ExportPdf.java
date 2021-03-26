@@ -1,25 +1,27 @@
 package fr.insee.queen.api.pdfutils;
 
-import fr.insee.queen.api.pdfutils.PDFDepositProofService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExportPdf extends HttpServlet {
 
-    static Logger logger = LoggerFactory.getLogger(ExportPdf.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6664666680913562382L;
+
+	static Logger logger = LoggerFactory.getLogger(ExportPdf.class);
 
     private PDFDepositProofService depositProofService;
 

@@ -1,0 +1,325 @@
+package fr.insee.queen.api.service.impl;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
+
+import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import fr.insee.queen.api.domain.Campaign;
+import fr.insee.queen.api.domain.Comment;
+import fr.insee.queen.api.domain.Data;
+import fr.insee.queen.api.domain.Metadata;
+import fr.insee.queen.api.domain.Nomenclature;
+import fr.insee.queen.api.domain.ParadataEvent;
+import fr.insee.queen.api.domain.Personalization;
+import fr.insee.queen.api.domain.QuestionnaireModel;
+import fr.insee.queen.api.domain.StateData;
+import fr.insee.queen.api.domain.StateDataType;
+import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.domain.Version;
+import fr.insee.queen.api.dto.campaign.CampaignDto;
+import fr.insee.queen.api.service.CampaignService;
+import fr.insee.queen.api.service.CommentService;
+import fr.insee.queen.api.service.DataService;
+import fr.insee.queen.api.service.DataSetInjectorService;
+import fr.insee.queen.api.service.MetadataService;
+import fr.insee.queen.api.service.NomenclatureService;
+import fr.insee.queen.api.service.ParadataEventService;
+import fr.insee.queen.api.service.PersonalizationService;
+import fr.insee.queen.api.service.QuestionnaireModelService;
+import fr.insee.queen.api.service.StateDataService;
+import fr.insee.queen.api.service.SurveyUnitService;
+import io.swagger.annotations.ApiOperation;
+
+@Service
+public class DataSetInjectorServiceImpl implements DataSetInjectorService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DataSetInjectorServiceImpl.class);
+
+	@Autowired
+	private CampaignService campaignservice;
+	@Autowired
+	private SurveyUnitService surveyUnitService;
+	@Autowired
+	private DataService dataService;
+	@Autowired
+	private CommentService commentService;
+	@Autowired
+	private ParadataEventService paradataEventService;
+	@Autowired
+	private MetadataService metadataService;
+	@Autowired
+	private PersonalizationService personalizationService;
+	@Autowired
+	private StateDataService stateDataService;
+	@Autowired
+	private QuestionnaireModelService questionnaireModelService;
+	@Autowired
+	private NomenclatureService nomenclatureService;
+	
+
+	
+	private ObjectMapper objectMapper = new ObjectMapper();
+
+	public void createDataSet() {
+		
+		
+		LOGGER.info("Dataset creation start");
+		JsonNode jsonArrayNomenclatureCities2019 = objectMapper.createObjectNode();
+		JsonNode jsonArrayRegions2019 = objectMapper.createObjectNode();
+		JsonNode jsonQuestionnaireModelSimpsons = objectMapper.createObjectNode();
+		JsonNode jsonQuestionnaireModelVqs = objectMapper.createObjectNode();
+		try {
+			 jsonArrayNomenclatureCities2019 = objectMapper.readTree(new File("src//main//resources//db//dataset//cities_2019_nomenclature.json"));
+			 jsonArrayRegions2019 = objectMapper.readTree(new File("src//main//resources//db//dataset//regions_2019_nomenclature.json"));
+			 jsonQuestionnaireModelSimpsons = objectMapper.readTree(new File("src//main//resources//db//dataset//simpsons_2020_questionnaire_models.json"));
+			 jsonQuestionnaireModelVqs = objectMapper.readTree(new File("src//main//resources//db//dataset//vqs_2021_questionnaire_models.json"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Nomenclature n = new Nomenclature("cities2019","french cities 2019",jsonArrayNomenclatureCities2019);
+		Nomenclature n2 = new Nomenclature("regions2019","french regions 2019",jsonArrayRegions2019);
+		if(!nomenclatureService.findById(n.getId()).isPresent()) {
+			nomenclatureService.save(n);
+		}
+		if(!nomenclatureService.findById(n2.getId()).isPresent()) {
+			nomenclatureService.save(n2);
+		}
+		
+		ParadataEvent pde = new ParadataEvent(UUID.randomUUID(),objectMapper.createObjectNode());
+		ParadataEvent pde2 = new ParadataEvent(UUID.randomUUID(),objectMapper.createObjectNode());
+		paradataEventService.save(pde);
+		paradataEventService.save(pde2);
+		
+		QuestionnaireModel qmWithoutCamp = new QuestionnaireModel("QmWithoutCamp","Questionnaire with no campaign",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),null);
+		if(!questionnaireModelService.findById(qmWithoutCamp.getId()).isPresent()) {
+			questionnaireModelService.save(qmWithoutCamp);
+		}
+	
+
+		Campaign camp = new Campaign("simpsons2020x00","Survey on the Simpsons tv show 2020",null); 
+		QuestionnaireModel qm = new QuestionnaireModel("simpsons","Questionnaire about the Simpsons tv show",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),camp);
+		camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
+		if(!campaignservice.findById(camp.getId()).isPresent()) {
+			campaignservice.save(camp);
+			if(!questionnaireModelService.findById(qm.getId()).isPresent()) {
+				questionnaireModelService.save(qm);
+			}
+			camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
+			campaignservice.save(camp);
+
+			Metadata md = new Metadata(UUID.randomUUID(),objectMapper.createObjectNode(),camp);
+			metadataService.save(md);
+			
+			Data d;
+			Comment c;
+			Personalization p;
+			StateData sd;
+			SurveyUnit su = new SurveyUnit("11",camp,qm,null,null,null,null);
+			if(!surveyUnitService.findById(su.getId()).isPresent()) {
+				surveyUnitService.save(su);
+				d = new Data(UUID.randomUUID(),Version.COLLECTED,getDataValue(su.getId()),su);
+				dataService.save(d);
+				c = new Comment(UUID.randomUUID(),getComment(),su);
+				commentService.save(c);
+				ArrayNode pValue = objectMapper.createArrayNode();
+				ObjectNode jsonObject = objectMapper.createObjectNode();
+				jsonObject.put("name", "whoAnswers1");
+				jsonObject.put("value", "Mr Dupond");
+				pValue.add(jsonObject);
+				jsonObject = objectMapper.createObjectNode();
+				jsonObject.put("name", "whoAnswers2");
+				jsonObject.put("value", "");
+				pValue.add(jsonObject);
+				p = new Personalization(UUID.randomUUID(),pValue,su);
+				personalizationService.save(p);
+				sd = new StateData(UUID.randomUUID(),StateDataType.EXPORTED,1111111111L,"2.3#5",su);
+				stateDataService.save(sd);
+				su.setData(d);
+				su.setStateData(sd);
+				su.setComment(c);
+				su.setPersonalization(p);
+				surveyUnitService.save(su);
+			}
+			su = new SurveyUnit("12",camp,qm,null,null,null,null);
+			if(!surveyUnitService.findById(su.getId()).isPresent()) {
+				surveyUnitService.save(su);
+				d = new Data(UUID.randomUUID(),Version.INIT,getDataValue(su.getId()),su);
+				dataService.save(d);
+				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				commentService.save(c);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				personalizationService.save(p);
+				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,"2.3#5",su);
+				stateDataService.save(sd);
+				su.setData(d);
+				su.setStateData(sd);
+				su.setComment(c);
+				su.setPersonalization(p);
+				surveyUnitService.save(su);
+			}
+			su = new SurveyUnit("13",camp,qm,null,null,null,null);
+			if(!surveyUnitService.findById(su.getId()).isPresent()) {
+				surveyUnitService.save(su);
+				d = new Data(UUID.randomUUID(),Version.INIT,getDataValue(su.getId()),su);
+				dataService.save(d);
+				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				commentService.save(c);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				personalizationService.save(p);
+				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,"2.3#5",su);
+				stateDataService.save(sd);
+				su.setData(d);
+				su.setStateData(sd);
+				su.setComment(c);
+				su.setPersonalization(p);
+				surveyUnitService.save(su);
+			}
+			su = new SurveyUnit("14",camp,qm,null,null,null,null);
+			if(!surveyUnitService.findById(su.getId()).isPresent()) {
+				surveyUnitService.save(su);
+				d = new Data(UUID.randomUUID(),Version.INIT,getDataValue(su.getId()),su);
+				dataService.save(d);
+				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				commentService.save(c);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				personalizationService.save(p);
+				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,"2.3#5",su);
+				stateDataService.save(sd);
+				su.setData(d);
+				su.setStateData(sd);
+				su.setComment(c);
+				su.setPersonalization(p);
+				surveyUnitService.save(su);
+			}
+		}
+
+		Campaign camp2 = new Campaign("vqs2021x00","Everyday life and health survey 2021",null);
+		QuestionnaireModel qm2 = new QuestionnaireModel("vqs2021x00","Questionnaire of the Everyday life and health survey 2021",jsonQuestionnaireModelVqs,new HashSet<>(List.of(n, n2)),camp2);
+		if(!campaignservice.findById(camp2.getId()).isPresent()) {
+			campaignservice.save(camp2);
+			if(!questionnaireModelService.findById(qm2.getId()).isPresent()) {
+				questionnaireModelService.save(qm2);
+			}
+			camp2.setQuestionnaireModels(new HashSet<>(List.of(qm2)));
+			campaignservice.save(camp2);
+			Metadata md2 = new Metadata(UUID.randomUUID(),objectMapper.createObjectNode(),camp2);
+			metadataService.save(md2);
+			
+			Data d2;
+			Comment c2;
+			Personalization p2;
+			StateData sd2;
+			SurveyUnit su2 = new SurveyUnit("20",camp2,qm2,null,null,null,null);
+			if(surveyUnitService.findById(su2.getId()).isPresent()) {
+				surveyUnitService.save(su2);
+				d2 = new Data(UUID.randomUUID(),Version.INIT,objectMapper.createObjectNode(),su2);
+				dataService.save(d2);
+				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				commentService.save(c2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				personalizationService.save(p2);
+				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
+				stateDataService.save(sd2);
+				su2.setData(d2);
+				su2.setStateData(sd2);
+				su2.setComment(c2);
+				su2.setPersonalization(p2);
+				surveyUnitService.save(su2);
+			}
+			su2 = new SurveyUnit("21",camp2,qm2,null,null,null,null);
+			if(!surveyUnitService.findById(su2.getId()).isPresent()) {
+				surveyUnitService.save(su2);
+				d2 = new Data(UUID.randomUUID(),Version.INIT,objectMapper.createObjectNode(),su2);
+				dataService.save(d2);
+				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				commentService.save(c2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				personalizationService.save(p2);
+				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
+				stateDataService.save(sd2);
+				su2.setData(d2);
+				su2.setStateData(sd2);
+				su2.setComment(c2);
+				su2.setPersonalization(p2);
+				surveyUnitService.save(su2);
+			}
+			su2 = new SurveyUnit("22",camp2,qm2,null,null,null,null);
+			if(!surveyUnitService.findById(su2.getId()).isPresent()) {
+				surveyUnitService.save(su2);
+				d2 = new Data(UUID.randomUUID(),Version.INIT,objectMapper.createObjectNode(),su2);
+				dataService.save(d2);
+				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				commentService.save(c2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				personalizationService.save(p2);
+				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
+				stateDataService.save(sd2);
+				su2.setData(d2);
+				su2.setStateData(sd2);
+				su2.setComment(c2);
+				su2.setPersonalization(p2);
+				surveyUnitService.save(su2);
+			}
+			su2 = new SurveyUnit("23",camp2,qm2,null,null,null,null);
+			if(!surveyUnitService.findById(su2.getId()).isPresent()) {
+				surveyUnitService.save(su2);
+				d2 = new Data(UUID.randomUUID(),Version.INIT,objectMapper.createObjectNode(),su2);
+				dataService.save(d2);
+				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				commentService.save(c2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				personalizationService.save(p2);
+				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
+				stateDataService.save(sd2);
+				su2.setData(d2);
+				su2.setStateData(sd2);
+				su2.setComment(c2);
+				su2.setPersonalization(p2);
+				surveyUnitService.save(su2);
+			}
+		}
+		LOGGER.info("Dataset creation end");	
+	}
+
+	private JsonNode getComment() {
+		ObjectNode jsonValue = objectMapper.createObjectNode();
+		jsonValue.put("COMMENT", "a comment");
+		return jsonValue;
+	}
+
+	private JsonNode getDataValue(String id) {
+		ObjectNode jsonValue = objectMapper.createObjectNode();
+		ObjectNode jsonBroadcast = objectMapper.createObjectNode();
+		jsonBroadcast.put("LAST_BROADCAST", "12/07/1998");
+		jsonValue.put("EXTERNAL", jsonBroadcast);
+		if("11".equals(id)) {
+			return jsonValue;
+		}
+		ObjectNode jsonCollected = objectMapper.createObjectNode();
+		jsonCollected.put("COMMENT", "Love it !");
+		jsonCollected.put("READY", true);
+		jsonCollected.put("PRODUCER", "Matt Groening");
+		jsonValue.put("COLLECTED", jsonCollected);
+		return jsonValue;
+	}
+
+}

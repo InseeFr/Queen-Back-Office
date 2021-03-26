@@ -1,6 +1,6 @@
 package fr.insee.queen.api.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.UUID;
 
 import fr.insee.queen.api.domain.Metadata;
 import fr.insee.queen.api.dto.metadata.MetadataDto;
@@ -11,7 +11,7 @@ import fr.insee.queen.api.dto.metadata.MetadataDto;
 * @author Corcaud Samuel
 * 
 */
-public interface MetadataRepository extends JpaRepository<Metadata, Integer> {
+public interface MetadataRepository extends ApiRepository<Metadata, UUID> {
 	
 	/**
 	* This method retrieve the Metadata for a specific campaign
@@ -19,6 +19,6 @@ public interface MetadataRepository extends JpaRepository<Metadata, Integer> {
 	* @param id the id of campaign
 	* @return {@link MetadataDto}
 	*/
-	MetadataDto findDtoByCampaign_id(String id);
+	MetadataDto findDtoByCampaignId(String id);
 
 }

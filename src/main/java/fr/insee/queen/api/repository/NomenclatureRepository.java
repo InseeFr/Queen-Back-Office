@@ -1,9 +1,5 @@
 package fr.insee.queen.api.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +14,7 @@ import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 */
 @Transactional
 @Repository
-public interface NomenclatureRepository extends JpaRepository<Nomenclature, String>{
+public interface NomenclatureRepository extends ApiRepository<Nomenclature, String>{
 	/**
 	* This method retrieve the NomenclatureDto by id
 	* 
@@ -26,15 +22,5 @@ public interface NomenclatureRepository extends JpaRepository<Nomenclature, Stri
 	* @return{@link NomenclatureDto}
 	*/
 	public NomenclatureDto findDtoById(String id);
-	/**
-	* This method retrieve all Nomenclature ids for a specific campaign
-	* 
-	* @param id id of the campaign
-	* @return List of {@link String}
-	*/
-	@Query(value="SELECT rn.code " 
-			+ "FROM required_nomenclature rn "
-			+ "JOIN questionnaire_model qm ON qm.id = rn.id_required_nomenclature "
-			+ "WHERE qm.campaign_id=?1 ", nativeQuery=true)
-	public List<String> findRequiredNomenclatureByCampaign(String id);
+
 }

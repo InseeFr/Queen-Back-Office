@@ -7,6 +7,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 /**
 * Entity SurveyUnit : represent the entity table in DB
 * 
@@ -14,44 +18,68 @@ import javax.persistence.Table;
 * 
 */
 @Entity
-@Table
-public class SurveyUnit extends AbstractEntity {
+@Table(name="survey_unit")
+@Document(collection="survey_unit")
+public class SurveyUnit {
 	/**
 	* The id of surveyUnit 
 	*/
 	@Id
+	@org.springframework.data.annotation.Id
 	private String id;
 	
 	/**
 	* The campaign associated to the reporting unit
 	*/
+	@DBRef
 	@ManyToOne
     private Campaign campaign ;
 	
 	/**
 	* The questionnaire model associated to the reporting unit
 	*/
+	@DBRef
 	@ManyToOne
+	@JoinColumn(name = "questionnaire_model_id", referencedColumnName = "id")
 	private QuestionnaireModel questionnaireModel;
 	
-
+	@DBRef
 	@OneToOne( mappedBy = "surveyUnit", cascade = CascadeType.ALL )
 	private Comment comment;
 	
+	@DBRef
 	@OneToOne( mappedBy = "surveyUnit", cascade = CascadeType.ALL )
 	private Data data;
 	
+	@DBRef
 	@OneToOne( mappedBy = "surveyUnit", cascade = CascadeType.ALL )
 	private StateData stateData;
 	
+	@DBRef
 	@OneToOne( mappedBy = "surveyUnit", cascade = CascadeType.ALL )
-	private Personnalization personnalization;
+	private Personalization personalization;
 	
-	public Personnalization getPersonnalization() {
-		return personnalization;
+	public SurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel, Comment comment, Data data,
+			StateData stateData, Personalization personalization) {
+		super();
+		this.id = id;
+		this.campaign = campaign;
+		this.questionnaireModel = questionnaireModel;
+		this.comment = comment;
+		this.data = data;
+		this.stateData = stateData;
+		this.personalization = personalization;
 	}
-	public void setPersonnalization(Personnalization personnalization) {
-		this.personnalization = personnalization;
+	
+	public SurveyUnit() {
+		super();
+	}
+
+	public Personalization getPersonalization() {
+		return personalization;
+	}
+	public void setPersonalization(Personalization personalization) {
+		this.personalization = personalization;
 	}
 	/**
 	 * @return id of surveyUnit

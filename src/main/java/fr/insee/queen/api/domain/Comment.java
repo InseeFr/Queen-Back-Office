@@ -1,8 +1,9 @@
 package fr.insee.queen.api.domain;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -10,8 +11,10 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.json.simple.JSONObject;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 /**
@@ -21,55 +24,68 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 * 
 */
 @Entity
-@Table
+@Table(name="comment")
 @TypeDef(
 	    name = "jsonb",
 	    typeClass = JsonBinaryType.class
 	)
-public class Comment extends AbstractEntity {
+@Document(collection="comment")
+public class Comment {
 	/**
 	* The id of comment 
 	*/
 	@Id
-	@GeneratedValue
-	private Long id;
+	@org.springframework.data.annotation.Id
+    protected UUID id;
 	
 	/**
 	* The value of comment (jsonb format)
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private JSONObject value;
+	private JsonNode value;
 
 	/**
 	* The SurveyUnit associated to the comment
 	*/
+	@DBRef
 	@OneToOne
 	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;
 	
+	public Comment() {
+		super();
+		this.id = UUID.randomUUID();
+	}
+	public Comment(UUID id, JsonNode value, SurveyUnit surveyUnit) {
+		super();
+		this.id = id;
+		this.value = value;
+		this.surveyUnit = surveyUnit;
+	}
+	
 	/**
-	 * @return id of comment
+	 * @return the id
 	 */
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 	/**
-	 * @param id id to set
+	 * @param id the id to set
 	 */
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 	/**
 	 * @return value of comment
 	 */
-	public JSONObject getValue() {
+	public JsonNode getValue() {
 		return value;
 	}
 	/**
 	 * @param value value to set
 	 */
-	public void setValue(JSONObject value) {
+	public void setValue(JsonNode value) {
 		this.value = value;
 	}
 	/**

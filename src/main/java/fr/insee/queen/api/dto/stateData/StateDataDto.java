@@ -1,14 +1,24 @@
-package fr.insee.queen.api.dto.stateData;
+package fr.insee.queen.api.dto.statedata;
 
 import fr.insee.queen.api.domain.StateData;
-import fr.insee.queen.api.domain.StateStateData;
+import fr.insee.queen.api.domain.StateDataType;
 
 public class StateDataDto {
-	private StateStateData state;
+	private StateDataType state;
 	private Long date;
-	private int currentPage;
+	private String currentPage;
 	
+	public StateDataDto() {
+		super();
+	}
 	
+	public StateDataDto(StateDataType state, Long date, String currentPage) {
+		super();
+		this.state = state;
+		this.date = date;
+		this.currentPage = currentPage;
+	}
+
 	public StateDataDto(StateData stateData) {
 		super();
 		if(stateData!=null) {
@@ -17,10 +27,10 @@ public class StateDataDto {
 			this.currentPage = stateData.getCurrentPage();
 		}
 	}
-	public StateStateData getState() {
+	public StateDataType getState() {
 		return state;
 	}
-	public void setState(StateStateData state) {
+	public void setState(StateDataType state) {
 		this.state = state;
 	}
 	public Long getDate() {
@@ -29,10 +39,10 @@ public class StateDataDto {
 	public void setDate(Long date) {
 		this.date = date;
 	}
-	public int getCurrentPage() {
+	public String getCurrentPage() {
 		return currentPage;
 	}
-	public void setCurrentPage(int currentPage) {
+	public void setCurrentPage(String currentPage) {
 		this.currentPage = currentPage;
 	}
 }

@@ -1,70 +1,43 @@
 package fr.insee.queen.api.noAuth;
 
+import static io.restassured.RestAssured.post;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.with;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.containsString;
-
-import java.util.HashMap;
-import java.util.Map;
+import static org.hamcrest.Matchers.hasItem;
 
 import org.hamcrest.Matchers;
 import org.json.JSONException;
-import org.json.simple.JSONObject;
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import liquibase.Liquibase;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties= {"fr.insee.queen.application.mode = NoAuth"})
-@ActiveProfiles({ "test" })
-@ContextConfiguration(initializers = { TestNoAuth.Initializer.class})
-@Testcontainers
-class TestNoAuth {
+public abstract class TestNoAuth {
 	
-	public Liquibase liquibase;
+	public ClientAndServer clientAndServer;
+	public MockServerClient mockServerClient;
+	
+	private ObjectMapper objectMapper = new ObjectMapper();
 	
 	@LocalServerPort
-	int port;
-
+	protected int port;
+	
 	@BeforeEach
 	public void setUp() {
 		RestAssured.port = port;
+		post("api/createDataSet");
 	}
-
-	@SuppressWarnings("rawtypes")
-	@Container
-	@ClassRule
-	public static PostgreSQLContainer postgreSQLContainer = (PostgreSQLContainer) new PostgreSQLContainer("postgres")
-			.withDatabaseName("queen").withUsername("queen").withPassword("queen");
-
-	public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-		public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-			TestPropertyValues
-					.of("spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
-							"spring.datasource.username=" + postgreSQLContainer.getUsername(),
-							"spring.datasource.password=" + postgreSQLContainer.getPassword())
-					.applyTo(configurableApplicationContext.getEnvironment());
-		}
-	}
+	
 	
 	/**
 	 * Test that the GET endpoint "api/campaigns"
@@ -159,11 +132,24 @@ class TestNoAuth {
 	 * @throws JSONException 
 	 */
 	@Test
-	public void testFindCommentBySurveyUnit() {
+	public void testFindCommentBySurveyUnit() {          
 		Response response = get("api/survey-unit/22/comment");
 		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString(), new JSONObject().toJSONString());
-	}
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), objectMapper.createObjectNode().toString());
+  }
+  
+  /**
+	 * Test that the GET endpoint "api/survey-unit/{id}/comment"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testGetSurveyUnitComment() throws JSONException {
+		Response response = get("api/survey-unit/11/comment");
+		response.then().statusCode(200);
+		Assert.assertEquals("{\"COMMENT\":\"acomment\"}", response.getBody().asString().replaceAll("\\s+",""));
+  }
 	
 	/**
 	 * Test that the PUT endpoint "api/survey-unit/{id}/comment"
@@ -173,19 +159,18 @@ class TestNoAuth {
 	 */
 	@Test
 	public void testPutCommentBySurveyUnit() {
-		Map<String,String> putComment = new HashMap<>();
-		putComment.put("comment", "value");
-		JSONObject comment = new JSONObject(putComment);
+		ObjectNode comment = objectMapper.createObjectNode();
+		comment.put("comment", "value");
 
 		with()
 			.contentType(ContentType.JSON)
-			.body(comment.toJSONString())
+			.body(comment.toString())
 		.put("api/survey-unit/21/comment")
 			.then()
 			.statusCode(200);
 		Response response = get("api/survey-unit/21/comment");
 		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString(), comment.toJSONString());
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), comment.toString());
 	}
 	
 	/**
@@ -210,7 +195,7 @@ class TestNoAuth {
 	public void testFindDataBySurveyUnit() {
 		Response response = get("api/survey-unit/22/data");
 		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString(), new JSONObject().toJSONString());
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), objectMapper.createObjectNode().toString());
 	}
 	
 	/**
@@ -221,19 +206,17 @@ class TestNoAuth {
 	 */
 	@Test
 	public void testPutDataBySurveyUnit() {
-		Map<String,String> putData = new HashMap<>();
-		putData.put("data", "value");
-		JSONObject data = new JSONObject(putData);
-
+		ObjectNode data = objectMapper.createObjectNode();
+		data.put("data", "value");
 		with()
 			.contentType(ContentType.JSON)
-			.body(data.toJSONString())
+			.body(data.toString())
 		.put("api/survey-unit/21/data")
 			.then()
 			.statusCode(200);
 		Response response = get("api/survey-unit/21/data");
 		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString(), data.toJSONString());
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), data.toString());
 	}
 	
 	/**
@@ -246,6 +229,19 @@ class TestNoAuth {
 	public void testFindDataByUnexistSurveyUnit() {
 		get("api/survey-unit/toto/data").then().statusCode(404);
 		get("api/survey-unit/0/data").then().statusCode(404);
+  }
+  
+  /**
+	 * Test that the GET endpoint "api/survey-unit/{id}/data"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testGetSurveyUnitData() throws JSONException {
+		Response response = get("api/survey-unit/11/data");
+		response.then().statusCode(200);
+		Assert.assertEquals("{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}}", response.getBody().asString().replaceAll("\\s+",""));
 	}
 
 	/**
@@ -258,7 +254,7 @@ class TestNoAuth {
 	public void testFindRequiredNomenclatureByCampaign() {
 		get("api/campaign/vqs2021x00/required-nomenclatures").then()
 		.statusCode(200).and()
-		.assertThat().body("$", hasItem("cities2019"));
+		.assertThat().body("$", hasItem("french cities 2019"));
 	}
 	
 	/**
@@ -280,9 +276,9 @@ class TestNoAuth {
 	 */
 	@Test
 	public void testFindQuestionnaireIdByCampaign() throws JSONException {
-		get("api/campaign/simpsons2020x00/questionnaire-id")
-		.then().statusCode(200).and()
-		.assertThat().body(containsString("\"questionnaireId\"" + ":" + "\"simpsons\""));
+		Response response = get("api/campaign/simpsons2020x00/questionnaire-id");
+		response.then().statusCode(200);
+		Assert.assertEquals("[{\"questionnaireId\"" + ":" + "\"simpsons\"}]", response.getBody().asString().replaceAll("\\s+",""));
 	}
 
 	/**
@@ -295,6 +291,229 @@ class TestNoAuth {
 	public void testFindQuestionnaireIdByUnexistCampaign() throws JSONException {
 		get("api/campaign/test/questionnaire-id")
 		.then().statusCode(404);
+  }
+
+  /**
+	 * Test that the GET endpoint "api/survey-unit/{id}/personalization"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testGetSurveyUnitPersonalization() throws JSONException {
+		Response response = get("api/survey-unit/11/personalization");
+		response.then().statusCode(200);
+		Assert.assertEquals("[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}]",
+				response.getBody().asString().replaceAll("\\s+",""));
+  }
+
+    /**
+	 * Test that the GET endpoint "api/survey-unit/{id}/personalization"
+	 * return 404
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testGetSurveyUnitPersonalizationNotExists() throws JSONException {
+		get("api/survey-unit/99/personalization")
+    .then().statusCode(404);
+    }
+
+  /**
+	 * Test that the PUT endpoint "api/survey-unit/{id}/personalization"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPutPersonalizationBySurveyUnit() {
+		with()
+			.contentType(ContentType.JSON)
+			.body("[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"}]")
+		.put("api/survey-unit/21/personalization")
+			.then()
+			.statusCode(200);
+		Response response = get("api/survey-unit/21/personalization");
+		response.then().statusCode(200);
+		Assert.assertEquals("[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"}]", response.getBody().asString().replaceAll("\\s+",""));
 	}
+  
+  /**
+	 * Test that the PUT endpoint "api/survey-unit/{id}/personalization"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPutPersonalizationBySurveyUnitNotExists() {
+		with()
+			.contentType(ContentType.JSON)
+			.body("[{\"name\":\"whoAnswers1\",\"value\":\"Mr Dupond\"}]")
+		.put("api/survey-unit/99/personalization")
+			.then()
+			.statusCode(404);
+  }
+  
+  /**
+	 * Test that the GET endpoint "api/survey-unit/{id}/state-data"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testGetSurveyUnitStateData() throws JSONException {
+		Response response = get("api/survey-unit/11/state-data");
+		response.then().statusCode(200);
+		Assert.assertEquals("{\"state\":\"EXPORTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}",
+				response.getBody().asString().replaceAll("\\s+",""));
+  }
+
+    /**
+	 * Test that the GET endpoint "api/survey-unit/{id}/state-data"
+	 * return 404
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testGetSurveyUnitStateDataNotExists() throws JSONException {
+		get("api/survey-unit/99/state-data")
+    .then().statusCode(404);
+  }
+  
+
+    /**
+	 * Test that the PUT endpoint "api/survey-unit/{id}/state-data"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPutStateDataBySurveyUnit() {
+		with()
+			.contentType(ContentType.JSON)
+			.body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
+		.put("api/survey-unit/21/state-data")
+			.then()
+			.statusCode(200);
+		Response response = get("api/survey-unit/21/state-data");
+		response.then().statusCode(200);
+		Assert.assertEquals("{\"state\":\"INIT\",\"date\":11111111111,\"currentPage\":\"11\"}", response.getBody().asString().replaceAll("\\s+",""));
+  }
+  
+  /**
+	 * Test that the PUT endpoint "api/survey-unit/{id}/state-data"
+	 * return 404
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPutStateDataBySurveyUnitNotExists() {
+		with()
+			.contentType(ContentType.JSON)
+			.body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
+		.put("api/survey-unit/99/state-data")
+			.then()
+			.statusCode(404);
+  }
+  
+  /**
+	 * Test that the GET endpoint "api/survey-unit/{id}/deposit-proof"
+	 * return 404
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testGetSurveyUnitDepositProofNotExists() throws JSONException {
+		get("api/survey-unit/99/deposit-proof")
+    .then().statusCode(404);
+  }
+
+  /**
+	 * Test that the GET endpoint "api/survey-unit/{id}/deposit-proof"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testGetSurveyUnitDepositProof() throws JSONException {
+		get("api/survey-unit/11/deposit-proof")
+    .then().statusCode(200).header("Content-Type", "application/pdf");
+  }
+	
+	/**
+	 * Test that the POST endpoint "api/questionnaire-models"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPostQuestionnaire() throws JSONException {
+		with()
+		.contentType(ContentType.JSON)
+		.body("{\"idQuestionnaireModel\":\"testPostQuestionnaire\",\"label\":\"label for testing post questionnaire\", \"requiredNomenclaturesId\":[\"cities2019\"],\"value\":{\"idQuestionnaireModel\":\"testPostQuestionnaire\"}}")
+		.post("api/questionnaire-models")
+		.then().statusCode(200);
+		Response response = get("api/questionnaire/testPostQuestionnaire");
+		response.then().statusCode(200);
+    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("testPostQuestionnaire"));
+}
+	
+	/**
+	 * Test that the GET endpoint "api/campaigns"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPostCampaignSurveyUnit() throws JSONException {
+		
+		String postBody = "{\"id\":55,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXPORTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
+		String respBodyExpected = "{\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXPORTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}}";
+		with()
+		.contentType(ContentType.JSON)
+		.body(postBody)
+		.post("/api/campaign/vqs2021x00/survey-unit")
+		.then().statusCode(200);
+		Response response = get("/api/survey-unit/55");
+		response.then().statusCode(200);
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), respBodyExpected.replaceAll("\\s+",""));
+	}
+	
+	/**
+	 * Test that the POST endpoint "api/nomenclature"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPostNomenclature() throws JSONException {
+		with()
+		.contentType(ContentType.JSON)
+		.body("{\"id\":\"testPostNomenclature\",\"label\":\"label for testing post nomnclature\", \"value\":{\"idNomenclature\":\"testPostNomenclature\"}}")
+		.post("/api/nomenclature")
+		.then().statusCode(200);
+		Response response = get("/api/nomenclature/testPostNomenclature");
+		response.then().statusCode(200);
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("testPostNomenclature"));
+	}
+	
+	/**
+	 * Test that the GET endpoint "api/campaigns"
+	 * return 200
+	 * @throws InterruptedException
+	 * @throws JSONException 
+	 */
+	@Test
+	public void testPostCampaign() throws JSONException {
+		with()
+		.contentType(ContentType.JSON)
+		.body("{\"id\":\"testPostCampaign\",\"label\":\"label for testing post campaign\",\"metadata\":{}, \"questionnaireModelsIds\":[\"QmWithoutCamp\"]}")
+		.post("api/campaigns")
+		.then().statusCode(200);
+		Response response = get("api/campaigns");
+		response.then().statusCode(200);
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+",""))); 
+	}
+	
 
 }

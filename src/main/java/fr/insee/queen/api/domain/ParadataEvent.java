@@ -1,61 +1,73 @@
 package fr.insee.queen.api.domain;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.json.simple.JSONObject;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity
-@Table
+@Table(name="paradata_event")
+@Document(collection="paradata_event")
 public class ParadataEvent {
 	
 	/**
 	 * The id of the ParadataEvent
 	 */
 	@Id
-	@GeneratedValue
-	private int idParadataEvent;
+	@org.springframework.data.annotation.Id
+	@Column(name = "id")
+	private UUID id;
 	
 	/**
 	* The value of data (jsonb format)
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private JSONObject value;
+	private JsonNode value;
 	
 	public ParadataEvent() {
 		super();
+		this.id = UUID.randomUUID();
+	}
+
+	public ParadataEvent(UUID id, JsonNode value) {
+		super();
+		this.id = id;
+		this.value = value;
 	}
 
 	/**
 	 * @return the idParadataEvent
 	 */
-	public int getIdParadataEvent() {
-		return idParadataEvent;
+	public UUID getId() {
+		return id;
 	}
 
 	/**
 	 * @param idParadataEvent the idParadataEvent to set
 	 */
-	public void setIdParadataEvent(int idParadataEvent) {
-		this.idParadataEvent = idParadataEvent;
+	public void setId(UUID id) {
+		this.id = id;
 	}
 
 	/**
 	 * @return the value
 	 */
-	public JSONObject getValue() {
+	public JsonNode getValue() {
 		return value;
 	}
 
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(JSONObject value) {
+	public void setValue(JsonNode value) {
 		this.value = value;
 	}
 }

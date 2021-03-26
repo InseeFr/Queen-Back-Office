@@ -1,64 +1,83 @@
 package fr.insee.queen.api.domain;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.json.simple.JSONObject;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.BaseJsonNode;
 
 @Entity
-@Table
+@Table(name="metadata")
+@Document(collection="metadata")
 public class Metadata {
 	
 	/**
 	 * The id of the Metadata
 	 */
 	@Id
-	@GeneratedValue
-	private int idMetadata;
+	@org.springframework.data.annotation.Id
+	private UUID id;
 	
 	/**
 	* The value of data (jsonb format)
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private JSONObject value;
+	private JsonNode value;
 	
 	/**
 	 * The campaign associated to the Metadata
 	 */
+	@DBRef
 	@OneToOne
 	private Campaign campaign;
+
+	public Metadata() {
+		super();
+		this.id = UUID.randomUUID();
+	}
+
+	public Metadata(UUID id, JsonNode value, Campaign campaign) {
+		super();
+		this.id = id;
+		this.value = value;
+		this.campaign = campaign;
+	}
 
 	/**
 	 * @return the idMetadata
 	 */
-	public int getIdMetadata() {
-		return idMetadata;
+	public UUID getId() {
+		return id;
 	}
 
 	/**
 	 * @param idMetadata the idMetadata to set
 	 */
-	public void setIdMetadata(int idMetadata) {
-		this.idMetadata = idMetadata;
+	public void setIdMetadata(UUID id) {
+		this.id = id;
 	}
 
 	/**
 	 * @return the value
 	 */
-	public JSONObject getValue() {
+	public JsonNode getValue() {
 		return value;
 	}
 
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(JSONObject value) {
+	public void setValue(JsonNode value) {
 		this.value = value;
 	}
 

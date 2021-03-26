@@ -1,33 +1,51 @@
 package fr.insee.queen.api.dto.surveyunit;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.insee.queen.api.domain.StateData;
-import fr.insee.queen.api.dto.stateData.StateDataDto;
+import fr.insee.queen.api.dto.statedata.StateDataDto;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SurveyUnitResponseDto {
 	String id;
 	String questionnaireId;
-	private JSONArray personnalization;
-	private JSONObject data;
+	private JsonNode personalization;
+	private JsonNode data;
+	private JsonNode comment;
 	private StateDataDto stateData;
 	
 	
-	public SurveyUnitResponseDto(String id, String questionnaireId, 
-			JSONArray personnalization, JSONObject data, StateDataDto stateDataDto) {
+	
+	public SurveyUnitResponseDto() {
+		super();
+	}
+	
+
+	public SurveyUnitResponseDto(String id, String questionnaireId, JsonNode personalization, JsonNode data,
+  JsonNode comment, StateDataDto stateData) {
 		super();
 		this.id = id;
 		this.questionnaireId = questionnaireId;
-		this.personnalization = personnalization;
+		this.personalization = personalization;
 		this.data = data;
-		this.stateData = stateDataDto;
-		
+		this.comment = comment;
+		this.stateData = stateData;
 	}
-	
+
+
+
+
+
+	public JsonNode getComment() {
+		return comment;
+	}
+
+
+	public void setComment(JsonNode comment) {
+		this.comment = comment;
+	}
+
 
 	public String getQuestionnaireId() {
 		return questionnaireId;
@@ -42,19 +60,19 @@ public class SurveyUnitResponseDto {
 		this.id = id;
 	}
 	
-	public JSONArray getPersonnalization() {
-		return personnalization;
+	public JsonNode getPersonalization() {
+		return personalization;
 	}
 
-	public void setPersonnalization(JSONArray comment) {
-		this.personnalization = comment;
+	public void setPersonalization(JsonNode personalization) {
+		this.personalization = personalization;
 	}
 
-	public JSONObject getData() {
+	public JsonNode getData() {
 		return data;
 	}
 
-	public void setData(JSONObject data) {
+	public void setData(JsonNode data) {
 		this.data = data;
 	}
 

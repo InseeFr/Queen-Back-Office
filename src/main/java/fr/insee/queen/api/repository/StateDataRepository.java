@@ -2,13 +2,12 @@ package fr.insee.queen.api.repository;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.UUID;
 
 import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.dto.data.DataDto;
-import fr.insee.queen.api.dto.stateData.StateDataDto;
+import fr.insee.queen.api.dto.statedata.StateDataDto;
 
 /**
 * DataRepository is the repository using to access to  Data table in DB
@@ -16,13 +15,19 @@ import fr.insee.queen.api.dto.stateData.StateDataDto;
 * @author Claudel Benjamin
 * 
 */
-public interface StateDataRepository extends JpaRepository<StateData, Long> {
-
+public interface StateDataRepository extends ApiRepository<StateData, UUID> {
+	/**
+	* This method retrieve the Data for a specific reporting_unit
+	* 
+	* @param id the id of reporting unit
+	* @return {@link DataDto}
+	*/
+	Optional<StateData> findDtoBySurveyUnitId(String id);
 	/**
 	* This method retrieve the Data for a specific reporting_unit
 	* 
 	* @param id the id of reporting unit
 	* @return {@link Data}
 	*/
-	Optional<StateData> findBySurveyUnit_id(String id);
+	Optional<StateData> findBySurveyUnitId(String id);
 }
