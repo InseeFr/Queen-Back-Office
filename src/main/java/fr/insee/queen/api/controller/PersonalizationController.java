@@ -1,11 +1,9 @@
 package fr.insee.queen.api.controller;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +86,6 @@ public class PersonalizationController {
 	* @return {@link HttpStatus 404} if personalization is not found, else {@link HttpStatus 200}
 	* 
 	*/
-	@SuppressWarnings("unchecked")
 	@ApiOperation(value = "Update personalization by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/personalization")
 	public ResponseEntity<Object> setPersonalization(@RequestBody JsonNode personalizationValues, @PathVariable(value = "id") String id, HttpServletRequest request) {

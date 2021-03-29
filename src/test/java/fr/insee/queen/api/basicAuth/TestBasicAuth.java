@@ -1,6 +1,5 @@
 package fr.insee.queen.api.basicAuth;
 
-import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.with;
 import static org.hamcrest.Matchers.containsString;

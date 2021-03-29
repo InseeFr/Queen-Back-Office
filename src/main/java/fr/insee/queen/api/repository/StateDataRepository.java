@@ -1,13 +1,11 @@
 package fr.insee.queen.api.repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.dto.data.DataDto;
-import fr.insee.queen.api.dto.statedata.StateDataDto;
 
 /**
 * DataRepository is the repository using to access to  Data table in DB
