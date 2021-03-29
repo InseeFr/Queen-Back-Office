@@ -1,10 +1,7 @@
 package fr.insee.queen.api.dto.nomenclature;
 
-import java.util.List;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NomenclatureDto {

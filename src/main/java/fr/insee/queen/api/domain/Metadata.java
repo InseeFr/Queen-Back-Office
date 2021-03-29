@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BaseJsonNode;
 
 @Entity
 @Table(name="metadata")

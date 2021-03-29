@@ -235,7 +235,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		}
 		@SuppressWarnings("unchecked")
 		List<LinkedHashMap<String,String>> objects = (List<LinkedHashMap<String, String>>) result.getBody();
-		if(objects.isEmpty()) {
+		if(objects == null || objects.isEmpty()) {
 			LOGGER.info("GET survey-units for campaign with id {} resulting in 404", id);
 			return Collections.emptyList();
 		}

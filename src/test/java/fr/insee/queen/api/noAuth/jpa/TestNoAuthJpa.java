@@ -1,19 +1,7 @@
 package fr.insee.queen.api.noAuth.jpa;
 
-import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.with;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItem;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.hamcrest.Matchers;
-import org.json.JSONException;
-import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
@@ -29,12 +17,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import fr.insee.queen.api.noAuth.TestNoAuth;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import liquibase.Liquibase;
 
 @ExtendWith(SpringExtension.class)

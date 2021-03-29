@@ -91,6 +91,7 @@ public class UtilsServiceImpl implements UtilsService{
 	 * @param String
 	 * @return Boolean
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean checkHabilitation(HttpServletRequest request, String suId){
 		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId;
 		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);

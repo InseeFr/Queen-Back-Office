@@ -27,7 +27,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 
 import fr.insee.queen.api.service.DataSetInjectorService;
-import fr.insee.queen.api.service.impl.DataSetInjectorServiceImpl;
 
 @SpringBootApplication(scanBasePackages = "fr.insee.queen.api",
 		exclude = {
@@ -42,7 +41,7 @@ import fr.insee.queen.api.service.impl.DataSetInjectorServiceImpl;
         MongoDataAutoConfiguration.class,
         MongoRepositoriesAutoConfiguration.class})
 public class ApiApplication extends SpringBootServletInitializer{
-	private static final Logger LOGGER = LoggerFactory.getLogger(ApiApplication.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ApiApplication.class);
 
 	@Autowired
     private DataSetInjectorService injector;
@@ -75,18 +74,18 @@ public class ApiApplication extends SpringBootServletInitializer{
 	@EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
         final Environment env = event.getApplicationContext().getEnvironment();
-        LOGGER.info("================================ Properties =================================");
+        LOG.info("================================ Properties =================================");
         final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
         StreamSupport.stream(sources.spliterator(), false)
-                .filter(ps -> ps instanceof EnumerablePropertySource)
+                .filter(EnumerablePropertySource.class::isInstance)
                 .map(ps -> ((EnumerablePropertySource<?>) ps).getPropertyNames())
                 .flatMap(Arrays::stream)
                 .distinct()
                 .filter(prop -> !(prop.contains("credentials") || prop.contains("password")))
                 .filter(prop -> prop.startsWith("fr.insee") || prop.startsWith("logging") || prop.startsWith("keycloak") || prop.startsWith("spring") || prop.startsWith("application"))
                 .sorted()
-                .forEach(prop -> LOGGER.info("{}: {}", prop, env.getProperty(prop)));
-        LOGGER.info("============================================================================");
+                .forEach(prop -> LOG.info("{}: {}", prop, env.getProperty(prop)));
+        LOG.info("============================================================================");
     }
 	
 	@EventListener(ApplicationReadyEvent.class)
