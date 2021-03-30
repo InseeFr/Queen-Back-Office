@@ -38,8 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{steps.version.outputs.prop}}-rc
-          release_name: Release Candidate ${{steps.version.outputs.prop}}
+          tag_name: ${{steps.version.outputs.prop}}
+          release_name: Release ${{steps.version.outputs.prop}}
           draft: false
           prerelease: false
   docker:
