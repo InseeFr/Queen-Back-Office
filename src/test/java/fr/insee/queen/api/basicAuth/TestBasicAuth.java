@@ -66,9 +66,10 @@ public abstract class TestBasicAuth {
 	}
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		RestAssured.port = port;
-		given().auth().preemptive().basic("INTW1", "a").when().post("api/createDataSet");
+		given().auth().preemptive().basic("INTW1", "a")
+		.when().post("api/createDataSet");
 	}
 
 	/**
@@ -79,8 +80,10 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindCampaign() throws InterruptedException {
-		given().auth().preemptive().basic("INTW1", "a").when().get("api/campaigns").then().statusCode(200).and()
-				.assertThat().body("id", hasItem("simpsons2020x00"));
+		given().auth().preemptive().basic("INTW1", "a")
+		.when().get("api/campaigns")
+		.then().statusCode(200)
+		.and().assertThat().body("id", hasItem("simpsons2020x00"));
 
 	}
 
@@ -92,8 +95,10 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindQuestionnaireByCampaign() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/campaign/simpsons2020x00/questionnaire").then()
-				.statusCode(200).and().assertThat().body("isEmpty()", Matchers.is(false));
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/campaign/simpsons2020x00/questionnaire")
+		.then().statusCode(200)
+		.and().assertThat().body("isEmpty()", Matchers.is(false));
 	}
 
 	/**
@@ -105,7 +110,9 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindQuestionnaireByUnexistCampaign() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/campaign/toto/questionnaire").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/campaign/toto/questionnaire")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -116,8 +123,10 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindSurveyUnitsByCampaign() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/campaign/simpsons2020x00/survey-units").then()
-				.statusCode(200).and().assertThat().body("id", hasItem("11"));
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/campaign/simpsons2020x00/survey-units")
+		.then().statusCode(200)
+		.and().assertThat().body("id", hasItem("11"));
 	}
 
 	/**
@@ -129,7 +138,9 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindSurveyUnitsByUnexistCampaign() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/campaign/toto/survey-units").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/campaign/toto/survey-units")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -140,8 +151,10 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindNomenclatureById() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/nomenclature/cities2019").then().statusCode(200).and()
-				.assertThat().body("isEmpty()", Matchers.is(false));
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/nomenclature/cities2019")
+		.then().statusCode(200)
+		.and().assertThat().body("isEmpty()", Matchers.is(false));
 	}
 
 	/**
@@ -153,7 +166,9 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindUnexistNomenclatureById() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/nomenclature/toto").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/nomenclature/toto")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -166,7 +181,7 @@ public abstract class TestBasicAuth {
 	void testFindCommentBySurveyUnit() throws JSONException {
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/11/comment");
 		response.then().statusCode(200);
-		Assert.assertEquals("{\"COMMENT\":\"acomment\"}", response.getBody().asString().replaceAll("\\s+",""));
+		Assert.assertEquals("{\"COMMENT\":\"acomment\"}", response.getBody().asString().replaceAll("\\s+", ""));
 	}
 
 	/**
@@ -181,8 +196,12 @@ public abstract class TestBasicAuth {
 		ObjectNode comment = objectMapper.createObjectNode();
 		comment.put("comment", "value");
 
-		with().contentType(ContentType.JSON).body(comment.toString()).given().auth().preemptive().basic("INTW1", "a")
-				.put("api/survey-unit/21/comment").then().statusCode(200);
+		with()
+		.contentType(ContentType.JSON)
+		.body(comment.toString())
+		.given().auth().preemptive().basic("INTW1", "a")
+		.put("api/survey-unit/21/comment")
+		.then().statusCode(200);
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/21/comment");
 		response.then().statusCode(200);
 		Assert.assertEquals(response.getBody().asString(), comment.toPrettyString());
@@ -197,8 +216,12 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindCommentByUnexistSurveyUnit() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/toto/comment").then().statusCode(404);
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/0/comment").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/toto/comment")
+		.then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/0/comment")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -211,7 +234,8 @@ public abstract class TestBasicAuth {
 	void testFindDataBySurveyUnit() throws JSONException {
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/11/data");
 		response.then().statusCode(200);
-		Assert.assertEquals("{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}}", response.getBody().asString().replaceAll("\\s+",""));
+		Assert.assertEquals("{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}}",
+				response.getBody().asString().replaceAll("\\s+", ""));
 	}
 
 	/**
@@ -225,8 +249,12 @@ public abstract class TestBasicAuth {
 		ObjectNode data = objectMapper.createObjectNode();// new JsonNode(putData);
 		data.put("data", "value");
 
-		with().contentType(ContentType.JSON).body(data.toString()).given().auth().preemptive().basic("INTW1", "a")
-				.put("api/survey-unit/21/data").then().statusCode(200);
+		with()
+		.contentType(ContentType.JSON)
+		.body(data.toString())
+		.given().auth().preemptive().basic("INTW1", "a")
+		.put("api/survey-unit/21/data")
+		.then().statusCode(200);
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/21/data");
 		response.then().statusCode(200);
 		Assert.assertEquals(response.getBody().asString(), data.toPrettyString());
@@ -241,8 +269,12 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindDataByUnexistSurveyUnit() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/toto/data").then().statusCode(404);
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/0/data").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/toto/data")
+		.then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/0/data")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -254,8 +286,10 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindRequiredNomenclatureByCampaign() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/campaign/vqs2021x00/required-nomenclatures").then()
-				.statusCode(200).and().assertThat().body("$", hasItem("french cities 2019"));
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/campaign/vqs2021x00/required-nomenclatures")
+		.then().statusCode(200)
+		.and().assertThat().body("$", hasItem("french cities 2019"));
 	}
 
 	/**
@@ -267,8 +301,9 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindRequiredNomenclatureByUnexistCampaign() {
-		given().auth().preemptive().basic("INTW1", "a").get("api/campaign/toto/required-nomenclatures").then()
-				.statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/campaign/toto/required-nomenclatures")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -279,9 +314,11 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindQuestionnaireIdByCampaign() throws JSONException {
-		Response response = given().auth().preemptive().basic("INTW1", "a").when().get("api/campaign/simpsons2020x00/questionnaire-id");
+		Response response = given().auth().preemptive().basic("INTW1", "a")
+				.when().get("api/campaign/simpsons2020x00/questionnaire-id");
 		response.then().statusCode(200);
-		Assert.assertEquals("[{\"questionnaireId\"" + ":" + "\"simpsons\"}]", response.getBody().asString().replaceAll("\\s+",""));
+		Assert.assertEquals("[{\"questionnaireId\"" + ":" + "\"simpsons\"}]",
+				response.getBody().asString().replaceAll("\\s+", ""));
 	}
 
 	/**
@@ -293,8 +330,9 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testFindQuestionnaireIdByUnexistCampaign() throws JSONException {
-		given().auth().preemptive().basic("INTW1", "a").when().get("api/campaign/test/questionnaire-id").then()
-				.statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.when().get("api/campaign/test/questionnaire-id")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -314,8 +352,10 @@ public abstract class TestBasicAuth {
 		obj.put("name", "whoAnswers2");
 		obj.put("value", "");
 		personalization.add(obj);
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/11/personalization").then().statusCode(200)
-				.and().assertThat().assertThat().body(containsString(personalization.toPrettyString()));
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/11/personalization")
+		.then().statusCode(200)
+		.and().assertThat().body(containsString(personalization.toPrettyString()));
 	}
 
 	/**
@@ -326,8 +366,9 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testGetSurveyUnitPersonalizationNotExists() throws JSONException {
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/99/personalization").then()
-				.statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/99/personalization")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -343,8 +384,12 @@ public abstract class TestBasicAuth {
 		obj.put("name", "whoAnswers1");
 		obj.put("value", "Mr Dupond");
 		personalization.add(obj);
-		with().contentType(ContentType.JSON).body("[{\"name\":\"whoAnswers1\",\"value\":\"Mr Dupond\"}]").given().auth()
-				.preemptive().basic("INTW1", "a").put("api/survey-unit/21/personalization").then().statusCode(200);
+		with()
+		.contentType(ContentType.JSON)
+		.body("[{\"name\":\"whoAnswers1\",\"value\":\"Mr Dupond\"}]")
+		.given().auth().preemptive().basic("INTW1", "a")
+		.put("api/survey-unit/21/personalization")
+		.then().statusCode(200);
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/21/personalization");
 		response.then().statusCode(200);
 		Assert.assertEquals(personalization.toPrettyString(), response.getBody().asString());
@@ -358,8 +403,12 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testPutPersonalizationBySurveyUnitNotExists() {
-		with().contentType(ContentType.JSON).body("[{\"name\":\"whoAnswers1\",\"value\":\"Mr Dupond\"}]").given().auth()
-				.preemptive().basic("INTW1", "a").put("api/survey-unit/99/personalization").then().statusCode(404);
+		with()
+		.contentType(ContentType.JSON)
+		.body("[{\"name\":\"whoAnswers1\",\"value\":\"Mr Dupond\"}]")
+		.given().auth().preemptive().basic("INTW1", "a")
+		.put("api/survey-unit/99/personalization")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -376,7 +425,7 @@ public abstract class TestBasicAuth {
 		obj.put("currentPage", "2.3#5");
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/11/state-data");
 		response.then().statusCode(200);
-		Assert.assertEquals(obj.toString(), response.getBody().asString().replaceAll("\\s+",""));
+		Assert.assertEquals(obj.toString(), response.getBody().asString().replaceAll("\\s+", ""));
 	}
 
 	/**
@@ -387,7 +436,9 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testGetSurveyUnitStateDataNotExists() throws JSONException {
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/99/state-data").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/99/state-data")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -402,13 +453,16 @@ public abstract class TestBasicAuth {
 		obj.put("state", "EXPORTED");
 		obj.put("date", 1111111111L);
 		obj.put("currentPage", "2.3#5");
-		with().contentType(ContentType.JSON).body(obj.toString())
-				.given().auth().preemptive().basic("INTW1", "a").put("api/survey-unit/21/state-data").then()
-				.statusCode(200);
+		with()
+		.contentType(ContentType.JSON)
+		.body(obj.toString())
+		.given().auth().preemptive().basic("INTW1", "a")
+		.put("api/survey-unit/21/state-data")
+		.then().statusCode(200);
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/21/state-data");
 		response.then().statusCode(200);
-		Assert.assertEquals(obj.toString().replaceAll("\\s+",""),
-				response.getBody().asString().replaceAll("\\s+",""));
+		Assert.assertEquals(obj.toString().replaceAll("\\s+", ""),
+				response.getBody().asString().replaceAll("\\s+", ""));
 	}
 
 	/**
@@ -419,9 +473,12 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testPutStateDataBySurveyUnitNotExists() {
-		with().contentType(ContentType.JSON).body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
-				.given().auth().preemptive().basic("INTW1", "a").put("api/survey-unit/99/state-data").then()
-				.statusCode(404);
+		with()
+		.contentType(ContentType.JSON)
+		.body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
+		.given().auth().preemptive().basic("INTW1", "a")
+		.put("api/survey-unit/99/state-data")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -432,7 +489,9 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testGetSurveyUnitDepositProofNotExists() throws JSONException {
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/99/deposit-proof").then().statusCode(404);
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/99/deposit-proof")
+		.then().statusCode(404);
 	}
 
 	/**
@@ -443,15 +502,17 @@ public abstract class TestBasicAuth {
 	 */
 	@Test
 	void testGetSurveyUnitDepositProof() throws JSONException {
-		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/11/deposit-proof").then().statusCode(200)
-				.header("Content-Type", "application/pdf");
+		given().auth().preemptive().basic("INTW1", "a")
+		.get("api/survey-unit/11/deposit-proof")
+		.then().statusCode(200)
+		.header("Content-Type", "application/pdf");
 	}
-	
+
 	/**
-	 * Test that the POST endpoint "api/questionnaire-models"
-	 * return 200
+	 * Test that the POST endpoint "api/questionnaire-models" return 200
+	 * 
 	 * @throws InterruptedException
-	 * @throws JSONException 
+	 * @throws JSONException
 	 */
 	@Test
 	void testPostQuestionnaire() throws JSONException {
@@ -461,20 +522,21 @@ public abstract class TestBasicAuth {
 		.given().auth().preemptive().basic("INTW1", "a")
 		.post("api/questionnaire-models")
 		.then().statusCode(200);
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/questionnaire/testPostQuestionnaire");
+		Response response = given().auth().preemptive().basic("INTW1", "a")
+				.get("api/questionnaire/testPostQuestionnaire");
 		response.then().statusCode(200);
-    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("testPostQuestionnaire"));
-}
-	
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains("testPostQuestionnaire"));
+	}
+
 	/**
-	 * Test that the GET endpoint "api/campaigns"
-	 * return 200
+	 * Test that the POST endpoint "/api/campaign/{id}/survey-unit" return 200
+	 * 
 	 * @throws InterruptedException
-	 * @throws JSONException 
+	 * @throws JSONException
 	 */
 	@Test
 	void testPostCampaignSurveyUnit() throws JSONException {
-		
+
 		String postBody = "{\"id\":55,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXPORTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
 		String respBodyExpected = "{\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXPORTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}}";
 		with()
@@ -485,14 +547,33 @@ public abstract class TestBasicAuth {
 		.then().statusCode(200);
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("/api/survey-unit/55");
 		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), respBodyExpected.replaceAll("\\s+",""));
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+", ""),
+				respBodyExpected.replaceAll("\\s+", ""));
 	}
-	
+
 	/**
-	 * Test that the POST endpoint "api/nomenclature"
-	 * return 200
+	 * Test that the POST endpoint "/api/campaign/{id}/survey-unit" return 400 if su
+	 * already exist
+	 * 
 	 * @throws InterruptedException
-	 * @throws JSONException 
+	 * @throws JSONException
+	 */
+	@Test
+	void testPostCampaignSurveyUnitAlreadyExist() throws JSONException {
+		String postBody = "{\"id\":22,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXPORTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
+		with()
+		.contentType(ContentType.JSON)
+		.body(postBody)
+		.given().auth().preemptive().basic("INTW1", "a")
+		.post("/api/campaign/vqs2021x00/survey-unit")
+		.then().statusCode(400);
+	}
+
+	/**
+	 * Test that the POST endpoint "api/nomenclature" return 200
+	 * 
+	 * @throws InterruptedException
+	 * @throws JSONException
 	 */
 	@Test
 	void testPostNomenclature() throws JSONException {
@@ -502,16 +583,17 @@ public abstract class TestBasicAuth {
 		.given().auth().preemptive().basic("INTW1", "a")
 		.post("/api/nomenclature")
 		.then().statusCode(200);
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("/api/nomenclature/testPostNomenclature");
+		Response response = given().auth().preemptive().basic("INTW1", "a")
+				.get("/api/nomenclature/testPostNomenclature");
 		response.then().statusCode(200);
-		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("testPostNomenclature"));
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains("testPostNomenclature"));
 	}
-	
+
 	/**
-	 * Test that the GET endpoint "api/campaigns"
-	 * return 200
+	 * Test that the GET endpoint "api/campaigns" return 200
+	 * 
 	 * @throws InterruptedException
-	 * @throws JSONException 
+	 * @throws JSONException
 	 */
 	@Test
 	void testPostCampaign() throws JSONException {
@@ -523,7 +605,8 @@ public abstract class TestBasicAuth {
 		.then().statusCode(200);
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/campaigns");
 		response.then().statusCode(200);
-		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+",""))); 
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
+				"{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
 	}
 
 }

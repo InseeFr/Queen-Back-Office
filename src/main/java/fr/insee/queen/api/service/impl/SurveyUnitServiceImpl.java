@@ -134,21 +134,21 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	public void updateSurveyUnit(SurveyUnit newSU, JsonNode surveyUnit) {
 			if(surveyUnit.get("personalization") != null) {
 				this.updatePersonalization(newSU, surveyUnit);
+				personalizationRepository.save(newSU.getPersonalization());
 			}
 			if(surveyUnit.get("comment") != null) {
 				this.updateComment(newSU, surveyUnit);
+				commentRepository.save(newSU.getComment());
 			}
 			if(surveyUnit.get("data") != null) {
 				this.updateData(newSU, surveyUnit);
+				dataRepository.save(newSU.getData());
 			}
 			if(surveyUnit.get("stateData") != null) {
 				this.updateStateData(newSU, surveyUnit);
+				stateDataRepository.save(newSU.getStateData());
 			}
 			surveyUnitRepository.save(newSU);
-			personalizationRepository.save(newSU.getPersonalization());
-			commentRepository.save(newSU.getComment());
-			dataRepository.save(newSU.getData());
-			stateDataRepository.save(newSU.getStateData());
 		}
 	
 	private void updateStateData(SurveyUnit newSU, JsonNode surveyUnit) {
@@ -289,13 +289,11 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 				type = su.getStateData().getState();
 			}
 			sd = new StateData(UUID.randomUUID(),type,su.getStateData().getDate(),su.getStateData().getCurrentPage(),newSu);
+			newSu.setStateData(sd);
+			stateDataService.save(sd);
 		}
-		else {
-			sd = new StateData(UUID.randomUUID(),type,null,null,newSu);
-		}
-		stateDataService.save(sd);
+		
 		newSu.setData(d);
-		newSu.setStateData(sd);
 		newSu.setComment(c);
 		newSu.setPersonalization(p);
 		surveyUnitRepository.save(newSu);
