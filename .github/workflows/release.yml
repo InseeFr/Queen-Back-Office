@@ -1,4 +1,4 @@
-name: Queen UI Release and Docker image publication 
+name: Queen API Release and Docker image publication 
 
 on:
   push:

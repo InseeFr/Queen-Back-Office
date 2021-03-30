@@ -1,4 +1,4 @@
-name: Queen UI Release Candidate (RC) release publication
+name: Queen API Release Candidate (RC) release publication
 
 on:
   push:

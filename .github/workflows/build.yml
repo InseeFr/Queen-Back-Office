@@ -1,4 +1,4 @@
-name: Queen UI build
+name: Queen API build
 
 on:
   pull_request:
@@ -14,6 +14,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Get current version
+        id: version
+        run: echo "::set-output name=prop::$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)"
+      - run: echo ${{steps.version.outputs.prop}}
       - name: Build with Maven
         run: mvn install --file pom.xml
       - name: Upload war
