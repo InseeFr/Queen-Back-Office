@@ -181,10 +181,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				commentService.save(c2);
 				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				personalizationService.save(p2);
-				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
-				stateDataService.save(sd2);
 				su2.setData(d2);
-				su2.setStateData(sd2);
 				su2.setComment(c2);
 				su2.setPersonalization(p2);
 				surveyUnitService.save(su2);
