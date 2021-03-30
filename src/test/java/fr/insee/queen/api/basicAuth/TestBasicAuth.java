@@ -163,20 +163,7 @@ public abstract class TestBasicAuth {
 	 * @throws JSONException
 	 */
 	@Test
-	void testFindCommentBySurveyUnit() {
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/22/comment");
-		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString(), objectMapper.createObjectNode().toPrettyString());
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/comment" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testGetSurveyUnitComment() throws JSONException {
+	void testFindCommentBySurveyUnit() throws JSONException {
 		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/11/comment");
 		response.then().statusCode(200);
 		Assert.assertEquals("{\"COMMENT\":\"acomment\"}", response.getBody().asString().replaceAll("\\s+",""));
@@ -221,10 +208,10 @@ public abstract class TestBasicAuth {
 	 * @throws JSONException
 	 */
 	@Test
-	void testFindDataBySurveyUnit() {
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/22/data");
+	void testFindDataBySurveyUnit() throws JSONException {
+		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/11/data");
 		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString(), objectMapper.createObjectNode().toPrettyString());
+		Assert.assertEquals("{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}}", response.getBody().asString().replaceAll("\\s+",""));
 	}
 
 	/**
@@ -256,19 +243,6 @@ public abstract class TestBasicAuth {
 	void testFindDataByUnexistSurveyUnit() {
 		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/toto/data").then().statusCode(404);
 		given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/0/data").then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/data" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testGetSurveyUnitData() throws JSONException {
-		Response response = given().auth().preemptive().basic("INTW1", "a").get("api/survey-unit/11/data");
-		response.then().statusCode(200);
-		Assert.assertEquals("{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}}", response.getBody().asString().replaceAll("\\s+",""));
 	}
 
 	/**
