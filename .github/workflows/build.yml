@@ -1,4 +1,4 @@
-name: Queen API build
+name: Build
 
 on:
   pull_request:
