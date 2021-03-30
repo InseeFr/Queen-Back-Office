@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/InseeFr/Queen-Back-Office.svg?branch=master)](https://travis-ci.org/InseeFr/Queen-Back-Office)
+![Build](https://github.com/InseeFr/Queen-Back-Office/actions/workflows/release.yml/badge.svg)
 
 # Queen-Back-Office
 Back-office services for Queen  
