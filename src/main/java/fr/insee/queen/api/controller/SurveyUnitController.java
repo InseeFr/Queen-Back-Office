@@ -90,7 +90,7 @@ public class SurveyUnitController {
 				su.getPersonalization()==null ? null :su.getPersonalization().getValue(), 
 				su.getData()==null ? null : su.getData().getValue(), 
 				su.getComment()==null ? null : su.getComment().getValue(),
-				new StateDataDto(su.getStateData()));
+				su.getStateData()==null ? null : new StateDataDto(su.getStateData()));
 		LOGGER.info("GET survey-unit resulting in 200");
 		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
@@ -208,7 +208,7 @@ public class SurveyUnitController {
 	@ApiOperation(value = "Post survey-unit")
 	@PostMapping(path = "/campaign/{id}/survey-unit")
 	public ResponseEntity<Object> postSurveyUnit(@RequestBody SurveyUnitResponseDto su, @PathVariable(value = "id") String id){
-		if(utilsService.isDevProfile() && !utilsService.isTestProfile()) {
+		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
@@ -220,6 +220,11 @@ public class SurveyUnitController {
 		if (!questionnaireModelOptional.isPresent() || campaignOptional.get().getQuestionnaireModels().contains(questionnaireModelOptional.get())){
 			LOGGER.info("POST survey-unit for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
+		}
+		Optional<SurveyUnit> surveyUnit = surveyUnitService.findById(su.getId());
+		if (surveyUnit.isPresent()){
+			LOGGER.info("POST survey-unit for campaign with id {} resulting in 400 : Survey-unit {} already exist", id, su.getId());
+			return ResponseEntity.badRequest().build();
 		}
 		surveyUnitService.createSurveyUnit(su, campaignOptional.get(), questionnaireModelOptional.get());
 		return ResponseEntity.ok().build();
