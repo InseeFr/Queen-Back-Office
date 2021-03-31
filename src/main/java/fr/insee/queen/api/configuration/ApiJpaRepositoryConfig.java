@@ -48,7 +48,7 @@ public class ApiJpaRepositoryConfig {
     @Value("${environment}")
     private String environment;
 
-    @Value("${fr.insee.queen.persistence.database.driver}")
+    @Value("${spring.datasource.driver-class-name}")
     private String jdbcDriver;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiJpaRepositoryConfig.class);
