@@ -34,30 +34,17 @@ public class FormAndDataServiceImpl implements FormAndDataService {
     public File getForm(String... args) throws Exception {
         String survey = args[0];
         String surveyModel = args[1];
-        String requestUrl = "http://nothing";//String.format(
-                //URL_API.concat("/restxq/collectes/formulaire/%s/%s"),
-                //survey, surveyModel);
+        String requestUrl = "http://void";
         return getXmlFromDataBase(requestUrl);
     }
 
     private File getXmlFromDataBase(String requestUrl) throws IOException {
         File xmlFile = File.createTempFile("xml-data",".xml");
         URL url = new URL(requestUrl);
-
-//        HttpURLConnection c = (HttpURLConnection) url.openConnection();
-//        c.setRequestProperty("accept", "application/xml");
-//
-//        int codeHttp = c.getResponseCode();
-//        if (codeHttp == 200) {
-//            InputStream responseIS = c.getInputStream();
-//            Files.copy(responseIS, xmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//            if(responseIS != null) responseIS.close();
-//        }
-//        else{
-            InputStream fakeData = Constants.getEmptyXml();
-            Files.copy(fakeData, xmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            if(fakeData != null) fakeData.close();
-        //}
+        InputStream fakeData = Constants.getEmptyXml();
+        Files.copy(fakeData, xmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        if(fakeData != null) fakeData.close();
+        
 
         return xmlFile;
     }

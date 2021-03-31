@@ -78,10 +78,10 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		JsonNode jsonQuestionnaireModelSimpsons = objectMapper.createObjectNode();
 		JsonNode jsonQuestionnaireModelVqs = objectMapper.createObjectNode();
 		try {
-			 jsonArrayNomenclatureCities2019 = objectMapper.readTree(new File("src//main//resources//db//dataset//cities_2019_nomenclature.json"));
-			 jsonArrayRegions2019 = objectMapper.readTree(new File("src//main//resources//db//dataset//regions_2019_nomenclature.json"));
-			 jsonQuestionnaireModelSimpsons = objectMapper.readTree(new File("src//main//resources//db//dataset//simpsons_2020_questionnaire_models.json"));
-			 jsonQuestionnaireModelVqs = objectMapper.readTree(new File("src//main//resources//db//dataset//vqs_2021_questionnaire_models.json"));
+			 jsonArrayNomenclatureCities2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//cities_2019_nomenclature.json").getFile()));
+			 jsonArrayRegions2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//regions_2019_nomenclature.json").getFile()));
+			 jsonQuestionnaireModelSimpsons = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//simpsons_2020_questionnaire_models.json").getFile()));
+			 jsonQuestionnaireModelVqs = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//vqs_2021_questionnaire_models.json").getFile()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

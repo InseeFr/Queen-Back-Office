@@ -48,6 +48,9 @@ public class ApiJpaRepositoryConfig {
     @Value("${environment}")
     private String environment;
 
+    @Value("${spring.datasource.driver-class-name}")
+    private String jdbcDriver;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiJpaRepositoryConfig.class);
 
     public ApiJpaRepositoryConfig() {
@@ -70,6 +73,11 @@ public class ApiJpaRepositoryConfig {
 
     @Bean(name = "dataSource")
     public DataSource dataSource() {
+    	try {
+    		Class.forName(jdbcDriver);
+	    } catch (ClassNotFoundException e) {
+	        e.printStackTrace();
+	    }
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setUrl(url);
         dataSource.setUsername(username);
