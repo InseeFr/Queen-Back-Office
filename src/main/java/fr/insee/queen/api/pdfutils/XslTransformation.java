@@ -1,7 +1,5 @@
 package fr.insee.queen.api.pdfutils;
 
-import fr.insee.queen.api.pdfutils.ClasspathURIResolver;
-import fr.insee.queen.api.pdfutils.XslParameters;
 import net.sf.saxon.TransformerFactoryImpl;
 
 import javax.xml.transform.*;

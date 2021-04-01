@@ -43,7 +43,7 @@ public class ExportPdf extends HttpServlet {
             logger.error("L'erreur est la suivante :", e);
         }
         logger.info("L'url de l'api exist est la suivante : ".concat(urlApi));
-        depositProofService = new PDFDepositProofService(urlApi);
+        depositProofService = new PDFDepositProofService();
     }
     
     public void doExport(HttpServletResponse response,
@@ -55,7 +55,7 @@ public class ExportPdf extends HttpServlet {
         response.setHeader("Content-disposition", "attachment; filename=\""+filename+"\"");
 
         try(OutputStream out = response.getOutputStream()){
-            depositProofService = new PDFDepositProofService("http:/");
+            depositProofService = new PDFDepositProofService();
             File pdfFile = depositProofService.generatePdf(date,campaignLabel, idec);
             out.write(Files.readAllBytes(pdfFile.toPath()));
             pdfFile.delete();

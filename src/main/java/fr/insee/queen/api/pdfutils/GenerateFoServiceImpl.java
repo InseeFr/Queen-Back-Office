@@ -2,7 +2,6 @@ package fr.insee.queen.api.pdfutils;
 
 import java.io.*;
 
-import javax.xml.transform.TransformerException;
 
 public class GenerateFoServiceImpl implements GenerateFoService {
 
