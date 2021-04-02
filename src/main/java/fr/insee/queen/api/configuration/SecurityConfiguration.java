@@ -35,7 +35,7 @@ import fr.insee.queen.api.constants.Constants;
  * @author Claudel Benjamin
  * 
  */
-@ConditionalOnExpression("'${fr.insee.queen.application.mode}'=='Basic' or '${fr.insee.queen.application.mode}'=='NoAuth'")
+@ConditionalOnExpression("'${fr.insee.queen.application.mode}'=='basic' or '${fr.insee.queen.application.mode}'=='noauth'")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -67,10 +67,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		System.setProperty("keycloak.enabled", applicationProperties.getMode() != Mode.Keycloak ? "false" : "true");
+		System.setProperty("keycloak.enabled", applicationProperties.getMode() != Mode.keycloak ? "false" : "true");
 		http.csrf().disable().headers().frameOptions().disable().and().requestCache()
 				.requestCache(new NullRequestCache());
-		if (this.applicationProperties.getMode() == Mode.Basic) {
+		if (this.applicationProperties.getMode() == Mode.basic) {
 			http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
 			http.authorizeRequests()
 					// manage routes securisation
@@ -132,11 +132,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		if (isDevelopment()) {
 			switch (this.applicationProperties.getMode()) {
-			case Basic:
+			case basic:
 				auth.inMemoryAuthentication().withUser("INTW1").password("{noop}a").roles(role).and()
 						.withUser("noWrite").password("{noop}a").roles();
 				break;
-			case NoAuth:
+			case noauth:
 				break;
 			default:
 				break;

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "fr.insee.queen.application", ignoreUnknownFields = false)
 public class ApplicationProperties {
-	public enum Mode {Basic, Keycloak, NoAuth};
+	public enum Mode {basic, keycloak, noauth};
 	public enum PersistenceType {JPA, MONGODB};
 	
 	private Mode mode;

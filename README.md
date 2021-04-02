@@ -73,7 +73,7 @@ fr.insee.queen.logging.path=${catalina.base}/webapps/log4j2.xml
 fr.insee.queen.logging.level=DEBUG
 
 #Application configuration
-fr.insee.queen.application.mode=NoAuth
+fr.insee.queen.application.mode=noauth
 fr.insee.queen.application.crosOrigin=*
 fr.insee.queen.application.persistenceType = MONGODB or JPA
 
@@ -135,7 +135,7 @@ Before committing code please ensure,
 
 - Questionnaire
 	- `GET /questionnaire/{id}` : get the questionnaire by his id
-	- `GET /campaign/{id}/questionnaire` : get the model json 
+	- `GET /campaign/{id}/questionnaires` : get the list of model json 
 	- `GET /campaign/{idCampaign}/questionnaire-id` : id of the questionnaire associated to the campaign
 	- `POST /questionnaire-models` : post a new questionnaire
 

@@ -94,7 +94,7 @@ public abstract class TestAuthKeycloak {
 	void setUp() throws JSONException, JsonMappingException, JsonProcessingException {
 		RestAssured.port = port;
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().post("api/createDataSet");
+		given().auth().oauth2(accessToken).when().post("api/create-dataset");
 	}
 
 	/***
@@ -138,7 +138,7 @@ public abstract class TestAuthKeycloak {
 	}
 
 	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire" return 200
+	 * Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 200
 	 * 
 	 * @throws InterruptedException
 	 * @throws JSONException
@@ -149,13 +149,13 @@ public abstract class TestAuthKeycloak {
 	void testFindQuestionnaireByCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
 		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/simpsons2020x00/questionnaire")
+		.when().get("api/campaign/simpsons2020x00/questionnaires")
 		.then().statusCode(200)
 		.and().assertThat().body("isEmpty()", Matchers.is(false));
 	}
 
 	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire" return 404 with
+	 * Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 404 with
 	 * wrong questionnaire Id
 	 * 
 	 * @throws InterruptedException
@@ -167,7 +167,7 @@ public abstract class TestAuthKeycloak {
 	void testFindQuestionnaireByUnexistCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
 		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/test/questionnaire")
+		.when().get("api/campaign/test/questionnaires")
 		.then().statusCode(404);
 	}
 
@@ -189,7 +189,7 @@ public abstract class TestAuthKeycloak {
 	}
 
 	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire" return 404 with
+	 * Test that the GET endpoint "api/campaigns/{id}/survey-units" return 404 with
 	 * wrong questionnaire Id
 	 * 
 	 * @throws InterruptedException
@@ -388,8 +388,9 @@ public abstract class TestAuthKeycloak {
 	void testFindQuestionnaireIdByCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
 		Response response = given().auth().oauth2(accessToken).when().get("api/campaign/simpsons2020x00/questionnaire-id");
-		response.then().statusCode(200);
-		Assert.assertEquals("[{\"questionnaireId\"" + ":" + "\"simpsons\"}]", response.getBody().asString().replaceAll("\\s+",""));
+    response.then().statusCode(200);
+    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\"" + ":" + "\"simpsons\"}"));
+    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\":\"simpsonsV2\"}"));
 	}
 
 	/**

@@ -69,7 +69,7 @@ public abstract class TestBasicAuth {
 	void setUp() {
 		RestAssured.port = port;
 		given().auth().preemptive().basic("INTW1", "a")
-		.when().post("api/createDataSet");
+		.when().post("api/create-dataset");
 	}
 
 	/**
@@ -88,7 +88,7 @@ public abstract class TestBasicAuth {
 	}
 
 	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire" return 200
+	 * Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 200
 	 * 
 	 * @throws InterruptedException
 	 * @throws JSONException
@@ -96,13 +96,13 @@ public abstract class TestBasicAuth {
 	@Test
 	void testFindQuestionnaireByCampaign() {
 		given().auth().preemptive().basic("INTW1", "a")
-		.get("api/campaign/simpsons2020x00/questionnaire")
+		.get("api/campaign/simpsons2020x00/questionnaires")
 		.then().statusCode(200)
 		.and().assertThat().body("isEmpty()", Matchers.is(false));
 	}
 
 	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire" return 404 with
+	 * Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 404 with
 	 * wrong questionnaire Id
 	 * 
 	 * @throws InterruptedException
@@ -111,7 +111,7 @@ public abstract class TestBasicAuth {
 	@Test
 	void testFindQuestionnaireByUnexistCampaign() {
 		given().auth().preemptive().basic("INTW1", "a")
-		.get("api/campaign/toto/questionnaire")
+		.get("api/campaign/toto/questionnaires")
 		.then().statusCode(404);
 	}
 
@@ -130,7 +130,7 @@ public abstract class TestBasicAuth {
 	}
 
 	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/questionnaire" return 404 with
+	 * Test that the GET endpoint "api/campaigns/{id}/survey-units" return 404 with
 	 * wrong questionnaire Id
 	 * 
 	 * @throws InterruptedException
@@ -317,8 +317,8 @@ public abstract class TestBasicAuth {
 		Response response = given().auth().preemptive().basic("INTW1", "a")
 				.when().get("api/campaign/simpsons2020x00/questionnaire-id");
 		response.then().statusCode(200);
-		Assert.assertEquals("[{\"questionnaireId\"" + ":" + "\"simpsons\"}]",
-				response.getBody().asString().replaceAll("\\s+", ""));
+    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\"" + ":" + "\"simpsons\"}"));
+    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\":\"simpsonsV2\"}"));
 	}
 
 	/**

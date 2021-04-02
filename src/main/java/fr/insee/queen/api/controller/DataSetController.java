@@ -21,7 +21,7 @@ public class DataSetController {
 	private DataSetInjectorService injector;
 	
 	@ApiOperation(value = "Create dataset")
-	@PostMapping(path = "/createDataSet")
+	@PostMapping(path = "/create-dataset")
 	public ResponseEntity<Object> createDataSet() {
 		
 		injector.createDataSet();

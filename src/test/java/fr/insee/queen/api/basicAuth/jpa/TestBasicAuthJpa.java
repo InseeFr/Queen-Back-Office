@@ -18,7 +18,7 @@ import fr.insee.queen.api.basicAuth.TestBasicAuth;
 import liquibase.Liquibase;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties= {"fr.insee.queen.application.mode = Basic",
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties= {"fr.insee.queen.application.mode = basic",
 		"fr.insee.queen.application.persistenceType=JPA"})
 @ActiveProfiles({ "test", "dev" })
 @ContextConfiguration(initializers = { TestBasicAuthJpa.Initializer.class})

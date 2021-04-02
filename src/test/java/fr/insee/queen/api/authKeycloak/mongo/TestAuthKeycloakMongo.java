@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import fr.insee.queen.api.authKeycloak.TestAuthKeycloak;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties= {"fr.insee.queen.application.mode = NoAuth", 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties= {"fr.insee.queen.application.mode = noauth", 
 		"fr.insee.queen.application.persistenceType=MONGODB"})
 @ActiveProfiles({ "test", "dev" })
 @ContextConfiguration(initializers = { TestAuthKeycloakMongo.Initializer.class})

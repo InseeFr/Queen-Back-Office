@@ -14,7 +14,7 @@ public class Constants {
 	public static final String API_CAMPAIGNS = "/api/campaigns";
 	public static final String API_CAMPAIGN_SURVEY_UNITS = "/api/campaign/{idCampaign}/survey-units";
 	public static final String API_CAMPAIGN_SURVEY_UNITS_CREATE = "/api/campaign/{idCampaign}/survey-unit";
-	public static final String API_CAMPAIGN_QUESTIONAIRE = "/api/campaign/{idCampaign}/questionnaire";
+	public static final String API_CAMPAIGN_QUESTIONAIRE = "/api/campaign/{idCampaign}/questionnaires";
 	public static final String API_CAMPAIGN_QUESTIONAIRE_ID = "/api/campaign/{idCampaign}/questionnaire-id";
 	public static final String API_CAMPAIGN_REQUIRED_NOMENCLATURES = "/api/campaign/{id}/required-nomenclatures";
 	public static final String API_SURVEY_UNIT= "/api/survey-unit/{id}";
@@ -30,7 +30,7 @@ public class Constants {
 	public static final String API_PARADATAEVENT = "/api/paradata";
 	public static final String API_QUESTIONNAIRE_NOMENCLATURE = "/api/questionnaire/{id}/required-nomenclatures";
 	
-	public static final String API_CREATE_DATASET = "/api/createDataSet";
+	public static final String API_CREATE_DATASET = "/api/create-dataset";
 
 	//Pilotage filter url
 	public static final String API_HABILITATION = "/api/check-habilitation";

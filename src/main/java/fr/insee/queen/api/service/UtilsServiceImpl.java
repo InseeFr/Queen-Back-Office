@@ -49,7 +49,7 @@ public class UtilsServiceImpl implements UtilsService{
 	public String getUserId(HttpServletRequest request) {
 		String userId = null;
 		switch (applicationProperties.getMode()) {
-		case Basic:
+		case basic:
 			Object basic = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			if (basic instanceof UserDetails) {
 				userId = ((UserDetails)basic).getUsername();
@@ -57,7 +57,7 @@ public class UtilsServiceImpl implements UtilsService{
 				userId = basic.toString();
 			}
 			break;
-		case Keycloak:
+		case keycloak:
 			KeycloakAuthenticationToken keycloak = (KeycloakAuthenticationToken) request.getUserPrincipal();
 			userId = keycloak.getPrincipal().toString();
 			break;

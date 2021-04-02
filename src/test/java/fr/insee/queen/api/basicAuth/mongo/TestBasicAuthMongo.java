@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import fr.insee.queen.api.basicAuth.TestBasicAuth;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties= {"fr.insee.queen.application.mode = Basic",
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties= {"fr.insee.queen.application.mode = basic",
 		"fr.insee.queen.application.persistenceType=MONGODB"})
 @ActiveProfiles({ "test", "dev" })
 @ContextConfiguration(initializers = { TestBasicAuthMongo.Initializer.class})

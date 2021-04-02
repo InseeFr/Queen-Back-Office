@@ -71,7 +71,7 @@ public class QuestionnaireModelController {
 	* @return the {@link QuestionnaireModelDto} associated to the campaign
 	*/
 	@ApiOperation(value = "Get questionnnaire model by campaign Id ")
-	@GetMapping(path = "/campaign/{id}/questionnaire")
+	@GetMapping(path = "/campaign/{id}/questionnaires")
 	public ResponseEntity<List<QuestionnaireModelDto>> getQuestionnaireModelByCampaignId(@PathVariable(value = "id") String id){
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {

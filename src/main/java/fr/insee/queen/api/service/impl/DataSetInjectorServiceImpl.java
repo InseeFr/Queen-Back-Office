@@ -3,6 +3,7 @@ package fr.insee.queen.api.service.impl;
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -76,11 +77,14 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		JsonNode jsonArrayNomenclatureCities2019 = objectMapper.createObjectNode();
 		JsonNode jsonArrayRegions2019 = objectMapper.createObjectNode();
 		JsonNode jsonQuestionnaireModelSimpsons = objectMapper.createObjectNode();
+		JsonNode jsonQuestionnaireModelSimpsonsV2 = objectMapper.createObjectNode();
+
 		JsonNode jsonQuestionnaireModelVqs = objectMapper.createObjectNode();
 		try {
 			 jsonArrayNomenclatureCities2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//cities_2019_nomenclature.json").getFile()));
 			 jsonArrayRegions2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//regions_2019_nomenclature.json").getFile()));
 			 jsonQuestionnaireModelSimpsons = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//simpsons_2020_questionnaire_models.json").getFile()));
+			 jsonQuestionnaireModelSimpsonsV2 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//simpsons_2020_questionnaire_models_V2.json").getFile()));
 			 jsonQuestionnaireModelVqs = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//vqs_2021_questionnaire_models.json").getFile()));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -98,7 +102,11 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		Campaign camp = new Campaign("simpsons2020x00","Survey on the Simpsons tv show 2020",null); 
 		QuestionnaireModel qm = new QuestionnaireModel("simpsons","Questionnaire about the Simpsons tv show",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),camp);
 		camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
-		createCampaign1(camp, qm);
+		QuestionnaireModel qmSimpsons2 = new QuestionnaireModel("simpsonsV2","Questionnaire about the Simpsons tv show version 2",jsonQuestionnaireModelSimpsonsV2,new HashSet<>(List.of(n)),camp);
+		camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
+		createCampaign1(camp, qm, qmSimpsons2);
+		
+		
 
 		Campaign camp2 = new Campaign("vqs2021x00","Everyday life and health survey 2021",null);
 		QuestionnaireModel qm2 = new QuestionnaireModel("vqs2021x00","Questionnaire of the Everyday life and health survey 2021",jsonQuestionnaireModelVqs,new HashSet<>(List.of(n, n2)),camp2);
@@ -189,13 +197,18 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		}
 	}
 
-	private void createCampaign1(Campaign camp, QuestionnaireModel qm) {
+	private void createCampaign1(Campaign camp, QuestionnaireModel qm, QuestionnaireModel qm2) {
 		if(!campaignservice.findById(camp.getId()).isPresent()) {
 			campaignservice.save(camp);
 			if(!questionnaireModelService.findById(qm.getId()).isPresent()) {
 				questionnaireModelService.save(qm);
 			}
-			camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
+			if(!questionnaireModelService.findById(qm2.getId()).isPresent()) {
+				questionnaireModelService.save(qm2);
+			}
+			Set<QuestionnaireModel> models = camp.getQuestionnaireModels();
+			models.add(qm);
+			models.add(qm2);
 			campaignservice.save(camp);
 
 			Metadata md = new Metadata(UUID.randomUUID(),objectMapper.createObjectNode(),camp);
@@ -248,7 +261,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				su.setPersonalization(p);
 				surveyUnitService.save(su);
 			}
-			su = new SurveyUnit("13",camp,qm,null,null,null,null);
+			su = new SurveyUnit("13",camp,qm2,null,null,null,null);
 			if(!surveyUnitService.findById(su.getId()).isPresent()) {
 				surveyUnitService.save(su);
 				d = new Data(UUID.randomUUID(),Version.INIT,getDataValue(su.getId()),su);
@@ -265,7 +278,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				su.setPersonalization(p);
 				surveyUnitService.save(su);
 			}
-			su = new SurveyUnit("14",camp,qm,null,null,null,null);
+			su = new SurveyUnit("14",camp,qm2,null,null,null,null);
 			if(!surveyUnitService.findById(su.getId()).isPresent()) {
 				surveyUnitService.save(su);
 				d = new Data(UUID.randomUUID(),Version.INIT,getDataValue(su.getId()),su);
