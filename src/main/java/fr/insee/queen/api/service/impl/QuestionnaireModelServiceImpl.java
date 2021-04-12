@@ -68,7 +68,7 @@ public class QuestionnaireModelServiceImpl extends AbstractService<Questionnaire
 		QuestionnaireModel questionnaireModel = new QuestionnaireModel();
 		questionnaireModel.setId(qm.getIdQuestionnaireModel());
 		questionnaireModel.setLabel(qm.getLabel());
-		questionnaireModel.setModel(qm.getValue());
+		questionnaireModel.setValue(qm.getValue());
 		questionnaireModel.setNomenclatures(nomenclatureService.findAllByIds(qm.getRequiredNomenclaturesId()));
 		questionnaireModelRepository.save(questionnaireModel);
 	}

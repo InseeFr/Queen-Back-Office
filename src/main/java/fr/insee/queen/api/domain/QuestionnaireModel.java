@@ -53,7 +53,7 @@ public class QuestionnaireModel {
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private JsonNode model;
+	private JsonNode value;
 	
 	/**
 	* The list of required of required nomenclature 
@@ -74,12 +74,12 @@ public class QuestionnaireModel {
 	public QuestionnaireModel() {
 		super();
 	}
-	public QuestionnaireModel(String id, String label, JsonNode model, Set<Nomenclature> nomenclatures,
+	public QuestionnaireModel(String id, String label, JsonNode value, Set<Nomenclature> nomenclatures,
 			Campaign campaign) {
 		super();
 		this.id = id;
 		this.label = label;
-		this.model = model;
+		this.value = value;
 		this.nomenclatures = nomenclatures;
 		this.campaign = campaign;
 	}
@@ -110,14 +110,14 @@ public class QuestionnaireModel {
 	/**
 	 * @return model of nomenclature
 	 */
-	public JsonNode getModel() {
-		return model;
+	public JsonNode getValue() {
+		return value;
 	}
 	/**
-	 * @param model model to set
+	 * @param value model to set
 	 */
-	public void setModel(JsonNode model) {
-		this.model = model;
+	public void setValue(JsonNode value) {
+		this.value = value;
 	}
 	/**
 	 * @return the campaign

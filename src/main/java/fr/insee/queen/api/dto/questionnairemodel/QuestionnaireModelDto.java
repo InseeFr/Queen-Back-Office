@@ -6,25 +6,25 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 
 public class QuestionnaireModelDto {
 
-	JsonNode model;
+	JsonNode value;
 
 	public QuestionnaireModelDto() {
 		super();
 	}
 	
-	public QuestionnaireModelDto(JsonNode model) {
-		this.model = model;
+	public QuestionnaireModelDto(JsonNode value) {
+		this.value = value;
 	}
 	
-	public QuestionnaireModelDto(QuestionnaireModel model) {
-		this.model = model.getModel();
+	public QuestionnaireModelDto(QuestionnaireModel qm) {
+		this.value = qm.getValue();
 	}
 
-	public JsonNode getModel() {
-		return model;
+	public JsonNode getValue() {
+		return value;
 	}
 
-	public void setModel(JsonNode model) {
-		this.model = model;
+	public void setValue(JsonNode value) {
+		this.value = value;
 	}
 }

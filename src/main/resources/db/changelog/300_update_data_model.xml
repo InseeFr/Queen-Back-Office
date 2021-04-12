@@ -80,4 +80,12 @@
     <changeSet author="samco (generated)" id="1614959963205-17">
         <dropColumn columnName="questionnaire_model_id" tableName="campaign"/>
     </changeSet>
+    <changeSet author="admin (generated)" id="1617965035964-1">
+       <renameColumn
+            columnDataType="jsonb"  
+            newColumnName="value"  
+            oldColumnName="model"  
+            schemaName="public"  
+            tableName="questionnaire_model"/>
+   </changeSet>
 </databaseChangeLog>

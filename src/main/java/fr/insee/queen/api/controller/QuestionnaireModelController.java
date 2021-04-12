@@ -80,7 +80,7 @@ public class QuestionnaireModelController {
 		} else {
 			Campaign campaign = campaignOptional.get();
 			List<QuestionnaireModelDto> resp = campaign.getQuestionnaireModels().stream()
-					.map(q -> new QuestionnaireModelDto(q.getModel())).collect(Collectors.toList());
+					.map(q -> new QuestionnaireModelDto(q.getValue())).collect(Collectors.toList());
 			
 			LOGGER.info("GET questionnaire for campaign with id {} resulting in 200", id);
 			return new ResponseEntity<>(resp, HttpStatus.OK);
