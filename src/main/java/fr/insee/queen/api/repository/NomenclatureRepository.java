@@ -1,5 +1,7 @@
 package fr.insee.queen.api.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,5 +24,7 @@ public interface NomenclatureRepository extends ApiRepository<Nomenclature, Stri
 	* @return{@link NomenclatureDto}
 	*/
 	public NomenclatureDto findDtoById(String id);
+	
+	public Optional<Nomenclature> findById(String id);
 
 }

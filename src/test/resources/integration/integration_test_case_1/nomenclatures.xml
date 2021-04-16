@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Nomenclatures>
+	<Nomenclature>
+		<Id>cities20199</Id>
+		<Label>french cities in 2019</Label>
+        <FileName>cities2020.json</FileName> 
+	</Nomenclature>
+	<Nomenclature>
+		<Id>regions2019</Id>
+		<Label>french regions in 2019</Label>
+        <FileName>regions2019.json</FileName> 
+	</Nomenclature>
+</Nomenclatures>

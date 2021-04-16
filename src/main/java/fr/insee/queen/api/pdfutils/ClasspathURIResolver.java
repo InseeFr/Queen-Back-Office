@@ -1,9 +1,5 @@
 package fr.insee.queen.api.pdfutils;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
@@ -15,8 +11,6 @@ import javax.xml.transform.stream.StreamSource;
  * i.e. import statements href are equal to <code>/path/to/resources/directory</code>
  * */
 public class ClasspathURIResolver implements URIResolver {
-
-	private static Logger LOGGER = LoggerFactory.getLogger(ClasspathURIResolver.class);
 
 	@Override
 	public Source resolve(String href, String base) throws TransformerException {

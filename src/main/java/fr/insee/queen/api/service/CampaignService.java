@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.dto.campaign.CampaignDto;
+import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 
 public interface CampaignService extends BaseService<Campaign, String> {
 
@@ -19,6 +22,10 @@ public interface CampaignService extends BaseService<Campaign, String> {
 	void saveDto(CampaignDto c);
 	
 	Boolean checkIfQuestionnaireOfCampaignExists(CampaignDto campaign);
+		
+	List<CampaignResponseDto> getAllCampaigns();
 	
-    
+	List<QuestionnaireIdDto> getQuestionnaireIds(String id);
+	
+	List<QuestionnaireModelDto> getQuestionnaireModels(String id);
 }

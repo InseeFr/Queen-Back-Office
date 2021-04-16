@@ -78,7 +78,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					// configuration for Swagger
 					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**", "/swagger-resources/**")
 					.permitAll().antMatchers("/environnement", "/healthcheck").permitAll()
-					.antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
+          .antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
+          .antMatchers(Constants.API_CAMPAIGNS_CONTEXT).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS_CREATE).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE).hasRole(role)
@@ -102,7 +103,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		} else {
 			http.httpBasic().disable();
 			http.authorizeRequests()
-					.antMatchers(Constants.API_CAMPAIGNS, 
+          .antMatchers(Constants.API_CAMPAIGNS, 
+              Constants.API_CAMPAIGNS_CONTEXT,
 							Constants.API_CAMPAIGN_SURVEY_UNITS,
 							Constants.API_CAMPAIGN_SURVEY_UNITS_CREATE,
 							Constants.API_CAMPAIGN_QUESTIONAIRE, 

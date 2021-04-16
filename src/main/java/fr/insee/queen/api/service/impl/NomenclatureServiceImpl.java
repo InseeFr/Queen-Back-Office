@@ -7,19 +7,26 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.Nomenclature;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 import fr.insee.queen.api.repository.ApiRepository;
+import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.NomenclatureRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.NomenclatureService;
 
 @Service
+@Transactional
 public class NomenclatureServiceImpl extends AbstractService<Nomenclature, String> implements NomenclatureService {
 	
     protected final NomenclatureRepository nomenclatureRepository;
+    
+    @Autowired
+    private CampaignRepository campaignRepository;
 
     @Autowired
     public NomenclatureServiceImpl(NomenclatureRepository repository) {
@@ -41,6 +48,19 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 		return setQuestionnaireModel.parallelStream().map(QuestionnaireModel::getNomenclatures).collect(Collectors.toList())
 				.parallelStream().flatMap(Set::parallelStream).collect(Collectors.toList())
 				.parallelStream().distinct().map(Nomenclature::getLabel).collect(Collectors.toList());
+	}
+	
+	public List<String> findRequiredNomenclatureByCampaign(String campaignId) {
+		Optional<Campaign> campaignOptional = campaignRepository.findById(campaignId);
+		if (campaignOptional.isPresent()) {
+			Set<QuestionnaireModel> setQuestionnaireModel = campaignOptional.get().getQuestionnaireModels();
+			return setQuestionnaireModel.parallelStream().map(QuestionnaireModel::getNomenclatures).collect(Collectors.toList())
+					.parallelStream().flatMap(Set::parallelStream).collect(Collectors.toList())
+					.parallelStream().distinct().map(Nomenclature::getLabel).collect(Collectors.toList());
+		} else {
+			return null;
+		}
+		
 	}
 
 	@Override

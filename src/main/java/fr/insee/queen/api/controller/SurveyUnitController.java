@@ -28,13 +28,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.Campaign;
-import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 import fr.insee.queen.api.service.CampaignService;
-import fr.insee.queen.api.service.QuestionnaireModelService;
 import fr.insee.queen.api.service.SurveyUnitService;
 import fr.insee.queen.api.service.UtilsService;
 import io.swagger.annotations.ApiOperation;
@@ -64,8 +62,6 @@ public class SurveyUnitController {
 	@Autowired
 	private CampaignService campaignService;
 	
-	@Autowired
-	private QuestionnaireModelService questionnaireModelService;
 	
 	/**
 	* This method is used to get a survey-unit by id
@@ -211,23 +207,8 @@ public class SurveyUnitController {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
-		Optional<Campaign> campaignOptional = campaignService.findById(id);
-		if (!campaignOptional.isPresent()) {
-			LOGGER.info("POST survey-unit for campaign with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		}
-		Optional<QuestionnaireModel> questionnaireModelOptional = questionnaireModelService.findById(su.getQuestionnaireId());
-		if (!questionnaireModelOptional.isPresent() || campaignOptional.get().getQuestionnaireModels().contains(questionnaireModelOptional.get())){
-			LOGGER.info("POST survey-unit for campaign with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		}
-		Optional<SurveyUnit> surveyUnit = surveyUnitService.findById(su.getId());
-		if (surveyUnit.isPresent()){
-			LOGGER.info("POST survey-unit for campaign with id {} resulting in 400 : Survey-unit {} already exist", id, su.getId());
-			return ResponseEntity.badRequest().build();
-		}
-		surveyUnitService.createSurveyUnit(su, campaignOptional.get(), questionnaireModelOptional.get());
-		return ResponseEntity.ok().build();
+		HttpStatus status = surveyUnitService.postSurveyUnit(id, su);
+		return new ResponseEntity<>(status);
 	}
 	
 }

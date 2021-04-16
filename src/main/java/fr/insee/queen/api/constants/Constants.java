@@ -29,7 +29,8 @@ public class Constants {
 	public static final String API_QUESTIONNAIRE_CREATE_QUESTIONNAIRE = "/api/questionnaire-models";
 	public static final String API_PARADATAEVENT = "/api/paradata";
 	public static final String API_QUESTIONNAIRE_NOMENCLATURE = "/api/questionnaire/{id}/required-nomenclatures";
-	
+  public static final String API_CAMPAIGNS_CONTEXT = "/api/campaign/context";
+
 	public static final String API_CREATE_DATASET = "/api/create-dataset";
 
 	//Pilotage filter url

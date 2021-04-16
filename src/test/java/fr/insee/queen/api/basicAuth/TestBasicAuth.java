@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
+import java.io.File;
+
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.junit.Assert;
@@ -18,6 +20,8 @@ import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -607,6 +611,126 @@ public abstract class TestBasicAuth {
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
 				"{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
+	}
+	
+	/**
+	 * Test that the POST endpoint "api/campaign/context" return 200
+	 * 
+	 * @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	 */
+	@Test
+	void testIntegrateContextCase1() throws JSONException, JsonMappingException, JsonProcessingException {
+		File zip = new File(getClass().getClassLoader()
+				.getResource("integration//integration_test_case_1.zip").getFile());
+		ObjectNode expected = objectMapper.createObjectNode();
+		
+		ObjectNode campaign = objectMapper.createObjectNode();
+		campaign.put("id", "simpsons2020x00");
+		campaign.put("status", "UPDATED");
+		
+		ArrayNode nomenclatures = objectMapper.createArrayNode();
+		ObjectNode nomenclature1 = objectMapper.createObjectNode();
+		nomenclature1.put("id", "cities20199");
+		nomenclature1.put("status", "CREATED");
+		nomenclatures.add(nomenclature1);
+		ObjectNode nomenclature2 = objectMapper.createObjectNode();
+		nomenclature2.put("id", "regions2019");
+		nomenclature2.put("status", "ERROR");
+		nomenclature2.put("cause", "A nomenclature with this id already exists");
+		nomenclatures.add(nomenclature2);
+		
+		ArrayNode questionnaireModels = objectMapper.createArrayNode();
+		ObjectNode questionnaireModel1 = objectMapper.createObjectNode();
+		questionnaireModel1.put("id", "simpsons-v1");
+		questionnaireModel1.put("status", "CREATED");
+		questionnaireModels.add(questionnaireModel1);
+		ObjectNode questionnaireModel2 = objectMapper.createObjectNode();
+		questionnaireModel2.put("id", "simpson-v2");
+		questionnaireModel2.put("status", "ERROR");
+		questionnaireModel2.put("cause", "The campaign 'simpsons' does not exist");
+		questionnaireModels.add(questionnaireModel2);
+		
+		expected.set("campaign", campaign);
+		expected.set("nomenclatures", nomenclatures);
+		expected.set("questionnaireModels", questionnaireModels);
+
+				
+		Response resp = with()
+		.given().auth().preemptive().basic("INTW1", "a")
+		.multiPart("file", zip)
+		.post("api/campaign/context");
+		resp.then().statusCode(200);
+
+		// Response is as expected
+		String responseString = objectMapper.readTree(resp.getBody().asString()).toString();
+	    Assert.assertEquals(expected.toString(), responseString);
+	    
+	    // Questionnaire model "simpsons-v1" has been created
+	    Response resp2 = given().auth().preemptive().basic("INTW1", "a")
+	    		.get("api/campaign/simpsons2020x00/questionnaire-id");
+	    resp2.then().statusCode(200);
+		Assert.assertTrue(resp2.getBody().asString().contains("simpsons-v1"));
+		
+		// Nomenclature "cities20199" has been created
+		given().auth().preemptive().basic("INTW1", "a")
+			.get("api/nomenclature/cities20199").then().statusCode(200);
+		
+	}
+	
+	/**
+	 * Test that the POST endpoint "api/campaign/context" return 200
+	 * 
+	 * @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	 */
+	@Test
+	void testIntegrateContextCase2() throws JSONException, JsonMappingException, JsonProcessingException {
+		File zip = new File(getClass().getClassLoader()
+				.getResource("integration//integration_test_case_2.zip").getFile());
+		ObjectNode expected = objectMapper.createObjectNode();
+		
+		ObjectNode campaign = objectMapper.createObjectNode();
+		campaign.put("id", "anotherCampaign");
+		campaign.put("status", "CREATED");
+		
+		ArrayNode nomenclatures = objectMapper.createArrayNode();
+		ObjectNode nomenclature1 = objectMapper.createObjectNode();
+		nomenclature1.put("id", "nomenclatures.xml");
+		nomenclature1.put("status", "ERROR");
+		nomenclature1.put("cause", "File nomenclatures.xml does not fit the required template (cvc-elt.1.a: Cannot find the declaration of element 'NomenclatureWithTypo'.)");
+		nomenclatures.add(nomenclature1);
+
+		
+		ArrayNode questionnaireModels = objectMapper.createArrayNode();
+		ObjectNode questionnaireModel1 = objectMapper.createObjectNode();
+		questionnaireModel1.put("id", "simpsons-v1");
+		questionnaireModel1.put("status", "ERROR");
+		questionnaireModel1.put("cause", "Questionnaire model file 'file_that does not exist.json' could not be found in input zip");
+		questionnaireModels.add(questionnaireModel1);
+
+		
+		expected.set("campaign", campaign);
+		expected.set("nomenclatures", nomenclatures);
+		expected.set("questionnaireModels", questionnaireModels);
+
+				
+		Response resp = with()
+		.given().auth().preemptive().basic("INTW1", "a")
+		.multiPart("file", zip)
+		.post("api/campaign/context");
+		resp.then().statusCode(200);
+
+		// Response is as expected
+		String responseString = objectMapper.readTree(resp.getBody().asString()).toString();
+	    Assert.assertEquals(expected.toString(), responseString);
+	    
+	    // Campaign "anotherCampaign" has been created
+	 	Response resp2 = given().auth().preemptive().basic("INTW1", "a").get("api/campaigns");
+	    resp2.then().statusCode(200);
+		Assert.assertFalse(resp2.getBody().asString().contains("anotherCampaigns"));
 	}
 
 }

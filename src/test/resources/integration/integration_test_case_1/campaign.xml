@@ -1,0 +1,17 @@
+<Campaign>
+	<Id>simpsons2020x00</Id>
+	<Label>Enquête sur les simpsons 2020</Label>
+	<Metadata> 
+   <InseeContext>household</InseeContext>
+   <Variables>
+     <Variable>
+        <Name>Enq_LibelleEnquete</Name>
+        <Value>Enquête statistique sur les technologies de l’information et de la communication 2021</Value>
+     </Variable>
+     <Variable>
+        <Name>UneAutre_variable</Name>
+        <Value>Enquête statistique sur les technologies de l’information et de la communication 2021</Value>
+     </Variable>
+   </Variables>
+	</Metadata>	
+</Campaign>

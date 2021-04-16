@@ -3,7 +3,6 @@ package fr.insee.queen.api.controller;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,10 +77,7 @@ public class QuestionnaireModelController {
 			LOGGER.info("GET questionnaire for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
-			Campaign campaign = campaignOptional.get();
-			List<QuestionnaireModelDto> resp = campaign.getQuestionnaireModels().stream()
-					.map(q -> new QuestionnaireModelDto(q.getModel())).collect(Collectors.toList());
-			
+			List<QuestionnaireModelDto> resp = campaignService.getQuestionnaireModels(id);
 			LOGGER.info("GET questionnaire for campaign with id {} resulting in 200", id);
 			return new ResponseEntity<>(resp, HttpStatus.OK);
 		}
@@ -121,10 +117,8 @@ public class QuestionnaireModelController {
 			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
-			Campaign campaign = campaignOptional.get();
-			List<QuestionnaireIdDto> resp = campaign.getQuestionnaireModels().stream()
-					.map(q -> new QuestionnaireIdDto(q.getId())).collect(Collectors.toList());
-			
+			List<QuestionnaireIdDto> resp = campaignService.getQuestionnaireIds(id);
+
 			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 200", id);
 			return new ResponseEntity<>(resp, HttpStatus.OK);
 		}
@@ -142,7 +136,7 @@ public class QuestionnaireModelController {
 	@ApiOperation(value = "Create a Questionnaire Model")
 	@PostMapping(path = "/questionnaire-models")
 	public ResponseEntity<Object> createQuestionnaire(@RequestBody QuestionnaireModelCreateDto questionnaireModel, HttpServletRequest request) {
-		if(utilsService.isDevProfile() && !utilsService.isTestProfile()) {
+		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
 		Optional<QuestionnaireModelDto> questMod = questionnaireModelService.findDtoById(questionnaireModel.getIdQuestionnaireModel());
