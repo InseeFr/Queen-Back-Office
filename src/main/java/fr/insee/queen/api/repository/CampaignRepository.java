@@ -1,6 +1,7 @@
 package fr.insee.queen.api.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -27,4 +28,6 @@ public interface CampaignRepository extends ApiRepository<Campaign, String> {
 	List<CampaignDto> findDtoBy();
 
 	List<Campaign> findAll();
+	
+	Optional<Campaign> findById(String id);
 }

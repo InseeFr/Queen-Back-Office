@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -45,9 +46,13 @@ public class Campaign {
 	*/
 	@Column(length=255, nullable = false)
 	private String label;
+	
+	@DBRef
+	@OneToOne( mappedBy = "campaign", cascade = CascadeType.ALL )
+	private Metadata metadata;
   
 	@DBRef
-	@OneToMany(fetch = FetchType.EAGER, targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
+	@OneToMany(fetch = FetchType.LAZY, targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
 	private Set<QuestionnaireModel> questionnaireModels = new HashSet<>();
 	 
   
@@ -74,6 +79,13 @@ public class Campaign {
 	 */
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	public Metadata getMetadata() {
+		return metadata;
+	}
+	public void setMetadata(Metadata metadata) {
+		this.metadata = metadata;
 	}
 	
 	public Set<QuestionnaireModel> getQuestionnaireModels(){

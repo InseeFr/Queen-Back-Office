@@ -14,7 +14,9 @@ public interface NomenclatureService extends BaseService<Nomenclature, String> {
 
 	void save(Nomenclature n);
 
-	List<String> findRequiredNomenclatureByQuestionnaire(Set<QuestionnaireModel> setQuestionnaireModel);
+	List<String> findRequiredNomenclatureByCampaign(String campaignId);
+	
+	public List<String> findRequiredNomenclatureByQuestionnaire(Set<QuestionnaireModel> setQuestionnaireModel);
 	
 	Boolean checkIfNomenclatureExists(Set<String> ids);
 

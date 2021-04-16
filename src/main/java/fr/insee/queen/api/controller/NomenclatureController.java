@@ -92,7 +92,7 @@ public class NomenclatureController {
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 200", id);
-			return new ResponseEntity<>(nomenclatureservice.findRequiredNomenclatureByQuestionnaire(campaignOptional.get().getQuestionnaireModels()), HttpStatus.OK);
+			return new ResponseEntity<>(nomenclatureservice.findRequiredNomenclatureByCampaign(id), HttpStatus.OK);
 		}
 	}
 	
@@ -125,7 +125,7 @@ public class NomenclatureController {
 	@ApiOperation(value = "Post new nomenclature ")
 	@PostMapping(path = "/nomenclature")
 	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature){
-		if(utilsService.isDevProfile() && !utilsService.isTestProfile()) {
+		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
 		nomenclatureservice.createNomenclature(nomenclature);

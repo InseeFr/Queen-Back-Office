@@ -53,11 +53,13 @@ import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.CommentService;
 import fr.insee.queen.api.service.DataService;
 import fr.insee.queen.api.service.PersonalizationService;
+import fr.insee.queen.api.service.QuestionnaireModelService;
 import fr.insee.queen.api.service.StateDataService;
 import fr.insee.queen.api.service.SurveyUnitService;
 import fr.insee.queen.api.service.UtilsService;
 
 @Service
+@Transactional
 public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> implements SurveyUnitService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyUnitServiceImpl.class);
 	
@@ -92,6 +94,9 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	
 	@Autowired
 	private PersonalizationRepository personalizationRepository;
+	
+	@Autowired
+	private QuestionnaireModelService questionnaireModelService;
 
 
     @Autowired
@@ -270,6 +275,30 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	            .map(entry -> entry.getKey() + ": " + entry.getValue() + " Suvey unit")
 	            .collect(Collectors.joining("; "))+"]";
 
+	}
+	
+	public HttpStatus postSurveyUnit(String id, SurveyUnitResponseDto su) {
+		Optional<Campaign> campaignOptional = campaignService.findById(id);
+		if (!campaignOptional.isPresent()) {
+			LOGGER.info("POST survey-unit for campaign with id {} resulting in 404", id);
+			return HttpStatus.NOT_FOUND;
+		}
+		Optional<QuestionnaireModel> questionnaireModelOptional = questionnaireModelService.findById(su.getQuestionnaireId());
+		if (!questionnaireModelOptional.isPresent() 
+				|| campaignOptional.get().getQuestionnaireModels()
+				.stream().filter(q -> q.getId().equals(su.getQuestionnaireId()))
+				.collect(Collectors.toList())
+				.isEmpty()){
+			LOGGER.info("POST survey-unit for campaign with id {} resulting in 404", id);
+			return HttpStatus.NOT_FOUND;
+		}
+		Optional<SurveyUnit> surveyUnit = findById(su.getId());
+		if (surveyUnit.isPresent()){
+			LOGGER.info("POST survey-unit for campaign with id {} resulting in 400 : Survey-unit {} already exist", id, su.getId());
+			return HttpStatus.BAD_REQUEST;
+		}
+		createSurveyUnit(su, campaignOptional.get(), questionnaireModelOptional.get());
+		return HttpStatus.OK;
 	}
 
 	@Override

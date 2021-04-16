@@ -9,6 +9,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.insee.queen.api.domain.Campaign;
@@ -38,5 +40,5 @@ public interface SurveyUnitService extends BaseService<SurveyUnit, String> {
 	public Collection<SurveyUnitResponseDto> getSurveyUnitsByCampaign(String id, HttpServletRequest request) throws BadRequestException;
 
 	void createSurveyUnit(SurveyUnitResponseDto su, Campaign campaign, QuestionnaireModel questionnaireModel);
-    
+	HttpStatus postSurveyUnit(String id, SurveyUnitResponseDto su);
 }

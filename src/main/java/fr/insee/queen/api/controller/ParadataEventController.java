@@ -48,7 +48,7 @@ public class ParadataEventController {
 	@PostMapping(path = "/paradata")
 	public ResponseEntity<Object> updateSurveyUnit(HttpServletRequest request,
 			@RequestBody JsonNode paradataValue) {
-		if(utilsService.isDevProfile()) {
+		if(!utilsService.isDevProfile()) {
 			return ResponseEntity.notFound().build();
 		}
 		if (paradataValue == null) {

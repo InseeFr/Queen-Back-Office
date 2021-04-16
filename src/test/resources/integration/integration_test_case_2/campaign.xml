@@ -1,0 +1,6 @@
+<!-- A new campaign, no metadata -->
+
+<Campaign>
+	<Id>anotherCampaign</Id>
+	<Label>An other campaign</Label>
+</Campaign>

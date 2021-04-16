@@ -1,5 +1,6 @@
 package fr.insee.queen.api.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -62,7 +63,7 @@ public class QuestionnaireModel {
 	@ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinTable(name = "required_nomenclature", 
 	joinColumns = { @JoinColumn(name = "id_required_nomenclature") }, inverseJoinColumns = { @JoinColumn(name = "code") })
-	private Set<Nomenclature> nomenclatures;
+	private Set<Nomenclature> nomenclatures = new HashSet<>();
 	
 	/**
 	 * The campaign associated to the questionnaireModel

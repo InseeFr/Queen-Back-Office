@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
@@ -16,6 +17,7 @@ import fr.insee.queen.api.service.NomenclatureService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
 
 @Service
+@Transactional
 public class QuestionnaireModelServiceImpl extends AbstractService<QuestionnaireModel, String> implements QuestionnaireModelService {
 
     protected final QuestionnaireModelRepository questionnaireModelRepository;
