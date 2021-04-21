@@ -32,15 +32,6 @@ public class Campaign {
 	@Column(length=50)
 	private String id;
   
-	public Campaign() {
-		super();
-	}
-	public Campaign(String id, String label, Set<QuestionnaireModel> questionnaireModels) {
-		super();
-		this.id = id;
-		this.label = label;
-		this.questionnaireModels = questionnaireModels;
-	}
 	/**
 	* The label of campaign 
 	*/
@@ -55,7 +46,16 @@ public class Campaign {
 	@OneToMany(fetch = FetchType.LAZY, targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
 	private Set<QuestionnaireModel> questionnaireModels = new HashSet<>();
 	 
-  
+	public Campaign() {
+		super();
+	}
+	public Campaign(String id, String label, Set<QuestionnaireModel> questionnaireModels) {
+		super();
+		this.id = id;
+		this.label = label;
+		this.questionnaireModels = questionnaireModels;
+	}
+	
 	/**
 	 * @return id of nomenclature
 	 */

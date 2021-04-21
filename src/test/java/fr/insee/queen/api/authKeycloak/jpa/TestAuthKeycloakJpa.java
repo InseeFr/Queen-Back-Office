@@ -19,7 +19,7 @@ import liquibase.Liquibase;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-		"fr.insee.queen.application.mode = KeyCloak", "fr.insee.queen.application.persistenceType=JPA" })
+		"fr.insee.queen.application.mode = keycloak", "fr.insee.queen.application.persistenceType=JPA" })
 @ActiveProfiles({ "test", "dev" })
 @ContextConfiguration(initializers = { TestAuthKeycloakJpa.Initializer.class })
 @Testcontainers

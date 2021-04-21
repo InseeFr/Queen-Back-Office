@@ -27,7 +27,7 @@ import fr.insee.queen.api.constants.Constants;
 
 
 
-@ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
+@ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'keycloak'")
 @KeycloakConfiguration
 public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 
@@ -111,7 +111,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
      * @return
      */
     @Bean
-    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
+    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'keycloak'")
     public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
    }
@@ -120,7 +120,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
      * Defines the session authentication strategy.
      */
     @Bean
-    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
+    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'keycloak'")
     @Override
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         // required for bearer-only applications.

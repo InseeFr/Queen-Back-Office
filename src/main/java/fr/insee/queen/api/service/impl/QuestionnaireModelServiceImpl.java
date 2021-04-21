@@ -71,7 +71,7 @@ public class QuestionnaireModelServiceImpl extends AbstractService<Questionnaire
 		questionnaireModel.setId(qm.getIdQuestionnaireModel());
 		questionnaireModel.setLabel(qm.getLabel());
 		questionnaireModel.setValue(qm.getValue());
-		questionnaireModel.setNomenclatures(nomenclatureService.findAllByIds(qm.getRequiredNomenclaturesId()));
+		questionnaireModel.setNomenclatures(nomenclatureService.findAllByIds(qm.getRequiredNomenclatureIds()));
 		questionnaireModelRepository.save(questionnaireModel);
 	}
 }

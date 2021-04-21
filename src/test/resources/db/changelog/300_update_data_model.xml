@@ -33,7 +33,7 @@
             </column>
             <column name="current_page" type="varchar(20)"/>
             <column name="date" type="BIGINT"/>
-            <column name="state" type="VARCHAR(8)"/>
+            <column name="state" type="VARCHAR(9)"/>
             <column name="survey_unit_id" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>

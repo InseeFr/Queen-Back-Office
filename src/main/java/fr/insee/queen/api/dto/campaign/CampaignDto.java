@@ -12,18 +12,18 @@ public class CampaignDto {
 	
 	public String label;
 	
-	public Set<String> questionnaireModelsIds;
+	public Set<String> questionnaireIds;
 	
 	public MetadataDto metadata;
 
 	public CampaignDto() {
 		super();
 	}
-	public CampaignDto(String id, String label, Set<String> questionnaireModelsIds, MetadataDto metadata) {
+	public CampaignDto(String id, String label, Set<String> questionnaireIds, MetadataDto metadata) {
 		super();
 		this.id = id;
 		this.label = label;
-		this.questionnaireModelsIds = questionnaireModelsIds;
+		this.questionnaireIds = questionnaireIds;
 		this.metadata = metadata;
 	}
 	
@@ -42,12 +42,11 @@ public class CampaignDto {
 	}
 
 	/**
-	 * @return the questionnaireModelsIds
+	 * @return the questionnaireIds
 	 */
-	public Set<String> getQuestionnaireModelsIds() {
-		return questionnaireModelsIds;
+	public Set<String> getQuestionnaireIds() {
+		return questionnaireIds;
 	}
-
 	/**
 	 * @return the metadata
 	 */
@@ -70,12 +69,11 @@ public class CampaignDto {
 	}
 
 	/**
-	 * @param questionnaireModelsIds the questionnaireModelsIds to set
+	 * @param questionnaireIds the questionnaireIds to set
 	 */
-	public void setQuestionnaireModelsIds(Set<String> questionnaireModelsIds) {
-		this.questionnaireModelsIds = questionnaireModelsIds;
+	public void setQuestionnaireIds(Set<String> questionnaireIds) {
+		this.questionnaireIds = questionnaireIds;
 	}
-
 	/**
 	 * @param metadata the metadata to set
 	 */

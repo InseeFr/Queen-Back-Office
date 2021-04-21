@@ -132,6 +132,8 @@ Before committing code please ensure,
 - Campaign
 	- `GET /campaigns` : get the campaign list
 	- `POST /campaigns` : post a new campaign
+	- `POST /campaign/context` : integrates the context of a campaign
+	
 
 - Questionnaire
 	- `GET /questionnaire/{id}` : get the questionnaire by his id
@@ -176,6 +178,9 @@ Before committing code please ensure,
 - StateData
 	- `GET /survey-unit/{id}/state-data` : get the state-data of a survey-unit
 	- `PUT /survey-unit/{id}/state-data` : put the state-data for a survey-unit
+	
+- DataSet
+	- `POST /create-dataset` : Create dataset
 
 ## Libraries used
 - spring-boot-jpa

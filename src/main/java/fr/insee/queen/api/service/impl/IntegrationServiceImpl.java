@@ -417,11 +417,11 @@ public class IntegrationServiceImpl implements IntegrationService {
 		 String qmLabel = qm.getElementsByTagName("Label").item(0).getTextContent();
 		 String qmFilename = qm.getElementsByTagName("FileName").item(0).getTextContent();
 		 String campaignId = qm.getElementsByTagName("CampaignId").item(0).getTextContent();
-		 ArrayList<String> requiredNomenclaturesId = new ArrayList<>();
+		 ArrayList<String> requiredNomenclatureIds = new ArrayList<>();
 		 NodeList requiredNomNodes = qm.getElementsByTagName("Nomenclature");
 		 for (int j = 0; j < requiredNomNodes.getLength(); j++) {
 			 if(requiredNomNodes.item(j).getNodeType() == Node.ELEMENT_NODE){
-				 requiredNomenclaturesId.add(requiredNomNodes.item(j).getTextContent());
+				 requiredNomenclatureIds.add(requiredNomNodes.item(j).getTextContent());
 			 }
 		 }
 		 // Checking if campaign exists
@@ -440,7 +440,7 @@ public class IntegrationServiceImpl implements IntegrationService {
 		 
 		 // Checking if required nomenclatures exist
 		 ArrayList<Nomenclature> requiredNomenclatures = new ArrayList<>();
-		 for(String id : requiredNomenclaturesId) {
+		 for(String id : requiredNomenclatureIds) {
 			 Optional<Nomenclature> nomenclatureOpt = nomenclatureRepository.findById(id);
 			 if(nomenclatureOpt.isPresent()) {
 				 requiredNomenclatures.add(nomenclatureOpt.get());

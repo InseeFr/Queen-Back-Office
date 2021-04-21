@@ -77,15 +77,12 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		JsonNode jsonArrayNomenclatureCities2019 = objectMapper.createObjectNode();
 		JsonNode jsonArrayRegions2019 = objectMapper.createObjectNode();
 		JsonNode jsonQuestionnaireModelSimpsons = objectMapper.createObjectNode();
-		JsonNode jsonQuestionnaireModelSimpsonsV2 = objectMapper.createObjectNode();
-
 		JsonNode jsonQuestionnaireModelVqs = objectMapper.createObjectNode();
 		try {
-			 jsonArrayNomenclatureCities2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//cities_2019_nomenclature.json").getFile()));
-			 jsonArrayRegions2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//regions_2019_nomenclature.json").getFile()));
-			 jsonQuestionnaireModelSimpsons = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//simpsons_2020_questionnaire_models.json").getFile()));
-			 jsonQuestionnaireModelSimpsonsV2 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//simpsons_2020_questionnaire_models_V2.json").getFile()));
-			 jsonQuestionnaireModelVqs = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//vqs_2021_questionnaire_models.json").getFile()));
+			 jsonArrayNomenclatureCities2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//public_communes-2019.json").getFile()));
+			 jsonArrayRegions2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//public_regions-2019.json").getFile()));
+			 jsonQuestionnaireModelSimpsons = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//simpsons.json").getFile()));
+			 jsonQuestionnaireModelVqs = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//vqs.json").getFile()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -102,7 +99,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		Campaign camp = new Campaign("simpsons2020x00","Survey on the Simpsons tv show 2020",null); 
 		QuestionnaireModel qm = new QuestionnaireModel("simpsons","Questionnaire about the Simpsons tv show",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),camp);
 		camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
-		QuestionnaireModel qmSimpsons2 = new QuestionnaireModel("simpsonsV2","Questionnaire about the Simpsons tv show version 2",jsonQuestionnaireModelSimpsonsV2,new HashSet<>(List.of(n)),camp);
+		QuestionnaireModel qmSimpsons2 = new QuestionnaireModel("simpsonsV2","Questionnaire about the Simpsons tv show version 2",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),camp);
 		camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
 		createCampaign1(camp, qm, qmSimpsons2);
 		
@@ -236,7 +233,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				pValue.add(jsonObject);
 				p = new Personalization(UUID.randomUUID(),pValue,su);
 				personalizationService.save(p);
-				sd = new StateData(UUID.randomUUID(),StateDataType.EXPORTED,1111111111L,CURRENT_PAGE,su);
+				sd = new StateData(UUID.randomUUID(),StateDataType.EXTRACTED,1111111111L,CURRENT_PAGE,su);
 				stateDataService.save(sd);
 				su.setData(d);
 				su.setStateData(sd);
