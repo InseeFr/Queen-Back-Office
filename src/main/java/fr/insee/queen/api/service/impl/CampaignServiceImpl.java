@@ -66,7 +66,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	@Override
 	public void saveDto(CampaignDto c) {
 		Set<QuestionnaireModel> qm = new HashSet<>();
-		c.getQuestionnaireModelsIds().stream().forEach(
+		c.getQuestionnaireIds().stream().forEach(
 			id -> {
 				Optional<QuestionnaireModel> qmTemp = questionnaireModelRepository.findById(id);
 				if(questionnaireModelRepository.findById(id).isPresent()) {
@@ -87,7 +87,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	}
 	
 	public Boolean checkIfQuestionnaireOfCampaignExists(CampaignDto campaign) {
-		return campaign.getQuestionnaireModelsIds().stream().noneMatch(questionaire -> 
+		return campaign.getQuestionnaireIds().stream().noneMatch(questionaire -> 
 			!questionnaireModelRepository.findById(questionaire).isPresent()
 			|| questionnaireModelRepository.findById(questionaire).get().getCampaign() != null
 		);

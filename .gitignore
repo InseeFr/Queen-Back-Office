@@ -32,3 +32,4 @@ build/
 /application-insee.properties
 
 *.DS_Store
+/.apt_generated_tests/

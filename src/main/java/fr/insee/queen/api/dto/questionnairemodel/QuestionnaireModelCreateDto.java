@@ -12,7 +12,7 @@ public class QuestionnaireModelCreateDto {
 	
 	private JsonNode value;
 
-	private Set<String> requiredNomenclaturesId;
+	private Set<String> requiredNomenclatureIds;
 
 	/**
 	 * @return the idQuestionnaireModel
@@ -36,10 +36,10 @@ public class QuestionnaireModelCreateDto {
 	}
 
 	/**
-	 * @return the requiredNomenclaturesId
+	 * @return the requiredNomenclatureIds
 	 */
-	public Set<String> getRequiredNomenclaturesId() {
-		return requiredNomenclaturesId;
+	public Set<String> getRequiredNomenclatureIds() {
+		return requiredNomenclatureIds;
 	}
 
 	/**
@@ -64,10 +64,10 @@ public class QuestionnaireModelCreateDto {
 	}
 
 	/**
-	 * @param requiredNomenclaturesId the requiredNomenclaturesId to set
+	 * @param requiredNomenclatureIds the requiredNomenclatureIds to set
 	 */
-	public void setRequiredNomenclaturesId(Set<String> requiredNomenclaturesId) {
-		this.requiredNomenclaturesId = requiredNomenclaturesId;
+	public void setRequiredNomenclatureIds(Set<String> requiredNomenclatureIds) {
+		this.requiredNomenclatureIds = requiredNomenclatureIds;
 	}
 
 }
