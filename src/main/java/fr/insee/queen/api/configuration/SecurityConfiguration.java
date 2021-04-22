@@ -35,7 +35,7 @@ import fr.insee.queen.api.constants.Constants;
  * @author Claudel Benjamin
  * 
  */
-@ConditionalOnExpression("'${fr.insee.queen.application.mode}'=='Basic' or '${fr.insee.queen.application.mode}'=='NoAuth'")
+@ConditionalOnExpression("'${fr.insee.queen.application.mode}'=='basic' or '${fr.insee.queen.application.mode}'=='noauth'")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -67,39 +67,62 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		System.setProperty("keycloak.enabled", applicationProperties.getMode() != Mode.Keycloak ? "false" : "true");
+		System.setProperty("keycloak.enabled", applicationProperties.getMode() != Mode.keycloak ? "false" : "true");
 		http.csrf().disable().headers().frameOptions().disable().and().requestCache()
 				.requestCache(new NullRequestCache());
-		if (this.applicationProperties.getMode() == Mode.Basic) {
+		if (this.applicationProperties.getMode() == Mode.basic) {
 			http.httpBasic().authenticationEntryPoint(unauthorizedEntryPoint());
 			http.authorizeRequests()
 					// manage routes securisation
 					.antMatchers(HttpMethod.OPTIONS).permitAll()
 					// configuration for Swagger
-					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**",
-							"/swagger-resources/**")
+					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**", "/swagger-resources/**")
 					.permitAll().antMatchers("/environnement", "/healthcheck").permitAll()
-					.antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
+          .antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
+          .antMatchers(Constants.API_CAMPAIGNS_CONTEXT).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS).hasRole(role)
+					.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS_CREATE).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE_ID).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT).hasRole(role)
 					.antMatchers(Constants.API_SURVEY_UNIT_DATA).hasRole(role)
 					.antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_STATE_DATA).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_DEPOSIT_PROOF).hasRole(role)
+					.antMatchers(Constants.API_SURVEY_UNIT_PERSONALIZATION).hasRole(role)
 					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+					.antMatchers(Constants.API_NOMENCLATURE_POST).hasRole(role)
+					.antMatchers(Constants.API_QUESTIONNAIRE).hasRole(role)
+					.antMatchers(Constants.API_PARADATAEVENT).hasRole(role)
+					.antMatchers(Constants.API_QUESTIONNAIRE_NOMENCLATURE).hasRole(role)
+					.antMatchers(Constants.API_QUESTIONNAIRE_CREATE_QUESTIONNAIRE).hasRole(role)
+					.antMatchers(Constants.API_CREATE_DATASET).hasRole(role)
 					.anyRequest().denyAll();
+			
 		} else {
 			http.httpBasic().disable();
 			http.authorizeRequests()
-					.antMatchers(
-						Constants.API_CAMPAIGNS, 
-						Constants.API_CAMPAIGN_SURVEY_UNITS,
-						Constants.API_CAMPAIGN_QUESTIONAIRE,
-						Constants.API_CAMPAIGN_QUESTIONAIRE_ID,
-						Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES,
-						Constants.API_SURVEY_UNIT_DATA, 
-						Constants.API_SURVEY_UNIT_COMMENT, 
-						Constants.API_NOMENCLATURE)
+          .antMatchers(Constants.API_CAMPAIGNS, 
+              Constants.API_CAMPAIGNS_CONTEXT,
+							Constants.API_CAMPAIGN_SURVEY_UNITS,
+							Constants.API_CAMPAIGN_SURVEY_UNITS_CREATE,
+							Constants.API_CAMPAIGN_QUESTIONAIRE, 
+							Constants.API_CAMPAIGN_QUESTIONAIRE_ID,
+							Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES,
+							Constants.API_SURVEY_UNIT,
+							Constants.API_SURVEY_UNIT_DATA,
+							Constants.API_SURVEY_UNIT_COMMENT, 
+							Constants.API_SURVEY_UNIT_DEPOSIT_PROOF,
+							Constants.API_SURVEY_UNIT_STATE_DATA, 
+							Constants.API_SURVEY_UNIT_PERSONALIZATION,
+							Constants.API_NOMENCLATURE, 
+							Constants.API_NOMENCLATURE_POST, 							
+							Constants.API_PARADATAEVENT,
+							Constants.API_QUESTIONNAIRE_NOMENCLATURE, 
+							Constants.API_QUESTIONNAIRE,
+							Constants.API_QUESTIONNAIRE_CREATE_QUESTIONNAIRE,
+							Constants.API_CREATE_DATASET)
 					.permitAll();
 		}
 	}
@@ -111,11 +134,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		if (isDevelopment()) {
 			switch (this.applicationProperties.getMode()) {
-			case Basic:
+			case basic:
 				auth.inMemoryAuthentication().withUser("INTW1").password("{noop}a").roles(role).and()
 						.withUser("noWrite").password("{noop}a").roles();
 				break;
-			case NoAuth:
+			case noauth:
 				break;
 			default:
 				break;

@@ -1,7 +1,5 @@
 package fr.insee.queen.api.domain;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,8 +7,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.json.simple.JSONObject;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 /**
 * Entity Nomenclature : represent the entity table in DB
@@ -19,16 +18,18 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 * 
 */
 @Entity
-@Table
+@Table(name="nomenclature")
 @TypeDef(
 	    name = "jsonb",
 	    typeClass = JsonBinaryType.class
 	)
+@Document(collection="nomenclature")
 public class Nomenclature {
 	/**
 	* The id of nomenclature 
 	*/
 	@Id
+	@org.springframework.data.annotation.Id
 	@Column(length=50)
 	private String id;
 	/**
@@ -42,8 +43,17 @@ public class Nomenclature {
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private List<JSONObject> value;
+	private JsonNode value;
 
+	public Nomenclature() {
+		super();
+	}
+	public Nomenclature(String id, String label, JsonNode value) {
+		super();
+		this.id = id;
+		this.label = label;
+		this.value = value;
+	}
 	/**
 	 * @return id of nomenclature
 	 */
@@ -71,13 +81,13 @@ public class Nomenclature {
 	/**
 	 * @return value of nomenclature
 	 */
-	public List<JSONObject> getValue() {
+	public JsonNode getValue() {
 		return value;
 	}
 	/**
 	 * @param value value to set
 	 */
-	public void setValue(List<JSONObject> value) {
+	public void setValue(JsonNode value) {
 		this.value = value;
 	}
 

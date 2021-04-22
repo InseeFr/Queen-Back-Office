@@ -1,10 +1,19 @@
 package fr.insee.queen.api.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 /**
 * Entity Campaign : represent the entity table in DB
 * 
@@ -12,25 +21,41 @@ import javax.persistence.Table;
 * 
 */
 @Entity
-@Table
+@Table(name="campaign")
+@Document(collection="campaign")
 public class Campaign {
 	/**
 	* The id of campaign 
 	*/
 	@Id
+	@org.springframework.data.annotation.Id
 	@Column(length=50)
 	private String id;
+  
 	/**
 	* The label of campaign 
 	*/
 	@Column(length=255, nullable = false)
 	private String label;
+	
+	@DBRef
+	@OneToOne( mappedBy = "campaign", cascade = CascadeType.ALL )
+	private Metadata metadata;
+  
+	@DBRef
+	@OneToMany(fetch = FetchType.LAZY, targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
+	private Set<QuestionnaireModel> questionnaireModels = new HashSet<>();
 	 
-	/**
-	* The QuestionnaireModel associated to campaign
-	*/
-	@ManyToOne
-	private QuestionnaireModel questionnaireModel;
+	public Campaign() {
+		super();
+	}
+	public Campaign(String id, String label, Set<QuestionnaireModel> questionnaireModels) {
+		super();
+		this.id = id;
+		this.label = label;
+		this.questionnaireModels = questionnaireModels;
+	}
+	
 	/**
 	 * @return id of nomenclature
 	 */
@@ -55,16 +80,19 @@ public class Campaign {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	/**
-	 * @return QuestionnaireModel associated to campaign
-	 */
-	public QuestionnaireModel getQuestionnaireModel() {
-		return questionnaireModel;
+	
+	public Metadata getMetadata() {
+		return metadata;
 	}
-	/**
-	 * @param questionnaireModel questionnaireModel to set
-	 */
-	public void setQuestionnaireModel(QuestionnaireModel questionnaireModel) {
-		this.questionnaireModel = questionnaireModel;
+	public void setMetadata(Metadata metadata) {
+		this.metadata = metadata;
 	}
+	
+	public Set<QuestionnaireModel> getQuestionnaireModels(){
+		return questionnaireModels;
+	}
+	public void setQuestionnaireModels(Set<QuestionnaireModel> questionnaireModels){
+		this.questionnaireModels = questionnaireModels;
+	}
+	
 }
