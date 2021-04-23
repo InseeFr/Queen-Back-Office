@@ -33,12 +33,13 @@ class TestBasicAuthMongo extends TestBasicAuth {
 			TestPropertyValues
 			.of("spring.data.mongodb.uri=" + mongoDBContainer.getReplicaSetUrl())
 			.applyTo(configurableApplicationContext.getEnvironment());
+			mongoDBContainer.start();
 		}
 	}
 	
 	@AfterAll
 	public static void  cleanUp() {
-		if(mongoDBContainer!=null) {
+		if(mongoDBContainer!=null && mongoDBContainer.isRunning()) {
 			mongoDBContainer.close();
 		}
 		if(mockServerClient!=null) {

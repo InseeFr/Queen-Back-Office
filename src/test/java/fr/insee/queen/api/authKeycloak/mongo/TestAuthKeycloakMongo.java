@@ -34,12 +34,13 @@ class TestAuthKeycloakMongo extends TestAuthKeycloak {
 			.of("spring.data.mongodb.uri=" + mongoDBContainer.getReplicaSetUrl(),
 					"keycloak.auth-server-url=" + keycloak.getAuthServerUrl())
 			.applyTo(configurableApplicationContext.getEnvironment());
+			mongoDBContainer.start();
 		}
 	}
 	
 	@AfterAll
 	public static void  cleanUp() {
-		if(mongoDBContainer!=null) {
+		if(mongoDBContainer!=null && mongoDBContainer.isRunning()) {
 			mongoDBContainer.close();
 		}
 		if(keycloak!=null) {
