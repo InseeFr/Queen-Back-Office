@@ -39,9 +39,9 @@ class TestBasicAuthMongo extends TestBasicAuth {
 	
 	@AfterAll
 	public static void  cleanUp() {
-//		if(mongoDBContainer!=null && mongoDBContainer.isRunning()) {
-//			mongoDBContainer.close();
-//		}
+		if(mongoDBContainer!=null && mongoDBContainer.isRunning()) {
+			mongoDBContainer.close();
+		}
 		if(mockServerClient!=null) {
 			mockServerClient.close();
 		}

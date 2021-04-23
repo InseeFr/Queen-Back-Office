@@ -40,7 +40,7 @@ class TestAuthKeycloakMongo extends TestAuthKeycloak {
 	
 	@AfterAll
 	public static void  cleanUp() {
-		if(mongoDBContainer!=null) {
+		if(mongoDBContainer!=null && mongoDBContainer.isRunning()) {
 			mongoDBContainer.close();
 		}
 		if(keycloak!=null) {
