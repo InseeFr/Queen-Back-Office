@@ -1,5 +1,6 @@
 package fr.insee.queen.api.controller;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -85,7 +86,7 @@ public class NomenclatureController {
 	*/
 	@ApiOperation(value = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
-	public ResponseEntity<Object> getListRequiredNomenclature(@PathVariable(value = "id") String id){
+	public ResponseEntity<List<String>> getListRequiredNomenclature(@PathVariable(value = "id") String id){
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 404", id);
@@ -104,7 +105,7 @@ public class NomenclatureController {
 	*/
 	@ApiOperation(value = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
-	public ResponseEntity<Object> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String id){
+	public ResponseEntity<List<String>> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String id){
 		Optional<QuestionnaireModel> questionnaireOptional = questionnaireModelService.findById(id);
 		if (!questionnaireOptional.isPresent()) {
 			LOGGER.info("GET required-nomenclatures for questionnaire with id {} resulting in 404", id);
