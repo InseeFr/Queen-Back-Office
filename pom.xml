@@ -6,7 +6,7 @@
 
 	<groupId>fr.insee.queen</groupId>
 	<artifactId>queen</artifactId>
-	<version>3.0.4</version>
+	<version>3.0.5</version>
 	<packaging>war</packaging>
 	<name>Queen-Back-Office</name>
 	<description>Back-office services for Queen</description>
@@ -391,7 +391,7 @@
 						<changeLogFile>src/main/resources/db/master.xml</changeLogFile>
 						<diffChangeLogFile>src/main/resources/db/changelog/new_changelog.xml</diffChangeLogFile>
 						<driver>org.postgresql.Driver</driver>
-						<url>jdbc:postgresql://localhost:5433/queen_api</url>
+						<url>jdbc:postgresql://localhost:5432/queen_api</url>
 						<defaultSchemaName>public</defaultSchemaName>
 						<contexts>test,dev,prod</contexts>
 						<username>user_capi3g</username>

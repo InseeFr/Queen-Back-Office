@@ -37,13 +37,14 @@ class TestNoAuthMongo extends TestNoAuth{
 			TestPropertyValues
 			.of("spring.data.mongodb.uri=" + mongoDBContainer.getReplicaSetUrl())
 			.applyTo(configurableApplicationContext.getEnvironment());
+			mongoDBContainer.start();
 		}
 	}
 	
 	@AfterAll
 	public static void  cleanUp() {
-		if(mongoDBContainer!=null) {
-			mongoDBContainer.stop();
+		if(mongoDBContainer!=null && mongoDBContainer.isRunning()) {
+			mongoDBContainer.close();
 		}
 	}
 }
