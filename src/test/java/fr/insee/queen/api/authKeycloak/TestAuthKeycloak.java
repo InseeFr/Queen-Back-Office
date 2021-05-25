@@ -84,7 +84,7 @@ public abstract class TestAuthKeycloak {
 					+ "\"collectionEndDate\":\"1622035845000\""
 				+ "}]";
 		mockServerClient.when(request()
-		        .withPath(Constants.API_PEARLJAM_SURVEY_UNITS))
+		        .withPath(Constants.API_PEARLJAM_SURVEYUNITS))
 		    .respond(response()
 	    		.withStatusCode(200)
 	    		.withHeaders(
@@ -96,8 +96,11 @@ public abstract class TestAuthKeycloak {
 	@BeforeEach
 	void setUp() throws JSONException, JsonMappingException, JsonProcessingException {
 		RestAssured.port = port;
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().post("api/create-dataset");
+		given().auth().oauth2(accessToken()).when().post("api/create-dataset");
+	}
+	
+	String accessToken() throws JsonMappingException, JSONException, JsonProcessingException {
+		return resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
 	}
 
 	/***
@@ -122,576 +125,56 @@ public abstract class TestAuthKeycloak {
 		return accessToken;
 	}
 
+	//////////////////////////API_CAMPAIGNS ///////////////////////
 	/**
-	 * Test that the GET endpoint "api/campaigns" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
+	* Test that the GET endpoint "api/campaigns" return 200
+	* 
+	* @throws InterruptedException
 	 * @throws JsonProcessingException 
 	 * @throws JsonMappingException 
-	 */
+	* @throws JSONException
+	*/
 	@Test
-	void testFindCampaign() throws InterruptedException, JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/campaigns")
-		.then().statusCode(200)
-		.and().assertThat().body("id", hasItem("simpsons2020x00"));
-
-	}
-
-	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testFindQuestionnaireByCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/simpsons2020x00/questionnaires")
-		.then().statusCode(200)
-		.and().assertThat().body("isEmpty()", Matchers.is(false));
-	}
-
-	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 404 with
-	 * wrong questionnaire Id
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testFindQuestionnaireByUnexistCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/test/questionnaires")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/survey-units" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testFindSurveyUnitsByOperation() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/simpsons2020x00/survey-units")
-		.then().statusCode(200).and().assertThat().body("id", hasItem("11"));
-
-	}
-
-	/**
-	 * Test that the GET endpoint "api/campaigns/{id}/survey-units" return 404 with
-	 * wrong questionnaire Id
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testFindSurveyUnitsByUnexistCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/test/survey-units")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/nomenclature/{id}" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testFindNomenclatureById() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/nomenclature/cities2019")
-		.then().statusCode(200)
-		.and().assertThat().body("isEmpty()", Matchers.is(false));
-	}
-
-	/**
-	 * Test that the GET endpoint "api/nomenclature/{id}" return 404 with wrong
-	 * nomenclature Id
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testFindUnexistNomenclatureById() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/nomenclature/test")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/comment" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testFindCommentBySurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		Response response = given().auth().oauth2(accessToken).when().get("api/survey-unit/11/comment");
-		response.then().statusCode(200);
-		Assert.assertEquals("{\"COMMENT\":\"acomment\"}", response.getBody().asString().replaceAll("\\s+",""));
-	}
-
-	/**
-	 * Test that the PUT endpoint "api/survey-unit/{id}/comment" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testPutCommentBySurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		
-		ObjectNode comment = objectMapper.createObjectNode();
-		comment.put("comment", "value");
-
-		with()
-		.contentType(ContentType.JSON)
-		.body(comment.toString())
-		.given().auth().oauth2(accessToken)
-		.when().put("api/survey-unit/21/comment")
-		.then().statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("api/survey-unit/21/comment");
-		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), comment.toString());
-	}
-
-	/**
-	 * Test that the PUT endpoint "api/reporting-unit/{id}/data" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testPutDataByReportingUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		ObjectNode data = objectMapper.createObjectNode();
-		data.put("data", "value");
-
-		with()
-		.contentType(ContentType.JSON).body(data.toString())
-		.given().auth().oauth2(accessToken)
-		.when().put("api/survey-unit/21/data")
-		.then().statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("api/survey-unit/21/data");
-		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), data.toString());
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/comment" return 404 with
-	 * wrong survey-unit Id
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testFindCommentByUnexistSurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken).when().get("api/survey-unit/test/comment").then().statusCode(404);
-		given().auth().oauth2(accessToken).when().get("api/survey-unit/0/comment").then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/data" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testFindDataBySurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		Response response = given().auth().oauth2(accessToken).when().get("api/survey-unit/11/data");
-		response.then().statusCode(200);
-		Assert.assertEquals("{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}}", response.getBody().asString().replaceAll("\\s+",""));
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/data" return 404 with wrong
-	 * survey-unit Id
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testFindDataByUnexistSurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/survey-unit/test/data")
-		.then().statusCode(404);
-		given().auth().oauth2(accessToken)
-		.when().get("api/survey-unit/0/data")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/campaign/{id}/required-nomenclature" return
-	 * 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testFindRequiredNomenclatureByCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/vqs2021x00/required-nomenclatures")
-		.then().statusCode(200)
-		.and().assertThat().body("$", hasItem("french cities 2019"));
+	void testFindCampaign() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaigns")
+				.then().statusCode(200)
+				.and().assertThat().body("id", hasItem("simpsons2020x00"));
 	}
 	
 	/**
-	 * Test that the GET endpoint "api/campaign/{id}/required-nomenclature" return
-	 * 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testFindRequiredNomenclatureByUnexistingCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/tototo/required-nomenclatures")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/campaign/{id}/questionnaire-id" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testFindQuestionnaireIdByCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		Response response = given().auth().oauth2(accessToken).when().get("api/campaign/simpsons2020x00/questionnaire-id");
-    response.then().statusCode(200);
-    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\"" + ":" + "\"simpsons\"}"));
-    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\":\"simpsonsV2\"}"));
-	}
-
-	/**
-	 * Test that the GET endpoint "api/campaign/{id}/questionnaire-id" return 404
-	 * with wrong campaign Id
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testFindQuestionnaireIdByUnexistCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/campaign/test/questionnaire-id")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/personalization" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testGetSurveyUnitPersonalization() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		Response response = given().auth().oauth2(accessToken).when().get("api/survey-unit/11/personalization");
-		response.then().statusCode(200);
-		Assert.assertEquals("[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}]", 
-				response.getBody().asString().replaceAll("\\s+",""));
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/personalization" return 404
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testGetSurveyUnitPersonalizationNotExists() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/survey-unit/99/personalization")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the PUT endpoint "api/survey-unit/{id}/personalization" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testPutPersonalizationBySurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		with()
-		.contentType(ContentType.JSON)
-		.body("[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"}]")
-		.given().auth().oauth2(accessToken)
-		.when().put("api/survey-unit/21/personalization")
-		.then().statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("api/survey-unit/21/personalization");
-		response.then().statusCode(200);
-		Assert.assertEquals("[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"}]", response.getBody().asString().replaceAll("\\s+",""));
-	}
-
-	/**
-	 * Test that the PUT endpoint "api/survey-unit/{id}/personalization" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testPutPersonalizationBySurveyUnitNotExists() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		with()
-		.contentType(ContentType.JSON)
-		.body("[{\"name\":\"whoAnswers1\",\"value\":\"Mr Dupond\"}]")
-		.given().auth().oauth2(accessToken)
-		.when().put("api/survey-unit/99/personalization")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/state-data" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testGetSurveyUnitStateData() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		Response response = given().auth().oauth2(accessToken).when().get("api/survey-unit/11/state-data");
-		response.then().statusCode(200);
-		Assert.assertEquals("{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}", response.getBody().asString().replaceAll("\\s+",""));
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/state-data" return 404
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testGetSurveyUnitStateDataNotExists() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/survey-unit/99/state-data")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the PUT endpoint "api/survey-unit/{id}/state-data" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testPutStateDataBySurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		with()
-		.contentType(ContentType.JSON)
-		.body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
-		.given().auth().oauth2(accessToken)
-		.when().put("api/survey-unit/21/state-data")
-		.then().statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("api/survey-unit/21/state-data");
-		response.then().statusCode(200);
-		Assert.assertEquals("{\"state\":\"INIT\",\"date\":11111111111,\"currentPage\":\"11\"}",response.getBody().asString().replaceAll("\\s+",""));
-	}
-
-	/**
-	 * Test that the PUT endpoint "api/survey-unit/{id}/state-data" return 404
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testPutStateDataBySurveyUnitNotExists() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		with()
-		.contentType(ContentType.JSON)
-		.body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
-		.given().auth().oauth2(accessToken)
-		.when().put("api/survey-unit/99/state-data")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/deposit-proof" return 404
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testGetSurveyUnitDepositProofNotExists() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/survey-unit/99/deposit-proof")
-		.then().statusCode(404);
-	}
-
-	/**
-	 * Test that the GET endpoint "api/survey-unit/{id}/deposit-proof" return 200
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 */
-	@Test
-	void testGetSurveyUnitDepositProof() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		given().auth().oauth2(accessToken)
-		.when().get("api/survey-unit/11/deposit-proof")
-		.then().statusCode(200)
-		.header("Content-Type", "application/pdf");
-	}
-	
-	/**
-	 * Test that the POST endpoint "api/questionnaire-models"
-	 * return 200
-	 * @throws InterruptedException
-	 * @throws JSONException 
+	* Test that the POST endpoint "api/campaigns" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
 	 * @throws JsonProcessingException 
 	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testPostQuestionnaire() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		with()
-		.contentType(ContentType.JSON)
-		.body("{\"idQuestionnaireModel\":\"testPostQuestionnaire\",\"label\":\"label for testing post questionnaire\", \"requiredNomenclatureIds\":[\"cities2019\"],\"value\":{\"idQuestionnaireModel\":\"testPostQuestionnaire\"}}")
-		.given().auth().oauth2(accessToken).when()
-		.post("api/questionnaire-models")
-		.then().statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("api/questionnaire/testPostQuestionnaire");
-		response.then().statusCode(200);
-    Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("testPostQuestionnaire"));
-}
-	
-	/**
-	 * Test that the POST endpoint "/api/campaign/{id}/survey-unit"
-	 * return 200
-	 * @throws InterruptedException
-	 * @throws JSONException 
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testPostCampaignSurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		String postBody = "{\"id\":55,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
-		String respBodyExpected = "{\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}}";
-		with()
-		.contentType(ContentType.JSON)
-		.body(postBody)
-		.given().auth().oauth2(accessToken).when()
-		.post("/api/campaign/vqs2021x00/survey-unit")
-		.then().statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("/api/survey-unit/55");
-		response.then().statusCode(200);
-		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+",""), respBodyExpected.replaceAll("\\s+",""));
-	}
-	
-	/**
-	 * Test that the POST endpoint "/api/campaign/{id}/survey-unit" return 400 if su
-	 * already exist
-	 * 
-	 * @throws InterruptedException
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testPostCampaignSurveyUnitAlreadyExist() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		String postBody = "{\"id\":22,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
-		with()
-		.contentType(ContentType.JSON)
-		.body(postBody)
-		.given().auth().oauth2(accessToken).when()
-		.post("/api/campaign/vqs2021x00/survey-unit")
-		.then().statusCode(400);
-	}
-	
-	
-	/**
-	 * Test that the POST endpoint "api/nomenclature"
-	 * return 200
-	 * @throws InterruptedException
-	 * @throws JSONException 
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
-	@Test
-	void testPostNomenclature() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		with()
-		.contentType(ContentType.JSON)
-		.body("{\"id\":\"testPostNomenclature\",\"label\":\"label for testing post nomnclature\", \"value\":{\"idNomenclature\":\"testPostNomenclature\"}}")
-		.given().auth().oauth2(accessToken).when()
-		.post("/api/nomenclature")
-		.then().statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("/api/nomenclature/testPostNomenclature");
-		response.then().statusCode(200);
-		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("testPostNomenclature"));
-	}
-	/**
-	 * Test that the GET endpoint "api/campaigns"
-	 * return 200
-	 * @throws InterruptedException
-	 * @throws JSONException 
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
+	*/
 	@Test
 	void testPostCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
-		with()
-		.contentType(ContentType.JSON)
-		.body("{\"id\":\"testPostCampaign\",\"label\":\"label for testing post campaign\",\"metadata\":{}, \"questionnaireIds\":[\"QmWithoutCamp\"]}")
-		.given().auth().oauth2(accessToken).when()
-		.post("api/campaigns")
-		.then().statusCode(200);
-		Response response = given().auth().oauth2(accessToken).when().get("api/campaigns");
+		with().contentType(ContentType.JSON)
+				.body("{\"id\":\"testPostCampaign\",\"label\":\"label for testing post campaign\",\"metadata\":{}, \"questionnaireIds\":[\"QmWithoutCamp\"]}")
+				.given().auth().oauth2(accessToken())
+				.post("api/campaigns").then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/campaigns");
 		response.then().statusCode(200);
-		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+",""))); 
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
+		"{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
 	}
+	//////////////////////////API_CAMPAIGNS ///////////////////////
 	
+	
+	//////////////////////////	API_CAMPAIGN_CONTEXT //////////////////////////
 	/**
-	 * Test that the POST endpoint "api/campaign/context" return 200
-	 * 
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
+	* Test that the POST endpoint "api/campaign/context" return 200
+	* 
+	* @throws JSONException
+	* @throws JsonProcessingException 
+	* @throws JsonMappingException 
+	*/
 	@Test
 	void testIntegrateContextCase1() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
 		File zip = new File(getClass().getClassLoader()
 				.getResource("integration//integration_test_case_1.zip").getFile());
 		ObjectNode expected = objectMapper.createObjectNode();
@@ -725,40 +208,37 @@ public abstract class TestAuthKeycloak {
 		expected.set("campaign", campaign);
 		expected.set("nomenclatures", nomenclatures);
 		expected.set("questionnaireModels", questionnaireModels);
-
-				
+		
 		Response resp = with()
-		.given().auth().oauth2(accessToken).when()
-		.multiPart("file", zip)
-		.post("api/campaign/context");
+				.multiPart("file", zip)
+				.given().auth().oauth2(accessToken())
+				.post("api/campaign/context");
 		resp.then().statusCode(200);
-
+		
 		// Response is as expected
 		String responseString = objectMapper.readTree(resp.getBody().asString()).toString();
-	    Assert.assertEquals(expected.toString(), responseString);
-	    
-    // Questionnaire model "simpsons-v1" has been created
-    Response resp2 = given().auth().oauth2(accessToken).when()
-	    		.get("api/campaign/simpsons2020x00/questionnaire-id");
-	  resp2.then().statusCode(200);
+		Assert.assertEquals(expected.toString(), responseString);
+		
+		// Questionnaire model "simpsons-v1" has been created
+		Response resp2 = given().auth().oauth2(accessToken())
+				.get("api/campaign/simpsons2020x00/questionnaire-id");
+		resp2.then().statusCode(200);
 		Assert.assertTrue(resp2.getBody().asString().contains("simpsons-v1"));
 		
 		// Nomenclature "cities20199" has been created
-		given().auth().oauth2(accessToken).when()
-			.get("api/nomenclature/cities20199").then().statusCode(200);
-		
+		given().auth().oauth2(accessToken())
+				.when().get("api/nomenclature/cities20199").then().statusCode(200);
 	}
 	
 	/**
-	 * Test that the POST endpoint "api/campaign/context" return 200
-	 * 
-	 * @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	 */
+	* Test that the POST endpoint "api/campaign/context" return 200
+	* 
+	* @throws JSONException
+	* @throws JsonProcessingException 
+	* @throws JsonMappingException 
+	*/
 	@Test
 	void testIntegrateContextCase2() throws JSONException, JsonMappingException, JsonProcessingException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "INTW1", "a");
 		File zip = new File(getClass().getClassLoader()
 				.getResource("integration//integration_test_case_2.zip").getFile());
 		ObjectNode expected = objectMapper.createObjectNode();
@@ -773,7 +253,6 @@ public abstract class TestAuthKeycloak {
 		nomenclature1.put("status", "ERROR");
 		nomenclature1.put("cause", "File nomenclatures.xml does not fit the required template (cvc-elt.1.a: Cannot find the declaration of element 'NomenclatureWithTypo'.)");
 		nomenclatures.add(nomenclature1);
-
 		
 		ArrayNode questionnaireModels = objectMapper.createArrayNode();
 		ObjectNode questionnaireModel1 = objectMapper.createObjectNode();
@@ -781,32 +260,661 @@ public abstract class TestAuthKeycloak {
 		questionnaireModel1.put("status", "ERROR");
 		questionnaireModel1.put("cause", "Questionnaire model file 'file_that does not exist.json' could not be found in input zip");
 		questionnaireModels.add(questionnaireModel1);
-
 		
 		expected.set("campaign", campaign);
 		expected.set("nomenclatures", nomenclatures);
 		expected.set("questionnaireModels", questionnaireModels);
-
-				
+		
 		Response resp = with()
-		.given().auth().oauth2(accessToken).when()
-		.multiPart("file", zip)
-		.post("api/campaign/context");
+				.multiPart("file", zip)
+				.given().auth().oauth2(accessToken())
+				.post("api/campaign/context");
 		resp.then().statusCode(200);
-
+		
 		// Response is as expected
 		String responseString = objectMapper.readTree(resp.getBody().asString()).toString();
-	    Assert.assertEquals(expected.toString(), responseString);
-	    
-	    // Campaign "anotherCampaign" has been created
-	 	Response resp2 = given().auth().oauth2(accessToken).when()
-	 			.get("api/campaigns");
-	    resp2.then().statusCode(200);
-		Assert.assertFalse(resp2.getBody().asString().contains("anotherCampaigns"));
+		Assert.assertEquals(expected.toString(), responseString);
 		
-	    
-		
-		
+		// Campaign "anotherCampaign" has been created
+		Response resp2 = given().auth().oauth2(accessToken())
+				.get("api/campaigns");
+		resp2.then().statusCode(200);
+		Assert.assertFalse(resp2.getBody().asString().contains("anotherCampaigns"));	
+	}
+	//////////////////////////	API_CAMPAIGN_CONTEXT //////////////////////////
+	
+	
+	//////////////////////////	API_CAMPAIGN_ID_SURVEY_UNITS //////////////////////////
+	/**
+	* Test that the GET endpoint "api/campaigns/{id}/survey-units" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindSurveyUnitsByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/simpsons2020x00/survey-units")
+				.then().statusCode(200)
+				.and().assertThat().body("id", hasItem("11"));
+	}
+	/**
+	* Test that the GET endpoint "api/campaigns/{id}/survey-units" return 404 with
+	* wrong questionnaire Id
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindSurveyUnitsByUnexistCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/toto/survey-units")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_CAMPAIGN_ID_SURVEY_UNITS //////////////////////////
+	
+	
+	//////////////////////////	API_CAMPAIGN_ID_SURVEY_UNIT //////////////////////////
+	/**
+	* Test that the POST endpoint "/api/campaign/{id}/survey-unit" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	*/
+	@Test
+	void testPostCampaignSurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
+		String postBody = "{\"id\":55,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
+		String respBodyExpected = "{\"questionnaireId\":\"vqs2021x00\",\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}}";
+		with().contentType(ContentType.JSON).body(postBody)
+				.given().auth().oauth2(accessToken())
+				.post("/api/campaign/vqs2021x00/survey-unit")
+				.then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.when().get("/api/survey-unit/55");
+		response.then().statusCode(200);
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+", ""),
+		respBodyExpected.replaceAll("\\s+", ""));
 	}
 	
+	/**
+	* Test that the POST endpoint "/api/campaign/{id}/survey-unit" return 400 if su already exist
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	*/
+	@Test
+	void testPostCampaignSurveyUnitAlreadyExist() throws JSONException, JsonMappingException, JsonProcessingException {
+		String postBody = "{\"id\":22,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
+		with().contentType(ContentType.JSON)
+				.body(postBody)
+				.given().auth().oauth2(accessToken())
+				.post("/api/campaign/vqs2021x00/survey-unit")
+				.then().statusCode(400);
+	}
+	//////////////////////////API_CAMPAIGN_ID_SURVEY_UNIT //////////////////////////
+	
+	
+	//////////////////////////	API_CAMPAIGN_ID_METADATA //////////////////////////
+	/**
+	* Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindMetadataByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/simpsons2020x00/metadata")
+				.then().statusCode(200);
+	}
+	/**
+	* Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 404 with
+	* wrong questionnaire Id
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindMetadataByUnexistCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/toto/metadata")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_CAMPAIGN_ID_METADATA //////////////////////////
+	
+	
+	//////////////////////////	API_CAMPAIGN_ID_QUESTIONAIRES //////////////////////////
+	/**
+	* Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindQuestionnaireByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/simpsons2020x00/questionnaires")
+				.then().statusCode(200)
+				.and().assertThat().body("isEmpty()",Matchers.is(false));
+	}
+	/**
+	* Test that the GET endpoint "api/campaigns/{id}/questionnaires" return 404 with
+	* wrong questionnaire Id
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindQuestionnaireByUnexistCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/toto/questionnaires")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_CAMPAIGN_ID_QUESTIONAIRES //////////////////////////
+	
+	
+	//////////////////////////	API_CAMPAIGN_ID_QUESTIONAIREID //////////////////////////
+	/**
+	* Test that the GET endpoint "api/campaign/{id}/questionnaire-id" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	*/
+	@Test
+	void testFindQuestionnaireIdByCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/campaign/simpsons2020x00/questionnaire-id");
+		response.then().statusCode(200);
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\"" + ":" + "\"simpsons\"}"));
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\":\"simpsonsV2\"}"));
+	}
+	
+	/**
+	* Test that the GET endpoint "api/campaign/{id}/questionnaire-id" return 404
+	* with wrong campaign Id
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	*/
+	@Test
+	void testFindQuestionnaireIdByUnexistCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/test/questionnaire-id")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_CAMPAIGN_ID_QUESTIONAIREID //////////////////////////
+	
+	
+	//////////////////////////	API_CAMPAIGN_ID_REQUIREDNOMENCLATURES //////////////////////////
+	/**
+	* Test that the GET endpoint "api/campaign/{id}/required-nomenclature" return
+	* 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindRequiredNomenclatureByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/simpsons2020x00/required-nomenclatures")
+				.then().statusCode(200)
+				.and().assertThat().body("$",hasItem("cities2019"));
+	}
+	
+	/**
+	* Test that the GET endpoint "api/campaign/{id}/required-nomenclature" return
+	* 404 with wrong campaign Id
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindRequiredNomenclatureByUnexistCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/campaign/toto/required-nomenclatures")
+				.then().statusCode(404);
+	}
+	//////////////////////////API_CAMPAIGN_ID_REQUIREDNOMENCLATURES //////////////////////////
+	
+	
+	//////////////////////////	API_SURVEYUNIT_ID //////////////////////////
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindSurveyUnitById() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/11")
+				.then().statusCode(200);
+	}
+	
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}" return 404
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindSurveyUnitByUnexistId() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/test")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_SURVEYUNIT_ID //////////////////////////
+	
+	
+	//////////////////////////	API_SURVEYUNIT_ID_DATA //////////////////////////
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/data" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	*/
+	@Test
+	void testFindDataBySurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/survey-unit/11/data");
+		response.then().statusCode(200);
+		Assert.assertEquals("{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}}",
+		response.getBody().asString().replaceAll("\\s+", ""));
+	}
+	
+	/**
+	* Test that the PUT endpoint "api/survey-unit/{id}/data" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testPutDataBySurveyUnit() throws JsonMappingException, JSONException, JsonProcessingException {
+		ObjectNode data = objectMapper.createObjectNode();
+		data.put("data", "value");
+		with().contentType(ContentType.JSON)
+				.body(data.toString())
+				.given().auth().oauth2(accessToken())
+				.put("api/survey-unit/21/data")
+				.then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/21/data");
+		response.then().statusCode(200);
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+", ""), data.toString());
+	}
+	
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/data" return 404 with wrong
+	* survey-unit Id
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindDataByUnexistSurveyUnit() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/toto/data")
+				.then().statusCode(404);
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/0/data")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_SURVEYUNIT_ID_DATA //////////////////////////
+	
+	
+	//////////////////////////	API_SURVEYUNIT_ID_COMMENT //////////////////////////
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/comment" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindCommentBySurveyUnit() throws JsonMappingException, JSONException, JsonProcessingException {
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/survey-unit/11/comment");
+		response.then().statusCode(200);
+		Assert.assertEquals("{\"COMMENT\":\"acomment\"}", response.getBody().asString().replaceAll("\\s+", ""));
+	}
+	
+	/**
+	* Test that the PUT endpoint "api/survey-unit/{id}/comment" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testPutCommentBySurveyUnit() throws JsonMappingException, JSONException, JsonProcessingException {
+		ObjectNode comment = objectMapper.createObjectNode();
+		comment.put("comment", "value");
+	
+		with().contentType(ContentType.JSON)
+				.body(comment.toString())
+				.given().auth().oauth2(accessToken())
+				.put("api/survey-unit/21/comment")
+				.then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/survey-unit/21/comment");
+		response.then().statusCode(200);
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+", ""), comment.toString());
+	}
+	
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/comment" return 404 with
+	* wrong survey-unit Id
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindCommentByUnexistSurveyUnit() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/toto/comment")
+				.then().statusCode(404);
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/0/comment")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_SURVEYUNIT_ID_COMMENT //////////////////////////
+	
+	
+	//////////////////////////	API_SURVEYUNIT_ID_STATEDATA //////////////////////////
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/state-data" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testGetSurveyUnitStateData() throws JsonMappingException, JSONException, JsonProcessingException {
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/survey-unit/11/state-data");
+		response.then().statusCode(200);
+		Assert.assertEquals("{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}",
+		response.getBody().asString().replaceAll("\\s+", ""));
+	}
+	
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/state-data" return 404
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testGetSurveyUnitStateDataNotExists() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/99/state-data")
+				.then().statusCode(404);
+	}
+	
+	/**
+	* Test that the PUT endpoint "api/survey-unit/{id}/state-data" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testPutStateDataBySurveyUnit() throws JsonMappingException, JSONException, JsonProcessingException {
+		with()
+				.contentType(ContentType.JSON)
+				.body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
+				.given().auth().oauth2(accessToken())
+				.put("api/survey-unit/21/state-data")
+				.then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/survey-unit/21/state-data");
+		response.then().statusCode(200);
+		Assert.assertEquals("{\"state\":\"INIT\",\"date\":11111111111,\"currentPage\":\"11\"}",
+		response.getBody().asString().replaceAll("\\s+", ""));
+	}
+	
+	/**
+	* Test that the PUT endpoint "api/survey-unit/{id}/state-data" return 404
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testPutStateDataBySurveyUnitNotExists() throws JsonMappingException, JSONException, JsonProcessingException {
+		with().contentType(ContentType.JSON)
+				.body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
+				.given().auth().oauth2(accessToken())
+				.put("api/survey-unit/99/state-data")
+				.then().statusCode(404);
+	}
+	//////////////////////////API_SURVEYUNIT_ID_STATEDATA //////////////////////////
+	
+	
+	//////////////////////////	API_SURVEYUNIT_ID_DEPOSITPROOF //////////////////////////
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/deposit-proof" return 404
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testGetSurveyUnitDepositProofNotExists() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/99/deposit-proof")
+				.then().statusCode(404);
+	}
+	
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/deposit-proof" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testGetSurveyUnitDepositProof() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/11/deposit-proof")
+				.then().statusCode(200)
+				.header("Content-Type", "application/pdf");
+	}
+	//////////////////////////	API_SURVEYUNIT_ID_DEPOSITPROOF //////////////////////////
+	
+	
+	//////////////////////////	API_SURVEYUNIT_ID_PERSONALIZATION //////////////////////////
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/personalization" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testGetSurveyUnitPersonalization() throws JsonMappingException, JSONException, JsonProcessingException {
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/survey-unit/11/personalization");
+		response.then().statusCode(200);
+		Assert.assertEquals(
+				"[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}]",
+		response.getBody().asString().replaceAll("\\s+", ""));
+	}
+	
+	/**
+	* Test that the GET endpoint "api/survey-unit/{id}/personalization" return 404
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testGetSurveyUnitPersonalizationNotExists() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-unit/99/personalization")
+				.then().statusCode(404);
+	}
+	
+	/**
+	* Test that the PUT endpoint "api/survey-unit/{id}/personalization" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testPutPersonalizationBySurveyUnit() throws JsonMappingException, JSONException, JsonProcessingException {
+		with().contentType(ContentType.JSON)
+				.body("[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"}]")
+				.given().auth().oauth2(accessToken())
+				.put("api/survey-unit/21/personalization")
+				.then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/survey-unit/21/personalization");
+		response.then().statusCode(200);
+		Assert.assertEquals("[{\"name\":\"whoAnswers1\",\"value\":\"MrDupond\"}]",
+		response.getBody().asString().replaceAll("\\s+", ""));
+	}
+	
+	/**
+	* Test that the PUT endpoint "api/survey-unit/{id}/personalization" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testPutPersonalizationBySurveyUnitNotExists() throws JsonMappingException, JSONException, JsonProcessingException {
+		with().contentType(ContentType.JSON)
+				.body("[{\"name\":\"whoAnswers1\",\"value\":\"Mr Dupond\"}]")
+				.given().auth().oauth2(accessToken())
+				.put("api/survey-unit/99/personalization")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_SURVEYUNIT_ID_PERSONALIZATION //////////////////////////
+	
+	
+	//////////////////////////	API_NOMENCLATURE //////////////////////////
+	/**
+	* Test that the POST endpoint "api/nomenclature" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testPostNomenclature() throws JsonMappingException, JSONException, JsonProcessingException {
+		with().contentType(ContentType.JSON)
+				.body("{\"id\":\"testPostNomenclature\",\"label\":\"label for testing post nomnclature\", \"value\":{\"idNomenclature\":\"testPostNomenclature\"}}")
+				.given().auth().oauth2(accessToken())
+				.post("/api/nomenclature")
+				.then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.get("/api/nomenclature/testPostNomenclature");
+		response.then().statusCode(200);
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains("testPostNomenclature"));
+	}
+	//////////////////////////	API_NOMENCLATURE //////////////////////////
+	
+	
+	//////////////////////////	API_NOMENCLATURE_ID //////////////////////////
+	/**
+	* Test that the GET endpoint "api/nomenclature/{id}" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindNomenclatureById() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/nomenclature/cities2019")
+				.then().statusCode(200)
+				.and().assertThat().body("isEmpty()",Matchers.is(false));
+	}
+	/**
+	* Test that the GET endpoint "api/nomenclature/{id}" return 404 with wrong
+	* nomenclature Id
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testFindUnexistNomenclatureById() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/nomenclature/toto")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_NOMENCLATURE_ID //////////////////////////
+	
+	
+	//////////////////////////	API_QUESTIONNAIRE_ID //////////////////////////
+	@Test
+	void testFindQuestionnaireById() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/questionnaire/simpsons")
+				.then().statusCode(200);
+	}
+	
+	@Test
+	void testFindQuestionnaireByUnexistId() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/questionnaire/test")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_QUESTIONNAIRE_ID //////////////////////////
+	
+	
+	//////////////////////////	API_QUESTIONNAIRE_ID_METADATA //////////////////////////
+	@Test
+	void testFindMetadataByQuestionnaireId() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/questionnaire/simpsons/metadata")
+				.then().statusCode(200);
+	}
+	
+	@Test
+	void testFindMetadataByUnexistQuestionnaireId() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/questionnaire/test/metadata")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_QUESTIONNAIRE_ID_METADATA //////////////////////////
+	
+	
+	//////////////////////////	API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE //////////////////////////
+	@Test
+	void testFindRequiredNomenclatureByQuestionnaireId() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/questionnaire/simpsons/required-nomenclatures")
+				.then().statusCode(200);
+	}
+	
+	@Test
+	void testFindRequiredNomenclatureByUnexistQuestionnaireId() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/questionnaire/test/required-nomenclatures")
+				.then().statusCode(404);
+	}
+	//////////////////////////	API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE //////////////////////////
+	
+	
+	//////////////////////////	API_QUESTIONNAIREMODELS //////////////////////////
+	/**
+	* Test that the POST endpoint "api/questionnaire-models" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	*/
+	@Test
+	void testPostQuestionnaire() throws JSONException, JsonMappingException, JsonProcessingException {
+		with().contentType(ContentType.JSON)
+				.body("{\"idQuestionnaireModel\":\"testPostQuestionnaire\",\"label\":\"label for testing post questionnaire\", \"requiredNomenclatureIds\":[\"cities2019\"],\"value\":{\"idQuestionnaireModel\":\"testPostQuestionnaire\"}}")
+				.given().auth().oauth2(accessToken())
+				.post("api/questionnaire-models")
+				.then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.get("api/questionnaire/testPostQuestionnaire");
+		response.then().statusCode(200);
+		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains("testPostQuestionnaire"));
+	}
+	//////////////////////////	API_QUESTIONNAIREMODELS //////////////////////////
 }

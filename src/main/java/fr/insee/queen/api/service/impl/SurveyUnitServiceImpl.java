@@ -37,7 +37,6 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.domain.StateDataType;
 import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.domain.Version;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 import fr.insee.queen.api.exception.BadRequestException;
@@ -305,7 +304,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	public void createSurveyUnit(SurveyUnitResponseDto su, Campaign campaign, QuestionnaireModel questionnaire) {
 		SurveyUnit newSu = new SurveyUnit(su.getId(),campaign,questionnaire,null,null,null,null);
 		surveyUnitRepository.save(newSu);
-		Data d = new Data(UUID.randomUUID(),Version.INIT,su.getData(),newSu);
+		Data d = new Data(UUID.randomUUID(),su.getData(),newSu);
 		dataService.save(d);
 		Comment c = new Comment(UUID.randomUUID(),su.getComment(),newSu);
 		commentService.save(c);

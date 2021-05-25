@@ -88,4 +88,7 @@
             schemaName="public"  
             tableName="questionnaire_model"/>
    </changeSet>
+   <changeSet author="bclaudel" id="1614959963205-18">
+        <dropColumn columnName="version" tableName="data"/>
+    </changeSet>
 </databaseChangeLog>

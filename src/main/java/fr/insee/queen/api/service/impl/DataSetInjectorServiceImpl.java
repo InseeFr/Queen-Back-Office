@@ -27,7 +27,6 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.domain.StateDataType;
 import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.domain.Version;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.CommentService;
 import fr.insee.queen.api.service.DataService;
@@ -129,7 +128,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			SurveyUnit su2 = new SurveyUnit("20",camp2,qm2,null,null,null,null);
 			if(surveyUnitService.findById(su2.getId()).isPresent()) {
 				surveyUnitService.save(su2);
-				d2 = new Data(UUID.randomUUID(),Version.INIT,objectMapper.createObjectNode(),su2);
+				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
@@ -146,7 +145,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			su2 = new SurveyUnit("21",camp2,qm2,null,null,null,null);
 			if(!surveyUnitService.findById(su2.getId()).isPresent()) {
 				surveyUnitService.save(su2);
-				d2 = new Data(UUID.randomUUID(),Version.INIT,objectMapper.createObjectNode(),su2);
+				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
@@ -163,7 +162,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			su2 = new SurveyUnit("22",camp2,qm2,null,null,null,null);
 			if(!surveyUnitService.findById(su2.getId()).isPresent()) {
 				surveyUnitService.save(su2);
-				d2 = new Data(UUID.randomUUID(),Version.INIT,objectMapper.createObjectNode(),su2);
+				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
@@ -180,7 +179,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			su2 = new SurveyUnit("23",camp2,qm2,null,null,null,null);
 			if(!surveyUnitService.findById(su2.getId()).isPresent()) {
 				surveyUnitService.save(su2);
-				d2 = new Data(UUID.randomUUID(),Version.INIT,objectMapper.createObjectNode(),su2);
+				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
@@ -218,7 +217,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			SurveyUnit su = new SurveyUnit("11",camp,qm,null,null,null,null);
 			if(!surveyUnitService.findById(su.getId()).isPresent()) {
 				surveyUnitService.save(su);
-				d = new Data(UUID.randomUUID(),Version.COLLECTED,getDataValue(su.getId()),su);
+				d = new Data(UUID.randomUUID(),getDataValue(su.getId()),su);
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),getComment(),su);
 				commentService.save(c);
@@ -244,7 +243,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			su = new SurveyUnit("12",camp,qm,null,null,null,null);
 			if(!surveyUnitService.findById(su.getId()).isPresent()) {
 				surveyUnitService.save(su);
-				d = new Data(UUID.randomUUID(),Version.INIT,getDataValue(su.getId()),su);
+				d = new Data(UUID.randomUUID(),getDataValue(su.getId()),su);
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);
@@ -261,7 +260,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			su = new SurveyUnit("13",camp,qm2,null,null,null,null);
 			if(!surveyUnitService.findById(su.getId()).isPresent()) {
 				surveyUnitService.save(su);
-				d = new Data(UUID.randomUUID(),Version.INIT,getDataValue(su.getId()),su);
+				d = new Data(UUID.randomUUID(),getDataValue(su.getId()),su);
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);
@@ -278,7 +277,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			su = new SurveyUnit("14",camp,qm2,null,null,null,null);
 			if(!surveyUnitService.findById(su.getId()).isPresent()) {
 				surveyUnitService.save(su);
-				d = new Data(UUID.randomUUID(),Version.INIT,getDataValue(su.getId()),su);
+				d = new Data(UUID.randomUUID(),getDataValue(su.getId()),su);
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);

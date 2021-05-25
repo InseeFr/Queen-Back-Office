@@ -75,7 +75,7 @@ public class UtilsServiceImpl implements UtilsService{
 	 * @return String of UserId
 	 */
 	public ResponseEntity<Object> getSuFromPilotage(HttpServletRequest request){
-		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_PEARLJAM_SURVEY_UNITS;
+		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_PEARLJAM_SURVEYUNITS;
 		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
