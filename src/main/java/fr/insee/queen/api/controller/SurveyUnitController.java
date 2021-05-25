@@ -68,7 +68,7 @@ public class SurveyUnitController {
 	*/
 	@ApiOperation(value = "Get survey-unit")
 	@GetMapping(path = "/survey-unit/{id}")
-	public ResponseEntity<Object> getSurveyUnitById(HttpServletRequest request, @PathVariable(value = "id") String id) {
+	public ResponseEntity<SurveyUnitResponseDto> getSurveyUnitById(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<SurveyUnit> suOpt = surveyUnitService.findById(id);
 		if(!suOpt.isPresent()) {
 			LOGGER.info("GET survey-units with id {} resulting in 404", id);
@@ -82,7 +82,7 @@ public class SurveyUnitController {
 		SurveyUnit su = suOpt.get();
 		SurveyUnitResponseDto resp = new SurveyUnitResponseDto(
 				null, 
-				null, 
+				su.getQuestionnaireModelId(), 
 				su.getPersonalization()==null ? null :su.getPersonalization().getValue(), 
 				su.getData()==null ? null : su.getData().getValue(), 
 				su.getComment()==null ? null : su.getComment().getValue(),
