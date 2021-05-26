@@ -84,12 +84,12 @@ public class StateDataController {
 	@ApiOperation(value = "Get state-data by survey-unit Id ")
 	@PostMapping(path = "survey-units/state-data")
 	public ResponseEntity<SurveyUnitOkNokDto>  getStateDataBySurveyUnits(@RequestBody List<String> lstSurveyUnitId, HttpServletRequest request){
-		List<String> surveyUnits = surveyUnitService.findAllIds();
+		List<SurveyUnit> lstSurveyUnit = (List<SurveyUnit>) surveyUnitService.findByIds(lstSurveyUnitId);		
+		List<String> surveyUnitsIds = lstSurveyUnit.stream().map(SurveyUnit::getId).collect(Collectors.toList());
 		List<SurveyUnitResponseDto> surveyUnitsNOK = lstSurveyUnitId.stream()
-				.filter(su -> !surveyUnits.contains(su))
+				.filter(su -> !surveyUnitsIds.contains(su))
 				.map(su -> new SurveyUnitResponseDto(su))
 				.collect(Collectors.toList());
-		List<SurveyUnit> lstSurveyUnit = (List<SurveyUnit>) surveyUnitService.findByIds(lstSurveyUnitId);
 		List<SurveyUnitResponseDto> surveyUnitsOK = lstSurveyUnit.stream()
 				.map(su -> new SurveyUnitResponseDto(su.getId(), null, null, null, null, new StateDataDto(su.getStateData())))
 				.collect(Collectors.toList());
