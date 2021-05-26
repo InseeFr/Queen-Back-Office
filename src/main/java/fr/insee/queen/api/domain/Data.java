@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -43,13 +41,6 @@ public class Data {
     protected UUID id;
 	
 	/**
-	* The version of data ('INIT' or 'COLLECTED')
-	*/
-	@Enumerated(EnumType.STRING)
-	@Column(columnDefinition = "varchar(9) default 'INIT'")
-	private Version version;
-	
-	/**
 	* The value of data (jsonb format)
 	*/
 	@Type(type = "jsonb")
@@ -68,10 +59,9 @@ public class Data {
 		super();
 		this.id = UUID.randomUUID();
 	}
-	public Data(UUID id, Version version, JsonNode value, SurveyUnit surveyUnit) {
+	public Data(UUID id, JsonNode value, SurveyUnit surveyUnit) {
 		super();
 		this.id = id;
-		this.version = version;
 		this.value = value;
 		this.surveyUnit = surveyUnit;
 	}
@@ -86,18 +76,6 @@ public class Data {
 	 */
 	public void setId(UUID id) {
 		this.id = id;
-	}
-	/**
-	 * @return version of comment
-	 */
-	public Version getVersion() {
-		return version;
-	}
-	/**
-	 * @param version version to set
-	 */
-	public void setVersion(Version version) {
-		this.version = version;
 	}
 	/**
 	 * @return value of comment
