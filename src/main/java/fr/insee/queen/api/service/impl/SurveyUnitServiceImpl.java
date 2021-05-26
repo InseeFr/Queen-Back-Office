@@ -327,4 +327,14 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		surveyUnitRepository.save(newSu);
 	}
 
+	@Override
+	public List<String> findAllIds() {
+		return surveyUnitRepository.findAllIds();
+	}
+
+	@Override
+	public Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId) {
+		return surveyUnitRepository.findAllById(lstSurveyUnitId);
+	}
+
 }

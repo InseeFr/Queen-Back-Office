@@ -37,6 +37,12 @@ public class SurveyUnitResponseDto {
 
 
 
+	public SurveyUnitResponseDto(String id) {
+		super();
+		this.id = id;
+	}
+
+
 	public JsonNode getComment() {
 		return comment;
 	}

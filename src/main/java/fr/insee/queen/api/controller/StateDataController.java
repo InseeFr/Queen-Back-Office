@@ -1,6 +1,8 @@
 package fr.insee.queen.api.controller;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +25,8 @@ import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.data.DataDto;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
+import fr.insee.queen.api.dto.surveyunit.SurveyUnitOkNokDto;
+import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 import fr.insee.queen.api.service.StateDataService;
 import fr.insee.queen.api.service.SurveyUnitService;
 import fr.insee.queen.api.service.UtilsService;
@@ -59,13 +64,13 @@ public class StateDataController {
 	* @param id the id of reporting unit
 	* @return {@link DataDto} the data associated to the reporting unit
 	*/
-	@ApiOperation(value = "Get data by reporting unit Id ")
+	@ApiOperation(value = "Get state-data by survey-unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/state-data")
-	public ResponseEntity<Object>  getDataBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request){
+	public ResponseEntity<StateDataDto>  getStateDataBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request){
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
-		if (!surveyUnitOptional.isPresent()) {
+		if (!surveyUnitOptional.isPresent() || surveyUnitOptional.get().getStateData() == null) {
 			LOGGER.info("GET state-data for reporting unit with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
@@ -73,11 +78,22 @@ public class StateDataController {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		LOGGER.info("GET state-data for reporting unit with id {} resulting in 200", id);
-		if (surveyUnitOptional.get().getStateData() == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		
 		return new ResponseEntity<>(new StateDataDto(surveyUnitOptional.get().getStateData()), HttpStatus.OK);		
+	}
+	
+	@ApiOperation(value = "Get state-data by survey-unit Id ")
+	@PostMapping(path = "survey-units/state-data")
+	public ResponseEntity<SurveyUnitOkNokDto>  getStateDataBySurveyUnits(@RequestBody List<String> lstSurveyUnitId, HttpServletRequest request){
+		List<String> surveyUnits = surveyUnitService.findAllIds();
+		List<SurveyUnitResponseDto> surveyUnitsNOK = lstSurveyUnitId.stream()
+				.filter(su -> !surveyUnits.contains(su))
+				.map(su -> new SurveyUnitResponseDto(su))
+				.collect(Collectors.toList());
+		List<SurveyUnit> lstSurveyUnit = (List<SurveyUnit>) surveyUnitService.findByIds(lstSurveyUnitId);
+		List<SurveyUnitResponseDto> surveyUnitsOK = lstSurveyUnit.stream()
+				.map(su -> new SurveyUnitResponseDto(su.getId(), null, null, null, null, new StateDataDto(su.getStateData())))
+				.collect(Collectors.toList());
+		return new ResponseEntity<>(new SurveyUnitOkNokDto(surveyUnitsOK, surveyUnitsNOK), HttpStatus.OK);		
 	}
 	
 	/**
@@ -90,7 +106,7 @@ public class StateDataController {
 	*/
 	@ApiOperation(value = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/state-data")
-	public ResponseEntity<Object> setData(@RequestBody JsonNode dataValue, HttpServletRequest request, @PathVariable(value = "id") String id) {
+	public ResponseEntity<Object> setStateData(@RequestBody JsonNode dataValue, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
 			LOGGER.info("PUT state-data for reporting unit with id {} resulting in 404", id);

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import fr.insee.queen.api.domain.SurveyUnit;
@@ -39,4 +40,7 @@ public interface SurveyUnitRepository extends ApiRepository<SurveyUnit, String> 
 	*/
 	SurveyUnitDto findDtoById(String id);
 	List<SurveyUnit> findByCampaignId(String id);
+	
+	@Query("SELECT su.id FROM SurveyUnit su")
+	List<String> findAllIds();
 }
