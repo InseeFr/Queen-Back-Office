@@ -86,6 +86,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIRES).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIREID).hasRole(role)
 					.antMatchers(Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES).hasRole(role)
+       				.antMatchers(Constants.API_SURVEYUNITS_STATEDATA).hasRole(role)
 					.antMatchers(Constants.API_SURVEYUNIT_ID).hasRole(role)
 					.antMatchers(Constants.API_SURVEYUNIT_ID_DATA).hasRole(role)
 					.antMatchers(Constants.API_SURVEYUNIT_ID_COMMENT).hasRole(role)
@@ -113,6 +114,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         		  Constants.API_CAMPAIGN_ID_QUESTIONAIRES,
         		  Constants.API_CAMPAIGN_ID_QUESTIONAIREID,
         		  Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES,
+        		  Constants.API_SURVEYUNITS_STATEDATA,
         		  Constants.API_SURVEYUNIT_ID,
         		  Constants.API_SURVEYUNIT_ID_DATA,
         		  Constants.API_SURVEYUNIT_ID_COMMENT,
