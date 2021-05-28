@@ -1,0 +1,94 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="samco (generated)" id="1614959963205-1">
+        <createTable tableName="metadata">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="JSONB"/>
+            <column name="campaign_id" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-2">
+        <createTable tableName="paradata_event">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="JSONB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-3">
+        <createTable tableName="personalization">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="JSONB"/>
+            <column name="survey_unit_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-4">
+        <createTable tableName="state_data">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_page" type="varchar(20)"/>
+            <column name="date" type="BIGINT"/>
+            <column name="state" type="VARCHAR(9)"/>
+            <column name="survey_unit_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-5">
+        <addColumn tableName="questionnaire_model">
+            <column name="campaign_id" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-6">
+        <addColumn tableName="survey_unit">
+            <column name="questionnaire_model_id" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-7">
+        <addPrimaryKey columnNames="id" constraintName="metadataPK" tableName="metadata"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-8">
+        <addPrimaryKey columnNames="id" constraintName="paradata_eventPK" tableName="paradata_event"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-9">
+        <addPrimaryKey columnNames="id" constraintName="personalizationPK" tableName="personalization"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-10">
+        <addPrimaryKey columnNames="id" constraintName="state_dataPK" tableName="state_data"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-11">
+        <addForeignKeyConstraint baseColumnNames="campaign_id" baseTableName="metadata" constraintName="FK13bif89tkws06lu6kdo3nye0t" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="campaign"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-12">
+        <addForeignKeyConstraint baseColumnNames="survey_unit_id" baseTableName="personalization" constraintName="FK9aonche3cbcolkeuacv4v6hk" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="survey_unit"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-13">
+        <addForeignKeyConstraint baseColumnNames="survey_unit_id" baseTableName="state_data" constraintName="FKkjjh680qs400ap1dko1kmqh0s" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="survey_unit"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-14">
+        <addForeignKeyConstraint baseColumnNames="questionnaire_model_id" baseTableName="survey_unit" constraintName="FKmxuurbuictd8h1b56n700585p" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="questionnaire_model"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-15">
+        <addForeignKeyConstraint baseColumnNames="campaign_id" baseTableName="questionnaire_model" constraintName="FKpps5mdanjpiyufudkdkqyvoh3" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="campaign"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-16">
+        <dropForeignKeyConstraint baseTableName="campaign" constraintName="FKkgwvclt3vox54o7kr50mu6w49"/>
+    </changeSet>
+    <changeSet author="samco (generated)" id="1614959963205-17">
+        <dropColumn columnName="questionnaire_model_id" tableName="campaign"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1617965035964-1">
+       <renameColumn
+            columnDataType="jsonb"  
+            newColumnName="value"  
+            oldColumnName="model"  
+            schemaName="public"  
+            tableName="questionnaire_model"/>
+   </changeSet>
+   <changeSet author="bclaudel" id="1614959963205-18">
+        <dropColumn columnName="version" tableName="data"/>
+    </changeSet>
+</databaseChangeLog>

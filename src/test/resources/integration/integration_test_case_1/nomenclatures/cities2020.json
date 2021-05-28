@@ -1,0 +1,15 @@
+[
+  {
+    "typecom": "COM",
+    "com": "01001",
+    "reg": 84,
+    "dep": "01",
+    "arr": "012",
+    "tncc": 5,
+    "ncc": "ABERGEMENT CLEMENCIAT",
+    "nccenr": "Abergement-Clémenciat",
+    "libelle": "L''Abergement-Clémenciat",
+    "can": "0108",
+    "comparent": ""
+  }
+]

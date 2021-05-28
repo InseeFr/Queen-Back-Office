@@ -7,17 +7,38 @@ public class Constants {
 	
 	// User
 	public static final String GUEST = "GUEST";
+	public static final String CAMPAIGN = "campaign";
+	public static final String AUTHORIZATION = "Authorization";
 	
 	//API url for endpoints
 	public static final String API_CAMPAIGNS = "/api/campaigns";
-	public static final String API_CAMPAIGN_SURVEY_UNITS = "/api/campaign/{idCampaign}/survey-units";
-	public static final String API_CAMPAIGN_QUESTIONAIRE = "/api/campaign/{idCampaign}/questionnaire";
-	public static final String API_CAMPAIGN_QUESTIONAIRE_ID = "/api/campaign/{idCampaign}/questionnaire-id";
-	public static final String API_CAMPAIGN_REQUIRED_NOMENCLATURES = "/api/campaign/{id}/required-nomenclatures";
-	public static final String API_SURVEY_UNIT_DATA = "/api/survey-unit/{id}/data";
-	public static final String API_SURVEY_UNIT_COMMENT = "/api/survey-unit/{id}/comment";
-	public static final String API_NOMENCLATURE = "/api/nomenclature/{id}";
+	public static final String API_CAMPAIGN_CONTEXT = "/api/campaign/context";
+	public static final String API_CAMPAIGN_ID_SURVEY_UNITS = "/api/campaign/{id}/survey-units";
+	public static final String API_CAMPAIGN_ID_SURVEY_UNIT = "/api/campaign/{id}/survey-unit";
+	public static final String API_CAMPAIGN_ID_METADATA = "/api/campaign/{id}/metadata";
+	public static final String API_CAMPAIGN_ID_QUESTIONAIRES = "/api/campaign/{id}/questionnaires";
+	public static final String API_CAMPAIGN_ID_QUESTIONAIREID = "/api/campaign/{id}/questionnaire-id";
+	public static final String API_CAMPAIGN_ID_REQUIREDNOMENCLATURES = "/api/campaign/{id}/required-nomenclatures";
+	public static final String API_SURVEYUNIT_ID= "/api/survey-unit/{id}";
+	public static final String API_SURVEYUNIT_ID_DATA = "/api/survey-unit/{id}/data";
+	public static final String API_SURVEYUNIT_ID_COMMENT = "/api/survey-unit/{id}/comment";
+	public static final String API_SURVEYUNIT_ID_STATEDATA = "/api/survey-unit/{id}/state-data";
+	public static final String API_SURVEYUNIT_ID_DEPOSITPROOF = "/api/survey-unit/{id}/deposit-proof";
+	public static final String API_SURVEYUNIT_ID_PERSONALIZATION = "/api/survey-unit/{id}/personalization";
+	public static final String API_NOMENCLATURE = "/api/nomenclature";
+	public static final String API_NOMENCLATURE_ID = "/api/nomenclature/{id}";
+	public static final String API_QUESTIONNAIRE_ID = "/api/questionnaire/{id}";
+	public static final String API_QUESTIONNAIRE_ID_METADATA = "/api/questionnaire/{id}/metadata";
+	public static final String API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE = "/api/questionnaire/{id}/required-nomenclatures";
+	public static final String API_QUESTIONNAIREMODELS = "/api/questionnaire-models";
+	public static final String API_PARADATAEVENT = "/api/paradata";
+
+	public static final String API_CREATE_DATASET = "/api/create-dataset";
+
+	//Pilotage filter url
+	public static final String API_HABILITATION = "/api/check-habilitation";
+	public static final String API_PEARLJAM_SURVEYUNITS = "/api/survey-units";
 	
-	//PearlJam filter url
-	public static final String API_PEARLJAM_SURVEY_UNITS = "/api/survey-units";
+	
+
 }

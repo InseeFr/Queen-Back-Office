@@ -1,18 +1,20 @@
 package fr.insee.queen.api.domain;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.json.simple.JSONObject;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 /**
@@ -22,73 +24,69 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 * 
 */
 @Entity
-@Table
+@Table(name="data")
 @TypeDef(
 	    name = "jsonb",
 	    typeClass = JsonBinaryType.class
 	)
-public class Data extends AbstractEntity {
+@Document(collection="data")
+public class Data {
+	
+	
 	/**
 	* The id of data 
 	*/
 	@Id
-	@GeneratedValue
-	private Long id;
-	
-	/**
-	* The version of data ('INIT' or 'COLLECTED')
-	*/
-	@Enumerated(EnumType.STRING)
-	@Column(columnDefinition = "varchar(9) default 'INIT'")
-	private Version version;
+	@org.springframework.data.annotation.Id
+    protected UUID id;
 	
 	/**
 	* The value of data (jsonb format)
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-	private JSONObject value;
+	private JsonNode value;
 	
 	/**
 	* The SurveyUnit associated to the comment
 	*/
+	@DBRef
 	@OneToOne
+	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;
 	
+	public Data() {
+		super();
+		this.id = UUID.randomUUID();
+	}
+	public Data(UUID id, JsonNode value, SurveyUnit surveyUnit) {
+		super();
+		this.id = id;
+		this.value = value;
+		this.surveyUnit = surveyUnit;
+	}
 	/**
 	 * @return id of comment
 	 */
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 	/**
 	 * @param id id to set
 	 */
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
-	}
-	/**
-	 * @return version of comment
-	 */
-	public Version getVersion() {
-		return version;
-	}
-	/**
-	 * @param version version to set
-	 */
-	public void setVersion(Version version) {
-		this.version = version;
 	}
 	/**
 	 * @return value of comment
 	 */
-	public JSONObject getValue() {
+	public JsonNode getValue() {
 		return value;
 	}
 	/**
 	 * @param value value to set
 	 */
-	public void setValue(JSONObject value) {
+	public void setValue(JsonNode value) {
 		this.value = value;
 	}
 	/**

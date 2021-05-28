@@ -3,7 +3,8 @@ package fr.insee.queen.api.controller;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import org.json.simple.JSONObject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import fr.insee.queen.api.domain.Comment;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.comment.CommentDto;
-import fr.insee.queen.api.repository.CommentRepository;
-import fr.insee.queen.api.repository.SurveyUnitRepository;
+import fr.insee.queen.api.service.CommentService;
+import fr.insee.queen.api.service.SurveyUnitService;
+import fr.insee.queen.api.service.UtilsService;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -39,13 +43,16 @@ public class CommentController {
 	* The comment repository using to access to table 'comment' in DB 
 	*/
 	@Autowired
-	private CommentRepository commentRepository;
+	private CommentService commentService;
 	
 	/**
 	* The reporting unit repository using to access to table 'reporting_unit' in DB 
 	*/
 	@Autowired
-	private SurveyUnitRepository surveyUnitRepository;
+	private SurveyUnitService surveyUnitservice;
+	
+	@Autowired
+	private UtilsService utilsService;
 	
 	/**
 	* This method is using to get the comment associated to a specific reporting unit 
@@ -55,20 +62,25 @@ public class CommentController {
 	*/
 	@ApiOperation(value = "Get comment for reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/comment")
-	public ResponseEntity<Object> getCommentBySurveyUnit(@PathVariable(value = "id") String id){
-		Optional<SurveyUnit> surveyUnitOptional = surveyUnitRepository.findById(id);
+	public ResponseEntity<Object> getCommentBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request){
+		Optional<SurveyUnit> surveyUnitOptional = surveyUnitservice.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
-		} else {
-			LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
-			Optional<Comment> commentOptional = commentRepository.findBySurveyUnit_id(id);
-			if (!commentOptional.isPresent()) {
-				return new ResponseEntity<>(new JSONObject(), HttpStatus.OK);
-			}else {
-				return new ResponseEntity<>(commentOptional.get().getValue(), HttpStatus.OK);
-			}
+    }
+    String userId = utilsService.getUserId(request);
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
+			LOGGER.info("GET comment for reporting unit with id {} resulting in 403", id);
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
+		LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
+		Optional<Comment> commentOptional = commentService.findBySurveyUnitId(id);
+		if (!commentOptional.isPresent()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(commentOptional.get().getValue(), HttpStatus.OK);
+		
+		
 	}
 	
 	/**
@@ -83,22 +95,21 @@ public class CommentController {
 	*/
 	@ApiOperation(value = "Update the comment by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/comment")
-	public ResponseEntity<Object> setComment(@RequestBody JSONObject commentValue, @PathVariable(value = "id") String id) throws ParseException, SQLException {
-		Optional<SurveyUnit> surveyUnitOptional = surveyUnitRepository.findById(id);
+	public ResponseEntity<Object> setComment(@RequestBody JsonNode commentValue, @PathVariable(value = "id") String id, HttpServletRequest request) {
+		Optional<SurveyUnit> surveyUnitOptional = surveyUnitservice.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
 			LOGGER.info("PUT comment for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
-		} else {
-			Optional<Comment> commentOptional = commentRepository.findBySurveyUnit_id(id);
-			if (!commentOptional.isPresent()) {
-				LOGGER.info("PUT comment for reporting unit with id {} resulting in 404", id);
-				return ResponseEntity.notFound().build();
-			}else {
-				commentOptional.get().setValue(commentValue);
-				commentRepository.save(commentOptional.get());
-				LOGGER.info("PUT comment for reporting unit with id {} resulting in 200", id);
-				return ResponseEntity.ok().build();
-			}
 		}
+		String userId = utilsService.getUserId(request);
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
+			LOGGER.info("PUT comment for reporting unit with id {} resulting in 403", id);
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		
+		commentService.updateComment(surveyUnitOptional.get(), commentValue);
+		LOGGER.info("PUT comment for reporting unit with id {} resulting in 200", id);
+		return ResponseEntity.ok().build();
+		
 	}	
 }

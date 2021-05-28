@@ -27,7 +27,7 @@ import fr.insee.queen.api.constants.Constants;
 
 
 
-@ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
+@ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'keycloak'")
 @KeycloakConfiguration
 public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 
@@ -73,13 +73,27 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers("/environnement", "/healthcheck").permitAll()
                    	// configuration for endpoints
        				.antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
-       				.antMatchers(Constants.API_CAMPAIGN_SURVEY_UNITS).hasRole(role)
-					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE).hasRole(role)
-					.antMatchers(Constants.API_CAMPAIGN_QUESTIONAIRE_ID).hasRole(role)
-					.antMatchers(Constants.API_CAMPAIGN_REQUIRED_NOMENCLATURES).hasRole(role)
-					.antMatchers(Constants.API_SURVEY_UNIT_DATA).hasRole(role)
-					.antMatchers(Constants.API_SURVEY_UNIT_COMMENT).hasRole(role)
-					.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_CONTEXT).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_SURVEY_UNITS).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_SURVEY_UNIT).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_METADATA).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIRES).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIREID).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES).hasRole(role)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID).hasRole(role)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_DATA).hasRole(role)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_COMMENT).hasRole(role)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_STATEDATA).hasRole(role)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_DEPOSITPROOF).hasRole(role)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_PERSONALIZATION).hasRole(role)
+       				.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
+       				.antMatchers(Constants.API_NOMENCLATURE_ID).hasRole(role)
+       				.antMatchers(Constants.API_QUESTIONNAIRE_ID).hasRole(role)
+       				.antMatchers(Constants.API_QUESTIONNAIRE_ID_METADATA).hasRole(role)
+       				.antMatchers(Constants.API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE).hasRole(role)
+       				.antMatchers(Constants.API_QUESTIONNAIREMODELS).hasRole(role)
+       				.antMatchers(Constants.API_PARADATAEVENT).hasRole(role)
+       				.antMatchers(Constants.API_CREATE_DATASET).hasRole(role)
 					.anyRequest().denyAll(); 
 	}
 	
@@ -99,7 +113,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
      * @return
      */
     @Bean
-    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
+    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'keycloak'")
     public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
    }
@@ -108,7 +122,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
      * Defines the session authentication strategy.
      */
     @Bean
-    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'KeyCloak'")
+    @ConditionalOnExpression( "'${fr.insee.queen.application.mode}' == 'keycloak'")
     @Override
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         // required for bearer-only applications.

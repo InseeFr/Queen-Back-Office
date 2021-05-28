@@ -2,7 +2,9 @@ package fr.insee.queen.api.repository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Repository;
 
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
@@ -12,7 +14,9 @@ import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 * @author Claudel Benjamin
 * 
 */
-public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> {
+@Transactional
+@Repository
+public interface SurveyUnitRepository extends ApiRepository<SurveyUnit, String> {
 	/**
 	* This method retrieve all SurveyUnit in DB
 	* 
@@ -25,7 +29,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 	* @param id id of the campaign
 	* @return {@link SurveyUnitDto}
 	*/
-	List<SurveyUnitDto> findDtoByCampaign_id(String id);
+	List<SurveyUnitDto> findDtoByCampaignId(String id);
 	
 	/**
 	* This method retrieve a reporting unit by his id
@@ -34,4 +38,5 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 	* @return {@link ReportingUnitDto}
 	*/
 	SurveyUnitDto findDtoById(String id);
+	List<SurveyUnit> findByCampaignId(String id);
 }

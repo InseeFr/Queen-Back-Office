@@ -35,7 +35,16 @@ standalone.sh -Djboss.socket.binding.port-offset=100 (on Unix-based systems)
 ```  
 2. Go to the console administration and create role investigator and a user with this role.
 
-
+## Database configuration
+Queen-Back-Office manage 2 Database configurations :
+1 - PostgreSQL database with JPA connectors
+2 - MongoDb database
+It is possible to switch between both configurations via the following property: 
+```shell
+fr.insee.queen.application.persistenceType
+```
+It can take the 2 following values : MONGODB or JPA
+ 
 ## Deploy application on Tomcat server
 ### 1. Package the application
 Use the [Spring Boot Maven plugin]  (https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html) like so:  
@@ -64,8 +73,9 @@ fr.insee.queen.logging.path=${catalina.base}/webapps/log4j2.xml
 fr.insee.queen.logging.level=DEBUG
 
 #Application configuration
-fr.insee.queen.application.mode=NoAuth
+fr.insee.queen.application.mode=noauth
 fr.insee.queen.application.crosOrigin=*
+fr.insee.queen.application.persistenceType = MONGODB or JPA
 
 #Database configuration
 fr.insee.queen.persistence.database.host = queen-db
@@ -86,11 +96,13 @@ keycloak.principal-attribute:preferred_username
 
 #Keycloak roles
 fr.insee.queen.interviewer.role=investigator
+fr.insee.queen.user.local.role=manager_local
+fr.insee.queen.user.national.role=manager_national
 
-#PearlJam Api
-fr.insee.queen.pearljam.url.scheme=http
-fr.insee.queen.pearljam.url.host=localhost
-fr.insee.queen.pearljam.url.port=8081
+#Pilotage Api
+fr.insee.queen.pilotage.service.url.scheme=http
+fr.insee.queen.pilotage.service.url.host=localhost
+fr.insee.queen.pilotage.service.url.port=8081
 ```
 
 #### External log file
@@ -119,12 +131,22 @@ Before committing code please ensure,
 ## End-Points
 - Campaign
 	- `GET /campaigns` : get the campaign list
+	- `POST /campaigns` : post a new campaign
+	- `POST /campaign/context` : integrates the context of a campaign
+	
 
 - Questionnaire
-	- `GET /campaign/{id}/questionnaire` : get the model json 
+	- `GET /questionnaire/{id}` : get the questionnaire by his id
+	- `GET /campaign/{id}/questionnaires` : get the list of model json 
+	- `GET /campaign/{idCampaign}/questionnaire-id` : id of the questionnaire associated to the campaign
+	- `POST /questionnaire-models` : post a new questionnaire
 
 - SurveyUnit
-	- `GET /campaign/{id}/survey-units` : get the list of reporting unit of campaign id
+	- `GET /survey-unit/{id}` : get survey-unit by id
+	- `GET /survey-unit/{id}/deposit-prof` : get the deposit-proof of survey-unit by id
+	- `GET /campaign/{id}/survey-units` : get the list of survey-unit of campaign id
+	- `PUT /survey-unit/{id}` : update a survey-unit
+	- `POST /campaign/{id}/survey-unit` : post a survey-unit for a campaign
 
 - Data
 	- `GET /survey-unit/{id}/data` : get the data of reporting unit id
@@ -138,7 +160,27 @@ Before committing code please ensure,
 	- `GET /campaign/{id}/required-nomenclatures` : list of nomenclature codes use for campaign
 
 - Nomenclatures
+	- `GET /campaign/{id}/required-nomenclatures` : get the nomenclature of a campaign
+	- `GET /questionnaire/{id}/required-nomenclatures` : get the nomenclature of a questionnaire
 	- `GET /nomenclature/{id}` : get the nomenclature json
+	- `POST /nomenclature` : post a new nomenclature
+
+- Personalization
+	- `GET /survey-unit/{id}/personalization` : get the personalization of a survey-unit
+	- `PUT /survey-unit/{id}/personalization` : put the personalization for a survey-unit
+	
+- Metadata
+	- `GET /campaign/{id}/metadata` : get the metadata of a campaign
+
+- Paradata
+	- `POST /paradata` : post the metadata of a campaign
+	
+- StateData
+	- `GET /survey-unit/{id}/state-data` : get the state-data of a survey-unit
+	- `PUT /survey-unit/{id}/state-data` : put the state-data for a survey-unit
+	
+- DataSet
+	- `POST /create-dataset` : Create dataset
 
 ## Libraries used
 - spring-boot-jpa
@@ -158,6 +200,7 @@ Before committing code please ensure,
 ## Developers
 - Benjamin Claudel (benjamin.claudel@keyconsulting.fr)
 - Samuel Corcaud (samuel.corcaud@keyconsulting.fr)
+- Paul Guillemet (paul.guillemet@keyconsulting.fr)
 
 ## License
 Please check [LICENSE](https://github.com/InseeFr/Queen-Back-Office/blob/master/LICENSE) file

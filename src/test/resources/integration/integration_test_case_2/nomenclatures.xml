@@ -1,0 +1,12 @@
+<!-- malformed nomenclatures file (NomenclatureWithTypo instead of Nomenclatures) -->
+<NomenclatureWithTypo>
+	<Nomenclature>
+		<Label>french cities in 2019</Label>
+        <FileName>cities2020.json</FileName> 
+	</Nomenclature>
+	<Nomenclature>
+		<Id>regions2019</Id>
+		<Label>french regions in 2019</Label>
+        <FileName>regions2019.json</FileName> 
+	</Nomenclature>
+</NomenclatureWithTypo>

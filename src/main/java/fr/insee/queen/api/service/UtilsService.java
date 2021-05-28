@@ -14,10 +14,16 @@ public interface UtilsService {
 	String getUserId(HttpServletRequest request);
 	
 	/**
-	 * This method retrieve the data from the PearlJam API for the current user
+	 * This method retrieve the data from the Pilotage API for the current user
 	 * @param HttpServletRequest
 	 * @return String of UserId
 	 */
-	ResponseEntity<Object> getSuFromPearlJam(HttpServletRequest request);
+	ResponseEntity<Object> getSuFromPilotage(HttpServletRequest request);
+	
+	boolean checkHabilitation(HttpServletRequest request, String suId);
 
+	
+	boolean isDevProfile();
+	
+	public boolean isTestProfile();
 }
