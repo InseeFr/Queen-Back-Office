@@ -99,7 +99,6 @@ public class PersonalizationController {
 			LOGGER.info("PUT personalization for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-
 		personalizationService.updatePersonalization(surveyUnitOptional.get(), personalizationValues);
 		LOGGER.info("PUT personalization for reporting unit with id {} resulting in 200", id);
 		return ResponseEntity.ok().build();

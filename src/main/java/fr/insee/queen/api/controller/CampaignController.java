@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.dto.campaign.CampaignDto;
@@ -64,9 +61,7 @@ public class CampaignController {
 	@ApiOperation(value = "Get list of campaigns")
 	@GetMapping(path = "/campaigns")
 	public ResponseEntity<Object> getListCampaign(){
-
 		List<CampaignResponseDto> resp = campaignservice.getAllCampaigns();
-		
 		LOGGER.info("GET campaigns resulting in 200");
 		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
@@ -76,13 +71,14 @@ public class CampaignController {
 	* 
 	* @param campaign the value to create
 	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200}
+	 * @throws Exception 
 	* @throws ParseException 
 	* @throws SQLException 
 	* 
 	*/
 	@ApiOperation(value = "Create a campaign")
 	@PostMapping(path = "/campaigns")
-	public ResponseEntity<Object> createCampaign(@RequestBody CampaignDto campaign, HttpServletRequest request) {
+	public ResponseEntity<Object> createCampaign(@RequestBody CampaignDto campaign, HttpServletRequest request) throws Exception {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -98,7 +94,6 @@ public class CampaignController {
 		campaignservice.saveDto(campaign);
 		LOGGER.info("POST campaign with id {} resulting in 200", campaign.getId());
 		return ResponseEntity.ok().build();
-		
 	}	
 	
 	/**
@@ -106,25 +101,22 @@ public class CampaignController {
 	* 
 	* @param campaign the value to create
 	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200}
-	 * @throws IOException 
-	 * @throws SAXException 
-	 * @throws XPathExpressionException 
-	 * @throws ParserConfigurationException 
-	* @throws ParseException 
+	 * @throws Exception 
+	 * @throws ParseException 
 	* @throws SQLException 
 	* 
 	*/
 	@ApiOperation(value = "Integrates the context of a campaign")
 	@PostMapping(path = "/campaign/context")
-	public ResponseEntity<Object> integrateContext(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-		
-		IntegrationResultDto result = integrationService.integrateContext(file);
-		if(result == null) {
+	public ResponseEntity<Object> integrateContext(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
+		IntegrationResultDto result = null;
+		try {
+			result = integrationService.integrateContext(file);
+		} catch(IOException e) {
 			LOGGER.info("POST campaign context resulting in 400");
 			return ResponseEntity.badRequest().build();
 		}
 		LOGGER.info("POST campaign context resulting in 200");
 		return new ResponseEntity<>(result, HttpStatus.OK);
-		
 	}	
 }

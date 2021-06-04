@@ -3,12 +3,13 @@ package fr.insee.queen.api.service.impl;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.domain.StateDataType;
@@ -44,7 +45,7 @@ public class StateDataServiceImpl extends AbstractService<StateData, UUID> imple
 		return stateDataRepository.findBySurveyUnitId(id);
 	}
 	
-	public ResponseEntity<Object> updateStateData(String id, JsonNode json, SurveyUnit su) {
+	public ResponseEntity<Object> updateStateData(String id, JsonNode json, SurveyUnit su) throws Exception {
 		Optional<StateData> stateDataOptional = stateDataRepository.findDtoBySurveyUnitId(id);
 		StateData stateData;
 		if (!stateDataOptional.isPresent()) {
@@ -53,14 +54,13 @@ public class StateDataServiceImpl extends AbstractService<StateData, UUID> imple
 		}else {
 			stateData = stateDataOptional.get();
 		}
-		
 		try {
 			updateStateDataFromJson(stateData, json);
 			stateDataRepository.save(stateData);
 		}
 		catch(Exception e) {
 			LOGGER.info("PUT state-data resulting in 400");
-			return ResponseEntity.badRequest().build();
+			throw new Exception(e.getStackTrace().toString());
 		}
 		
 		LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);

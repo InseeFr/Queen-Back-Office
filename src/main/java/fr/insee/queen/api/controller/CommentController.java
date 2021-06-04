@@ -67,8 +67,8 @@ public class CommentController {
 		if (!surveyUnitOptional.isPresent()) {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
-    }
-    String userId = utilsService.getUserId(request);
+	    }
+	    String userId = utilsService.getUserId(request);
 		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
 			LOGGER.info("GET comment for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -79,8 +79,6 @@ public class CommentController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(commentOptional.get().getValue(), HttpStatus.OK);
-		
-		
 	}
 	
 	/**

@@ -113,7 +113,7 @@ public class SurveyUnitController {
 			surveyUnitService.updateSurveyUnit(su.get(), surveyUnit);
 		} 
 		catch(Exception e) {
-			LOGGER.info("PUT survey-units resulting in 400");
+			LOGGER.info("PUT survey-units resulting in 400 " + e.getStackTrace().toString());
 			return ResponseEntity.badRequest().build();
 		}
 		LOGGER.info("PUT survey-units resulting in 200");
@@ -167,7 +167,6 @@ public class SurveyUnitController {
 	@ApiOperation(value = "Get deposit proof for a SU ")
 	@GetMapping(value = "/survey-unit/{id}/deposit-proof")
 	public ResponseEntity<Object> getDepositProof(@PathVariable(value = "id") String id, HttpServletRequest request, HttpServletResponse response) {
-		
 		Optional<SurveyUnit> suOpt = surveyUnitService.findById(id);
 		if(!suOpt.isPresent()) {
 			LOGGER.info("GET deposit-proof with id {} resulting in 404", id);
@@ -178,14 +177,13 @@ public class SurveyUnitController {
 			LOGGER.info("GET deposit-proof for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-
 		SurveyUnit su = suOpt.get();
 		if (su.getStateData()!=null) {
 			try {
 				surveyUnitService.generateDepositProof(su, request, response);
 				return ResponseEntity.ok().build();
 			} catch (ServletException | IOException e) {
-				return new ResponseEntity<>("ERROR_EXPORT", HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("ERROR_EXPORT " + e.getStackTrace().toString() , HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 	    }

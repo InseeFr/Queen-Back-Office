@@ -99,14 +99,8 @@ public class UtilsServiceImpl implements UtilsService{
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.set(Constants.AUTHORIZATION, authTokenHeader);
-		try {
-			ResponseEntity<Object> resp = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, new HttpEntity<T>(headers), Object.class);
-			return Boolean.TRUE.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
-		}
-		catch(Exception e) {
-			return false;
-		}
-		
+		ResponseEntity<Object> resp = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, new HttpEntity<T>(headers), Object.class);
+		return Boolean.TRUE.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
 	}
 
 	@Override

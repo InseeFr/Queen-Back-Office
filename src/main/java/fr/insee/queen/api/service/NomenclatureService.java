@@ -14,7 +14,7 @@ public interface NomenclatureService extends BaseService<Nomenclature, String> {
 
 	void save(Nomenclature n);
 
-	List<String> findRequiredNomenclatureByCampaign(String campaignId);
+	List<String> findRequiredNomenclatureByCampaign(String campaignId) throws Exception;
 	
 	public List<String> findRequiredNomenclatureByQuestionnaire(Set<QuestionnaireModel> setQuestionnaireModel);
 	
@@ -22,6 +22,6 @@ public interface NomenclatureService extends BaseService<Nomenclature, String> {
 
 	Set<Nomenclature> findAllByIds(Set<String> nomenclatureIds);
 
-	void createNomenclature(NomenclatureDto nomenclature);
+	void createNomenclature(NomenclatureDto nomenclature) throws Exception;
     
 }

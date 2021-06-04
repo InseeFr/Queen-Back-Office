@@ -83,10 +83,11 @@ public class NomenclatureController {
 	* 
 	* @param id the id of campaign
 	* @return List of {@link String} containing nomenclature ids
+	 * @throws Exception 
 	*/
 	@ApiOperation(value = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
-	public ResponseEntity<List<String>> getListRequiredNomenclature(@PathVariable(value = "id") String id){
+	public ResponseEntity<List<String>> getListRequiredNomenclature(@PathVariable(value = "id") String id) throws Exception{
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 404", id);
@@ -102,10 +103,11 @@ public class NomenclatureController {
 	* 
 	* @param id the id of campaign
 	* @return List of {@link String} containing nomenclature ids
+	 * @throws Exception 
 	*/
 	@ApiOperation(value = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
-	public ResponseEntity<List<String>> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String id){
+	public ResponseEntity<List<String>> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String id) {
 		Optional<QuestionnaireModel> questionnaireOptional = questionnaireModelService.findById(id);
 		if (!questionnaireOptional.isPresent()) {
 			LOGGER.info("GET required-nomenclatures for questionnaire with id {} resulting in 404", id);
@@ -122,10 +124,11 @@ public class NomenclatureController {
 	* 
 	* @param id the id of campaign
 	* @return List of {@link String} containing nomenclature ids
+	 * @throws Exception 
 	*/
 	@ApiOperation(value = "Post new nomenclature ")
 	@PostMapping(path = "/nomenclature")
-	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature){
+	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature) throws Exception{
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}

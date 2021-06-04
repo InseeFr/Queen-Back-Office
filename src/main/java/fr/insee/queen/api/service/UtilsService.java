@@ -21,7 +21,6 @@ public interface UtilsService {
 	ResponseEntity<Object> getSuFromPilotage(HttpServletRequest request);
 	
 	boolean checkHabilitation(HttpServletRequest request, String suId);
-
 	
 	boolean isDevProfile();
 	

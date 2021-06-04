@@ -17,6 +17,7 @@ import fr.insee.queen.api.dto.campaign.CampaignDto;
 import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
+import fr.insee.queen.api.exception.NotFoundException;
 import fr.insee.queen.api.repository.ApiRepository;
 import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
@@ -77,7 +78,6 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 		qm.parallelStream().forEach(q -> q.setCampaign(campaign));
 		campaignRepository.save(campaign);
 		questionnaireModelRepository.saveAll(qm);
-		
 		// For mongoDB impl
 		Set<QuestionnaireModel> qms = campaign.getQuestionnaireModels();
 		 if(qms.isEmpty() && !qm.isEmpty()) {
@@ -95,7 +95,6 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	
 	public List<CampaignResponseDto> getAllCampaigns() {
 		List<Campaign> campaigns = campaignRepository.findAll();
-
 		return campaigns.stream()
 				.map(camp -> new CampaignResponseDto(
 					camp.getId(), 
@@ -115,7 +114,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 					.map(q -> new QuestionnaireIdDto(q.getId())).collect(Collectors.toList());
 			
 		} else {
-			return null;
+			throw new NotFoundException("Campaign " + id + "not found in database");
 		}
 	}
 	
@@ -127,7 +126,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 					.map(q -> new QuestionnaireModelDto(q.getValue())).collect(Collectors.toList());
 		
 		} else {
-			return null;
+			throw new NotFoundException("Campaign " + id + "not found in database");
 		}
 	}
 }

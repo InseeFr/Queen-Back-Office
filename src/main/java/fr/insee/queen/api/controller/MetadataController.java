@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.metadata.MetadataDto;
+import fr.insee.queen.api.exception.NotFoundException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.MetadataService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
@@ -83,11 +84,12 @@ public class MetadataController {
 			LOGGER.info("GET metadata for questionnaire with id {} resulting in 404 : No campaign associated to questionnaire", id);
 			return ResponseEntity.notFound().build();
 		}
-		
-		MetadataDto metadataDto = metadataService.findDtoByCampaignId(questionnaireOptional.get().getCampaign().getId());
-		if (metadataDto == null) {
+		MetadataDto metadataDto = null;
+		try {
+			metadataDto = metadataService.findDtoByCampaignId(questionnaireOptional.get().getCampaign().getId());
+		} catch(Exception e) {
 			LOGGER.info("GET metadata for questionnaire with id {} resulting in 404 : No metadate found for campaign", id);
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new NotFoundException(e.getStackTrace().toString());
 		}
 		LOGGER.info("GET metadata for questionnaire with id {} resulting in 200", id);
 		return new ResponseEntity<>(metadataDto.getValue(), HttpStatus.OK);

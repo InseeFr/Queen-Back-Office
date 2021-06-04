@@ -29,9 +29,7 @@ public class DataSetController {
 		if (!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
-
 		injector.createDataSet();
-
 		LOGGER.info("Dataset creation end");
 		return new ResponseEntity<>("dataSet created", HttpStatus.OK);
 	}

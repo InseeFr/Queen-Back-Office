@@ -102,11 +102,12 @@ public class StateDataController {
 	* @param dataValue	the value to update
 	* @param id	the id of reporting unit
 	* @return {@link HttpStatus 404} if data is not found, else {@link HttpStatus 200}
+	 * @throws Exception 
 	* 
 	*/
 	@ApiOperation(value = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/state-data")
-	public ResponseEntity<Object> setStateData(@RequestBody JsonNode dataValue, HttpServletRequest request, @PathVariable(value = "id") String id) {
+	public ResponseEntity<Object> setStateData(@RequestBody JsonNode dataValue, HttpServletRequest request, @PathVariable(value = "id") String id) throws Exception {
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
 			LOGGER.info("PUT state-data for reporting unit with id {} resulting in 404", id);
