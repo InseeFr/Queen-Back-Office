@@ -24,6 +24,7 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelCreateDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
+import fr.insee.queen.api.exception.NotFoundException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.NomenclatureService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
@@ -68,10 +69,11 @@ public class QuestionnaireModelController {
 	* 
 	* @param id the id of campaign
 	* @return the {@link QuestionnaireModelDto} associated to the campaign
+	 * @throws NotFoundException 
 	*/
 	@ApiOperation(value = "Get questionnnaire model by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/questionnaires")
-	public ResponseEntity<List<QuestionnaireModelDto>> getQuestionnaireModelByCampaignId(@PathVariable(value = "id") String id){
+	public ResponseEntity<List<QuestionnaireModelDto>> getQuestionnaireModelByCampaignId(@PathVariable(value = "id") String id) throws NotFoundException{
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.info("GET questionnaire for campaign with id {} resulting in 404", id);
@@ -108,10 +110,11 @@ public class QuestionnaireModelController {
 	* 
 	* @param id the id of questionnaire
 	* @return the {@link QuestionnaireModelResponseDto} associated to the id
+	 * @throws NotFoundException 
 	*/
 	@ApiOperation(value = "Get questionnnaire id by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/questionnaire-id")
-	public ResponseEntity<List<QuestionnaireIdDto>> getQuestionnaireModelIdByCampaignId(@PathVariable(value = "id") String id){
+	public ResponseEntity<List<QuestionnaireIdDto>> getQuestionnaireModelIdByCampaignId(@PathVariable(value = "id") String id) throws NotFoundException{
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 404", id);

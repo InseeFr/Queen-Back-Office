@@ -71,10 +71,11 @@ public class MetadataController {
 	* 
 	* @param id the id of the campaign
 	* @return {@link metaData} the metadata associated to the reporting unit
+	 * @throws NotFoundException 
 	*/
 	@ApiOperation(value = "Get metadata by questionnaire Id ")
 	@GetMapping(path = "/questionnaire/{id}/metadata")
-	public ResponseEntity<Object>  getMetadataByQuestionnaireId(@PathVariable(value = "id") String id){
+	public ResponseEntity<Object>  getMetadataByQuestionnaireId(@PathVariable(value = "id") String id) throws NotFoundException{
 		Optional<QuestionnaireModel> questionnaireOptional = questionnaireModelService.findById(id);
 		if (!questionnaireOptional.isPresent()) {
 			LOGGER.info("GET metadata for questionnaire with id {} resulting in 404 : Questionnaire not found", id);

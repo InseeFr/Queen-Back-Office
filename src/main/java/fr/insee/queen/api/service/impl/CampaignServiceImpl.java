@@ -106,25 +106,23 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 				.collect(Collectors.toList());
 	}
 	
-	public List<QuestionnaireIdDto> getQuestionnaireIds(String id) {
+	public List<QuestionnaireIdDto> getQuestionnaireIds(String id) throws NotFoundException {
 		Optional<Campaign> campaignOptional = campaignRepository.findById(id);
 		if (campaignOptional.isPresent()) {
 			Campaign campaign = campaignOptional.get();
 			return campaign.getQuestionnaireModels().stream()
 					.map(q -> new QuestionnaireIdDto(q.getId())).collect(Collectors.toList());
-			
 		} else {
 			throw new NotFoundException("Campaign " + id + "not found in database");
 		}
 	}
 	
-	public List<QuestionnaireModelDto> getQuestionnaireModels(String id) {
+	public List<QuestionnaireModelDto> getQuestionnaireModels(String id) throws NotFoundException {
 		Optional<Campaign> campaignOptional = campaignRepository.findById(id);
 		if (campaignOptional.isPresent()) {
 			Campaign campaign = campaignOptional.get();
 			return campaign.getQuestionnaireModels().stream()
 					.map(q -> new QuestionnaireModelDto(q.getValue())).collect(Collectors.toList());
-		
 		} else {
 			throw new NotFoundException("Campaign " + id + "not found in database");
 		}
