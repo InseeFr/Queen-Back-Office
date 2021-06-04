@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,13 +74,19 @@ public class QuestionnaireModelController {
 	*/
 	@ApiOperation(value = "Get questionnnaire model by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/questionnaires")
-	public ResponseEntity<List<QuestionnaireModelDto>> getQuestionnaireModelByCampaignId(@PathVariable(value = "id") String id) throws NotFoundException{
+	public ResponseEntity<List<QuestionnaireModelDto>> getQuestionnaireModelByCampaignId(@PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.info("GET questionnaire for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
-			List<QuestionnaireModelDto> resp = campaignService.getQuestionnaireModels(id);
+			List<QuestionnaireModelDto> resp = new ArrayList<>();
+			try {
+				resp = campaignService.getQuestionnaireModels(id);
+			} catch (NotFoundException e) {
+				LOGGER.info(e.getMessage());
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 			LOGGER.info("GET questionnaire for campaign with id {} resulting in 200", id);
 			return new ResponseEntity<>(resp, HttpStatus.OK);
 		}
@@ -114,14 +121,19 @@ public class QuestionnaireModelController {
 	*/
 	@ApiOperation(value = "Get questionnnaire id by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/questionnaire-id")
-	public ResponseEntity<List<QuestionnaireIdDto>> getQuestionnaireModelIdByCampaignId(@PathVariable(value = "id") String id) throws NotFoundException{
+	public ResponseEntity<List<QuestionnaireIdDto>> getQuestionnaireModelIdByCampaignId(@PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
-			List<QuestionnaireIdDto> resp = campaignService.getQuestionnaireIds(id);
-
+			List<QuestionnaireIdDto> resp = new ArrayList<>();
+			try {
+				resp = campaignService.getQuestionnaireIds(id);
+			} catch (NotFoundException e) {
+				LOGGER.info(e.getMessage());
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 200", id);
 			return new ResponseEntity<>(resp, HttpStatus.OK);
 		}

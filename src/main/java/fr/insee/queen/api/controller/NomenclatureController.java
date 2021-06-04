@@ -20,6 +20,7 @@ import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.Nomenclature;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
+import fr.insee.queen.api.exception.NotFoundException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.NomenclatureService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
@@ -87,14 +88,19 @@ public class NomenclatureController {
 	*/
 	@ApiOperation(value = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
-	public ResponseEntity<List<String>> getListRequiredNomenclature(@PathVariable(value = "id") String id) throws Exception{
+	public ResponseEntity<List<String>> getListRequiredNomenclature(@PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 200", id);
-			return new ResponseEntity<>(nomenclatureservice.findRequiredNomenclatureByCampaign(id), HttpStatus.OK);
+			try {
+				return new ResponseEntity<>(nomenclatureservice.findRequiredNomenclatureByCampaign(id), HttpStatus.OK);
+			} catch (NotFoundException e) {
+				LOGGER.info(e.getMessage());
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 		}
 	}
 	
@@ -128,7 +134,7 @@ public class NomenclatureController {
 	*/
 	@ApiOperation(value = "Post new nomenclature ")
 	@PostMapping(path = "/nomenclature")
-	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature) throws Exception{
+	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature) {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}

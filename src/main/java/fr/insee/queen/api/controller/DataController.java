@@ -61,8 +61,7 @@ public class DataController {
 	*/
 	@ApiOperation(value = "Get data by reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/data")
-	public ResponseEntity<Object>  getDataBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request) throws Exception{
-		try {
+	public ResponseEntity<Object>  getDataBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request) {
 			Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
 			if (!surveyUnitOptional.isPresent()) {
 				LOGGER.info("GET data for reporting unit with id {} resulting in 404", id);
@@ -79,12 +78,6 @@ public class DataController {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 			return new ResponseEntity<>(dataOptional.get().getValue(), HttpStatus.OK);
-		} catch (Exception e) {
-			throw new Exception(e.getCause() + e.getStackTrace().toString());
-		}
-		
-		
-		
 	}
 	
 	/**

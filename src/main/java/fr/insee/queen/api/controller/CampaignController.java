@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
 
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.dto.campaign.CampaignDto;
@@ -70,15 +73,14 @@ public class CampaignController {
 	* This method is using to post a new campaign
 	* 
 	* @param campaign the value to create
-	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200}
-	 * @throws Exception 
+	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200} 
 	* @throws ParseException 
 	* @throws SQLException 
 	* 
 	*/
 	@ApiOperation(value = "Create a campaign")
 	@PostMapping(path = "/campaigns")
-	public ResponseEntity<Object> createCampaign(@RequestBody CampaignDto campaign, HttpServletRequest request) throws Exception {
+	public ResponseEntity<Object> createCampaign(@RequestBody CampaignDto campaign, HttpServletRequest request) {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -108,11 +110,11 @@ public class CampaignController {
 	*/
 	@ApiOperation(value = "Integrates the context of a campaign")
 	@PostMapping(path = "/campaign/context")
-	public ResponseEntity<Object> integrateContext(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
+	public ResponseEntity<Object> integrateContext(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 		IntegrationResultDto result = null;
 		try {
 			result = integrationService.integrateContext(file);
-		} catch(IOException e) {
+		} catch(IOException | XPathExpressionException | SAXException | ParserConfigurationException e) {
 			LOGGER.info("POST campaign context resulting in 400");
 			return ResponseEntity.badRequest().build();
 		}

@@ -51,7 +51,7 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 				.parallelStream().distinct().map(Nomenclature::getId).collect(Collectors.toList());
 	}
 	
-	public List<String> findRequiredNomenclatureByCampaign(String campaignId) throws Exception {
+	public List<String> findRequiredNomenclatureByCampaign(String campaignId) throws NotFoundException {
 		Optional<Campaign> campaignOptional = campaignRepository.findById(campaignId);
 		if (campaignOptional.isPresent()) {
 			Set<QuestionnaireModel> setQuestionnaireModel = campaignOptional.get().getQuestionnaireModels();
@@ -81,7 +81,7 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 	}
 
 	@Override
-	public void createNomenclature(NomenclatureDto nomenclature) throws Exception{
+	public void createNomenclature(NomenclatureDto nomenclature) {
 		Nomenclature newNomenclature = new Nomenclature(nomenclature.getId(), nomenclature.getLabel(), nomenclature.getValue());
 		nomenclatureRepository.save(newNomenclature);
 	}

@@ -45,7 +45,7 @@ public class StateDataServiceImpl extends AbstractService<StateData, UUID> imple
 		return stateDataRepository.findBySurveyUnitId(id);
 	}
 	
-	public ResponseEntity<Object> updateStateData(String id, JsonNode json, SurveyUnit su) throws Exception {
+	public ResponseEntity<Object> updateStateData(String id, JsonNode json, SurveyUnit su) {
 		Optional<StateData> stateDataOptional = stateDataRepository.findDtoBySurveyUnitId(id);
 		StateData stateData;
 		if (!stateDataOptional.isPresent()) {
@@ -60,9 +60,8 @@ public class StateDataServiceImpl extends AbstractService<StateData, UUID> imple
 		}
 		catch(Exception e) {
 			LOGGER.info("PUT state-data resulting in 400");
-			throw new Exception(e.getStackTrace().toString());
+			return ResponseEntity.badRequest().build();
 		}
-		
 		LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);
 		return ResponseEntity.ok().build();
 	}
