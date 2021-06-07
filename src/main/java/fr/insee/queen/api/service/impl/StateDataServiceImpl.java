@@ -54,14 +54,8 @@ public class StateDataServiceImpl extends AbstractService<StateData, UUID> imple
 		}else {
 			stateData = stateDataOptional.get();
 		}
-		try {
-			updateStateDataFromJson(stateData, json);
-			stateDataRepository.save(stateData);
-		}
-		catch(Exception e) {
-			LOGGER.info("PUT state-data resulting in 400");
-			return ResponseEntity.badRequest().build();
-		}
+		updateStateDataFromJson(stateData, json);
+		stateDataRepository.save(stateData);
 		LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);
 		return ResponseEntity.ok().build();
 	}
