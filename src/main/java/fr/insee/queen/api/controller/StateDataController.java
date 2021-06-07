@@ -81,7 +81,7 @@ public class StateDataController {
 		return new ResponseEntity<>(new StateDataDto(surveyUnitOptional.get().getStateData()), HttpStatus.OK);		
 	}
 	
-	@ApiOperation(value = "Get state-data by survey-unit Id ")
+	@ApiOperation(value = "Get state-data for all survey-units defined in request body ")
 	@PostMapping(path = "survey-units/state-data")
 	public ResponseEntity<SurveyUnitOkNokDto>  getStateDataBySurveyUnits(@RequestBody List<String> lstSurveyUnitId, HttpServletRequest request){
 		List<SurveyUnit> lstSurveyUnit = (List<SurveyUnit>) surveyUnitService.findByIds(lstSurveyUnitId);		
