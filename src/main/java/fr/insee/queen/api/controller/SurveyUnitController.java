@@ -32,6 +32,7 @@ import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
+import fr.insee.queen.api.exception.BadRequestException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.SurveyUnitService;
 import fr.insee.queen.api.service.UtilsService;
@@ -48,7 +49,6 @@ import io.swagger.annotations.ApiOperation;
 public class SurveyUnitController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyUnitController.class);
 
-	
 	/**
 	* The survey unit repository using to access to table 'survey_unit' in DB 
 	*/
@@ -71,12 +71,12 @@ public class SurveyUnitController {
 	public ResponseEntity<SurveyUnitResponseDto> getSurveyUnitById(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<SurveyUnit> suOpt = surveyUnitService.findById(id);
 		if(!suOpt.isPresent()) {
-			LOGGER.info("GET survey-units with id {} resulting in 404", id);
+			LOGGER.error("GET survey-units with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("GET survey-unit for reporting unit with id {} resulting in 403", id);
+			LOGGER.error("GET survey-unit for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		SurveyUnit su = suOpt.get();
@@ -101,21 +101,15 @@ public class SurveyUnitController {
 	public ResponseEntity<Object> getSurveyUnitById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<SurveyUnit> su = surveyUnitService.findById(id);
 		if(!su.isPresent()) {
-			LOGGER.info("PUT survey-unit with id {} resulting in 404", id);
+			LOGGER.error("PUT survey-unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("PUT survey-unit for reporting unit with id {} resulting in 403", id);
+			LOGGER.error("PUT survey-unit for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-		try {
-			surveyUnitService.updateSurveyUnit(su.get(), surveyUnit);
-		} 
-		catch(Exception e) {
-			LOGGER.info("PUT survey-units resulting in 400");
-			return ResponseEntity.badRequest().build();
-		}
+		surveyUnitService.updateSurveyUnit(su.get(), surveyUnit);
 		LOGGER.info("PUT survey-units resulting in 200");
 		return ResponseEntity.ok().build();
 	}
@@ -135,7 +129,7 @@ public class SurveyUnitController {
 	public ResponseEntity<Object> getListSurveyUnitByCampaign(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
-			LOGGER.info("GET survey-units for campaign with id {} resulting in 404", id);
+			LOGGER.error("GET survey-units for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		
@@ -147,7 +141,8 @@ public class SurveyUnitController {
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 				}
 				return new ResponseEntity<>(lstSuByCampaign, HttpStatus.OK);
-			}catch (Exception e) {
+			}catch (BadRequestException e) {
+				LOGGER.error(e.getMessage());
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			}
 		} else {
@@ -167,30 +162,27 @@ public class SurveyUnitController {
 	@ApiOperation(value = "Get deposit proof for a SU ")
 	@GetMapping(value = "/survey-unit/{id}/deposit-proof")
 	public ResponseEntity<Object> getDepositProof(@PathVariable(value = "id") String id, HttpServletRequest request, HttpServletResponse response) {
-		
 		Optional<SurveyUnit> suOpt = surveyUnitService.findById(id);
 		if(!suOpt.isPresent()) {
-			LOGGER.info("GET deposit-proof with id {} resulting in 404", id);
+			LOGGER.error("GET deposit-proof with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("GET deposit-proof for reporting unit with id {} resulting in 403", id);
+			LOGGER.error("GET deposit-proof for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-
 		SurveyUnit su = suOpt.get();
 		if (su.getStateData()!=null) {
 			try {
 				surveyUnitService.generateDepositProof(su, request, response);
 				return ResponseEntity.ok().build();
 			} catch (ServletException | IOException e) {
-				return new ResponseEntity<>("ERROR_EXPORT", HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("ERROR_EXPORT " + e.getStackTrace().toString() , HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 	    }
-		
-        LOGGER.info("GET deposit-proof with id {} resulting in 404", id);
+        LOGGER.error("GET deposit-proof with id {} resulting in 404", id);
         return ResponseEntity.notFound().build();
 	
 	}

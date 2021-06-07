@@ -7,6 +7,7 @@ import java.util.Set;
 import fr.insee.queen.api.domain.Nomenclature;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
+import fr.insee.queen.api.exception.NotFoundException;
 
 public interface NomenclatureService extends BaseService<Nomenclature, String> {
 
@@ -14,7 +15,7 @@ public interface NomenclatureService extends BaseService<Nomenclature, String> {
 
 	void save(Nomenclature n);
 
-	List<String> findRequiredNomenclatureByCampaign(String campaignId);
+	List<String> findRequiredNomenclatureByCampaign(String campaignId) throws NotFoundException;
 	
 	public List<String> findRequiredNomenclatureByQuestionnaire(Set<QuestionnaireModel> setQuestionnaireModel);
 	

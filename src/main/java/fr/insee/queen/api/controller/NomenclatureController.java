@@ -20,6 +20,7 @@ import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.Nomenclature;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
+import fr.insee.queen.api.exception.NotFoundException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.NomenclatureService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
@@ -69,7 +70,7 @@ public class NomenclatureController {
 	public ResponseEntity<Object> getNomenclatureById(@PathVariable(value = "id") String id){
 		Optional<Nomenclature> nomenclatureOptional = nomenclatureservice.findById(id);
 		if (!nomenclatureOptional.isPresent()) {
-			LOGGER.info("GET nomenclature with id {} resulting in 404", id);
+			LOGGER.error("GET nomenclature with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET nomenclature with id {} resulting in 200", id);
@@ -83,17 +84,23 @@ public class NomenclatureController {
 	* 
 	* @param id the id of campaign
 	* @return List of {@link String} containing nomenclature ids
+	 * @throws Exception 
 	*/
 	@ApiOperation(value = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
-	public ResponseEntity<List<String>> getListRequiredNomenclature(@PathVariable(value = "id") String id){
+	public ResponseEntity<List<String>> getListRequiredNomenclature(@PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
-			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 404", id);
+			LOGGER.error("GET required-nomenclatures for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 200", id);
-			return new ResponseEntity<>(nomenclatureservice.findRequiredNomenclatureByCampaign(id), HttpStatus.OK);
+			try {
+				return new ResponseEntity<>(nomenclatureservice.findRequiredNomenclatureByCampaign(id), HttpStatus.OK);
+			} catch (NotFoundException e) {
+				LOGGER.info(e.getMessage());
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 		}
 	}
 	
@@ -102,13 +109,14 @@ public class NomenclatureController {
 	* 
 	* @param id the id of campaign
 	* @return List of {@link String} containing nomenclature ids
+	 * @throws Exception 
 	*/
 	@ApiOperation(value = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
-	public ResponseEntity<List<String>> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String id){
+	public ResponseEntity<List<String>> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String id) {
 		Optional<QuestionnaireModel> questionnaireOptional = questionnaireModelService.findById(id);
 		if (!questionnaireOptional.isPresent()) {
-			LOGGER.info("GET required-nomenclatures for questionnaire with id {} resulting in 404", id);
+			LOGGER.error("GET required-nomenclatures for questionnaire with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 200", id);
@@ -122,10 +130,11 @@ public class NomenclatureController {
 	* 
 	* @param id the id of campaign
 	* @return List of {@link String} containing nomenclature ids
+	 * @throws Exception 
 	*/
 	@ApiOperation(value = "Post new nomenclature ")
 	@PostMapping(path = "/nomenclature")
-	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature){
+	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature) {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}

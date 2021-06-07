@@ -57,28 +57,27 @@ public class DataController {
 	* 
 	* @param id the id of reporting unit
 	* @return {@link DataDto} the data associated to the reporting unit
+	 * @throws Exception 
 	*/
 	@ApiOperation(value = "Get data by reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/data")
-	public ResponseEntity<Object>  getDataBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request){
-		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
-		if (!surveyUnitOptional.isPresent()) {
-			LOGGER.info("GET data for reporting unit with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		}
-		String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("GET data for reporting unit with id {} resulting in 403", id);
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-		}
-		LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
-		Optional<Data> dataOptional = dataService.findBySurveyUnitId(id);
-		if (!dataOptional.isPresent()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(dataOptional.get().getValue(), HttpStatus.OK);
-		
-		
+	public ResponseEntity<Object>  getDataBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request) {
+			Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
+			if (!surveyUnitOptional.isPresent()) {
+				LOGGER.error("GET data for reporting unit with id {} resulting in 404", id);
+				return ResponseEntity.notFound().build();
+			}
+			String userId = utilsService.getUserId(request);
+			if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
+				LOGGER.error("GET data for reporting unit with id {} resulting in 403", id);
+				return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+			}
+			LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
+			Optional<Data> dataOptional = dataService.findBySurveyUnitId(id);
+			if (!dataOptional.isPresent()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			return new ResponseEntity<>(dataOptional.get().getValue(), HttpStatus.OK);
 	}
 	
 	/**
@@ -94,12 +93,12 @@ public class DataController {
 	public ResponseEntity<Object> setData(@RequestBody JsonNode dataValue, @PathVariable(value = "id") String id, HttpServletRequest request) {
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
-			LOGGER.info("PUT data for reporting unit with id {} resulting in 404", id);
+			LOGGER.error("PUT data for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("PUT data for reporting unit with id {} resulting in 403", id);
+			LOGGER.error("PUT data for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		dataService.updateData(surveyUnitOptional.get(), dataValue);
