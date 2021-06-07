@@ -70,7 +70,7 @@ public class NomenclatureController {
 	public ResponseEntity<Object> getNomenclatureById(@PathVariable(value = "id") String id){
 		Optional<Nomenclature> nomenclatureOptional = nomenclatureservice.findById(id);
 		if (!nomenclatureOptional.isPresent()) {
-			LOGGER.info("GET nomenclature with id {} resulting in 404", id);
+			LOGGER.error("GET nomenclature with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET nomenclature with id {} resulting in 200", id);
@@ -91,7 +91,7 @@ public class NomenclatureController {
 	public ResponseEntity<List<String>> getListRequiredNomenclature(@PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
-			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 404", id);
+			LOGGER.error("GET required-nomenclatures for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 200", id);
@@ -116,7 +116,7 @@ public class NomenclatureController {
 	public ResponseEntity<List<String>> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String id) {
 		Optional<QuestionnaireModel> questionnaireOptional = questionnaireModelService.findById(id);
 		if (!questionnaireOptional.isPresent()) {
-			LOGGER.info("GET required-nomenclatures for questionnaire with id {} resulting in 404", id);
+			LOGGER.error("GET required-nomenclatures for questionnaire with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 200", id);

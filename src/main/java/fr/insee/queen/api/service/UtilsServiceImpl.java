@@ -34,6 +34,12 @@ public class UtilsServiceImpl implements UtilsService{
 	@Value("${fr.insee.queen.pilotage.service.url.port:#{null}}")
 	private String pilotagePort;
 	
+	@Value("${fr.insee.queen.interviewer.role:#{null}}")
+	private String roleInterviewer;
+	
+	@Value("${fr.insee.queen.reviewer.role:#{null}}")
+	private String roleReviewer;
+	
 	@Autowired
 	Environment environment;
 		
@@ -93,7 +99,16 @@ public class UtilsServiceImpl implements UtilsService{
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean checkHabilitation(HttpServletRequest request, String suId){
-		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId;
+		String role = "";
+		if(request.isUserInRole(roleInterviewer))
+			role = null;
+		else if(request.isUserInRole(roleReviewer))
+			role= "reviewer";
+		else 
+			return false;
+		
+		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId
+				+ "?role=" + role;
 		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();

@@ -54,14 +54,14 @@ public class MetadataController {
 	public ResponseEntity<Object>  getMetadataByCampaignId(@PathVariable(value = "id") String id){
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
-			LOGGER.info("GET metadata for campaign with id {} resulting in 404", id);
+			LOGGER.error("GET metadata for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		MetadataDto metadataDto;
 		try {
 			metadataDto = metadataService.findDtoByCampaignId(id);
 		} catch (NotFoundException e) {
-			LOGGER.info("GET metadata for campaign with id {} resulting in 404 : No metadata found for campaign. \\n {}", id, e.getMessage());
+			LOGGER.error("GET metadata for campaign with id {} resulting in 404 : No metadata found for campaign. \\n {}", id, e.getMessage());
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		LOGGER.info("GET metadata for campaign with id {} resulting in 200", id);
@@ -80,18 +80,18 @@ public class MetadataController {
 	public ResponseEntity<Object>  getMetadataByQuestionnaireId(@PathVariable(value = "id") String id) {
 		Optional<QuestionnaireModel> questionnaireOptional = questionnaireModelService.findById(id);
 		if (!questionnaireOptional.isPresent()) {
-			LOGGER.info("GET metadata for questionnaire with id {} resulting in 404 : Questionnaire not found", id);
+			LOGGER.error("GET metadata for questionnaire with id {} resulting in 404 : Questionnaire not found", id);
 			return ResponseEntity.notFound().build();
 		}
 		if(questionnaireOptional.get().getCampaign()==null) {
-			LOGGER.info("GET metadata for questionnaire with id {} resulting in 404 : No campaign associated to questionnaire", id);
+			LOGGER.error("GET metadata for questionnaire with id {} resulting in 404 : No campaign associated to questionnaire", id);
 			return ResponseEntity.notFound().build();
 		}
 		MetadataDto metadataDto;
 		try {
 			metadataDto = metadataService.findDtoByCampaignId(questionnaireOptional.get().getCampaign().getId());
 		} catch(NotFoundException e) {
-			LOGGER.info("GET metadata for questionnaire with id {} resulting in 404 : No metadate found for campaign. \n {}", id, e.getMessage());
+			LOGGER.error("GET metadata for questionnaire with id {} resulting in 404 : No metadate found for campaign. \n {}", id, e.getMessage());
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		LOGGER.info("GET metadata for questionnaire with id {} resulting in 200", id);

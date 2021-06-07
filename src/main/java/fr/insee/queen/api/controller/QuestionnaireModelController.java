@@ -77,14 +77,14 @@ public class QuestionnaireModelController {
 	public ResponseEntity<List<QuestionnaireModelDto>> getQuestionnaireModelByCampaignId(@PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
-			LOGGER.info("GET questionnaire for campaign with id {} resulting in 404", id);
+			LOGGER.error("GET questionnaire for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			List<QuestionnaireModelDto> resp = new ArrayList<>();
 			try {
 				resp = campaignService.getQuestionnaireModels(id);
 			} catch (NotFoundException e) {
-				LOGGER.info(e.getMessage());
+				LOGGER.error(e.getMessage());
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 			LOGGER.info("GET questionnaire for campaign with id {} resulting in 200", id);
@@ -103,7 +103,7 @@ public class QuestionnaireModelController {
 	public ResponseEntity<QuestionnaireModelDto> getQuestionnaireModelById(@PathVariable(value = "id") String id){
 		Optional<QuestionnaireModel> questModel = questionnaireModelService.findById(id);
 		if (!questModel.isPresent()) {
-			LOGGER.info("GET questionnaire for id {} resulting in 404", id);
+			LOGGER.error("GET questionnaire for id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			QuestionnaireModelDto questMod = new QuestionnaireModelDto(questModel.get());
@@ -124,14 +124,14 @@ public class QuestionnaireModelController {
 	public ResponseEntity<List<QuestionnaireIdDto>> getQuestionnaireModelIdByCampaignId(@PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
-			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 404", id);
+			LOGGER.error("GET questionnaire Id for campaign with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		} else {
 			List<QuestionnaireIdDto> resp = new ArrayList<>();
 			try {
 				resp = campaignService.getQuestionnaireIds(id);
 			} catch (NotFoundException e) {
-				LOGGER.info(e.getMessage());
+				LOGGER.error(e.getMessage());
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 200", id);
@@ -156,11 +156,11 @@ public class QuestionnaireModelController {
 		}
 		Optional<QuestionnaireModelDto> questMod = questionnaireModelService.findDtoById(questionnaireModel.getIdQuestionnaireModel());
 		if (questMod.isPresent()) {
-			LOGGER.info("POST questionnaire with id {} resulting in 400 because it already exists", questionnaireModel.getIdQuestionnaireModel());
+			LOGGER.error("POST questionnaire with id {} resulting in 400 because it already exists", questionnaireModel.getIdQuestionnaireModel());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		if(Boolean.FALSE.equals(nomenclatureService.checkIfNomenclatureExists(questionnaireModel.getRequiredNomenclatureIds()))) {
-			LOGGER.info("POST questionnaire with id {} resulting in 403 because a nomenclature does not exist", questionnaireModel.getIdQuestionnaireModel());
+			LOGGER.error("POST questionnaire with id {} resulting in 403 because a nomenclature does not exist", questionnaireModel.getIdQuestionnaireModel());
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		questionnaireModelService.createQuestionnaire(questionnaireModel);

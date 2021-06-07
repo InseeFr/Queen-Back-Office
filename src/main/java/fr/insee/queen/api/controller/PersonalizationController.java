@@ -62,12 +62,12 @@ public class PersonalizationController {
 	public ResponseEntity<Object>  getPersonalizationBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request){
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
-			LOGGER.info("GET personalization for reporting unit with id {} resulting in 404", id);
+			LOGGER.error("GET personalization for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("GET personalization for reporting unit with id {} resulting in 403", id);
+			LOGGER.error("GET personalization for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		LOGGER.info("GET personalization for reporting unit with id {} resulting in 200", id);

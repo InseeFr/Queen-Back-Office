@@ -86,11 +86,11 @@ public class CampaignController {
 		}
 		Optional<Campaign> campaignOptional = campaignservice.findById(campaign.getId());
 		if (campaignOptional.isPresent()) {
-			LOGGER.info("POST campaign with id {} resulting in 400 because it already exists", campaign.getId());
+			LOGGER.error("POST campaign with id {} resulting in 400 because it already exists", campaign.getId());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		if(Boolean.FALSE.equals(campaignservice.checkIfQuestionnaireOfCampaignExists(campaign))) {
-			LOGGER.info("POST campaign with id {} resulting in 403 besause a questionnaire does not exist or is already associated ", campaign.getId());
+			LOGGER.error("POST campaign with id {} resulting in 403 besause a questionnaire does not exist or is already associated ", campaign.getId());
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		campaignservice.saveDto(campaign);
@@ -115,7 +115,7 @@ public class CampaignController {
 		try {
 			result = integrationService.integrateContext(file);
 		} catch(IOException | XPathExpressionException | SAXException | ParserConfigurationException e) {
-			LOGGER.info("POST campaign context resulting in 400");
+			LOGGER.error("POST campaign context resulting in 400");
 			return ResponseEntity.badRequest().build();
 		}
 		LOGGER.info("POST campaign context resulting in 200");
