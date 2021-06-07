@@ -64,9 +64,7 @@ public class CampaignController {
 	@ApiOperation(value = "Get list of campaigns")
 	@GetMapping(path = "/campaigns")
 	public ResponseEntity<Object> getListCampaign(){
-
 		List<CampaignResponseDto> resp = campaignservice.getAllCampaigns();
-		
 		LOGGER.info("GET campaigns resulting in 200");
 		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
@@ -75,7 +73,7 @@ public class CampaignController {
 	* This method is using to post a new campaign
 	* 
 	* @param campaign the value to create
-	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200}
+	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200} 
 	* @throws ParseException 
 	* @throws SQLException 
 	* 
@@ -88,17 +86,16 @@ public class CampaignController {
 		}
 		Optional<Campaign> campaignOptional = campaignservice.findById(campaign.getId());
 		if (campaignOptional.isPresent()) {
-			LOGGER.info("POST campaign with id {} resulting in 400 because it already exists", campaign.getId());
+			LOGGER.error("POST campaign with id {} resulting in 400 because it already exists", campaign.getId());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		if(Boolean.FALSE.equals(campaignservice.checkIfQuestionnaireOfCampaignExists(campaign))) {
-			LOGGER.info("POST campaign with id {} resulting in 403 besause a questionnaire does not exist or is already associated ", campaign.getId());
+			LOGGER.error("POST campaign with id {} resulting in 403 besause a questionnaire does not exist or is already associated ", campaign.getId());
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		campaignservice.saveDto(campaign);
 		LOGGER.info("POST campaign with id {} resulting in 200", campaign.getId());
 		return ResponseEntity.ok().build();
-		
 	}	
 	
 	/**
@@ -106,25 +103,22 @@ public class CampaignController {
 	* 
 	* @param campaign the value to create
 	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200}
-	 * @throws IOException 
-	 * @throws SAXException 
-	 * @throws XPathExpressionException 
-	 * @throws ParserConfigurationException 
-	* @throws ParseException 
+	 * @throws Exception 
+	 * @throws ParseException 
 	* @throws SQLException 
 	* 
 	*/
 	@ApiOperation(value = "Integrates the context of a campaign")
 	@PostMapping(path = "/campaign/context")
-	public ResponseEntity<Object> integrateContext(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-		
-		IntegrationResultDto result = integrationService.integrateContext(file);
-		if(result == null) {
-			LOGGER.info("POST campaign context resulting in 400");
+	public ResponseEntity<Object> integrateContext(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+		IntegrationResultDto result = null;
+		try {
+			result = integrationService.integrateContext(file);
+		} catch(IOException | XPathExpressionException | SAXException | ParserConfigurationException e) {
+			LOGGER.error("POST campaign context resulting in 400");
 			return ResponseEntity.badRequest().build();
 		}
 		LOGGER.info("POST campaign context resulting in 200");
 		return new ResponseEntity<>(result, HttpStatus.OK);
-		
 	}	
 }

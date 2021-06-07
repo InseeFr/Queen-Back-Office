@@ -69,12 +69,12 @@ public class StateDataController {
 	public ResponseEntity<StateDataDto>  getStateDataBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request){
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
 		if (!surveyUnitOptional.isPresent() || surveyUnitOptional.get().getStateData() == null) {
-			LOGGER.info("GET state-data for reporting unit with id {} resulting in 404", id);
+			LOGGER.error("GET state-data for reporting unit with id {} resulting in 404", id);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("GET state-data for reporting unit with id {} resulting in 403", id);
+			LOGGER.error("GET state-data for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		LOGGER.info("GET state-data for reporting unit with id {} resulting in 200", id);
@@ -102,6 +102,7 @@ public class StateDataController {
 	* @param dataValue	the value to update
 	* @param id	the id of reporting unit
 	* @return {@link HttpStatus 404} if data is not found, else {@link HttpStatus 200}
+	 * @throws Exception 
 	* 
 	*/
 	@ApiOperation(value = "Update data by reporting unit Id ")
@@ -109,12 +110,12 @@ public class StateDataController {
 	public ResponseEntity<Object> setStateData(@RequestBody JsonNode dataValue, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
-			LOGGER.info("PUT state-data for reporting unit with id {} resulting in 404", id);
+			LOGGER.error("PUT state-data for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("PUT state-data for reporting unit with id {} resulting in 403", id);
+			LOGGER.error("PUT state-data for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		return stateDataService.updateStateData(id, dataValue, surveyUnitOptional.get());
