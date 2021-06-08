@@ -20,7 +20,7 @@ public interface UtilsService {
 	 */
 	ResponseEntity<Object> getSuFromPilotage(HttpServletRequest request);
 	
-	boolean checkHabilitation(HttpServletRequest request, String suId);
+	boolean checkHabilitation(HttpServletRequest request, String suId, String role);
 	
 	boolean isDevProfile();
 	

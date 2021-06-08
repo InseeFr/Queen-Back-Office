@@ -98,17 +98,15 @@ public class UtilsServiceImpl implements UtilsService{
 	 * @return Boolean
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean checkHabilitation(HttpServletRequest request, String suId){
-		String role = "";
-		if(request.isUserInRole(roleInterviewer))
+	public boolean checkHabilitation(HttpServletRequest request, String suId, String role){
+		if(role.equals(Constants.INTERVIEWER))
 			role = "";
-		else if(request.isUserInRole(roleReviewer))
-			role= "reviewer";
+		else if(role.equals(Constants.REVIEWER))
+			role= Constants.REVIEWER;
 		else 
 			return false;
-		
 		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId
-				+ "?role=" + role;
+				+ "&role=" + role;
 		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();

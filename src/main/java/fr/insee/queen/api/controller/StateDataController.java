@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.data.DataDto;
@@ -73,7 +74,7 @@ public class StateDataController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
 			LOGGER.error("GET state-data for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
@@ -114,7 +115,7 @@ public class StateDataController {
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
 			LOGGER.error("PUT state-data for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}

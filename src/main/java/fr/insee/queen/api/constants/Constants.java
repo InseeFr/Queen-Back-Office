@@ -9,6 +9,8 @@ public class Constants {
 	public static final String GUEST = "GUEST";
 	public static final String CAMPAIGN = "campaign";
 	public static final String AUTHORIZATION = "Authorization";
+	public static final String INTERVIEWER = "interviewer";
+	public static final String REVIEWER = "reviewer";
 	
 	//API url for endpoints
 	public static final String API_CAMPAIGNS = "/api/campaigns";

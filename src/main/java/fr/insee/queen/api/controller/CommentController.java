@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.Comment;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.comment.CommentDto;
@@ -69,7 +70,7 @@ public class CommentController {
 			return ResponseEntity.notFound().build();
 	    }
 	    String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
 			LOGGER.error("GET comment for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
@@ -100,7 +101,7 @@ public class CommentController {
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
 			LOGGER.error("PUT comment for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
