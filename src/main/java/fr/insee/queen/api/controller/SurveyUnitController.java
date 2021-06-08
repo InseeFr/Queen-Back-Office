@@ -76,7 +76,7 @@ public class SurveyUnitController {
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals(Constants.GUEST) && (!utilsService.checkHabilitation(request, id, Constants.INTERVIEWER) 
-				|| !utilsService.checkHabilitation(request, id, Constants.REVIEWER))) {
+				&& !utilsService.checkHabilitation(request, id, Constants.REVIEWER))) {
 			LOGGER.error("GET survey-unit for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
@@ -170,7 +170,7 @@ public class SurveyUnitController {
 		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals(Constants.GUEST) && (!utilsService.checkHabilitation(request, id, Constants.INTERVIEWER) 
-				|| !utilsService.checkHabilitation(request, id, Constants.REVIEWER))) {
+				&& !utilsService.checkHabilitation(request, id, Constants.REVIEWER))) {
 			LOGGER.error("GET deposit-proof for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
