@@ -101,7 +101,7 @@ public class UtilsServiceImpl implements UtilsService{
 	public boolean checkHabilitation(HttpServletRequest request, String suId){
 		String role = "";
 		if(request.isUserInRole(roleInterviewer))
-			role = null;
+			role = "";
 		else if(request.isUserInRole(roleReviewer))
 			role= "reviewer";
 		else 
