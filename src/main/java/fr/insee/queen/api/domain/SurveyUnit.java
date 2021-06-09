@@ -51,7 +51,7 @@ public class SurveyUnit {
 	private Data data;
 	
 	@DBRef
-	@OneToOne( mappedBy = "surveyUnit", cascade = CascadeType.ALL )
+	@OneToOne(mappedBy = "surveyUnit", cascade = CascadeType.ALL )
 	private StateData stateData;
 	
 	@DBRef
