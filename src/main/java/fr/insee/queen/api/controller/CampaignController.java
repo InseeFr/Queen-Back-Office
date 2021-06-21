@@ -84,17 +84,18 @@ public class CampaignController {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
-		Optional<Campaign> campaignOptional = campaignservice.findById(campaign.getId());
+		String campaignId = campaign.getId().toUpperCase();
+		Optional<Campaign> campaignOptional = campaignservice.findById(campaignId);
 		if (campaignOptional.isPresent()) {
-			LOGGER.error("POST campaign with id {} resulting in 400 because it already exists", campaign.getId());
+			LOGGER.error("POST campaign with id {} resulting in 400 because it already exists", campaignId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		if(Boolean.FALSE.equals(campaignservice.checkIfQuestionnaireOfCampaignExists(campaign))) {
-			LOGGER.error("POST campaign with id {} resulting in 403 besause a questionnaire does not exist or is already associated ", campaign.getId());
+			LOGGER.error("POST campaign with id {} resulting in 403 besause a questionnaire does not exist or is already associated ", campaignId);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		campaignservice.saveDto(campaign);
-		LOGGER.info("POST campaign with id {} resulting in 200", campaign.getId());
+		LOGGER.info("POST campaign with id {} resulting in 200", campaignId);
 		return ResponseEntity.ok().build();
 	}	
 	

@@ -51,13 +51,13 @@ public abstract class TestBasicAuth {
 								new Header("Cache-Control", "public, max-age=86400"))
 						.withBody(expectedBody));
 
-		expectedBody = "[" + "{" + "\"id\":\"11\", " + "\"campaign\":\"simpsons2020x00\", "
+		expectedBody = "[" + "{" + "\"id\":\"11\", " + "\"campaign\":\"SIMPSONS2020X00\", "
 				+ "\"campaignLabel\":\"Survey on the Simpsons tv show 2020\", "
 				+ "\"collectionStartDate\":\"1577836800000\", " + "\"collectionEndDate\":\"1622035845000\"" + "}, "
-				+ "{" + "\"id\":\"12\", " + "\"campaign\":\"simpsons2020x00\", "
+				+ "{" + "\"id\":\"12\", " + "\"campaign\":\"SIMPSONS2020X00\", "
 				+ "\"campaignLabel\":\"Survey on the Simpsons tv show 2020\", "
 				+ "\"collectionStartDate\":\"1577836800000\", " + "\"collectionEndDate\":\"1622035845000\"" + "}, "
-				+ "{" + "\"id\":\"20\", " + "\"campaign\":\"vqs2021x00\", "
+				+ "{" + "\"id\":\"20\", " + "\"campaign\":\"VQS2021X00\", "
 				+ "\"campaignLabel\":\"Everyday life and health survey 2021\", "
 				+ "\"collectionStartDate\":\"1577836800000\", " + "\"collectionEndDate\":\"1622035845000\"" + "}]";
 		mockServerClient.when(request().withPath(Constants.API_PEARLJAM_SURVEYUNITS))
@@ -87,7 +87,7 @@ public abstract class TestBasicAuth {
 		given().auth().preemptive().basic("INTW1", "a")
 		.when().get("api/campaigns")
 		.then().statusCode(200)
-		.and().assertThat().body("id", hasItem("simpsons2020x00"));
+		.and().assertThat().body("id", hasItem("SIMPSONS2020X00"));
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public abstract class TestBasicAuth {
 				.get("api/campaigns");
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
-		"{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
+		"{\"id\":\"TESTPOSTCAMPAIGN\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
 	}
 	//////////////////////////API_CAMPAIGNS ///////////////////////
 	
@@ -127,7 +127,7 @@ public abstract class TestBasicAuth {
 		ObjectNode expected = objectMapper.createObjectNode();
 		
 		ObjectNode campaign = objectMapper.createObjectNode();
-		campaign.put("id", "simpsons2020x00");
+		campaign.put("id", "SIMPSONS2020X00");
 		campaign.put("status", "UPDATED");
 		
 		ArrayNode nomenclatures = objectMapper.createArrayNode();
@@ -168,7 +168,7 @@ public abstract class TestBasicAuth {
 		
 		// Questionnaire model "simpsons-v1" has been created
 		Response resp2 = given().auth().preemptive().basic("INTW1", "a")
-				.get("api/campaign/simpsons2020x00/questionnaire-id");
+				.get("api/campaign/SIMPSONS2020X00/questionnaire-id");
 		resp2.then().statusCode(200);
 		Assert.assertTrue(resp2.getBody().asString().contains("simpsons-v1"));
 		
@@ -187,7 +187,7 @@ public abstract class TestBasicAuth {
 	@Test
 	void testFindSurveyUnitsByCampaign() {
 		given().auth().preemptive().basic("INTW1", "a")
-		.when().get("api/campaign/simpsons2020x00/survey-units")
+		.when().get("api/campaign/SIMPSONS2020X00/survey-units")
 		.then().statusCode(200)
 		.and().assertThat().body("id", hasItem("11"));
 	}
