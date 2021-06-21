@@ -97,8 +97,7 @@ keycloak.principal-attribute:preferred_username
 #Keycloak roles
 fr.insee.queen.interviewer.role=investigator
 fr.insee.queen.reviewer.role=reviewer
-fr.insee.queen.user.local.role=manager_local
-fr.insee.queen.user.national.role=manager_national
+fr.insee.queen.admin.role=admin
 
 #Pilotage Api
 fr.insee.queen.pilotage.service.url.scheme=http

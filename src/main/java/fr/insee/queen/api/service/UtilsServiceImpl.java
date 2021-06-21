@@ -34,11 +34,6 @@ public class UtilsServiceImpl implements UtilsService{
 	@Value("${fr.insee.queen.pilotage.service.url.port:#{null}}")
 	private String pilotagePort;
 	
-	@Value("${fr.insee.queen.interviewer.role:#{null}}")
-	private String roleInterviewer;
-	
-	@Value("${fr.insee.queen.reviewer.role:#{null}}")
-	private String roleReviewer;
 	
 	@Autowired
 	Environment environment;
