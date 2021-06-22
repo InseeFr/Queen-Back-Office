@@ -9,6 +9,8 @@ public class Constants {
 	public static final String GUEST = "GUEST";
 	public static final String CAMPAIGN = "campaign";
 	public static final String AUTHORIZATION = "Authorization";
+	public static final String INTERVIEWER = "interviewer";
+	public static final String REVIEWER = "reviewer";
 	
 	//API url for endpoints
 	public static final String API_CAMPAIGNS = "/api/campaigns";
@@ -19,6 +21,7 @@ public class Constants {
 	public static final String API_CAMPAIGN_ID_QUESTIONAIRES = "/api/campaign/{id}/questionnaires";
 	public static final String API_CAMPAIGN_ID_QUESTIONAIREID = "/api/campaign/{id}/questionnaire-id";
 	public static final String API_CAMPAIGN_ID_REQUIREDNOMENCLATURES = "/api/campaign/{id}/required-nomenclatures";
+	public static final String API_SURVEYUNITS_STATEDATA= "/api/survey-units/state-data";
 	public static final String API_SURVEYUNIT_ID= "/api/survey-unit/{id}";
 	public static final String API_SURVEYUNIT_ID_DATA = "/api/survey-unit/{id}/data";
 	public static final String API_SURVEYUNIT_ID_COMMENT = "/api/survey-unit/{id}/comment";

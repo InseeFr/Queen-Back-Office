@@ -17,4 +17,4 @@ spec:
           image: inseefr/queen-back-office:latest
           env:
            - name: JAVA_OPTS
-             value: '-Dspring.profiles.active=prod -Dspring.config.location=classpath:/,${CATALINA_BASE}/webapps/queenbo.properties -Dspring.config.additional-location=classpath:/,${CATALINA_BASE}/webapps/colemcolbo.properties -Dlogging.config=classpath:log4j2.xml'
+             value: '-Dspring.profiles.active=prod -Dspring.config.location=classpath:/,${CATALINA_BASE}/webapps/queenbo.properties -Dspring.config.additional-location=classpath:/,${CATALINA_BASE}/webapps/colmcolb.properties -Dlogging.config=classpath:log4j2.xml'

@@ -91,7 +91,6 @@ public class IntegrationServiceImpl implements IntegrationService {
 
 	
 	public IntegrationResultDto integrateContext(MultipartFile file) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-		
 	    String fileName = file.getOriginalFilename();
 	    if (fileName!=null) {
 	    	fileName = fileName.replace(".zip", "");
@@ -102,10 +101,8 @@ public class IntegrationServiceImpl implements IntegrationService {
 		    return doIntegration(zip, fileName);
 	    }
 	    catch(IOException e) {
-	    	return null;
+	    	throw new IOException(e.getStackTrace().toString());
 	    }
-	    
-	    
 	}
 	
 	private IntegrationResultDto doIntegration(File zip, String fileName) throws ParserConfigurationException, SAXException, XPathExpressionException {

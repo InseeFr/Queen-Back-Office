@@ -310,13 +310,19 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		commentService.save(c);
 		Personalization p = new Personalization(UUID.randomUUID(),su.getPersonalization(),newSu);
 		personalizationService.save(p);
-		StateDataType type = StateDataType.INIT;
 		StateData sd;
 		if(su.getStateData() != null) {
+			sd = new StateData();
 			if (su.getStateData().getState() != null ) {
-				type = su.getStateData().getState();
+				sd.setState(su.getStateData().getState());
 			}
-			sd = new StateData(UUID.randomUUID(),type,su.getStateData().getDate(),su.getStateData().getCurrentPage(),newSu);
+			if (su.getStateData().getDate() != null ) {
+				sd.setDate(su.getStateData().getDate());
+			}
+			if (su.getStateData().getCurrentPage() != null ) {
+				sd.setCurrentPage(su.getStateData().getCurrentPage());
+			}
+			sd.setSurveyUnit(newSu);
 			newSu.setStateData(sd);
 			stateDataService.save(sd);
 		}
@@ -325,6 +331,11 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		newSu.setComment(c);
 		newSu.setPersonalization(p);
 		surveyUnitRepository.save(newSu);
+	}
+
+	@Override
+	public Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId) {
+		return surveyUnitRepository.findAllById(lstSurveyUnitId);
 	}
 
 }

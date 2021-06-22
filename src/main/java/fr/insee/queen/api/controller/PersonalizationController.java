@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.Personalization;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.service.PersonalizationService;
@@ -62,12 +63,12 @@ public class PersonalizationController {
 	public ResponseEntity<Object>  getPersonalizationBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request){
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
-			LOGGER.info("GET personalization for reporting unit with id {} resulting in 404", id);
+			LOGGER.error("GET personalization for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("GET personalization for reporting unit with id {} resulting in 403", id);
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
+			LOGGER.error("GET personalization for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		LOGGER.info("GET personalization for reporting unit with id {} resulting in 200", id);
@@ -95,11 +96,10 @@ public class PersonalizationController {
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
 			LOGGER.info("PUT personalization for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-
 		personalizationService.updatePersonalization(surveyUnitOptional.get(), personalizationValues);
 		LOGGER.info("PUT personalization for reporting unit with id {} resulting in 200", id);
 		return ResponseEntity.ok().build();

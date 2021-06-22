@@ -32,7 +32,10 @@ import fr.insee.queen.api.constants.Constants;
 public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 
 	@Value("${fr.insee.queen.interviewer.role:#{null}}")
-	private String role;
+	private String roleInterviewer;
+	
+	@Value("${fr.insee.queen.reviewer.role:#{null}}")
+	private String roleReviewer;
 	
 	/**
      * Specific configuration for keycloak(add filter, etc)
@@ -72,28 +75,32 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
        				.antMatchers("/environnement", "/healthcheck").permitAll()
                    	// configuration for endpoints
-       				.antMatchers(Constants.API_CAMPAIGNS).hasRole(role)
-       				.antMatchers(Constants.API_CAMPAIGN_CONTEXT).hasRole(role)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_SURVEY_UNITS).hasRole(role)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_SURVEY_UNIT).hasRole(role)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_METADATA).hasRole(role)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIRES).hasRole(role)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIREID).hasRole(role)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES).hasRole(role)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID).hasRole(role)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_DATA).hasRole(role)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_COMMENT).hasRole(role)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_STATEDATA).hasRole(role)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_DEPOSITPROOF).hasRole(role)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_PERSONALIZATION).hasRole(role)
-       				.antMatchers(Constants.API_NOMENCLATURE).hasRole(role)
-       				.antMatchers(Constants.API_NOMENCLATURE_ID).hasRole(role)
-       				.antMatchers(Constants.API_QUESTIONNAIRE_ID).hasRole(role)
-       				.antMatchers(Constants.API_QUESTIONNAIRE_ID_METADATA).hasRole(role)
-       				.antMatchers(Constants.API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE).hasRole(role)
-       				.antMatchers(Constants.API_QUESTIONNAIREMODELS).hasRole(role)
-       				.antMatchers(Constants.API_PARADATAEVENT).hasRole(role)
-       				.antMatchers(Constants.API_CREATE_DATASET).hasRole(role)
+       				.antMatchers(Constants.API_CAMPAIGNS).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_CAMPAIGN_CONTEXT).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_SURVEY_UNITS).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGN_ID_SURVEY_UNIT).hasAnyRole(roleInterviewer, roleReviewer)
+					.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGN_ID_SURVEY_UNIT).hasAnyRole(roleInterviewer)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_METADATA).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIRES).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIREID).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_SURVEYUNITS_STATEDATA).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleInterviewer)
+					.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleInterviewer)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_DATA).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_COMMENT).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_STATEDATA).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_DEPOSITPROOF).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_SURVEYUNIT_ID_PERSONALIZATION).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_NOMENCLATURE).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_NOMENCLATURE_ID).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_QUESTIONNAIRE_ID).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_QUESTIONNAIRE_ID_METADATA).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_QUESTIONNAIREMODELS).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(Constants.API_PARADATAEVENT).hasRole(roleInterviewer)
+       				.antMatchers(Constants.API_CREATE_DATASET).hasAnyRole(roleInterviewer, roleReviewer)
 					.anyRequest().denyAll(); 
 	}
 	

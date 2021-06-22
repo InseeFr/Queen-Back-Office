@@ -38,5 +38,5 @@ public interface SurveyUnitRepository extends ApiRepository<SurveyUnit, String> 
 	* @return {@link ReportingUnitDto}
 	*/
 	SurveyUnitDto findDtoById(String id);
-	List<SurveyUnit> findByCampaignId(String id);
+	List<SurveyUnit> findByCampaignId(String id);	
 }

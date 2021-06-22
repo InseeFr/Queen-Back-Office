@@ -8,6 +8,7 @@ import fr.insee.queen.api.dto.campaign.CampaignDto;
 import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
+import fr.insee.queen.api.exception.NotFoundException;
 
 public interface CampaignService extends BaseService<Campaign, String> {
 
@@ -25,7 +26,7 @@ public interface CampaignService extends BaseService<Campaign, String> {
 		
 	List<CampaignResponseDto> getAllCampaigns();
 	
-	List<QuestionnaireIdDto> getQuestionnaireIds(String id);
+	List<QuestionnaireIdDto> getQuestionnaireIds(String id) throws NotFoundException;
 	
-	List<QuestionnaireModelDto> getQuestionnaireModels(String id);
+	List<QuestionnaireModelDto> getQuestionnaireModels(String id) throws NotFoundException;
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.Comment;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.comment.CommentDto;
@@ -65,12 +66,12 @@ public class CommentController {
 	public ResponseEntity<Object> getCommentBySurveyUnit(@PathVariable(value = "id") String id, HttpServletRequest request){
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitservice.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
-			LOGGER.info("GET comment for reporting unit with id {} resulting in 404", id);
+			LOGGER.error("GET comment for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
-    }
-    String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("GET comment for reporting unit with id {} resulting in 403", id);
+	    }
+	    String userId = utilsService.getUserId(request);
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
+			LOGGER.error("GET comment for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		LOGGER.info("GET comment for reporting unit with id {} resulting in 200", id);
@@ -79,8 +80,6 @@ public class CommentController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(commentOptional.get().getValue(), HttpStatus.OK);
-		
-		
 	}
 	
 	/**
@@ -98,12 +97,12 @@ public class CommentController {
 	public ResponseEntity<Object> setComment(@RequestBody JsonNode commentValue, @PathVariable(value = "id") String id, HttpServletRequest request) {
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitservice.findById(id);
 		if (!surveyUnitOptional.isPresent()) {
-			LOGGER.info("PUT comment for reporting unit with id {} resulting in 404", id);
+			LOGGER.error("PUT comment for reporting unit with id {} resulting in 404", id);
 			return ResponseEntity.notFound().build();
 		}
 		String userId = utilsService.getUserId(request);
-		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id)) {
-			LOGGER.info("PUT comment for reporting unit with id {} resulting in 403", id);
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
+			LOGGER.error("PUT comment for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		

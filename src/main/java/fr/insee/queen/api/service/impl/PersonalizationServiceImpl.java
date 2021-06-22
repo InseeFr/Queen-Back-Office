@@ -46,7 +46,6 @@ public class PersonalizationServiceImpl extends AbstractService<Personalization,
 			newPers.setSurveyUnit(su);
 			newPers.setValue(persValue);
 			personalizationRepository.save(newPers);
-			
 		} else {
 			Personalization pers = persOptional.get();
 			pers.setValue(persValue);

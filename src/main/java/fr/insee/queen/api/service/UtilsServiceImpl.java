@@ -34,6 +34,12 @@ public class UtilsServiceImpl implements UtilsService{
 	@Value("${fr.insee.queen.pilotage.service.url.port:#{null}}")
 	private String pilotagePort;
 	
+	@Value("${fr.insee.queen.interviewer.role:#{null}}")
+	private String roleInterviewer;
+	
+	@Value("${fr.insee.queen.reviewer.role:#{null}}")
+	private String roleReviewer;
+	
 	@Autowired
 	Environment environment;
 		
@@ -92,21 +98,22 @@ public class UtilsServiceImpl implements UtilsService{
 	 * @return Boolean
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean checkHabilitation(HttpServletRequest request, String suId){
-		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId;
+	public boolean checkHabilitation(HttpServletRequest request, String suId, String role){
+		if(role.equals(Constants.INTERVIEWER))
+			role = "";
+		else if(role.equals(Constants.REVIEWER))
+			role= Constants.REVIEWER;
+		else 
+			return false;
+		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId
+				+ "&role=" + role;
 		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.set(Constants.AUTHORIZATION, authTokenHeader);
-		try {
-			ResponseEntity<Object> resp = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, new HttpEntity<T>(headers), Object.class);
-			return Boolean.TRUE.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
-		}
-		catch(Exception e) {
-			return false;
-		}
-		
+		ResponseEntity<Object> resp = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, new HttpEntity<T>(headers), Object.class);
+		return Boolean.TRUE.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
 	}
 
 	@Override
