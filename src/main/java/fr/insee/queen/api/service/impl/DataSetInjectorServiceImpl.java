@@ -95,7 +95,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		}
 	
 
-		Campaign camp = new Campaign("simpsons2020x00","Survey on the Simpsons tv show 2020",null); 
+		Campaign camp = new Campaign("SIMPSONS2020X00","Survey on the Simpsons tv show 2020",null); 
 		QuestionnaireModel qm = new QuestionnaireModel("simpsons","Questionnaire about the Simpsons tv show",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),camp);
 		camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
 		QuestionnaireModel qmSimpsons2 = new QuestionnaireModel("simpsonsV2","Questionnaire about the Simpsons tv show version 2",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),camp);
@@ -104,8 +104,8 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		
 		
 
-		Campaign camp2 = new Campaign("vqs2021x00","Everyday life and health survey 2021",null);
-		QuestionnaireModel qm2 = new QuestionnaireModel("vqs2021x00","Questionnaire of the Everyday life and health survey 2021",jsonQuestionnaireModelVqs,new HashSet<>(List.of(n, n2)),camp2);
+		Campaign camp2 = new Campaign("VQS2021X00","Everyday life and health survey 2021",null);
+		QuestionnaireModel qm2 = new QuestionnaireModel("VQS2021X00","Questionnaire of the Everyday life and health survey 2021",jsonQuestionnaireModelVqs,new HashSet<>(List.of(n, n2)),camp2);
 		createCampaign2(camp2, qm2);
 		LOGGER.info("Dataset creation end");	
 	}

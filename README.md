@@ -22,7 +22,7 @@ mvn spring-boot:run
 ```  
 
 ## Application Accesses locally
-To access to swagger-ui, use this url : [http://localhost:8080/api/swagger-ui.html](http://localhost:8080/api/swagger-ui.html)  
+To access to swagger-ui, use this url : [http://localhost:8080/api/swagger-ui.html](http://localhost:8080/swagger-ui.html)  
 To access to h2 console, use this url : [http://localhost:8080/api/h2-console](http://localhost:8080/api/h2-console)  
 
 
@@ -73,7 +73,7 @@ fr.insee.queen.logging.path=${catalina.base}/webapps/log4j2.xml
 fr.insee.queen.logging.level=DEBUG
 
 #Application configuration
-fr.insee.queen.application.mode=noauth
+fr.insee.queen.application.mode=noauth or basic or keycloak
 fr.insee.queen.application.crosOrigin=*
 fr.insee.queen.application.persistenceType = MONGODB or JPA
 
@@ -94,11 +94,10 @@ keycloak.public-client=true
 keycloak.bearer-only=true
 keycloak.principal-attribute:preferred_username
 
-#Keycloak roles
+#Roles
 fr.insee.queen.interviewer.role=investigator
 fr.insee.queen.reviewer.role=reviewer
-fr.insee.queen.user.local.role=manager_local
-fr.insee.queen.user.national.role=manager_national
+fr.insee.queen.admin.role=admin
 
 #Pilotage Api
 fr.insee.queen.pilotage.service.url.scheme=http
@@ -171,7 +170,8 @@ Before committing code please ensure,
 	- `PUT /survey-unit/{id}/personalization` : put the personalization for a survey-unit
 	
 - Metadata
-	- `GET /campaign/{id}/metadata` : get the metadata of a campaign
+	- `GET /campaign/{id}/metadata` : get the metadata by campaign Id
+	- `GET /questionnaire/{id}/metadata` : get the metadata by questionnaire id
 
 - Paradata
 	- `POST /paradata` : post the metadata of a campaign
@@ -179,6 +179,7 @@ Before committing code please ensure,
 - StateData
 	- `GET /survey-unit/{id}/state-data` : get the state-data of a survey-unit
 	- `PUT /survey-unit/{id}/state-data` : put the state-data for a survey-unit
+	- `POST /survey-units/state-data` : Get state-data for all survey-units defined in request body
 	
 - DataSet
 	- `POST /create-dataset` : Create dataset

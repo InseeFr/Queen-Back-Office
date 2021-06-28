@@ -4,7 +4,7 @@
   <QuestionnaireModel>
      <Id>simpsons-v1</Id>
      <Label>Questionnaire simpsons</Label>
-     <CampaignId>simpsons2020x00</CampaignId>
+     <CampaignId>SIMPSONS2020X00</CampaignId>
      <FileName>file_that does not exist.json</FileName>
      <RequiredNomenclatures>
     	<Nomenclature>cities2019</Nomenclature>

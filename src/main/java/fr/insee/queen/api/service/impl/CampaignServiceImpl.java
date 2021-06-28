@@ -73,7 +73,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 				if(questionnaireModelRepository.findById(id).isPresent()) {
 					qm.add(qmTemp.get());
 		}});
-		Campaign campaign = new Campaign(c.getId(), c.getLabel(), qm);
+		Campaign campaign = new Campaign(c.getId().toUpperCase(), c.getLabel(), qm);
 		campaign.setQuestionnaireModels(qm);
 		qm.parallelStream().forEach(q -> q.setCampaign(campaign));
 		campaignRepository.save(campaign);
