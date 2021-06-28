@@ -85,4 +85,9 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 		Nomenclature newNomenclature = new Nomenclature(nomenclature.getId(), nomenclature.getLabel(), nomenclature.getValue());
 		nomenclatureRepository.save(newNomenclature);
 	}
+
+	@Override
+	public void delete(Nomenclature nomenclature) {
+		nomenclatureRepository.delete(nomenclature);
+	}
 }

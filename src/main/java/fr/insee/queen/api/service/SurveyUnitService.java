@@ -43,4 +43,6 @@ public interface SurveyUnitService extends BaseService<SurveyUnit, String> {
 	HttpStatus postSurveyUnit(String id, SurveyUnitResponseDto su);
 
 	Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId);
+	
+	void deleteById(SurveyUnit su);
 }

@@ -51,6 +51,7 @@ import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.CommentService;
 import fr.insee.queen.api.service.DataService;
+import fr.insee.queen.api.service.NomenclatureService;
 import fr.insee.queen.api.service.PersonalizationService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
 import fr.insee.queen.api.service.StateDataService;
@@ -96,7 +97,6 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	
 	@Autowired
 	private QuestionnaireModelService questionnaireModelService;
-
 
     @Autowired
     public SurveyUnitServiceImpl(SurveyUnitRepository repository) {
@@ -336,6 +336,11 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	@Override
 	public Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId) {
 		return surveyUnitRepository.findAllById(lstSurveyUnitId);
+	}
+	
+	@Override
+	public void deleteById(SurveyUnit su) {
+		surveyUnitRepository.delete(su);
 	}
 
 }
