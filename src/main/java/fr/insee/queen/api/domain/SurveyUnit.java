@@ -2,6 +2,7 @@ package fr.insee.queen.api.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -38,8 +39,8 @@ public class SurveyUnit {
 	* The questionnaire model associated to the reporting unit
 	*/
 	@DBRef
-	@ManyToOne
-	@JoinColumn(name = "questionnaire_model_id", referencedColumnName = "id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn( name = "questionnaire_model_id", referencedColumnName = "id")
 	private QuestionnaireModel questionnaireModel;
 	
 	@DBRef
