@@ -14,6 +14,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,6 +51,8 @@ import io.swagger.annotations.ApiOperation;
 public class SurveyUnitController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyUnitController.class);
 
+	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
+	private String integrationOverride;
 	/**
 	* The survey unit repository using to access to table 'survey_unit' in DB 
 	*/
@@ -135,8 +138,9 @@ public class SurveyUnitController {
 			return ResponseEntity.notFound().build();
 		}
 		
-		String userId = utilsService.getUserId(request);
-		if(!userId.equals(Constants.GUEST)) {
+    String userId = utilsService.getUserId(request);
+    if(!userId.equals(Constants.GUEST) && 
+      !(integrationOverride != null && integrationOverride.equals("true"))) {
 			try {
 				Collection<SurveyUnitResponseDto> lstSuByCampaign = surveyUnitService.getSurveyUnitsByCampaign(id, request);
 				if(lstSuByCampaign.isEmpty()) {

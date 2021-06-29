@@ -1,4 +1,4 @@
-package fr.insee.queen.api.service;
+package fr.insee.queen.api.service.impl;
 
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -24,6 +24,7 @@ import fr.insee.queen.api.configuration.ApplicationProperties.Mode;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.repository.SurveyUnitRepository;
+import fr.insee.queen.api.service.UtilsService;
 import liquibase.pro.packaged.T;
 
 @Service
@@ -38,7 +39,10 @@ public class UtilsServiceImpl implements UtilsService{
 	@Value("${fr.insee.queen.pilotage.service.url.port:#{null}}")
 	private String pilotagePort;
 	
+	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
+	private String integrationOverride;
 	
+
 	@Autowired
 	Environment environment;
 		
@@ -101,6 +105,9 @@ public class UtilsServiceImpl implements UtilsService{
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean checkHabilitation(HttpServletRequest request, String suId, String role){
+		if(integrationOverride != null && integrationOverride.equals("true")) {
+			return true;
+		}
 		if(role.equals(Constants.INTERVIEWER))
 			role = "";
 		else if(role.equals(Constants.REVIEWER))
