@@ -24,10 +24,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter;
@@ -50,6 +48,9 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 	
 	@Value("${fr.insee.queen.admin.role:#{null}}")
 	private String roleAdmin;
+	
+	@Value("${fr.insee.queen.token.claim.role:#{null}}")
+	private String otherClaimRole;
 	
 	/**
      * Specific configuration for keycloak(add filter, etc)
@@ -147,7 +148,9 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
     			if (principal instanceof KeycloakPrincipal) {
     			    KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
     			    accessToken = kp.getKeycloakSecurityContext().getToken();
-    			    inseeGroupeDefaut = (List<String>) accessToken.getOtherClaims().get("inseegroupedefaut");    	
+    			    if(otherClaimRole != null) {
+        			    inseeGroupeDefaut = (List<String>) accessToken.getOtherClaims().get(otherClaimRole);    	
+    			    }
     			}
     			
     			for (String role : token.getAccount().getRoles()) {
