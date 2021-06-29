@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -121,5 +123,28 @@ public class CampaignController {
 		}
 		LOGGER.info("POST campaign context resulting in 200");
 		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	/**
+	* This method is using to delete a campaign
+	* 
+	* @param campaign the value to create
+	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200}
+	 * @throws Exception 
+	 * @throws ParseException 
+	* @throws SQLException 
+	* 
+	*/
+	@ApiOperation(value = "Delete a campaign")
+	@DeleteMapping(path = "/campaign/{id}")
+	public ResponseEntity<Object> deleteCampaignById(HttpServletRequest request, @PathVariable(value = "id") String id) {
+		Optional<Campaign> campaignOptional = campaignservice.findById(id);
+		if (!campaignOptional.isPresent()) {
+			LOGGER.error("DELETE campaign with id {} resulting in 404 because it does not exists", id);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		campaignservice.delete(campaignOptional.get());
+		LOGGER.info("DELETE campaign with id {} resulting in 200", id);
+		return ResponseEntity.ok().build();
 	}	
 }

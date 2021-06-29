@@ -1,5 +1,6 @@
 package fr.insee.queen.api.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class QuestionnaireModelServiceImpl extends AbstractService<Questionnaire
 	}
 	
 	@Override
-	public Optional<QuestionnaireModel> findQuestionnaireModelByCampaignId(String id) {
+	public List<QuestionnaireModel> findQuestionnaireModelByCampaignId(String id) {
 		return questionnaireModelRepository.findByCampaignId(id);
 	}
 

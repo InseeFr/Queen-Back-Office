@@ -133,6 +133,7 @@ Before committing code please ensure,
 	- `GET /campaigns` : get the campaign list
 	- `POST /campaigns` : post a new campaign
 	- `POST /campaign/context` : integrates the context of a campaign
+	- `DELETE /campaign/{id}` : delete a campaign
 	
 
 - Questionnaire
@@ -147,6 +148,7 @@ Before committing code please ensure,
 	- `GET /campaign/{id}/survey-units` : get the list of survey-unit of campaign id
 	- `PUT /survey-unit/{id}` : update a survey-unit
 	- `POST /campaign/{id}/survey-unit` : post a survey-unit for a campaign
+	- `DELETE /survey-unit/{id}` : delete a survey-unit by id
 
 - Data
 	- `GET /survey-unit/{id}/data` : get the data of reporting unit id

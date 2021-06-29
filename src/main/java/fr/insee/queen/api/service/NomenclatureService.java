@@ -24,5 +24,7 @@ public interface NomenclatureService extends BaseService<Nomenclature, String> {
 	Set<Nomenclature> findAllByIds(Set<String> nomenclatureIds);
 
 	void createNomenclature(NomenclatureDto nomenclature);
+	
+	void delete(Nomenclature nomenclature);
     
 }

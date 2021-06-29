@@ -1,5 +1,6 @@
 package fr.insee.queen.api.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import fr.insee.queen.api.domain.QuestionnaireModel;
@@ -17,10 +18,9 @@ public interface QuestionnaireModelService extends BaseService<QuestionnaireMode
 
 	Optional<QuestionnaireModelDto> findDtoById(String id);
 	
-	Optional<QuestionnaireModel> findQuestionnaireModelByCampaignId(String id);
+	List<QuestionnaireModel> findQuestionnaireModelByCampaignId(String id);
 	
 	void save(QuestionnaireModel qm);
 	
-	void createQuestionnaire(QuestionnaireModelCreateDto qm);
-    
+	void createQuestionnaire(QuestionnaireModelCreateDto qm);    
 }
