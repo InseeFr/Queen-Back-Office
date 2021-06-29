@@ -63,10 +63,7 @@ import fr.insee.queen.api.service.UtilsService;
 public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> implements SurveyUnitService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyUnitServiceImpl.class);
 	
-    protected final SurveyUnitRepository surveyUnitRepository;
-    
-	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
-	private String integrationOverride;
+  protected final SurveyUnitRepository surveyUnitRepository;
     
     @Autowired
 	private StateDataService stateDataService;
@@ -231,13 +228,6 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			return Collections.emptyList();
 		}
 		Map<String, SurveyUnitResponseDto> surveyUnitMap = new HashMap<>();
-		
-		if(integrationOverride != null && integrationOverride.equals("true")) {
-			LOGGER.info("Integration override property set to true, all Survey units of campaign returned");
-			return surveyUnitRepository.findByCampaignId(id).stream()
-					.map(su -> new SurveyUnitResponseDto(su.getId(), su.getQuestionnaireModelId(), null, null, null, null))
-					.collect(Collectors.toList());
-		}
 		
 		ResponseEntity<Object> result = utilsService.getSuFromPilotage(request);
 		LOGGER.info("GET survey-units from PearJam API resulting in {}", result.getStatusCode());
