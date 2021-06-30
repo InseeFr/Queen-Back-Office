@@ -14,6 +14,7 @@ public class Constants {
 	
 	//API url for endpoints
 	public static final String API_CAMPAIGNS = "/api/campaigns";
+	public static final String API_CAMPAIGN_ID = "/api/campaign/{id}";
 	public static final String API_CAMPAIGN_CONTEXT = "/api/campaign/context";
 	public static final String API_CAMPAIGN_ID_SURVEY_UNITS = "/api/campaign/{id}/survey-units";
 	public static final String API_CAMPAIGN_ID_SURVEY_UNIT = "/api/campaign/{id}/survey-unit";

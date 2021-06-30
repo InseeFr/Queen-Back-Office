@@ -103,6 +103,13 @@ fr.insee.queen.admin.role=admin
 fr.insee.queen.pilotage.service.url.scheme=http
 fr.insee.queen.pilotage.service.url.host=localhost
 fr.insee.queen.pilotage.service.url.port=8081
+
+#If true, checkHabilitation and getSuFromPilotage are not used to secure the endpoints
+fr.insee.queen.pilotage.integration.override=false
+
+#Other claim to read roles from in token
+fr.insee.queen.token.claim.role=inseegroupedefaut
+
 ```
 
 #### External log file
@@ -133,6 +140,7 @@ Before committing code please ensure,
 	- `GET /campaigns` : get the campaign list
 	- `POST /campaigns` : post a new campaign
 	- `POST /campaign/context` : integrates the context of a campaign
+	- `DELETE /campaign/{id}` : delete a campaign
 	
 
 - Questionnaire
@@ -147,6 +155,7 @@ Before committing code please ensure,
 	- `GET /campaign/{id}/survey-units` : get the list of survey-unit of campaign id
 	- `PUT /survey-unit/{id}` : update a survey-unit
 	- `POST /campaign/{id}/survey-unit` : post a survey-unit for a campaign
+	- `DELETE /survey-unit/{id}` : delete a survey-unit by id
 
 - Data
 	- `GET /survey-unit/{id}/data` : get the data of reporting unit id

@@ -14,8 +14,10 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +51,8 @@ import io.swagger.annotations.ApiOperation;
 public class SurveyUnitController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyUnitController.class);
 
+	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
+	private String integrationOverride;
 	/**
 	* The survey unit repository using to access to table 'survey_unit' in DB 
 	*/
@@ -134,8 +138,9 @@ public class SurveyUnitController {
 			return ResponseEntity.notFound().build();
 		}
 		
-		String userId = utilsService.getUserId(request);
-		if(!userId.equals(Constants.GUEST)) {
+    String userId = utilsService.getUserId(request);
+    if(!userId.equals(Constants.GUEST) && 
+      !(integrationOverride != null && integrationOverride.equals("true"))) {
 			try {
 				Collection<SurveyUnitResponseDto> lstSuByCampaign = surveyUnitService.getSurveyUnitsByCampaign(id, request);
 				if(lstSuByCampaign.isEmpty()) {
@@ -203,6 +208,25 @@ public class SurveyUnitController {
 		}
 		HttpStatus status = surveyUnitService.postSurveyUnit(id, su);
 		return new ResponseEntity<>(status);
+	}
+	
+	/**
+	* This method is using to create a survey-unit
+	* 
+	* @param id the id of campaign
+	* @return List of {@link String} containing nomenclature ids
+	*/
+	@ApiOperation(value = "Delete survey-unit")
+	@DeleteMapping(path = "/survey-unit/{id}")
+	public ResponseEntity<Object> deleteSurveyUnit(HttpServletRequest request, @PathVariable(value = "id") String id){
+		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
+		if (!surveyUnitOptional.isPresent()) {
+			LOGGER.error("DELETE survey-unit with id {} resulting in 404 because it does not exists", id);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		surveyUnitService.deleteById(surveyUnitOptional.get());
+		LOGGER.info("DELETE survey-unit with id {} resulting in 200", id);
+		return ResponseEntity.ok().build();
 	}
 	
 }

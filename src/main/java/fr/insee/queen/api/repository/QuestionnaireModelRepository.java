@@ -1,5 +1,6 @@
 package fr.insee.queen.api.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -43,6 +44,6 @@ public interface QuestionnaireModelRepository extends ApiRepository<Questionnair
 	*/
 	Optional<QuestionnaireModelDto> findDtoById(String id);
 
-	Optional<QuestionnaireModel> findByCampaignId(String id);
+	List<QuestionnaireModel> findByCampaignId(String id);
 	
 }

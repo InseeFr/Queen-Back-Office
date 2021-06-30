@@ -162,6 +162,36 @@ public abstract class TestAuthKeycloak {
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
 		"{\"id\":\"TESTPOSTCAMPAIGN\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
 	}
+	
+	/**
+	* Test that the DELETE endpoint "api/campaign/{id}" return 200
+	* 
+	* @throws InterruptedException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	* @throws JSONException
+	*/
+	@Test
+	void testDeleteCampaignById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().delete("api/campaign/SIMPSONS2020X00")
+				.then().statusCode(200);
+	}
+	
+	/**
+	* Test that the DELETE endpoint "api/campaign/{id}" return 200
+	* 
+	* @throws InterruptedException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	* @throws JSONException
+	*/
+	@Test
+	void testDeleteCampaignByUnexistingId() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().delete("api/campaign/unexistingcampaign")
+				.then().statusCode(404);
+	}
 	//////////////////////////API_CAMPAIGNS ///////////////////////
 	
 	
@@ -368,7 +398,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindMetadataByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/campaign/SIMPSONS2020X00/metadata")
+				.when().get("api/campaign/VQS2021X00/metadata")
 				.then().statusCode(200);
 	}
 	/**
@@ -509,6 +539,32 @@ public abstract class TestAuthKeycloak {
 	void testFindSurveyUnitByUnexistId() throws JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
 				.when().get("api/survey-unit/test")
+				.then().statusCode(404);
+	}
+	
+	/**
+	* Test that the DELETE endpoint "api/survey-unit/{id}" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testDeleteSurveyUnitById() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().delete("api/survey-unit/21")
+				.then().statusCode(200);
+	}
+	
+	/**
+	* Test that the DELETE endpoint "api/survey-unit/{id}" return 404
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testDeleteSurveyUnitByUnexistId() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().delete("api/survey-unit/test")
 				.then().statusCode(404);
 	}
 	//////////////////////////	API_SURVEYUNIT_ID //////////////////////////

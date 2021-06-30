@@ -86,6 +86,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.permitAll().antMatchers("/environnement", "/healthcheck").permitAll()
 					.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGNS).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
        				.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGNS).hasAnyRole(roleAdmin)
+       				.antMatchers(HttpMethod.DELETE, Constants.API_CAMPAIGN_ID).hasAnyRole(roleAdmin)
        				.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGN_CONTEXT).hasAnyRole(roleAdmin)
        				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGN_ID_SURVEY_UNITS).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
 					.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGN_ID_SURVEY_UNIT).hasAnyRole(roleAdmin)
@@ -97,6 +98,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
        				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
        				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
 					.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
+					.antMatchers(HttpMethod.DELETE, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
 					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
 					.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
 					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_DATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
@@ -122,6 +124,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			http.httpBasic().disable();
 			http.authorizeRequests()
           .antMatchers(Constants.API_CAMPAIGNS,
+        		  Constants.API_CAMPAIGN_ID,
         		  Constants.API_CAMPAIGN_CONTEXT,
         		  Constants.API_CAMPAIGN_ID_SURVEY_UNITS,
         		  Constants.API_CAMPAIGN_ID_SURVEY_UNIT,
