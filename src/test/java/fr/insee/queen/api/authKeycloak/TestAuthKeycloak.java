@@ -64,21 +64,21 @@ public abstract class TestAuthKeycloak {
 		expectedBody = "["
 				+ "{"
 					+ "\"id\":\"11\", "
-					+ "\"campaign\":\"simpsons2020x00\", "
+					+ "\"campaign\":\"SIMPSONS2020X00\", "
 					+ "\"campaignLabel\":\"Survey on the Simpsons tv show 2020\", "
 					+ "\"collectionStartDate\":\"1577836800000\", "
 					+ "\"collectionEndDate\":\"1622035845000\""
 				+ "}, "
 				+ "{"
 					+ "\"id\":\"12\", "
-					+ "\"campaign\":\"simpsons2020x00\", "
+					+ "\"campaign\":\"SIMPSONS2020X00\", "
 					+ "\"campaignLabel\":\"Survey on the Simpsons tv show 2020\", "
 					+ "\"collectionStartDate\":\"1577836800000\", "
 					+ "\"collectionEndDate\":\"1622035845000\""
 				+ "}, "
 				+ "{"
 					+ "\"id\":\"20\", "
-					+ "\"campaign\":\"vqs2021x00\", "
+					+ "\"campaign\":\"VQS2021X00\", "
 					+ "\"campaignLabel\":\"Everyday life and health survey 2021\", "
 					+ "\"collectionStartDate\":\"1577836800000\", "
 					+ "\"collectionEndDate\":\"1622035845000\""
@@ -139,7 +139,7 @@ public abstract class TestAuthKeycloak {
 		given().auth().oauth2(accessToken())
 				.when().get("api/campaigns")
 				.then().statusCode(200)
-				.and().assertThat().body("id", hasItem("simpsons2020x00"));
+				.and().assertThat().body("id", hasItem("SIMPSONS2020X00"));
 	}
 	
 	/**
@@ -160,7 +160,37 @@ public abstract class TestAuthKeycloak {
 				.get("api/campaigns");
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
-		"{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
+		"{\"id\":\"TESTPOSTCAMPAIGN\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
+	}
+	
+	/**
+	* Test that the DELETE endpoint "api/campaign/{id}" return 200
+	* 
+	* @throws InterruptedException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	* @throws JSONException
+	*/
+	@Test
+	void testDeleteCampaignById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().delete("api/campaign/SIMPSONS2020X00")
+				.then().statusCode(200);
+	}
+	
+	/**
+	* Test that the DELETE endpoint "api/campaign/{id}" return 200
+	* 
+	* @throws InterruptedException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	* @throws JSONException
+	*/
+	@Test
+	void testDeleteCampaignByUnexistingId() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().delete("api/campaign/unexistingcampaign")
+				.then().statusCode(404);
 	}
 	//////////////////////////API_CAMPAIGNS ///////////////////////
 	
@@ -180,7 +210,7 @@ public abstract class TestAuthKeycloak {
 		ObjectNode expected = objectMapper.createObjectNode();
 		
 		ObjectNode campaign = objectMapper.createObjectNode();
-		campaign.put("id", "simpsons2020x00");
+		campaign.put("id", "SIMPSONS2020X00");
 		campaign.put("status", "UPDATED");
 		
 		ArrayNode nomenclatures = objectMapper.createArrayNode();
@@ -221,7 +251,7 @@ public abstract class TestAuthKeycloak {
 		
 		// Questionnaire model "simpsons-v1" has been created
 		Response resp2 = given().auth().oauth2(accessToken())
-				.get("api/campaign/simpsons2020x00/questionnaire-id");
+				.get("api/campaign/SIMPSONS2020X00/questionnaire-id");
 		resp2.then().statusCode(200);
 		Assert.assertTrue(resp2.getBody().asString().contains("simpsons-v1"));
 		
@@ -244,7 +274,7 @@ public abstract class TestAuthKeycloak {
 		ObjectNode expected = objectMapper.createObjectNode();
 		
 		ObjectNode campaign = objectMapper.createObjectNode();
-		campaign.put("id", "anotherCampaign");
+		campaign.put("id", "ANOTHERCAMPAIGN");
 		campaign.put("status", "CREATED");
 		
 		ArrayNode nomenclatures = objectMapper.createArrayNode();
@@ -275,11 +305,11 @@ public abstract class TestAuthKeycloak {
 		String responseString = objectMapper.readTree(resp.getBody().asString()).toString();
 		Assert.assertEquals(expected.toString(), responseString);
 		
-		// Campaign "anotherCampaign" has been created
+		// Campaign "ANOTHERCAMPAIGN" has been created
 		Response resp2 = given().auth().oauth2(accessToken())
 				.get("api/campaigns");
 		resp2.then().statusCode(200);
-		Assert.assertFalse(resp2.getBody().asString().contains("anotherCampaigns"));	
+		Assert.assertTrue(resp2.getBody().asString().contains("ANOTHERCAMPAIGN"));	
 	}
 	//////////////////////////	API_CAMPAIGN_CONTEXT //////////////////////////
 	
@@ -294,7 +324,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindSurveyUnitsByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/campaign/simpsons2020x00/survey-units")
+				.when().get("api/campaign/SIMPSONS2020X00/survey-units")
 				.then().statusCode(200)
 				.and().assertThat().body("id", hasItem("11"));
 	}
@@ -325,11 +355,11 @@ public abstract class TestAuthKeycloak {
 	*/
 	@Test
 	void testPostCampaignSurveyUnit() throws JSONException, JsonMappingException, JsonProcessingException {
-		String postBody = "{\"id\":55,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
-		String respBodyExpected = "{\"questionnaireId\":\"vqs2021x00\",\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}}";
+		String postBody = "{\"id\":55,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"VQS2021X00\"}";
+		String respBodyExpected = "{\"questionnaireId\":\"VQS2021X00\",\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"}}";
 		with().contentType(ContentType.JSON).body(postBody)
 				.given().auth().oauth2(accessToken())
-				.post("/api/campaign/vqs2021x00/survey-unit")
+				.post("/api/campaign/VQS2021X00/survey-unit")
 				.then().statusCode(200);
 		Response response = given().auth().oauth2(accessToken())
 				.when().get("/api/survey-unit/55");
@@ -348,11 +378,11 @@ public abstract class TestAuthKeycloak {
 	*/
 	@Test
 	void testPostCampaignSurveyUnitAlreadyExist() throws JSONException, JsonMappingException, JsonProcessingException {
-		String postBody = "{\"id\":22,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"vqs2021x00\"}";
+		String postBody = "{\"id\":22,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"VQS2021X00\"}";
 		with().contentType(ContentType.JSON)
 				.body(postBody)
 				.given().auth().oauth2(accessToken())
-				.post("/api/campaign/vqs2021x00/survey-unit")
+				.post("/api/campaign/VQS2021X00/survey-unit")
 				.then().statusCode(400);
 	}
 	//////////////////////////API_CAMPAIGN_ID_SURVEY_UNIT //////////////////////////
@@ -368,7 +398,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindMetadataByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/campaign/simpsons2020x00/metadata")
+				.when().get("api/campaign/VQS2021X00/metadata")
 				.then().statusCode(200);
 	}
 	/**
@@ -397,7 +427,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindQuestionnaireByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/campaign/simpsons2020x00/questionnaires")
+				.when().get("api/campaign/SIMPSONS2020X00/questionnaires")
 				.then().statusCode(200)
 				.and().assertThat().body("isEmpty()",Matchers.is(false));
 	}
@@ -429,7 +459,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindQuestionnaireIdByCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
 		Response response = given().auth().oauth2(accessToken())
-				.get("api/campaign/simpsons2020x00/questionnaire-id");
+				.get("api/campaign/SIMPSONS2020X00/questionnaire-id");
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\"" + ":" + "\"simpsons\"}"));
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+","").contains("{\"questionnaireId\":\"simpsonsV2\"}"));
@@ -464,7 +494,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindRequiredNomenclatureByCampaign() throws JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/campaign/simpsons2020x00/required-nomenclatures")
+				.when().get("api/campaign/SIMPSONS2020X00/required-nomenclatures")
 				.then().statusCode(200)
 				.and().assertThat().body("$",hasItem("cities2019"));
 	}
@@ -509,6 +539,32 @@ public abstract class TestAuthKeycloak {
 	void testFindSurveyUnitByUnexistId() throws JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
 				.when().get("api/survey-unit/test")
+				.then().statusCode(404);
+	}
+	
+	/**
+	* Test that the DELETE endpoint "api/survey-unit/{id}" return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testDeleteSurveyUnitById() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().delete("api/survey-unit/21")
+				.then().statusCode(200);
+	}
+	
+	/**
+	* Test that the DELETE endpoint "api/survey-unit/{id}" return 404
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	*/
+	@Test
+	void testDeleteSurveyUnitByUnexistId() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().delete("api/survey-unit/test")
 				.then().statusCode(404);
 	}
 	//////////////////////////	API_SURVEYUNIT_ID //////////////////////////

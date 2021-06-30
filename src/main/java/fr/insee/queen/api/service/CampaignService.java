@@ -29,4 +29,6 @@ public interface CampaignService extends BaseService<Campaign, String> {
 	List<QuestionnaireIdDto> getQuestionnaireIds(String id) throws NotFoundException;
 	
 	List<QuestionnaireModelDto> getQuestionnaireModels(String id) throws NotFoundException;
+	
+	void delete(Campaign c);
 }

@@ -1,6 +1,5 @@
 package fr.insee.queen.api.service.impl;
 
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +22,8 @@ import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.CampaignService;
+import fr.insee.queen.api.service.QuestionnaireModelService;
+import fr.insee.queen.api.service.SurveyUnitService;
 
 @Service
 @Transactional
@@ -31,8 +32,13 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
     protected final CampaignRepository campaignRepository;
     
     protected final QuestionnaireModelRepository questionnaireModelRepository;
-   
-
+    
+    @Autowired
+	private QuestionnaireModelService questionnaireModelService;
+    
+    @Autowired
+    private SurveyUnitService surveyUnitService;    
+    
     @Autowired
     public CampaignServiceImpl(CampaignRepository repository, QuestionnaireModelRepository questionnaireModelRepository) {
         this.campaignRepository = repository;
@@ -73,7 +79,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 				if(questionnaireModelRepository.findById(id).isPresent()) {
 					qm.add(qmTemp.get());
 		}});
-		Campaign campaign = new Campaign(c.getId(), c.getLabel(), qm);
+		Campaign campaign = new Campaign(c.getId().toUpperCase(), c.getLabel(), qm);
 		campaign.setQuestionnaireModels(qm);
 		qm.parallelStream().forEach(q -> q.setCampaign(campaign));
 		campaignRepository.save(campaign);
@@ -126,5 +132,14 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 		} else {
 			throw new NotFoundException("Campaign " + id + "not found in database");
 		}
+	}
+	
+	@Override
+	public void delete(Campaign c) {
+		surveyUnitService.findByCampaignId(c.getId()).stream().forEach(su -> surveyUnitService.deleteById(su));
+		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(c.getId());
+		if(qmList!=null && !qmList.isEmpty())
+		qmList.stream().forEach(qm -> questionnaireModelRepository.delete(qm));
+		campaignRepository.delete(c);
 	}
 }

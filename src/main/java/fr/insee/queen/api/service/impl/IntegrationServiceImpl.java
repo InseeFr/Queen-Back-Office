@@ -240,7 +240,7 @@ public class IntegrationServiceImpl implements IntegrationService {
 		XPath xpath = xPathfactory.newXPath();
 		XPathExpression expr = xpath.compile("/Campaign/Id/text()");
 	    
-		String id = expr.evaluate(doc, XPathConstants.STRING).toString();
+		String id = expr.evaluate(doc, XPathConstants.STRING).toString().toUpperCase();
 		Optional<Campaign> campaignOpt = campaignRepository.findById(id);
 		Campaign campaign;
 		if(campaignOpt.isPresent()) {

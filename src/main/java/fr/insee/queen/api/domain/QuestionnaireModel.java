@@ -60,7 +60,7 @@ public class QuestionnaireModel {
 	* The list of required of required nomenclature 
 	*/
 	@DBRef(lazy = true)
-	@ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch=FetchType.EAGER)
 	@JoinTable(name = "required_nomenclature", 
 	joinColumns = { @JoinColumn(name = "id_required_nomenclature") }, inverseJoinColumns = { @JoinColumn(name = "code") })
 	private Set<Nomenclature> nomenclatures = new HashSet<>();

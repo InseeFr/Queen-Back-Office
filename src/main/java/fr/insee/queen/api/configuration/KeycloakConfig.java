@@ -1,12 +1,20 @@
 package fr.insee.queen.api.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
+import org.keycloak.adapters.springsecurity.account.KeycloakRole;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -16,6 +24,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -37,6 +46,12 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 	@Value("${fr.insee.queen.reviewer.role:#{null}}")
 	private String roleReviewer;
 	
+	@Value("${fr.insee.queen.admin.role:#{null}}")
+	private String roleAdmin;
+	
+	@Value("${fr.insee.queen.token.claim.role:#{null}}")
+	private String otherClaimRole;
+	
 	/**
      * Specific configuration for keycloak(add filter, etc)
      * @param http
@@ -44,7 +59,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
      */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
+
 		http
 			// disable csrf because of API mode
 			.csrf().disable()
@@ -75,32 +90,40 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
        				.antMatchers("/environnement", "/healthcheck").permitAll()
                    	// configuration for endpoints
-       				.antMatchers(Constants.API_CAMPAIGNS).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_CAMPAIGN_CONTEXT).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_SURVEY_UNITS).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGN_ID_SURVEY_UNIT).hasAnyRole(roleInterviewer, roleReviewer)
-					.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGN_ID_SURVEY_UNIT).hasAnyRole(roleInterviewer)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_METADATA).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIRES).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_QUESTIONAIREID).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_SURVEYUNITS_STATEDATA).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleInterviewer)
-					.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleInterviewer)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_DATA).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_COMMENT).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_STATEDATA).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_DEPOSITPROOF).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_SURVEYUNIT_ID_PERSONALIZATION).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_NOMENCLATURE).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_NOMENCLATURE_ID).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_QUESTIONNAIRE_ID).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_QUESTIONNAIRE_ID_METADATA).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_QUESTIONNAIREMODELS).hasAnyRole(roleInterviewer, roleReviewer)
-       				.antMatchers(Constants.API_PARADATAEVENT).hasRole(roleInterviewer)
-       				.antMatchers(Constants.API_CREATE_DATASET).hasAnyRole(roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGNS) .hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGNS).hasAnyRole(roleAdmin)
+       				.antMatchers(HttpMethod.DELETE, Constants.API_CAMPAIGN_ID).hasAnyRole(roleAdmin)
+       				.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGN_CONTEXT).hasAnyRole(roleAdmin)
+       				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGN_ID_SURVEY_UNITS).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+					.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGN_ID_SURVEY_UNIT).hasAnyRole(roleAdmin)
+       				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGN_ID_METADATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGN_ID_QUESTIONAIRES).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGN_ID_QUESTIONAIREID).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNITS_STATEDATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
+					.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
+					.antMatchers(HttpMethod.DELETE, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
+					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
+					.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
+					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_DATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+					.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_DATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_COMMENT).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_COMMENT).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_STATEDATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_STATEDATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_DEPOSITPROOF).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_PERSONALIZATION).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_PERSONALIZATION).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.POST, Constants.API_NOMENCLATURE).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_NOMENCLATURE_ID).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_QUESTIONNAIRE_ID).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_QUESTIONNAIRE_ID_METADATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.GET, Constants.API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+       				.antMatchers(HttpMethod.POST, Constants.API_QUESTIONNAIREMODELS).hasAnyRole(roleAdmin)
+       				.antMatchers(HttpMethod.POST,Constants.API_PARADATAEVENT).hasRole(roleAdmin)
+       				.antMatchers(HttpMethod.POST, Constants.API_CREATE_DATASET).hasAnyRole(roleAdmin)
 					.anyRequest().denyAll(); 
 	}
 	
@@ -112,7 +135,38 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 	public void configureGlobal(AuthenticationManagerBuilder auth) {
 		KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
 		keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-		auth.authenticationProvider(keycloakAuthenticationProvider);
+		auth.authenticationProvider(new KeycloakAuthenticationProvider() {
+			
+            @SuppressWarnings("unchecked")
+			@Override
+            public Authentication authenticate(Authentication authentication) { 
+                KeycloakAuthenticationToken token = (KeycloakAuthenticationToken) authentication;
+                List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+                List<String> inseeGroupeDefaut = new ArrayList<>();
+                Object principal = authentication.getPrincipal();
+                AccessToken accessToken;
+    			if (principal instanceof KeycloakPrincipal) {
+    			    KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
+    			    accessToken = kp.getKeycloakSecurityContext().getToken();
+    			    if(otherClaimRole != null) {
+        			    inseeGroupeDefaut = (List<String>) accessToken.getOtherClaims().get(otherClaimRole);    	
+    			    }
+    			}
+    			
+    			for (String role : token.getAccount().getRoles()) {
+    	            grantedAuthorities.add(new KeycloakRole(role));
+    	        }
+
+    			if(inseeGroupeDefaut!=null) {
+                	for (String role : inseeGroupeDefaut) {
+                    	grantedAuthorities.add(new KeycloakRole(role)); 
+                    } 
+                }
+    			
+                return new KeycloakAuthenticationToken(token.getAccount(), token.isInteractive(), new SimpleAuthorityMapper().mapAuthorities(grantedAuthorities));
+            }
+
+        });
 	}
 	
 	/**

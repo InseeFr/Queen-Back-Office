@@ -52,7 +52,7 @@ public abstract class TestNoAuth {
 	void testFindCampaign() throws InterruptedException {
 		get("api/campaigns")
 		.then().statusCode(200)
-		.and().assertThat().body("id", hasItem("simpsons2020x00"));
+		.and().assertThat().body("id", hasItem("SIMPSONS2020X00"));
 
 	}
 	
@@ -71,7 +71,7 @@ public abstract class TestNoAuth {
 		Response response = get("api/campaigns");
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
-				"{\"id\":\"testPostCampaign\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
+				"{\"id\":\"TESTPOSTCAMPAIGN\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
 	}
 	//////////////////////////API_CAMPAIGNS ///////////////////////
 	
@@ -91,7 +91,7 @@ public abstract class TestNoAuth {
 		ObjectNode expected = objectMapper.createObjectNode();
 		
 		ObjectNode campaign = objectMapper.createObjectNode();
-		campaign.put("id", "simpsons2020x00");
+		campaign.put("id", "SIMPSONS2020X00");
 		campaign.put("status", "UPDATED");
 		
 		ArrayNode nomenclatures = objectMapper.createArrayNode();
@@ -130,7 +130,7 @@ public abstract class TestNoAuth {
 	    Assert.assertEquals(expected.toString(), responseString);
 	    
 	    // Questionnaire model "simpsons-v1" has been created
-	    Response resp2 = get("api/campaign/simpsons2020x00/questionnaire-id");
+	    Response resp2 = get("api/campaign/SIMPSONS2020X00/questionnaire-id");
 	    resp2.then().statusCode(200);
 		Assert.assertTrue(resp2.getBody().asString().contains("simpsons-v1"));
 		
@@ -150,7 +150,7 @@ public abstract class TestNoAuth {
 	 */
 	@Test
 	void testFindSurveyUnitsByCampaign() {
-		get("api/campaign/simpsons2020x00/survey-units")
+		get("api/campaign/SIMPSONS2020X00/survey-units")
 		.then().statusCode(200)
 		.and().assertThat().body("id", hasItem("11"));
 	}

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,7 @@ import fr.insee.queen.api.service.UtilsService;
 public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> implements SurveyUnitService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyUnitServiceImpl.class);
 	
-    protected final SurveyUnitRepository surveyUnitRepository;
+  protected final SurveyUnitRepository surveyUnitRepository;
     
     @Autowired
 	private StateDataService stateDataService;
@@ -96,7 +97,6 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	
 	@Autowired
 	private QuestionnaireModelService questionnaireModelService;
-
 
     @Autowired
     public SurveyUnitServiceImpl(SurveyUnitRepository repository) {
@@ -228,6 +228,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			return Collections.emptyList();
 		}
 		Map<String, SurveyUnitResponseDto> surveyUnitMap = new HashMap<>();
+		
 		ResponseEntity<Object> result = utilsService.getSuFromPilotage(request);
 		LOGGER.info("GET survey-units from PearJam API resulting in {}", result.getStatusCode());
 		if(result.getStatusCode()!=HttpStatus.OK) {
@@ -336,6 +337,11 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	@Override
 	public Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId) {
 		return surveyUnitRepository.findAllById(lstSurveyUnitId);
+	}
+	
+	@Override
+	public void deleteById(SurveyUnit su) {
+		surveyUnitRepository.delete(su);
 	}
 
 }

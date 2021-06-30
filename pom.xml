@@ -6,7 +6,7 @@
 
 	<groupId>fr.insee.queen</groupId>
 	<artifactId>queen</artifactId>
-	<version>3.2.7</version>
+	<version>3.3.2</version>
 	<packaging>war</packaging>
 	<name>Queen-Back-Office</name>
 	<description>Back-office services for Queen</description>
@@ -164,15 +164,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 			<exclusions>
-          <exclusion>
-              <groupId>junit</groupId>
-              <artifactId>junit</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.vaadin.external.google</groupId>
-            <artifactId>android-json</artifactId>
-        </exclusion>
-      </exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -299,12 +299,12 @@
 			<artifactId>Saxon-HE</artifactId>
 			<version>10.3</version>
 		</dependency>
-    <!-- XML conversion -->
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20210307</version>
-    </dependency>
+		<!-- XML conversion -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version>
+		</dependency>
 	</dependencies>
 
 	<build>
