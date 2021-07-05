@@ -159,11 +159,10 @@ public class QuestionnaireModelController {
 			LOGGER.error("POST questionnaire with id {} resulting in 400 because it already exists", questionnaireModel.getIdQuestionnaireModel());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		if(!questionnaireModel.getRequiredNomenclatureIds().isEmpty()) {
-			if(Boolean.FALSE.equals(nomenclatureService.checkIfNomenclatureExists(questionnaireModel.getRequiredNomenclatureIds()))) {
-				LOGGER.error("POST questionnaire with id {} resulting in 403 because a nomenclature does not exist", questionnaireModel.getIdQuestionnaireModel());
-				return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-			}
+		if(!questionnaireModel.getRequiredNomenclatureIds().isEmpty() && 
+			Boolean.FALSE.equals(nomenclatureService.checkIfNomenclatureExists(questionnaireModel.getRequiredNomenclatureIds()))) {
+			LOGGER.error("POST questionnaire with id {} resulting in 403 because a nomenclature does not exist", questionnaireModel.getIdQuestionnaireModel());
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		questionnaireModelService.createQuestionnaire(questionnaireModel);
 		LOGGER.info("POST campaign with id {} resulting in 200", questionnaireModel.getIdQuestionnaireModel());
