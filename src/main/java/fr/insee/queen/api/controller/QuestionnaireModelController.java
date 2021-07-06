@@ -161,8 +161,8 @@ public class QuestionnaireModelController {
 		}
 		if(!questionnaireModel.getRequiredNomenclatureIds().isEmpty() && 
 			Boolean.FALSE.equals(nomenclatureService.checkIfNomenclatureExists(questionnaireModel.getRequiredNomenclatureIds()))) {
-			LOGGER.error("POST questionnaire with id {} resulting in 403 because a nomenclature does not exist", questionnaireModel.getIdQuestionnaireModel());
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+			LOGGER.error("POST questionnaire with id {} resulting in 400 because a nomenclature does not exist", questionnaireModel.getIdQuestionnaireModel());
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		questionnaireModelService.createQuestionnaire(questionnaireModel);
 		LOGGER.info("POST campaign with id {} resulting in 200", questionnaireModel.getIdQuestionnaireModel());
