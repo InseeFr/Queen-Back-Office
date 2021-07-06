@@ -41,6 +41,8 @@ jobs:
         with:
           name: artifacts
           path: target/
+      - name: Check target/
+        run: ls -la target/
       - name: Extract branch name
         id: extract_branch
         shell: bash
