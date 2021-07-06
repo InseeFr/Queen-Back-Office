@@ -41,8 +41,6 @@ jobs:
         with:
           name: artifacts
           path: ./
-      - name: Check target & glowroot
-        run: ls -la target/ && ls -la glowroot
       - name: Extract branch name
         id: extract_branch
         shell: bash
