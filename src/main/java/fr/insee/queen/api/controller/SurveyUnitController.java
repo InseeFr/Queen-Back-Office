@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -185,7 +186,7 @@ public class SurveyUnitController {
 				surveyUnitService.generateDepositProof(su, request, response);
 				return ResponseEntity.ok().build();
 			} catch (ServletException | IOException e) {
-				return new ResponseEntity<>("ERROR_EXPORT " + e.getStackTrace().toString() , HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("ERROR_EXPORT " + Arrays.toString(e.getStackTrace()) , HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 	    }
