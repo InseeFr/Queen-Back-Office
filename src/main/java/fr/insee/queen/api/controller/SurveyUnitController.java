@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -118,6 +119,22 @@ public class SurveyUnitController {
 		LOGGER.info("PUT survey-units resulting in 200");
 		return ResponseEntity.ok().build();
 	}
+
+	/**
+	 * This method is used to update a survey-unit by id
+	 */
+	@ApiOperation(value = "Put survey-unit better")
+	@PutMapping(path = "/survey-unit/better/{id}")
+	public ResponseEntity<Object> putSurveyUnitImproveById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
+		String userId = utilsService.getUserId(request);
+		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
+			LOGGER.error("PUT survey-unit for reporting unit with id {} resulting in 403", id);
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		surveyUnitService.updateSurveyUnitImproved(id, surveyUnit);
+		LOGGER.info("PUT survey-units resulting in 200");
+		return ResponseEntity.ok().build();
+	}
 	
 	/**
 	* This method is using to get all survey units associated to a specific campaign 
@@ -185,7 +202,7 @@ public class SurveyUnitController {
 				surveyUnitService.generateDepositProof(su, request, response);
 				return ResponseEntity.ok().build();
 			} catch (ServletException | IOException e) {
-				return new ResponseEntity<>("ERROR_EXPORT " + e.getStackTrace().toString() , HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("ERROR_EXPORT " + Arrays.toString(e.getStackTrace()) , HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 	    }

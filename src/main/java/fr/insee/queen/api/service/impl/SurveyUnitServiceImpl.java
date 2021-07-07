@@ -18,10 +18,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fr.insee.queen.api.repository.base.SimplePostgreSQLRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -62,51 +62,54 @@ import fr.insee.queen.api.service.UtilsService;
 @Transactional
 public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> implements SurveyUnitService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyUnitServiceImpl.class);
-	
-  protected final SurveyUnitRepository surveyUnitRepository;
-    
-    @Autowired
+
+	protected final SurveyUnitRepository surveyUnitRepository;
+
+	@Autowired(required = false)
+	private SimplePostgreSQLRepository sqlRepository;
+
+	@Autowired
 	private StateDataService stateDataService;
-    
-    @Autowired
+
+	@Autowired
 	private DataService dataService;
-        
-    @Autowired
+
+	@Autowired
 	private CommentService commentService;
-    
-    @Autowired
+
+	@Autowired
 	private PersonalizationService personalizationService;
-	
+
 	@Autowired
 	private UtilsService utilsService;
-	
+
 	@Autowired
 	private CampaignService campaignService;
-	
+
 	@Autowired
 	private StateDataRepository stateDataRepository;
-	
+
 	@Autowired
 	private DataRepository dataRepository;
-	
+
 	@Autowired
 	private CommentRepository commentRepository;
-	
+
 	@Autowired
 	private PersonalizationRepository personalizationRepository;
-	
+
 	@Autowired
 	private QuestionnaireModelService questionnaireModelService;
 
-    @Autowired
-    public SurveyUnitServiceImpl(SurveyUnitRepository repository) {
-        this.surveyUnitRepository = repository;
-    }
+	@Autowired
+	public SurveyUnitServiceImpl(SurveyUnitRepository repository) {
+		this.surveyUnitRepository = repository;
+	}
 
-    @Override
-    protected ApiRepository<SurveyUnit, String> getRepository() {
-        return surveyUnitRepository;
-    }
+	@Override
+	protected ApiRepository<SurveyUnit, String> getRepository() {
+		return surveyUnitRepository;
+	}
 
 	@Override
 	public Optional<SurveyUnit> findById(String id) {
@@ -136,25 +139,50 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	@Override
 	@Transactional
 	public void updateSurveyUnit(SurveyUnit newSU, JsonNode surveyUnit) {
+		if(surveyUnit.get("personalization") != null) {
+			this.updatePersonalization(newSU, surveyUnit);
+			personalizationRepository.save(newSU.getPersonalization());
+		}
+		if(surveyUnit.get("comment") != null) {
+			this.updateComment(newSU, surveyUnit);
+			commentRepository.save(newSU.getComment());
+		}
+		if(surveyUnit.get("data") != null) {
+			this.updateData(newSU, surveyUnit);
+			dataRepository.save(newSU.getData());
+		}
+		if(surveyUnit.get("stateData") != null) {
+			this.updateStateData(newSU, surveyUnit);
+			stateDataRepository.save(newSU.getStateData());
+		}
+		surveyUnitRepository.save(newSU);
+	}
+
+	@Override
+	public void updateSurveyUnitImproved(String id, JsonNode surveyUnit) {
+		if(sqlRepository!=null){
 			if(surveyUnit.get("personalization") != null) {
-				this.updatePersonalization(newSU, surveyUnit);
-				personalizationRepository.save(newSU.getPersonalization());
+				sqlRepository.updateSurveyUnitPersonalization(id,surveyUnit.get("personalization"));
 			}
 			if(surveyUnit.get("comment") != null) {
-				this.updateComment(newSU, surveyUnit);
-				commentRepository.save(newSU.getComment());
+				sqlRepository.updateSurveyUnitComment(id,surveyUnit.get("comment"));
 			}
 			if(surveyUnit.get("data") != null) {
-				this.updateData(newSU, surveyUnit);
-				dataRepository.save(newSU.getData());
+				sqlRepository.updateSurveyUnitData(id,surveyUnit.get("data"));
 			}
 			if(surveyUnit.get("stateData") != null) {
-				this.updateStateData(newSU, surveyUnit);
-				stateDataRepository.save(newSU.getStateData());
+				sqlRepository.updateSurveyUnitStateDate(id,surveyUnit.get("stateData"));
 			}
-			surveyUnitRepository.save(newSU);
+		} else {
+			// if sqlRepo is null, use classic method
+			Optional<SurveyUnit> su = findById(id);
+			updateSurveyUnit(su.get(),surveyUnit);
 		}
-	
+
+
+	}
+
+
 	private void updateStateData(SurveyUnit newSU, JsonNode surveyUnit) {
 		JsonNode statedata = surveyUnit.get("stateData");
 		if(newSU.getStateData()!=null) {
@@ -209,7 +237,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		String campaignLabel = su.getCampaign().getLabel();
 		String date = "";
 		if(su.getStateData().getState().equals(StateDataType.EXTRACTED)) {
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy à HH:mm"); 
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy à HH:mm");
 			date = dateFormat.format(new Date(su.getStateData().getDate()));
 		}
 		ExportPdf exp = new ExportPdf();
@@ -217,10 +245,10 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			exp.doExport(response, date, campaignId, campaignLabel, userId);
 		} catch (ServletException | IOException e) {
 			throw e;
-        }
+		}
 	}
-	
-	
+
+
 	public Collection<SurveyUnitResponseDto> getSurveyUnitsByCampaign(String id, HttpServletRequest request) throws BadRequestException{
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
@@ -228,7 +256,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			return Collections.emptyList();
 		}
 		Map<String, SurveyUnitResponseDto> surveyUnitMap = new HashMap<>();
-		
+
 		ResponseEntity<Object> result = utilsService.getSuFromPilotage(request);
 		LOGGER.info("GET survey-units from PearJam API resulting in {}", result.getStatusCode());
 		if(result.getStatusCode()!=HttpStatus.OK) {
@@ -258,9 +286,9 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		}
 		LOGGER.info("Number of SU to return : {}", surveyUnitMap.size());
 		LOGGER.info("GET survey-units for campaign with id {} resulting in 200", id);
-		return surveyUnitMap.values();			
+		return surveyUnitMap.values();
 	}
-	
+
 
 	private String displayDetail(List<LinkedHashMap<String, String>> objects) {
 		Map<String,Integer> nbSUbyCampaign = new HashMap<>();
@@ -271,12 +299,12 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			nbSUbyCampaign.put(map.get(Constants.CAMPAIGN),  nbSUbyCampaign.get(map.get(Constants.CAMPAIGN))+1);
 		}
 		return "["+nbSUbyCampaign.entrySet()
-	            .stream()
-	            .map(entry -> entry.getKey() + ": " + entry.getValue() + " Suvey unit")
-	            .collect(Collectors.joining("; "))+"]";
+				.stream()
+				.map(entry -> entry.getKey() + ": " + entry.getValue() + " Suvey unit")
+				.collect(Collectors.joining("; "))+"]";
 
 	}
-	
+
 	public HttpStatus postSurveyUnit(String id, SurveyUnitResponseDto su) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
 		if (!campaignOptional.isPresent()) {
@@ -284,7 +312,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			return HttpStatus.NOT_FOUND;
 		}
 		Optional<QuestionnaireModel> questionnaireModelOptional = questionnaireModelService.findById(su.getQuestionnaireId());
-		if (!questionnaireModelOptional.isPresent() 
+		if (!questionnaireModelOptional.isPresent()
 				|| campaignOptional.get().getQuestionnaireModels()
 				.stream().filter(q -> q.getId().equals(su.getQuestionnaireId()))
 				.collect(Collectors.toList())
@@ -327,7 +355,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			newSu.setStateData(sd);
 			stateDataService.save(sd);
 		}
-		
+
 		newSu.setData(d);
 		newSu.setComment(c);
 		newSu.setPersonalization(p);
@@ -338,7 +366,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	public Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId) {
 		return surveyUnitRepository.findAllById(lstSurveyUnitId);
 	}
-	
+
 	@Override
 	public void deleteById(SurveyUnit su) {
 		surveyUnitRepository.delete(su);

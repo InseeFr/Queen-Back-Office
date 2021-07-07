@@ -24,6 +24,7 @@ public class Constants {
 	public static final String API_CAMPAIGN_ID_REQUIREDNOMENCLATURES = "/api/campaign/{id}/required-nomenclatures";
 	public static final String API_SURVEYUNITS_STATEDATA= "/api/survey-units/state-data";
 	public static final String API_SURVEYUNIT_ID= "/api/survey-unit/{id}";
+	public static final String API_SURVEYUNIT_ID_BETTER= "/api/survey-unit/better/{id}";
 	public static final String API_SURVEYUNIT_ID_DATA = "/api/survey-unit/{id}/data";
 	public static final String API_SURVEYUNIT_ID_COMMENT = "/api/survey-unit/{id}/comment";
 	public static final String API_SURVEYUNIT_ID_STATEDATA = "/api/survey-unit/{id}/state-data";

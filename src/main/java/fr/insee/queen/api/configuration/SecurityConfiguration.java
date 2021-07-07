@@ -101,6 +101,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.DELETE, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
 					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
 					.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
+					.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_BETTER).hasAnyRole(roleAdmin, roleInterviewer)
 					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_DATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
 					.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_DATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
        				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_COMMENT).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
@@ -134,6 +135,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         		  Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES,
         		  Constants.API_SURVEYUNITS_STATEDATA,
         		  Constants.API_SURVEYUNIT_ID,
+        		  Constants.API_SURVEYUNIT_ID_BETTER,
         		  Constants.API_SURVEYUNIT_ID_DATA,
         		  Constants.API_SURVEYUNIT_ID_COMMENT,
         		  Constants.API_SURVEYUNIT_ID_STATEDATA,

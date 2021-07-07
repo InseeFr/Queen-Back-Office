@@ -103,6 +103,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNITS_STATEDATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
        				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
        				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
+					.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_BETTER).hasAnyRole(roleAdmin, roleInterviewer)
 					.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
 					.antMatchers(HttpMethod.DELETE, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
 					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
