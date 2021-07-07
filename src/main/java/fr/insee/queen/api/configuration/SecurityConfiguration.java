@@ -135,6 +135,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         		  Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES,
         		  Constants.API_SURVEYUNITS_STATEDATA,
         		  Constants.API_SURVEYUNIT_ID,
+        		  Constants.API_SURVEYUNIT_ID_BETTER,
         		  Constants.API_SURVEYUNIT_ID_DATA,
         		  Constants.API_SURVEYUNIT_ID_COMMENT,
         		  Constants.API_SURVEYUNIT_ID_STATEDATA,
