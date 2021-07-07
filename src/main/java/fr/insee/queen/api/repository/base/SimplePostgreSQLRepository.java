@@ -40,7 +40,7 @@ public class SimplePostgreSQLRepository {
     }
 
     private void updateJsonValueOfSurveyUnit(String table, String id, JsonNode jsonValue) {
-        String qString = "UPDATE ? SET value=? WHERE survey_unit_id=?";
+        String qString = String.format("UPDATE %s SET value=? WHERE survey_unit_id=?",table);
         PGobject q = new PGobject();
         q.setType("json");
         try {
@@ -48,6 +48,6 @@ public class SimplePostgreSQLRepository {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        jdbcTemplate.update(qString, table, q, id);
+        jdbcTemplate.update(qString, q, id);
     }
 }
