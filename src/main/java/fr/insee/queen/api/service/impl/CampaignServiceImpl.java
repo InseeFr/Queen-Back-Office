@@ -151,7 +151,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	
 	@Override
 	public void delete(Campaign c) {
-		surveyUnitService.findByCampaignId(c.getId()).stream().forEach(su -> surveyUnitService.deleteById(su));
+		surveyUnitService.findByCampaignId(c.getId()).stream().forEach(su -> surveyUnitService.delete(su));
 		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(c.getId());
 		if(qmList!=null && !qmList.isEmpty())
 		qmList.stream().forEach(qm -> questionnaireModelRepository.delete(qm));

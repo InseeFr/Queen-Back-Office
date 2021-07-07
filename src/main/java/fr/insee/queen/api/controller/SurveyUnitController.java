@@ -212,10 +212,10 @@ public class SurveyUnitController {
 	}
 	
 	/**
-	* This method is using to create a survey-unit
+	* This method is using to delete a survey-unit
 	* 
-	* @param id the id of campaign
-	* @return List of {@link String} containing nomenclature ids
+	* @param id the id of survey-unit
+	* @return {@link HttpStatus}
 	*/
 	@ApiOperation(value = "Delete survey-unit")
 	@DeleteMapping(path = "/survey-unit/{id}")
@@ -225,7 +225,7 @@ public class SurveyUnitController {
 			LOGGER.error("DELETE survey-unit with id {} resulting in 404 because it does not exists", id);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		surveyUnitService.deleteById(surveyUnitOptional.get());
+		surveyUnitService.delete(surveyUnitOptional.get());
 		LOGGER.info("DELETE survey-unit with id {} resulting in 200", id);
 		return ResponseEntity.ok().build();
 	}
