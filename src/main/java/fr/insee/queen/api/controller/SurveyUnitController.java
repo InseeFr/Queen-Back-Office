@@ -123,7 +123,7 @@ public class SurveyUnitController {
 	/**
 	 * This method is used to update a survey-unit by id
 	 */
-	@ApiOperation(value = "Put survey-unit perf")
+	@ApiOperation(value = "Put survey-unit better")
 	@PutMapping(path = "/survey-unit/better/{id}")
 	public ResponseEntity<Object> putSurveyUnitImproveById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
