@@ -33,6 +33,7 @@ public interface SurveyUnitService extends BaseService<SurveyUnit, String> {
 	List<SurveyUnit> findByCampaignId(String id);
 
 	void updateSurveyUnit(SurveyUnit su, JsonNode surveyUnit);
+	void updateSurveyUnitImproved(String id, JsonNode surveyUnit);
 
 	public void generateDepositProof(SurveyUnit su, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException;

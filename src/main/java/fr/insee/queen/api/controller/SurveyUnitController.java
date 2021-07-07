@@ -119,6 +119,22 @@ public class SurveyUnitController {
 		LOGGER.info("PUT survey-units resulting in 200");
 		return ResponseEntity.ok().build();
 	}
+
+	/**
+	 * This method is used to update a survey-unit by id
+	 */
+	@ApiOperation(value = "Put survey-unit perf")
+	@PutMapping(path = "/survey-unit/improved/{id}")
+	public ResponseEntity<Object> putSurveyUnitImproveById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
+		String userId = utilsService.getUserId(request);
+		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
+			LOGGER.error("PUT survey-unit for reporting unit with id {} resulting in 403", id);
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		surveyUnitService.updateSurveyUnitImproved(id, surveyUnit);
+		LOGGER.info("PUT survey-units resulting in 200");
+		return ResponseEntity.ok().build();
+	}
 	
 	/**
 	* This method is using to get all survey units associated to a specific campaign 
