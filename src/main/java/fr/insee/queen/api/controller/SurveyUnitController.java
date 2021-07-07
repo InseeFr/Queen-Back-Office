@@ -124,7 +124,7 @@ public class SurveyUnitController {
 	 * This method is used to update a survey-unit by id
 	 */
 	@ApiOperation(value = "Put survey-unit perf")
-	@PutMapping(path = "/survey-unit/improved/{id}")
+	@PutMapping(path = "/survey-unit/better/{id}")
 	public ResponseEntity<Object> putSurveyUnitImproveById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
