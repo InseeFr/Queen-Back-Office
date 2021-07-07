@@ -20,7 +20,7 @@ jobs:
       - name: Get Glow Root
         run: |
           curl -L https://github.com/glowroot/glowroot/releases/download/v0.13.6/glowroot-0.13.6-dist.zip -o glowroot.zip
-          unzip glowroot.zip glowroot/glowroot.jar
+          unzip glowroot.zip
           rm -rf glowroot.zip
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -28,8 +28,7 @@ jobs:
           name: artifacts
           path: |
             target/*.war
-            glowroot/glowroot.jar
-
+            glowroot
   docker:
     needs: build
     runs-on: ubuntu-latest
