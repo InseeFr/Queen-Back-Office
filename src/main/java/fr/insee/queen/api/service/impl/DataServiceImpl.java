@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import fr.insee.queen.api.repository.base.SimplePostgreSQLRepository;
+import fr.insee.queen.api.service.SurveyUnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,12 @@ import fr.insee.queen.api.service.DataService;
 
 @Service
 public class DataServiceImpl extends AbstractService<Data, UUID> implements DataService {
+
+	@Autowired(required = false)
+	private SimplePostgreSQLRepository sqlRepository;
+
+	@Autowired
+	public SurveyUnitService surveyUnitService;
 
     protected final DataRepository dataRepository;
 
@@ -51,6 +59,17 @@ public class DataServiceImpl extends AbstractService<Data, UUID> implements Data
 			Data data = dataOptional.get();
 			data.setValue(dataValue);
 			dataRepository.save(data);
+		}
+	}
+
+	@Override
+	public void updateDataImproved(String id, JsonNode dataValue) {
+		if(sqlRepository != null){
+			sqlRepository.updateSurveyUnitData(id, dataValue);
+		}
+		else {
+			Optional<SurveyUnit> su = surveyUnitService.findById(id);
+			updateData(su.get(),dataValue);
 		}
 	}
 
