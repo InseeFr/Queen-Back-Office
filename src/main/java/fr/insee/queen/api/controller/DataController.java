@@ -106,4 +106,25 @@ public class DataController {
 		LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);
 		return ResponseEntity.ok().build();
 	}
+
+	/**
+	 * This method is using to update the data associated to a specific reporting unit
+	 *
+	 * @param dataValue	the value to update
+	 * @param id	the id of reporting unit
+	 * @return {@link HttpStatus 404} if data is not found, else {@link HttpStatus 200}
+	 *
+	 */
+	@ApiOperation(value = "Update data by reporting unit Id ")
+	@PutMapping(path = "/survey-unit/better/{id}/data")
+	public ResponseEntity<Object> putDataImproved(@RequestBody JsonNode dataValue, @PathVariable(value = "id") String id, HttpServletRequest request) {
+		String userId = utilsService.getUserId(request);
+		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
+			LOGGER.error("PUT data for reporting unit with id {} resulting in 403", id);
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		dataService.updateDataImproved(id, dataValue);
+		LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);
+		return ResponseEntity.ok().build();
+	}
 }

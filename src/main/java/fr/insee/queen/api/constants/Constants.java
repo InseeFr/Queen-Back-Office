@@ -26,6 +26,7 @@ public class Constants {
 	public static final String API_SURVEYUNIT_ID= "/api/survey-unit/{id}";
 	public static final String API_SURVEYUNIT_ID_BETTER= "/api/survey-unit/better/{id}";
 	public static final String API_SURVEYUNIT_ID_DATA = "/api/survey-unit/{id}/data";
+	public static final String API_SURVEYUNIT_ID_DATA_BETTER = "/api/survey-unit/better/{id}/data";
 	public static final String API_SURVEYUNIT_ID_COMMENT = "/api/survey-unit/{id}/comment";
 	public static final String API_SURVEYUNIT_ID_STATEDATA = "/api/survey-unit/{id}/state-data";
 	public static final String API_SURVEYUNIT_ID_DEPOSITPROOF = "/api/survey-unit/{id}/deposit-proof";
