@@ -17,6 +17,7 @@ import fr.insee.queen.api.exception.NotFoundException;
 import fr.insee.queen.api.repository.ApiRepository;
 import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.NomenclatureRepository;
+import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.NomenclatureService;
 
@@ -27,7 +28,9 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
     protected final NomenclatureRepository nomenclatureRepository;
     
     @Autowired
-    private CampaignRepository campaignRepository;
+    private CampaignRepository campaignRepository; 
+    @Autowired
+    private QuestionnaireModelRepository questionnaireModelRepository;
 
     @Autowired
     public NomenclatureServiceImpl(NomenclatureRepository repository) {
@@ -45,10 +48,12 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 	}
 
 	@Override
-	public List<String> findRequiredNomenclatureByQuestionnaire(Set<QuestionnaireModel> setQuestionnaireModel){
-		return setQuestionnaireModel.parallelStream().map(QuestionnaireModel::getNomenclatures).collect(Collectors.toList())
-				.parallelStream().flatMap(Set::parallelStream).collect(Collectors.toList())
-				.parallelStream().distinct().map(Nomenclature::getId).collect(Collectors.toList());
+	public List<String> findRequiredNomenclatureByQuestionnaire(String questionnaireModelId){
+		Optional<QuestionnaireModel> q = questionnaireModelRepository.findById(questionnaireModelId);
+		if(!q.isPresent()) {
+			return null;
+		}
+		return q.get().getNomenclatures().parallelStream().distinct().map(Nomenclature::getId).collect(Collectors.toList());
 	}
 	
 	public List<String> findRequiredNomenclatureByCampaign(String campaignId) throws NotFoundException {

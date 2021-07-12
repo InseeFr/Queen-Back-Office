@@ -128,11 +128,8 @@ public class CampaignController {
 	/**
 	* This method is using to delete a campaign
 	* 
-	* @param campaign the value to create
-	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200}
-	 * @throws Exception 
-	 * @throws ParseException 
-	* @throws SQLException 
+	* @param campaign the value to delete
+	* @return {@link HttpStatus}
 	* 
 	*/
 	@ApiOperation(value = "Delete a campaign")
