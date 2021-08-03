@@ -165,9 +165,6 @@ Before committing code please ensure,
 	- `GET /survey-unit/{id}/comment` : get the comment of reporting unit id 
 	- `PUT /survey-unit/{id}/comment` : update the comment of reporting unit id
 
-- RequiredNomenclature
-	- `GET /campaign/{id}/required-nomenclatures` : list of nomenclature codes use for campaign
-
 - Nomenclatures
 	- `GET /campaign/{id}/required-nomenclatures` : get the nomenclature of a campaign
 	- `GET /questionnaire/{id}/required-nomenclatures` : get the nomenclature of a questionnaire
