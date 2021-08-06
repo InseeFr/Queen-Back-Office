@@ -42,16 +42,16 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 
 	@Value("${fr.insee.queen.interviewer.role:#{null}}")
 	private String roleInterviewer;
-	
+
 	@Value("${fr.insee.queen.reviewer.role:#{null}}")
 	private String roleReviewer;
-	
+
 	@Value("${fr.insee.queen.admin.role:#{null}}")
 	private String roleAdmin;
-	
+
 	@Value("${fr.insee.queen.token.claim.role:#{null}}")
 	private String otherClaimRole;
-	
+
 	/**
      * Specific configuration for keycloak(add filter, etc)
      * @param http
@@ -72,7 +72,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
                    .addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
                    .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class)
                    .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-               
+
             // delegate logout endpoint to spring security
 
                .and()
@@ -86,6 +86,8 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
                .and()
                    	// manage routes securisation
                    	.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
+					// healtcheck
+					.antMatchers(HttpMethod.GET, Constants.API_HEALTH_CHECK).permitAll()
                    	// configuration for Swagger
        				.antMatchers("/swagger-ui.html/**", "/v2/api-docs","/csrf", "/", "/webjars/**", "/swagger-resources/**").permitAll()
        				.antMatchers("/environnement", "/healthcheck").permitAll()
@@ -124,9 +126,9 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers(HttpMethod.POST, Constants.API_QUESTIONNAIREMODELS).hasAnyRole(roleAdmin)
        				.antMatchers(HttpMethod.POST,Constants.API_PARADATAEVENT).hasRole(roleAdmin)
        				.antMatchers(HttpMethod.POST, Constants.API_CREATE_DATASET).hasAnyRole(roleAdmin)
-					.anyRequest().denyAll(); 
+					.anyRequest().denyAll();
 	}
-	
+
 	/**
 	 * Registers the KeycloakAuthenticationProvider with the authentication
 	 * manager.
@@ -136,10 +138,10 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
 		KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
 		keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
 		auth.authenticationProvider(new KeycloakAuthenticationProvider() {
-			
+
             @SuppressWarnings("unchecked")
 			@Override
-            public Authentication authenticate(Authentication authentication) { 
+            public Authentication authenticate(Authentication authentication) {
                 KeycloakAuthenticationToken token = (KeycloakAuthenticationToken) authentication;
                 List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
                 List<String> inseeGroupeDefaut = new ArrayList<>();
@@ -149,26 +151,26 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
     			    KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
     			    accessToken = kp.getKeycloakSecurityContext().getToken();
     			    if(otherClaimRole != null) {
-        			    inseeGroupeDefaut = (List<String>) accessToken.getOtherClaims().get(otherClaimRole);    	
+        			    inseeGroupeDefaut = (List<String>) accessToken.getOtherClaims().get(otherClaimRole);
     			    }
     			}
-    			
+
     			for (String role : token.getAccount().getRoles()) {
     	            grantedAuthorities.add(new KeycloakRole(role));
     	        }
 
     			if(inseeGroupeDefaut!=null) {
                 	for (String role : inseeGroupeDefaut) {
-                    	grantedAuthorities.add(new KeycloakRole(role)); 
-                    } 
+                    	grantedAuthorities.add(new KeycloakRole(role));
+                    }
                 }
-    			
+
                 return new KeycloakAuthenticationToken(token.getAccount(), token.isInteractive(), new SimpleAuthorityMapper().mapAuthorities(grantedAuthorities));
             }
 
         });
 	}
-	
+
 	/**
      * Required to handle spring boot configurations
      * @return
@@ -178,7 +180,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
     public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
    }
-    
+
     /**
      * Defines the session authentication strategy.
      */

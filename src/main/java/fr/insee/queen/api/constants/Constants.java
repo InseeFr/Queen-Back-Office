@@ -42,6 +42,9 @@ public class Constants {
 	//Pilotage filter url
 	public static final String API_HABILITATION = "/api/check-habilitation";
 	public static final String API_PEARLJAM_SURVEYUNITS = "/api/survey-units";
+
+	// HealthCheck url
+	public static final String API_HEALTH_CHECK = "/api/healthcheck";
 	
 	
 
