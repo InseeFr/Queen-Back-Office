@@ -29,6 +29,7 @@ public class Constants {
 	public static final String API_SURVEYUNIT_ID_STATEDATA = "/api/survey-unit/{id}/state-data";
 	public static final String API_SURVEYUNIT_ID_DEPOSITPROOF = "/api/survey-unit/{id}/deposit-proof";
 	public static final String API_SURVEYUNIT_ID_PERSONALIZATION = "/api/survey-unit/{id}/personalization";
+	public static final String API_SURVEYUNIT_ID_TEMP_ZONE = "/api/survey-unit/{id}/temp-zone";
 	public static final String API_NOMENCLATURE = "/api/nomenclature";
 	public static final String API_NOMENCLATURE_ID = "/api/nomenclature/{id}";
 	public static final String API_QUESTIONNAIRE_ID = "/api/questionnaire/{id}";
