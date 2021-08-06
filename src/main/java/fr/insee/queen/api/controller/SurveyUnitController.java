@@ -129,8 +129,8 @@ public class SurveyUnitController {
 	public ResponseEntity<Object> postSurveyUnitByIdInTempZone(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
 		surveyUnitService.saveSurveyUnitToTempZone(id, userId, surveyUnit);
-		LOGGER.info("POST survey-unit to temp-zone resulting in 200");
-		return ResponseEntity.ok().build();
+		LOGGER.info("POST survey-unit to temp-zone resulting in 201");
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	/**
