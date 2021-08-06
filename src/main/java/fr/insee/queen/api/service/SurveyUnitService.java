@@ -45,4 +45,6 @@ public interface SurveyUnitService extends BaseService<SurveyUnit, String> {
 	Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId);
 	
 	void delete(SurveyUnit su);
+
+	void saveSurveyUnitToTempZone(String id, String userId, JsonNode surveyUnit);
 }
