@@ -119,6 +119,18 @@ public class SurveyUnitController {
 		LOGGER.info("PUT survey-units resulting in 200");
 		return ResponseEntity.ok().build();
 	}
+
+	/**
+	 * This method is used to post a survey-unit by id to a temp-zone
+	 */
+	@ApiOperation(value = "Post survey-unit to temp-zone")
+	@PostMapping(path = "/survey-unit/{id}/temp-zone")
+	public ResponseEntity<Object> postSurveyUnitByIdInTempZone(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
+		String userId = utilsService.getUserId(request);
+		surveyUnitService.saveSurveyUnitToTempZone(id, userId, surveyUnit);
+		LOGGER.info("POST survey-units to temp-zone resulting in 200");
+		return ResponseEntity.ok().build();
+	}
 	
 	/**
 	* This method is using to get all survey units associated to a specific campaign 
