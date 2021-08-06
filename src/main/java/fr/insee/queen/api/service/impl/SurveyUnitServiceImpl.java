@@ -3,15 +3,7 @@ package fr.insee.queen.api.service.impl;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -20,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import fr.insee.queen.api.domain.*;
 import fr.insee.queen.api.repository.*;
+import org.modelmapper.internal.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -339,6 +332,11 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
     	Long date = new Date().getTime();
 		SurveyUnitTempZone surveyUnitTempZoneToSave = new SurveyUnitTempZone(id,userId,date,surveyUnit);
     	surveyUnitTempZoneRepository.save(surveyUnitTempZoneToSave);
+	}
+
+	@Override
+	public List<SurveyUnitTempZone> getAllSurveyUnitTempZone(){
+    	return (List<SurveyUnitTempZone>) surveyUnitTempZoneRepository.findAll();
 	}
 
 }

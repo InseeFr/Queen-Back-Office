@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fr.insee.queen.api.domain.SurveyUnitTempZone;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,9 +129,22 @@ public class SurveyUnitController {
 	public ResponseEntity<Object> postSurveyUnitByIdInTempZone(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
 		surveyUnitService.saveSurveyUnitToTempZone(id, userId, surveyUnit);
-		LOGGER.info("POST survey-units to temp-zone resulting in 200");
+		LOGGER.info("POST survey-unit to temp-zone resulting in 200");
 		return ResponseEntity.ok().build();
 	}
+
+	/**
+	 * This method is used to retrieve survey-units in temp-zone
+	 */
+	@ApiOperation(value = "GET all survey-units in temp-zone")
+	@GetMapping(path = "/survey-units/temp-zone")
+	public ResponseEntity<Object> getSurveyUnitsInTempZone() {
+		List<SurveyUnitTempZone> surveyUnitTempZones = surveyUnitService.getAllSurveyUnitTempZone();
+		LOGGER.info("GET survey-units in temp-zone resulting in 200");
+		return new ResponseEntity<>(surveyUnitTempZones,HttpStatus.OK);
+	}
+
+
 	
 	/**
 	* This method is using to get all survey units associated to a specific campaign 
