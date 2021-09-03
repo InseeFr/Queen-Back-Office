@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.insee.queen.api.domain.Campaign;
+import fr.insee.queen.api.domain.Metadata;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.campaign.CampaignDto;
 import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
@@ -19,6 +21,7 @@ import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 import fr.insee.queen.api.exception.NotFoundException;
 import fr.insee.queen.api.repository.ApiRepository;
 import fr.insee.queen.api.repository.CampaignRepository;
+import fr.insee.queen.api.repository.MetadataRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.CampaignService;
@@ -30,19 +33,22 @@ import fr.insee.queen.api.service.SurveyUnitService;
 public class CampaignServiceImpl extends AbstractService<Campaign, String> implements CampaignService {
 	
     protected final CampaignRepository campaignRepository;
-    
+
     protected final QuestionnaireModelRepository questionnaireModelRepository;
+    
+    protected final MetadataRepository metadataRepository;
     
     @Autowired
 	private QuestionnaireModelService questionnaireModelService;
-    
+
     @Autowired
     private SurveyUnitService surveyUnitService;    
     
     @Autowired
-    public CampaignServiceImpl(CampaignRepository repository, QuestionnaireModelRepository questionnaireModelRepository) {
-        this.campaignRepository = repository;
+    public CampaignServiceImpl(CampaignRepository campaignRepository, MetadataRepository metadataRepository, QuestionnaireModelRepository questionnaireModelRepository) {
+        this.campaignRepository = campaignRepository;
         this.questionnaireModelRepository = questionnaireModelRepository;
+        this.metadataRepository = metadataRepository;
     }
 
     @Override
@@ -73,6 +79,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	@Override
 	public void saveDto(CampaignDto c) {
 		Set<QuestionnaireModel> qm = new HashSet<>();
+		
 		c.getQuestionnaireIds().stream().forEach(
 			id -> {
 				Optional<QuestionnaireModel> qmTemp = questionnaireModelRepository.findById(id);
@@ -84,6 +91,14 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 		qm.parallelStream().forEach(q -> q.setCampaign(campaign));
 		campaignRepository.save(campaign);
 		questionnaireModelRepository.saveAll(qm);
+		//Add Metadata
+		if (c.getMetadata()!=null) {
+			Metadata m = new Metadata(UUID.randomUUID(), c.getMetadata().getValue(), campaign);
+			m = metadataRepository.save(m);
+			campaign.setMetadata(m);
+			campaignRepository.save(campaign);
+		}
+		
 		// For mongoDB impl
 		Set<QuestionnaireModel> qms = campaign.getQuestionnaireModels();
 		 if(qms.isEmpty() && !qm.isEmpty()) {
@@ -136,7 +151,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	
 	@Override
 	public void delete(Campaign c) {
-		surveyUnitService.findByCampaignId(c.getId()).stream().forEach(su -> surveyUnitService.deleteById(su));
+		surveyUnitService.findByCampaignId(c.getId()).stream().forEach(su -> surveyUnitService.delete(su));
 		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(c.getId());
 		if(qmList!=null && !qmList.isEmpty())
 		qmList.stream().forEach(qm -> questionnaireModelRepository.delete(qm));

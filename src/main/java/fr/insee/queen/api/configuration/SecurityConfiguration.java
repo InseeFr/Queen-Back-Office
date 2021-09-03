@@ -81,6 +81,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			http.authorizeRequests()
 					// manage routes securisation
 					.antMatchers(HttpMethod.OPTIONS).permitAll()
+					// healtcheck
+					.antMatchers(HttpMethod.GET, Constants.API_HEALTH_CHECK).permitAll()
 					// configuration for Swagger
 					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**", "/swagger-resources/**")
 					.permitAll().antMatchers("/environnement", "/healthcheck").permitAll()
@@ -97,6 +99,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
        				.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNITS_STATEDATA).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
        				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
        				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
+					.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNIT_ID_TEMP_ZONE).hasAnyRole(roleAdmin, roleInterviewer)
+					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNITS_TEMP_ZONE).hasAnyRole(roleAdmin, roleInterviewer)
 					.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
 					.antMatchers(HttpMethod.DELETE, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin)
 					.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID).hasAnyRole(roleAdmin, roleInterviewer)
@@ -134,6 +138,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         		  Constants.API_CAMPAIGN_ID_REQUIREDNOMENCLATURES,
         		  Constants.API_SURVEYUNITS_STATEDATA,
         		  Constants.API_SURVEYUNIT_ID,
+        		  Constants.API_SURVEYUNIT_ID_TEMP_ZONE,
+        		  Constants.API_SURVEYUNITS_TEMP_ZONE,
         		  Constants.API_SURVEYUNIT_ID_DATA,
         		  Constants.API_SURVEYUNIT_ID_COMMENT,
         		  Constants.API_SURVEYUNIT_ID_STATEDATA,
@@ -146,7 +152,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         		  Constants.API_QUESTIONNAIRE_ID_REQUIREDNOMENCLATURE,
         		  Constants.API_QUESTIONNAIREMODELS,
         		  Constants.API_PARADATAEVENT,
-        		  Constants.API_CREATE_DATASET)
+        		  Constants.API_CREATE_DATASET,
+				  Constants.API_HEALTH_CHECK)
 					.permitAll();
 		}
 	}

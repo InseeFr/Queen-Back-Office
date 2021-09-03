@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fr.insee.queen.api.domain.SurveyUnitTempZone;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -44,5 +45,9 @@ public interface SurveyUnitService extends BaseService<SurveyUnit, String> {
 
 	Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId);
 	
-	void deleteById(SurveyUnit su);
+	void delete(SurveyUnit su);
+
+	void saveSurveyUnitToTempZone(String id, String userId, JsonNode surveyUnit);
+
+	List<SurveyUnitTempZone> getAllSurveyUnitTempZone();
 }

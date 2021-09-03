@@ -32,7 +32,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: war
-          path: target/*.war
+          path: target/
       - name: Extract branch name
         id: extract_branch
         shell: bash

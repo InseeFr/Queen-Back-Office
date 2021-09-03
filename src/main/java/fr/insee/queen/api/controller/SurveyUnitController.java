@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fr.insee.queen.api.domain.SurveyUnitTempZone;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +120,31 @@ public class SurveyUnitController {
 		LOGGER.info("PUT survey-units resulting in 200");
 		return ResponseEntity.ok().build();
 	}
+
+	/**
+	 * This method is used to post a survey-unit by id to a temp-zone
+	 */
+	@ApiOperation(value = "Post survey-unit to temp-zone")
+	@PostMapping(path = "/survey-unit/{id}/temp-zone")
+	public ResponseEntity<Object> postSurveyUnitByIdInTempZone(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
+		String userId = utilsService.getUserId(request);
+		surveyUnitService.saveSurveyUnitToTempZone(id, userId, surveyUnit);
+		LOGGER.info("POST survey-unit to temp-zone resulting in 201");
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	/**
+	 * This method is used to retrieve survey-units in temp-zone
+	 */
+	@ApiOperation(value = "GET all survey-units in temp-zone")
+	@GetMapping(path = "/survey-units/temp-zone")
+	public ResponseEntity<Object> getSurveyUnitsInTempZone() {
+		List<SurveyUnitTempZone> surveyUnitTempZones = surveyUnitService.getAllSurveyUnitTempZone();
+		LOGGER.info("GET survey-units in temp-zone resulting in 200");
+		return new ResponseEntity<>(surveyUnitTempZones,HttpStatus.OK);
+	}
+
+
 	
 	/**
 	* This method is using to get all survey units associated to a specific campaign 
@@ -185,7 +212,7 @@ public class SurveyUnitController {
 				surveyUnitService.generateDepositProof(su, request, response);
 				return ResponseEntity.ok().build();
 			} catch (ServletException | IOException e) {
-				return new ResponseEntity<>("ERROR_EXPORT " + e.getStackTrace().toString() , HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("ERROR_EXPORT " + Arrays.toString(e.getStackTrace()) , HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 	    }
@@ -211,10 +238,10 @@ public class SurveyUnitController {
 	}
 	
 	/**
-	* This method is using to create a survey-unit
+	* This method is using to delete a survey-unit
 	* 
-	* @param id the id of campaign
-	* @return List of {@link String} containing nomenclature ids
+	* @param id the id of survey-unit
+	* @return {@link HttpStatus}
 	*/
 	@ApiOperation(value = "Delete survey-unit")
 	@DeleteMapping(path = "/survey-unit/{id}")
@@ -224,7 +251,7 @@ public class SurveyUnitController {
 			LOGGER.error("DELETE survey-unit with id {} resulting in 404 because it does not exists", id);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		surveyUnitService.deleteById(surveyUnitOptional.get());
+		surveyUnitService.delete(surveyUnitOptional.get());
 		LOGGER.info("DELETE survey-unit with id {} resulting in 200", id);
 		return ResponseEntity.ok().build();
 	}

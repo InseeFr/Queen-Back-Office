@@ -2,7 +2,6 @@ package fr.insee.queen.api.controller;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.Nomenclature;
-import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 import fr.insee.queen.api.exception.NotFoundException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.NomenclatureService;
-import fr.insee.queen.api.service.QuestionnaireModelService;
 import fr.insee.queen.api.service.UtilsService;
 import io.swagger.annotations.ApiOperation;
 
@@ -52,12 +49,6 @@ public class NomenclatureController {
 	*/
 	@Autowired
 	private CampaignService campaignService;
-	
-	/**
-	* The questionnaire repository using to access to table 'questionnaire' in DB 
-	*/
-	@Autowired
-	private QuestionnaireModelService questionnaireModelService;
 	
 	/**
 	* This method is using to get the a specific Nomenclature
@@ -114,15 +105,13 @@ public class NomenclatureController {
 	@ApiOperation(value = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
 	public ResponseEntity<List<String>> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String id) {
-		Optional<QuestionnaireModel> questionnaireOptional = questionnaireModelService.findById(id);
-		if (!questionnaireOptional.isPresent()) {
+		List<String> lstRequiredNomenclature = nomenclatureservice.findRequiredNomenclatureByQuestionnaire(id);
+		if(lstRequiredNomenclature == null) {
 			LOGGER.error("GET required-nomenclatures for questionnaire with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		} else {
-			LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 200", id);
-			return new ResponseEntity<>(nomenclatureservice.findRequiredNomenclatureByQuestionnaire(Set.of(questionnaireOptional.get())), 
-					HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		LOGGER.info("GET required-nomenclatures for campaign with id {} resulting in 200", id);
+		return new ResponseEntity<>(lstRequiredNomenclature, HttpStatus.OK);
 	}
 	
 	/**

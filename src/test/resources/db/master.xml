@@ -14,4 +14,6 @@
 	<include file="changelog/200_rename_entities.xml" relativeToChangelogFile="true"/>
 	<!-- Update data model in db -->
 	<include file="changelog/300_update_data_model.xml" relativeToChangelogFile="true"/>
+	<!-- Add new table (tempzone) in db -->
+	<include file="changelog/400_add_new_temp_zone.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

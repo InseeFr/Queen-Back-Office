@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -39,6 +41,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +53,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.json.XML;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -88,7 +90,15 @@ public class IntegrationServiceImpl implements IntegrationService {
     
     private ObjectMapper objectMapper = new ObjectMapper();
 
-
+    private static final String CAMPAIGN_XML = "campaign.xml";
+    private static final String NOMENCLATURES_XML = "nomenclatures.xml";
+    private static final String QUESTIONNAIREMODELS_XML = "questionnaireModels.xml";
+    private static final String LABEL = "Label";
+	private static final String METADATA = "Metadata";
+	private static final String ID = "Id";
+	private static final String FILENAME = "FileName";
+	private static final String CAMPAIGN_ID = "CampaignId";
+	private static final String NOMENCLATURE = "Nomenclature";
 	
 	public IntegrationResultDto integrateContext(MultipartFile file) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
 	    String fileName = file.getOriginalFilename();
@@ -98,14 +108,14 @@ public class IntegrationServiceImpl implements IntegrationService {
 	    File zip = File.createTempFile(UUID.randomUUID().toString(), "temp");
 	    try(FileOutputStream o = new FileOutputStream(zip)){
 	    	IOUtils.copy(file.getInputStream(), o);
-		    return doIntegration(zip, fileName);
+		    return doIntegration(zip);
 	    }
 	    catch(IOException e) {
-	    	throw new IOException(e.getStackTrace().toString());
+	    	throw new IOException(Arrays.toString(e.getStackTrace()));
 	    }
 	}
 	
-	private IntegrationResultDto doIntegration(File zip, String fileName) throws ParserConfigurationException, SAXException, XPathExpressionException {
+	private IntegrationResultDto doIntegration(File zip) throws ParserConfigurationException, SAXException, XPathExpressionException {
 		IntegrationResultDto result = new IntegrationResultDto();
 		ZipEntry campaignXmlFile = null;
 		ZipEntry nomenclaturesXmlFile =  null;
@@ -114,8 +124,8 @@ public class IntegrationServiceImpl implements IntegrationService {
 		HashMap<String, ZipEntry> questionnaireModelJsonFiles = new HashMap<>();
 	    
 	    try(ZipFile zf = new ZipFile(zip)){
-		    String nomenclaturesPattern = fileName + "/nomenclatures/.*json";
-		    String questionnairesPattern = fileName + "/questionnaireModels/.*json";
+		    String nomenclaturesPattern = "nomenclatures/.*json";
+		    String questionnairesPattern = "questionnaireModels/.*json";
 	
 		    
 		    Enumeration<? extends ZipEntry> e = zf.entries();
@@ -123,13 +133,13 @@ public class IntegrationServiceImpl implements IntegrationService {
 		    
 		    while(e.hasMoreElements()){
 		        ZipEntry entry = e.nextElement();
-		        if(entry.getName().equals(fileName + "/campaign.xml")) {
+		        if(entry.getName().equals(CAMPAIGN_XML)) {
 		        	campaignXmlFile = entry;
 		        }
-		        else if(entry.getName().equals(fileName + "/nomenclatures.xml")) {
+		        else if(entry.getName().equals(NOMENCLATURES_XML)) {
 		        	nomenclaturesXmlFile = entry;
 		        }
-		        else if(entry.getName().equals(fileName + "/questionnaireModels.xml")) {
+		        else if(entry.getName().equals(QUESTIONNAIREMODELS_XML)) {
 		        	questionnaireModelsXmlFile = entry;
 		        }
 		        else if(Pattern.matches(nomenclaturesPattern,entry.getName())){
@@ -141,13 +151,13 @@ public class IntegrationServiceImpl implements IntegrationService {
 		    }	    
 			
 			// Nomenclatures process
-		    validateAndProcessNomenclatures(zf, nomenclaturesXmlFile, nomenclatureJsonFiles, result, fileName);
+		    validateAndProcessNomenclatures(zf, nomenclaturesXmlFile, nomenclatureJsonFiles, result);
 			
 			// Campaign process
 		    validateAndProcessCampaign(zf, campaignXmlFile, result);
 			
 			// Questionnaire models process
-			validateAndProcessQuestionnaireModels(zf, questionnaireModelsXmlFile, questionnaireModelJsonFiles, result, fileName);
+			validateAndProcessQuestionnaireModels(zf, questionnaireModelsXmlFile, questionnaireModelJsonFiles, result);
 			
 			
 		    return result;
@@ -158,8 +168,14 @@ public class IntegrationServiceImpl implements IntegrationService {
 	}
 	
 	private void validateAndProcessNomenclatures(ZipFile zf, ZipEntry nomenclaturesXmlFile, 
-			HashMap<String, ZipEntry> nomenclatureJsonFiles, IntegrationResultDto result, String fileName) throws ParserConfigurationException, SAXException, IOException {
-		if(nomenclaturesXmlFile != null) {
+			HashMap<String, ZipEntry> nomenclatureJsonFiles, IntegrationResultDto result) throws ParserConfigurationException, SAXException, IOException {
+		if(nomenclaturesXmlFile == null) {
+			result.setNomenclatures(new ArrayList<>());
+			result.getNomenclatures().add(new IntegrationResultUnitDto(
+					NOMENCLATURES_XML, 
+					IntegrationStatus.ERROR, 
+					"No file nomenclatures.xml found"));
+		} else {
 			boolean validation = false;
 			try {
 				validation = validateAgainstSchema(zf.getInputStream(nomenclaturesXmlFile), "nomenclatures_integration_template.xsd");
@@ -167,25 +183,29 @@ public class IntegrationServiceImpl implements IntegrationService {
 			catch(Exception ex) {
 				result.setNomenclatures(new ArrayList<>());
 				result.getNomenclatures().add(new IntegrationResultUnitDto(
-						"nomenclatures.xml", 
+						NOMENCLATURES_XML, 
 						IntegrationStatus.ERROR, 
 						"File nomenclatures.xml does not fit the required template (" + ex.getMessage() + ")"));
 			}
 			if(validation) {
-				processNomenclatures(zf, nomenclaturesXmlFile, nomenclatureJsonFiles, fileName, result);
+				processNomenclatures(zf, nomenclaturesXmlFile, nomenclatureJsonFiles, result);
 			}
 		}
 	}
 	
 	private void validateAndProcessCampaign(ZipFile zf, ZipEntry campaignXmlFile,
 			IntegrationResultDto result) throws XPathExpressionException, SAXException, IOException, ParserConfigurationException {
-		if(campaignXmlFile != null) {
+		if(campaignXmlFile == null) {
+			result.setCampaign(new IntegrationResultUnitDto(CAMPAIGN_XML, 
+					IntegrationStatus.ERROR, 
+					"No file campaign.xml found"));
+		} else {
 			boolean validation = false;
 			try {
 				validation = validateAgainstSchema(zf.getInputStream(campaignXmlFile), "campaign_integration_template.xsd");
 			}
 			catch(Exception ex) {
-				result.setCampaign(new IntegrationResultUnitDto("campaign.xml", 
+				result.setCampaign(new IntegrationResultUnitDto(CAMPAIGN_XML, 
 						IntegrationStatus.ERROR, 
 						"File campaign.xml does not fit the required template (" + ex.getMessage() + ")"));
 			}
@@ -196,8 +216,14 @@ public class IntegrationServiceImpl implements IntegrationService {
 	}
 	
 	private void validateAndProcessQuestionnaireModels(ZipFile zf, ZipEntry questionnaireModelsXmlFile, 
-			HashMap<String, ZipEntry> questionnaireModelJsonFiles, IntegrationResultDto result, String fileName) throws ParserConfigurationException, SAXException, IOException {
-		if(questionnaireModelsXmlFile != null) {
+			HashMap<String, ZipEntry> questionnaireModelJsonFiles, IntegrationResultDto result) throws ParserConfigurationException, SAXException, IOException {
+		if(questionnaireModelsXmlFile == null) {
+			result.setQuestionnaireModels(new ArrayList<>());
+			result.getQuestionnaireModels().add(new IntegrationResultUnitDto(
+					QUESTIONNAIREMODELS_XML, 
+					IntegrationStatus.ERROR, 
+					"No file questionnaireModels.xml found"));
+		} else {
 			boolean validation = false;
 			try {
 				validation = validateAgainstSchema(zf.getInputStream(questionnaireModelsXmlFile), "questionnaireModels_integration_template.xsd");
@@ -205,12 +231,12 @@ public class IntegrationServiceImpl implements IntegrationService {
 			catch(Exception ex) {
 				result.setQuestionnaireModels(new ArrayList<>());
 				result.getQuestionnaireModels().add(new IntegrationResultUnitDto(
-						"questionnaireModels.xml", 
+						QUESTIONNAIREMODELS_XML, 
 						IntegrationStatus.ERROR, 
 						"File questionnaireModels.xml does not fit the required template (" + ex.getMessage() + ")"));
 			}
 			if(validation) {
-				processQuestionnaireModels(zf, questionnaireModelsXmlFile, questionnaireModelJsonFiles, fileName, result);
+				processQuestionnaireModels(zf, questionnaireModelsXmlFile, questionnaireModelJsonFiles, result);
 			}
 		}
 	}
@@ -254,8 +280,8 @@ public class IntegrationServiceImpl implements IntegrationService {
 			result.setCampaign(new IntegrationResultUnitDto(id, IntegrationStatus.CREATED, null));
 		}
 		
-		NodeList metadataTags = doc.getElementsByTagName("Metadata");
-		NodeList labelTags = doc.getElementsByTagName("Label");
+		NodeList metadataTags = doc.getElementsByTagName(METADATA);
+		NodeList labelTags = doc.getElementsByTagName(LABEL);
 		
 		if(metadataTags.getLength() > 0) {
 			LOGGER.info("Setting metadata for campaign {}", id);
@@ -283,7 +309,7 @@ public class IntegrationServiceImpl implements IntegrationService {
 		String jsonString = XML.toJSONObject(toString(xmlNode, true, true)).toString();
 		JsonNode jsonObj = mapper.readTree(jsonString);
 		
-		return removeArrayLevel(jsonObj.get("Metadata"), mapper);
+		return removeArrayLevel(jsonObj.get(METADATA), mapper);
 	}
 	
 	public JsonNode removeArrayLevel(JsonNode node, ObjectMapper mapper) {
@@ -317,7 +343,7 @@ public class IntegrationServiceImpl implements IntegrationService {
 	}
 	
 	private void processNomenclatures(ZipFile zf, ZipEntry nomenclaturesXmlFile,
-			HashMap<String, ZipEntry> nomenclatureJsonFiles, String fileName, IntegrationResultDto result) throws ParserConfigurationException, SAXException, IOException {
+			HashMap<String, ZipEntry> nomenclatureJsonFiles, IntegrationResultDto result) throws ParserConfigurationException, SAXException, IOException {
 		ArrayList<IntegrationResultUnitDto> results = new ArrayList<>();
 		result.setNomenclatures(results);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -329,18 +355,18 @@ public class IntegrationServiceImpl implements IntegrationService {
 		 for (int i = 0; i < nomenclatureNodes.getLength(); i++) {
 			 if(nomenclatureNodes.item(i).getNodeType() == Node.ELEMENT_NODE){
 				 Element nomenclature = (Element) nomenclatureNodes.item(i);
-				 processNomenclature(zf, nomenclature, nomenclatureJsonFiles, fileName, results);
+				 processNomenclature(zf, nomenclature, nomenclatureJsonFiles, results);
 			 }
 			 
 		 }
 	}
 	
 	private void processNomenclature(ZipFile zf, Element nomenclature, 
-		 HashMap<String, ZipEntry> nomenclatureJsonFiles, String fileName, 
+		 HashMap<String, ZipEntry> nomenclatureJsonFiles, 
 		 ArrayList<IntegrationResultUnitDto> results) {
-		 String nomenclatureId = nomenclature.getElementsByTagName("Id").item(0).getTextContent();
-		 String nomenclatureLabel = nomenclature.getElementsByTagName("Label").item(0).getTextContent();
-		 String nomenclatureFilename = nomenclature.getElementsByTagName("FileName").item(0).getTextContent();
+		 String nomenclatureId = nomenclature.getElementsByTagName(ID).item(0).getTextContent();
+		 String nomenclatureLabel = nomenclature.getElementsByTagName(LABEL).item(0).getTextContent();
+		 String nomenclatureFilename = nomenclature.getElementsByTagName(FILENAME).item(0).getTextContent();
 		 
 		 Optional<Nomenclature> nomOpt = nomenclatureRepository.findById(nomenclatureId);
 		 if(nomOpt.isPresent()) {
@@ -352,7 +378,7 @@ public class IntegrationServiceImpl implements IntegrationService {
 				);
 		 }
 		 else {
-			 ZipEntry nomenclatureValueEntry = nomenclatureJsonFiles.get(fileName + "/nomenclatures/" +nomenclatureFilename);
+			 ZipEntry nomenclatureValueEntry = nomenclatureJsonFiles.get("nomenclatures/" +nomenclatureFilename);
 			 if(nomenclatureValueEntry != null) {
 				JsonNode nomenclatureValue;
 				try {
@@ -389,7 +415,7 @@ public class IntegrationServiceImpl implements IntegrationService {
 	}
 	
 	private void processQuestionnaireModels(ZipFile zf, ZipEntry questionnaireModelsXmlFile,
-			HashMap<String, ZipEntry> questionnaireModelJsonFiles, String fileName, IntegrationResultDto result) throws ParserConfigurationException, SAXException, IOException {
+			HashMap<String, ZipEntry> questionnaireModelJsonFiles, IntegrationResultDto result) throws ParserConfigurationException, SAXException, IOException {
 		ArrayList<IntegrationResultUnitDto> results = new ArrayList<>();
 		result.setQuestionnaireModels(results);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -401,26 +427,24 @@ public class IntegrationServiceImpl implements IntegrationService {
 		 for (int i = 0; i < qmNodes.getLength(); i++) {
 			 if(qmNodes.item(i).getNodeType() == Node.ELEMENT_NODE){
 				 Element qm = (Element) qmNodes.item(i);
-				 processQuestionnaireModel(zf, qm, results, fileName, questionnaireModelJsonFiles);
+				 processQuestionnaireModel(zf, qm, results, questionnaireModelJsonFiles);
 			 }
 			 
 		 }
 	}
 	
 	private void processQuestionnaireModel(ZipFile zf, Element qm, 
-		 ArrayList<IntegrationResultUnitDto> results, String fileName, 
+		 ArrayList<IntegrationResultUnitDto> results, 
 		 HashMap<String, ZipEntry> questionnaireModelJsonFiles) {
-		 String qmId = qm.getElementsByTagName("Id").item(0).getTextContent();
-		 String qmLabel = qm.getElementsByTagName("Label").item(0).getTextContent();
-		 String qmFilename = qm.getElementsByTagName("FileName").item(0).getTextContent();
-		 String campaignId = qm.getElementsByTagName("CampaignId").item(0).getTextContent();
-		 ArrayList<String> requiredNomenclatureIds = new ArrayList<>();
-		 NodeList requiredNomNodes = qm.getElementsByTagName("Nomenclature");
-		 for (int j = 0; j < requiredNomNodes.getLength(); j++) {
-			 if(requiredNomNodes.item(j).getNodeType() == Node.ELEMENT_NODE){
-				 requiredNomenclatureIds.add(requiredNomNodes.item(j).getTextContent());
-			 }
-		 }
+		 String qmId = qm.getElementsByTagName(ID).item(0).getTextContent();
+		 String qmLabel = qm.getElementsByTagName(LABEL).item(0).getTextContent();
+		 String qmFilename = qm.getElementsByTagName(FILENAME).item(0).getTextContent();
+		 String campaignId = qm.getElementsByTagName(CAMPAIGN_ID).item(0).getTextContent();
+		 NodeList requiredNomNodes = qm.getElementsByTagName(NOMENCLATURE);
+		 ArrayList<String> requiredNomenclatureIds = (ArrayList<String>) IntStream.range(0, requiredNomNodes.getLength())
+				 .filter(j-> requiredNomNodes.item(j).getNodeType() == Node.ELEMENT_NODE)
+				 .mapToObj(j -> requiredNomNodes.item(j).getTextContent())
+				 .collect(Collectors.toList());
 		 // Checking if campaign exists
 		 Campaign campaign;
 		 Optional<Campaign> campaignOpt = campaignRepository.findById(campaignId);
@@ -466,7 +490,7 @@ public class IntegrationServiceImpl implements IntegrationService {
 			 questionnaireModel.setId(qmId);
 			 status = IntegrationStatus.CREATED;
 		 }
-		 ZipEntry qmValueEntry = questionnaireModelJsonFiles.get(fileName + "/questionnaireModels/" +qmFilename);
+		 ZipEntry qmValueEntry = questionnaireModelJsonFiles.get("questionnaireModels/" +qmFilename);
 		 if(qmValueEntry != null) {
 			JsonNode qmValue;
 			try {
