@@ -3,21 +3,16 @@ package fr.insee.queen.api.service.impl;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fr.insee.queen.api.domain.*;
+import fr.insee.queen.api.repository.*;
+import org.modelmapper.internal.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,24 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.insee.queen.api.constants.Constants;
-import fr.insee.queen.api.domain.Campaign;
-import fr.insee.queen.api.domain.Comment;
-import fr.insee.queen.api.domain.Data;
-import fr.insee.queen.api.domain.Personalization;
-import fr.insee.queen.api.domain.QuestionnaireModel;
-import fr.insee.queen.api.domain.StateData;
-import fr.insee.queen.api.domain.StateDataType;
-import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 import fr.insee.queen.api.exception.BadRequestException;
 import fr.insee.queen.api.pdfutils.ExportPdf;
-import fr.insee.queen.api.repository.ApiRepository;
-import fr.insee.queen.api.repository.CommentRepository;
-import fr.insee.queen.api.repository.DataRepository;
-import fr.insee.queen.api.repository.PersonalizationRepository;
-import fr.insee.queen.api.repository.StateDataRepository;
-import fr.insee.queen.api.repository.SurveyUnitRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.CommentService;
@@ -63,6 +44,8 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyUnitServiceImpl.class);
 	
   protected final SurveyUnitRepository surveyUnitRepository;
+
+  protected final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
     
     @Autowired
 	private StateDataService stateDataService;
@@ -98,8 +81,9 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	private QuestionnaireModelService questionnaireModelService;
 
     @Autowired
-    public SurveyUnitServiceImpl(SurveyUnitRepository repository) {
+    public SurveyUnitServiceImpl(SurveyUnitRepository repository, SurveyUnitTempZoneRepository tempZoneRepository) {
         this.surveyUnitRepository = repository;
+        this.surveyUnitTempZoneRepository = tempZoneRepository;
     }
 
     @Override
@@ -341,6 +325,18 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	@Override
 	public void delete(SurveyUnit su) {
 		surveyUnitRepository.delete(su);
+	}
+
+	@Override
+	public void saveSurveyUnitToTempZone(String id, String userId, JsonNode surveyUnit){
+    	Long date = new Date().getTime();
+		SurveyUnitTempZone surveyUnitTempZoneToSave = new SurveyUnitTempZone(id,userId,date,surveyUnit);
+    	surveyUnitTempZoneRepository.save(surveyUnitTempZoneToSave);
+	}
+
+	@Override
+	public List<SurveyUnitTempZone> getAllSurveyUnitTempZone(){
+    	return (List<SurveyUnitTempZone>) surveyUnitTempZoneRepository.findAll();
 	}
 
 }
