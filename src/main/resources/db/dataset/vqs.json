@@ -1,11 +1,13 @@
 
-  { "id" : "kejxez5cqf29",
-    "modele" : "VQSWEBA",
-    "enoCoreVersion" : "2.2.5",
-    "lunaticModelVersion" : "2.1.0",
+  { "id" : "kejxez5c",
+    "modele" : "v1",
+    "enoCoreVersion" : "2.2.11-dev-logement2",
+    "lunaticModelVersion" : "2.2.3",
+    "generatingDate" : "12-10-2021 10:22:44",
+    "missing" : false,
     "pagination" : "question",
-    "maxPage" : "9",
-    "label" : "VQS Web - test suppression tableau",
+    "maxPage" : "15",
+    "label" : "VQS Web",
     "components" : 
     [ 
       { "id" : "kejxl9lk",
@@ -17,29 +19,31 @@
           { "id" : "kejxl9lk-kejy60t1",
             "declarationType" : "INSTRUCTION",
             "position" : "AFTER_QUESTION_TEXT",
-            "label" : "\"L’enquête est très courte, elle comporte une vingtaine de questions et ne devrait pas vous prendre plus de 15 minutes. Cette enquête s’adresse à toutes les personnes vivant habituellement avec \" || cast(cast(NOMCONTACT,string),string) || \"Une personne peut répondre pour les autres.Nous allons commencer par vérifier l’adresse principale de \" || cast(cast(NOMCONTACT,string),string) || \" (ou le\/la destinataire de la lettre-avis)\"" } ],
-        "conditionFilter" : "\"normal\"",
+            "label" : "\"L’enquête est très courte. Remplir le questionnaire prendra 15 minutes environ. Cette enquête s’adresse à toutes les personnes vivant habituellement avec \" || cast(cast(LIBCONTACT,string),string) || \"Une personne peut répondre pour les autres.​\"" } ],
+        "conditionFilter" : 
+        { "value" : "true" },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejxl9lk",
             "page" : "1",
             "label" : "\"I - Introduction\"" } },
         "bindingDependencies" : 
-        [ "NOMCONTACT" ] },
+        [ "LIBCONTACT" ] },
       
       { "id" : "kejxy84t",
-        "componentType" : "CheckboxOne",
+        "componentType" : "Radio",
         "mandatory" : false,
         "page" : "2",
-        "label" : "\"➡ 1. \" || cast(cast(NOMCONTACT,string),string) || \" réside-t-il\/elle toujours à cette adresse ?​\" || cast(cast(ADRESSE,string),string) || \"\"",
-        "conditionFilter" : "\"normal\"",
+        "label" : "\"➡ \" || cast(cast(LIBCONTACT,string),string) || \" réside-t-il\/elle toujours à cette adresse ?​\" || cast(cast(ADRESSE,string),string) || \"\"",
+        "conditionFilter" : 
+        { "value" : "true" },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejxl9lk",
             "page" : "1",
             "label" : "\"I - Introduction\"" } },
         "bindingDependencies" : 
-        [ "NOMCONTACT",
+        [ "LIBCONTACT",
           "ADRESSE",
           "OKADRESS" ],
         "options" : 
@@ -57,7 +61,8 @@
         "page" : "2",
         "filterDescription" : false,
         "label" : "\"Si oui, aller à la question NHAB\"",
-        "conditionFilter" : "\"normal\"",
+        "conditionFilter" : 
+        { "value" : "true" },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejxl9lk",
@@ -65,18 +70,21 @@
             "label" : "\"I - Introduction\"" } } },
       
       { "id" : "ker5lx5h",
-        "componentType" : "CheckboxOne",
+        "componentType" : "Radio",
         "mandatory" : false,
         "page" : "3",
-        "label" : "\"➡ 2. Où \" || cast(cast(NOMCONTACT,string),string) || \" habite-t-il\/elle actuellement ? \"",
-        "conditionFilter" : "if ((not(cast(OKADRESS,string)=1))) then \"normal\" else \"hidden\"",
+        "label" : "\"➡ Où \" || cast(cast(LIBCONTACT,string),string) || \" habite-t-il\/elle actuellement ? \"",
+        "conditionFilter" : 
+        { "value" : "(not(cast(OKADRESS,string)  <> \"2\"))",
+          "bindingDependencies" : 
+          [ "OKADRESS" ] },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejxl9lk",
             "page" : "1",
             "label" : "\"I - Introduction\"" } },
         "bindingDependencies" : 
-        [ "NOMCONTACT",
+        [ "LIBCONTACT",
           "RESIDM" ],
         "options" : 
         [ 
@@ -98,8 +106,11 @@
         "componentType" : "FilterDescription",
         "page" : "3",
         "filterDescription" : false,
-        "label" : "\"Si RESIDM=3, alors demander la nouvelle adresse\"",
-        "conditionFilter" : "if ((not(cast(OKADRESS,string)=1))) then \"normal\" else \"hidden\"",
+        "label" : "\"Si RESIDM différent de 3, alors fin du questionnaire\"",
+        "conditionFilter" : 
+        { "value" : "(not(cast(OKADRESS,string)  <> \"2\"))",
+          "bindingDependencies" : 
+          [ "OKADRESS" ] },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejxl9lk",
@@ -107,243 +118,378 @@
             "label" : "\"I - Introduction\"" } } },
       
       { "id" : "kfpub47i",
-        "componentType" : "Table",
+        "componentType" : "InputNumber",
         "mandatory" : false,
         "page" : "4",
-        "positioning" : "HORIZONTAL",
-        "label" : "\"➡ 3. Quelle est sa nouvelle adresse ?\"",
-        "conditionFilter" : "if ((not(cast(OKADRESS,string)=1))) then \"normal\" else \"hidden\"",
+        "min" : 1,
+        "max" : 99999,
+        "decimals" : 0,
+        "label" : "\"➡ Quel est le numéro de voie ?\"",
+        "declarations" : 
+        [ 
+          { "id" : "kgw1s4pa-SI",
+            "declarationType" : "STATEMENT",
+            "position" : "BEFORE_QUESTION_TEXT",
+            "label" : "\"Vous avez indiqué que \" || cast(cast(LIBCONTACT,string),string) || \" a déménagé. Veuillez indiquer sa nouvelle adresse. \"" },
+          
+          { "id" : "kfpub47i-kh4kq2mk",
+            "declarationType" : "INSTRUCTION",
+            "position" : "AFTER_QUESTION_TEXT",
+            "label" : "\"Il s’agit du numéro dans la rue. Écrire la réponse sous forme de nombre. Par exemple : 45\"" } ],
+        "conditionFilter" : 
+        { "value" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+          "bindingDependencies" : 
+          [ "OKADRESS",
+            "RESIDM" ] },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejxl9lk",
             "page" : "1",
             "label" : "\"I - Introduction\"" } },
         "bindingDependencies" : 
-        [ "NVOI",
-          "NTYPC",
-          "NLIB",
-          "NCOMP",
-          "NCODPOS",
-          "NCOMMU",
-          "NVOI_1_1",
-          "NTYPC_1_2",
-          "NLIB_1_3",
-          "NCOMP_1_4",
-          "NCODPOS_1_5",
-          "NCOMMU_1_6" ],
-        "lines" : 
-        { "min" : 1,
-          "max" : 1 },
-        "cells" : 
+        [ "LIBCONTACT",
+          "NVOI" ],
+        "response" : 
+        { "name" : "NVOI" } },
+      
+      { "id" : "kgw2gyze",
+        "componentType" : "Input",
+        "mandatory" : false,
+        "page" : "5",
+        "maxLength" : 20,
+        "label" : "\"➡ S’il existe, quel est l’indice de répétition ?\"",
+        "declarations" : 
         [ 
-          [ 
-            { "headerCell" : true,
-              "label" : "\"Numéro de voie\"" },
-            
-            { "headerCell" : true,
-              "label" : "\"Type de voie\"" },
-            
-            { "headerCell" : true,
-              "label" : "\"Nom de la voie\"" },
-            
-            { "headerCell" : true,
-              "label" : "\"Complément d’adresse\"" },
-            
-            { "headerCell" : true,
-              "label" : "\"Code postal\"" },
-            
-            { "headerCell" : true,
-              "label" : "\"Commune\"" } ],
-          
-          [ 
-            { "componentType" : "InputNumber",
-              "min" : 1,
-              "max" : 1000,
-              "decimals" : 0,
-              "id" : "kfpub47i-QOP-kgs10bwv_1_1",
-              "response" : 
-              { "name" : "NVOI_1_1" },
-              "bindingDependencies" : 
-              [ "NVOI_1_1" ] },
-            
-            { "componentType" : "Input",
-              "maxLength" : 15,
-              "id" : "kfpub47i-QOP-kgs1054c_1_2",
-              "response" : 
-              { "name" : "NTYPC_1_2" },
-              "bindingDependencies" : 
-              [ "NTYPC_1_2" ] },
-            
-            { "componentType" : "Input",
-              "maxLength" : 100,
-              "id" : "kfpub47i-QOP-kgs0y9jy_1_3",
-              "response" : 
-              { "name" : "NLIB_1_3" },
-              "bindingDependencies" : 
-              [ "NLIB_1_3" ] },
-            
-            { "componentType" : "Input",
-              "maxLength" : 50,
-              "id" : "kfpub47i-QOP-kgs0wwlh_1_4",
-              "response" : 
-              { "name" : "NCOMP_1_4" },
-              "bindingDependencies" : 
-              [ "NCOMP_1_4" ] },
-            
-            { "componentType" : "InputNumber",
-              "min" : 1,
-              "max" : 99999,
-              "decimals" : 0,
-              "id" : "kfpub47i-QOP-kgs11eu9_1_5",
-              "response" : 
-              { "name" : "NCODPOS_1_5" },
-              "bindingDependencies" : 
-              [ "NCODPOS_1_5" ] },
-            
-            { "componentType" : "Input",
-              "maxLength" : 100,
-              "id" : "kfpub47i-QOP-kgs0h3s6_1_6",
-              "response" : 
-              { "name" : "NCOMMU_1_6" },
-              "bindingDependencies" : 
-              [ "NCOMMU_1_6" ] } ] ] },
+          { "id" : "kgw2gyze-kh4mnjbi",
+            "declarationType" : "INSTRUCTION",
+            "position" : "AFTER_QUESTION_TEXT",
+            "label" : "\"Par exemple : bis, ter ...\"" } ],
+        "conditionFilter" : 
+        { "value" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+          "bindingDependencies" : 
+          [ "OKADRESS",
+            "RESIDM" ] },
+        "hierarchy" : 
+        { "sequence" : 
+          { "id" : "kejxl9lk",
+            "page" : "1",
+            "label" : "\"I - Introduction\"" } },
+        "bindingDependencies" : 
+        [ "NVOIC" ],
+        "response" : 
+        { "name" : "NVOIC" } },
+      
+      { "id" : "kgw1qalj",
+        "componentType" : "Textarea",
+        "mandatory" : false,
+        "page" : "6",
+        "maxLength" : 255,
+        "label" : "\"➡ Quels sont le type et le nom de la voie ?\"",
+        "declarations" : 
+        [ 
+          { "id" : "kgw1qalj-kh4m4ykg",
+            "declarationType" : "INSTRUCTION",
+            "position" : "AFTER_QUESTION_TEXT",
+            "label" : "\"Par exemple : rue des plantes, avenue du général Leclerc...\"" } ],
+        "conditionFilter" : 
+        { "value" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+          "bindingDependencies" : 
+          [ "OKADRESS",
+            "RESIDM" ] },
+        "hierarchy" : 
+        { "sequence" : 
+          { "id" : "kejxl9lk",
+            "page" : "1",
+            "label" : "\"I - Introduction\"" } },
+        "bindingDependencies" : 
+        [ "NLIB" ],
+        "response" : 
+        { "name" : "NLIB" } },
+      
+      { "id" : "kgw22pxh",
+        "componentType" : "Textarea",
+        "mandatory" : false,
+        "page" : "7",
+        "maxLength" : 255,
+        "label" : "\"➡ S’il existe, quel est le complément d’adresse ?\"",
+        "declarations" : 
+        [ 
+          { "id" : "kgw22pxh-kh4me5zx",
+            "declarationType" : "INSTRUCTION",
+            "position" : "AFTER_QUESTION_TEXT",
+            "label" : "\"Le complément d’adresse correspond à toute précision utile et non précisée jusqu’à présent : bâtiment, numéro d’appartement, boîte à lettres, étage, escalier ... Par exemple : bâtiment C, étage 4\"" } ],
+        "conditionFilter" : 
+        { "value" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+          "bindingDependencies" : 
+          [ "OKADRESS",
+            "RESIDM" ] },
+        "hierarchy" : 
+        { "sequence" : 
+          { "id" : "kejxl9lk",
+            "page" : "1",
+            "label" : "\"I - Introduction\"" } },
+        "bindingDependencies" : 
+        [ "NCOMP" ],
+        "response" : 
+        { "name" : "NCOMP" } },
+      
+      { "id" : "kgw2dgqu",
+        "componentType" : "Input",
+        "mandatory" : false,
+        "page" : "8",
+        "maxLength" : 5,
+        "label" : "\"➡ Quel est le code postal ?\"",
+        "declarations" : 
+        [ 
+          { "id" : "kgw2dgqu-kh4mhnl5",
+            "declarationType" : "INSTRUCTION",
+            "position" : "AFTER_QUESTION_TEXT",
+            "label" : "\"Noter les 5 chiffres du code postal Par exemple : 31000\"" } ],
+        "conditionFilter" : 
+        { "value" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+          "bindingDependencies" : 
+          [ "OKADRESS",
+            "RESIDM" ] },
+        "hierarchy" : 
+        { "sequence" : 
+          { "id" : "kejxl9lk",
+            "page" : "1",
+            "label" : "\"I - Introduction\"" } },
+        "bindingDependencies" : 
+        [ "NCODPOS" ],
+        "response" : 
+        { "name" : "NCODPOS" } },
+      
+      { "id" : "kgam8uff",
+        "componentType" : "Textarea",
+        "mandatory" : false,
+        "page" : "9",
+        "maxLength" : 255,
+        "label" : "\"➡ Quel est le nom de la commune ?\"",
+        "declarations" : 
+        [ 
+          { "id" : "kgam8uff-kh4mlfrk",
+            "declarationType" : "INSTRUCTION",
+            "position" : "AFTER_QUESTION_TEXT",
+            "label" : "\"Par exemple : Toulouse\"" } ],
+        "conditionFilter" : 
+        { "value" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+          "bindingDependencies" : 
+          [ "OKADRESS",
+            "RESIDM" ] },
+        "hierarchy" : 
+        { "sequence" : 
+          { "id" : "kejxl9lk",
+            "page" : "1",
+            "label" : "\"I - Introduction\"" } },
+        "bindingDependencies" : 
+        [ "NCOMMU" ],
+        "response" : 
+        { "name" : "NCOMMU" } },
       
       { "id" : "kejyfwqj",
         "componentType" : "Sequence",
-        "page" : "5",
+        "page" : "10",
         "label" : "\"II - Les habitants du logement\"",
         "declarations" : 
         [ 
           { "id" : "kejyfwqj-kejy4m1u",
             "declarationType" : "INSTRUCTION",
             "position" : "AFTER_QUESTION_TEXT",
-            "label" : "\"Nous allons lister les habitants habituels du logement. Ce sont les adultes et les enfants :- qui vivent plus de 6 mois dans ce logement- ou qui vivent 6 mois dans ce logement et 6 mois dans un autre logement (par exemple les enfants en garde alternée), s’ils qui ont dormi dans ce logement la nuit dernière.\"" } ],
-        "conditionFilter" : "\"normal\"",
+            "label" : "\"Nous allons lister les habitants habituels du logement.Ce sont les adultes et les enfants :- qui vivent plus de 6 mois dans ce logement- ou qui vivent 6 mois dans ce logement et 6 mois dans un autre logement (par exemple les enfants en garde alternée), s’ils ont dormi dans ce logement la nuit dernière.Cas où \" || cast(cast(LIBCONTACT,string),string) || \" vit dans un logement d’une gendarmerie, d’un foyer de travailleurs, d’une cité universitaire, etc. : compter \" || cast(cast(LIBCONTACT,string),string) || \" comme seule personne habitant dans le logement.\"" } ],
+        "conditionFilter" : 
+        { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+          "bindingDependencies" : 
+          [ "RESIDM",
+            "OKADRESS" ] },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejyfwqj",
-            "page" : "5",
-            "label" : "\"II - Les habitants du logement\"" } } },
+            "page" : "10",
+            "label" : "\"II - Les habitants du logement\"" } },
+        "bindingDependencies" : 
+        [ "LIBCONTACT" ] },
       
       { "id" : "kejymd3m",
         "componentType" : "InputNumber",
         "mandatory" : false,
-        "page" : "6",
+        "page" : "11",
         "min" : 1,
         "max" : 20,
         "decimals" : 0,
-        "label" : "\"➡ 4. Combien de personnes vivent habituellement dans le logement où vit \" || cast(cast(NOMCONTACT,string),string) || \"? \"",
+        "label" : "\"➡ Combien de personnes vivent habituellement dans le logement où vit \" || cast(cast(LIBCONTACT,string),string) || \" ? \"",
         "declarations" : 
         [ 
           { "id" : "kejymd3m-kejyqjq5",
             "declarationType" : "INSTRUCTION",
             "position" : "AFTER_QUESTION_TEXT",
-            "label" : "\"Compter également \" || cast(cast(NOMCONTACT,string),string) || \".​Cas des personnes vivant dans un logements d’une gendarmerie, d’un foyer de travailleurs, d’une cité universitaire, etc. : compter \" || cast(cast(NOMCONTACT,string),string) || \" comme seule personne habitant dans le logement.\"" } ],
-        "conditionFilter" : "\"normal\"",
+            "label" : "\"Compter également \" || cast(cast(LIBCONTACT,string),string) || \"​Nous vous proposerons ensuite de décrire chacune de ces personnes.\"" } ],
+        "conditionFilter" : 
+        { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+          "bindingDependencies" : 
+          [ "RESIDM",
+            "OKADRESS" ] },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejyfwqj",
-            "page" : "5",
+            "page" : "10",
             "label" : "\"II - Les habitants du logement\"" } },
         "bindingDependencies" : 
-        [ "NOMCONTACT",
+        [ "LIBCONTACT",
           "NHAB" ],
         "response" : 
         { "name" : "NHAB" } },
       
-      { "id" : "kgs0f5oz",
+      { "id" : "kjsq3mmk",
         "componentType" : "Loop",
-        "page" : "7",
+        "page" : "12",
+        "depth" : 1,
         "paginatedLoop" : false,
-        "label" : "\"Ajouter un individu\"",
-        "conditionFilter" : "\"normal\"",
+        "label" : "\"Cliquer ici pour décrire une autre personne du logement\"",
+        "conditionFilter" : 
+        { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+          "bindingDependencies" : 
+          [ "RESIDM",
+            "OKADRESS" ] },
         "hierarchy" : 
         { "sequence" : 
           { "id" : "kejyfwqj",
-            "page" : "5",
+            "page" : "10",
             "label" : "\"II - Les habitants du logement\"" } },
         "bindingDependencies" : 
-        [ "THL1",
-          "THL2",
-          "THL3",
-          "THL4" ],
+        [ "NHAB",
+          "LIBCONTACT",
+          "BOUCLEINDIV-position",
+          "prenom",
+          "NOM",
+          "SEXE",
+          "DTNAIS" ],
+        "loopDependencies" : 
+        [ "NHAB" ],
+        "lines" : 
+        { "min" : "1",
+          "max" : "cast(NHAB,integer)" },
         "components" : 
         [ 
-          { "id" : "kgrzwsjx",
+          { "id" : "kh3v5m6a",
             "componentType" : "Subsequence",
-            "page" : "7",
-            "goToPage" : "7",
-            "label" : "\"Presentation\"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "12",
+            "goToPage" : "12",
+            "label" : "\"Description de l’habitant \" || cast(cast(BOUCLEINDIV-position,string),string) || \" du logement\"",
+            "declarations" : 
+            [ 
+              { "id" : "kh3v5m6a-kh3vcw47",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"Nous allons vous demander de décrire ces personnes.\" || cast(cast(LIBCONTACT,string),string) || \" doit figurer dans cette liste.\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejyfwqj",
-                "page" : "5",
+                "page" : "10",
                 "label" : "\"II - Les habitants du logement\"" },
               "subSequence" : 
-              { "id" : "kgrzwsjx",
-                "page" : "7",
-                "label" : "\"Presentation\"" } } },
-          
-          { "id" : "kgrud3by",
-            "componentType" : "Input",
-            "mandatory" : false,
-            "page" : "7",
-            "maxLength" : 50,
-            "label" : "\"➡ 5. Quel est le prénom de l’individu ?\"",
-            "conditionFilter" : "\"normal\"",
-            "hierarchy" : 
-            { "sequence" : 
-              { "id" : "kejyfwqj",
-                "page" : "5",
-                "label" : "\"II - Les habitants du logement\"" },
-              "subSequence" : 
-              { "id" : "kgrzwsjx",
-                "page" : "7",
-                "label" : "\"Presentation\"" } },
+              { "id" : "kh3v5m6a",
+                "page" : "12",
+                "label" : "\"Description de l’habitant \" || cast(cast(BOUCLEINDIV-position,string),string) || \" du logement\"" } },
             "bindingDependencies" : 
-            [ "THL1" ],
+            [ "LIBCONTACT",
+              "BOUCLEINDIV-position",
+              "NHAB" ] },
+          
+          { "id" : "kek24wga",
+            "componentType" : "Textarea",
+            "mandatory" : false,
+            "page" : "12",
+            "maxLength" : 255,
+            "label" : "\"➡ Quel est le prénom de l’individu \" || cast(cast(BOUCLEINDIV-position,string),string) || \" ?\"",
+            "declarations" : 
+            [ 
+              { "id" : "kek24wga-kjspyxd4",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"Le prénom sera utilisé dans la suite du questionnaire pour décrire la situation de chaque individu.\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
+            "controls" : 
+            [ 
+              { "id" : "kek24wga-CI-0",
+                "criticality" : "INFO",
+                "control" : "not(cast(prenom,string) = '')",
+                "errorMessage" : "\"Le prénom sera utilisé dans la suite du questionnaire pour décrire la situation de chaque individu, donc merci de préciser ce prénom\"",
+                "bindingDependencies" : 
+                [ "prenom" ] } ],
+            "hierarchy" : 
+            { "sequence" : 
+              { "id" : "kejyfwqj",
+                "page" : "10",
+                "label" : "\"II - Les habitants du logement\"" },
+              "subSequence" : 
+              { "id" : "kh3v5m6a",
+                "page" : "12",
+                "label" : "\"Description de l’habitant \" || cast(cast(BOUCLEINDIV-position,string),string) || \" du logement\"" } },
+            "bindingDependencies" : 
+            [ "BOUCLEINDIV-position",
+              "prenom",
+              "NHAB" ],
             "response" : 
-            { "name" : "THL1" } },
+            { "name" : "prenom" } },
           
-          { "id" : "kgrue2lv",
-            "componentType" : "Input",
+          { "id" : "kgw2jmcs",
+            "componentType" : "Textarea",
             "mandatory" : false,
-            "page" : "7",
-            "maxLength" : 50,
-            "label" : "\"➡ 6. Quel est le nom de l’individu ?\"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "12",
+            "maxLength" : 255,
+            "label" : "\"➡ Quel est son nom de famille ?\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejyfwqj",
-                "page" : "5",
+                "page" : "10",
                 "label" : "\"II - Les habitants du logement\"" },
               "subSequence" : 
-              { "id" : "kgrzwsjx",
-                "page" : "7",
-                "label" : "\"Presentation\"" } },
+              { "id" : "kh3v5m6a",
+                "page" : "12",
+                "label" : "\"Description de l’habitant \" || cast(cast(BOUCLEINDIV-position,string),string) || \" du logement\"" } },
             "bindingDependencies" : 
-            [ "THL2" ],
+            [ "NOM",
+              "NHAB" ],
             "response" : 
-            { "name" : "THL2" } },
+            { "name" : "NOM" } },
           
-          { "id" : "kgruqvjq",
-            "componentType" : "CheckboxOne",
+          { "id" : "kgw2sc13",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "7",
-            "label" : "\"➡ 7. Quel est son sexe ?\"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "12",
+            "label" : "\"➡ Quel est son sexe ?\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejyfwqj",
-                "page" : "5",
+                "page" : "10",
                 "label" : "\"II - Les habitants du logement\"" },
               "subSequence" : 
-              { "id" : "kgrzwsjx",
-                "page" : "7",
-                "label" : "\"Presentation\"" } },
+              { "id" : "kh3v5m6a",
+                "page" : "12",
+                "label" : "\"Description de l’habitant \" || cast(cast(BOUCLEINDIV-position,string),string) || \" du logement\"" } },
             "bindingDependencies" : 
-            [ "THL3" ],
+            [ "SEXE",
+              "NHAB" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -352,46 +498,89 @@
               { "value" : "2",
                 "label" : "\"Femme\"" } ],
             "response" : 
-            { "name" : "THL3" } },
+            { "name" : "SEXE" } },
           
-          { "id" : "kgruc0yk",
+          { "id" : "kgw2niw5",
             "componentType" : "Datepicker",
             "mandatory" : false,
-            "page" : "7",
-            "min" : "1900-01-01",
-            "max" : "2021-06-20",
-            "label" : "\"➡ 8. Quelle est sa date de naissance ?\"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "12",
+            "min" : "1890-01-01",
+            "label" : "\"➡ Quelle est sa date de naissance ?\"",
+            "declarations" : 
+            [ 
+              { "id" : "kgw2niw5-kh4n5cdi",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"Notez le jour, le mois et l’année. Par exemple : 01\/04\/1936.\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejyfwqj",
-                "page" : "5",
+                "page" : "10",
                 "label" : "\"II - Les habitants du logement\"" },
               "subSequence" : 
-              { "id" : "kgrzwsjx",
-                "page" : "7",
-                "label" : "\"Presentation\"" } },
+              { "id" : "kh3v5m6a",
+                "page" : "12",
+                "label" : "\"Description de l’habitant \" || cast(cast(BOUCLEINDIV-position,string),string) || \" du logement\"" } },
             "bindingDependencies" : 
-            [ "THL4" ],
+            [ "DTNAIS",
+              "NHAB" ],
             "dateFormat" : "YYYY-MM-DD",
             "response" : 
-            { "name" : "THL4" } } ] },
+            { "name" : "DTNAIS" } } ] },
       
-      { "id" : "kgs00j0o",
+      { "id" : "COMMENT-SEQ",
+        "componentType" : "Sequence",
+        "page" : "13",
+        "label" : "\"Commentaire\"",
+        "conditionFilter" : 
+        { "value" : "true" },
+        "hierarchy" : 
+        { "sequence" : 
+          { "id" : "COMMENT-SEQ",
+            "page" : "13",
+            "label" : "\"Commentaire\"" } } },
+      
+      { "id" : "COMMENT-QUESTION",
+        "componentType" : "Textarea",
+        "mandatory" : false,
+        "page" : "14",
+        "maxLength" : 2000,
+        "label" : "\"Avez-vous des remarques concernant l'enquête ou des commentaires ?\"",
+        "conditionFilter" : 
+        { "value" : "true" },
+        "hierarchy" : 
+        { "sequence" : 
+          { "id" : "COMMENT-SEQ",
+            "page" : "13",
+            "label" : "\"Commentaire\"" } },
+        "bindingDependencies" : 
+        [ "COMMENT_QE" ],
+        "response" : 
+        { "name" : "COMMENT_QE" } },
+      
+      { "id" : "kjsqnqh0",
         "componentType" : "Loop",
-        "page" : "8",
-        "maxPage" : "26",
-        "min" : 0,
-        "iterations" : "count(THL1)",
+        "page" : "15",
+        "maxPage" : "30",
+        "iterations" : "count(prenom)",
         "depth" : 1,
         "paginatedLoop" : true,
-        "conditionFilter" : "\"normal\"",
+        "conditionFilter" : 
+        { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+          "bindingDependencies" : 
+          [ "RESIDM",
+            "OKADRESS" ] },
         "bindingDependencies" : 
-        [ "THL1",
-          "AIDEREG4",
-          "AIDEREG1",
-          "AIDEREG2",
-          "AIDEREG3",
+        [ "prenom",
+          "AIDREG_D",
+          "AIDREG_A",
+          "AIDREG_B",
+          "AIDREG_C",
           "ETAT_SANT",
           "MAL_CHRO",
           "LIMITAT",
@@ -404,7 +593,7 @@
           "DECISION",
           "SORTIES",
           "COMPRENDRE",
-          "PRNOMATILE",
+          "PSY",
           "HPSY",
           "AIDPRO",
           "AIDENT",
@@ -413,51 +602,71 @@
           "HANDICAP",
           "RECONNAI",
           "APPRENT",
-          "PRENOMHABI1",
-          "PRENOMHABI2",
-          "PRENOMHABI3",
-          "PRENOMHABI4",
-          "AU1ERJANVI" ],
+          "RELATION1",
+          "RELATION2",
+          "RELATION3",
+          "RELATION4",
+          "RESIDANCIEN" ],
         "loopDependencies" : 
-        [ "THL1",
-          "THL2",
-          "THL3",
-          "THL4" ],
+        [ "prenom",
+          "NOM",
+          "SEXE",
+          "DTNAIS" ],
         "components" : 
         [ 
           { "id" : "kejydb2m",
             "componentType" : "Sequence",
-            "page" : "8.1",
-            "label" : "\"III - État de santé de \" || cast(cast(THL1,string),string) || \" \"",
+            "page" : "15.1",
+            "label" : "\"III - État de santé de \" || cast(cast(prenom,string),string) || \" \"",
             "declarations" : 
             [ 
               { "id" : "kejydb2m-kejy4wmu",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
-                "label" : "\"Nous allons maintenant parler de l’état de santé de chacune de ces personnes.\"" } ],
-            "conditionFilter" : "\"normal\"",
+                "label" : "\"Nous allons maintenant évoquer l’état de santé de chacune de ces personnes.\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejydb2m",
-                "page" : "8.1",
-                "label" : "\"III - État de santé de \" || cast(cast(THL1,string),string) || \" \"" } },
+                "page" : "15.1",
+                "label" : "\"III - État de santé de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1" ] },
+            [ "prenom",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ] },
           
           { "id" : "kejyrpog",
             "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.2",
-            "label" : "\"➡ 9. Comment est l’état de santé général de \" || cast(cast(THL1,string),string) || \" ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.2",
+            "label" : "\"➡ Comment est l’état de santé général de \" || cast(cast(prenom,string),string) || \" ? \"",
+            "declarations" : 
+            [ 
+              { "id" : "kejyrpog-kh99nrbd",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"Ne tenez pas compte des problèmes de santé passagers ou temporaires (comme la grippe par exemple).\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejydb2m",
-                "page" : "8.1",
-                "label" : "\"III - État de santé de \" || cast(cast(THL1,string),string) || \" \"" } },
+                "page" : "15.1",
+                "label" : "\"III - État de santé de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "ETAT_SANT" ],
+            [ "prenom",
+              "ETAT_SANT",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -478,25 +687,32 @@
             { "name" : "ETAT_SANT" } },
           
           { "id" : "kerafhb6",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.3",
-            "label" : "\"➡ 10. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle une maladie ou un problème de santé qui soit chronique ou de caractère durable ? \"",
+            "page" : "15.3",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle une maladie ou un problème de santé qui soit chronique ou de caractère durable ? \"",
             "declarations" : 
             [ 
               { "id" : "kerafhb6-kerajrim",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
-                "label" : "\"Une maladie chronique dure pendant au moins 6 mois. Ne pas tenir compte des problèmes de santé passagers ou temporaires (comme la grippe par exemple). \"" } ],
-            "conditionFilter" : "\"normal\"",
+                "label" : "\"Une maladie chronique dure pendant au moins 6 mois. Ne tenez pas compte des problèmes de santé passagers ou temporaires (comme la grippe par exemple).\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejydb2m",
-                "page" : "8.1",
-                "label" : "\"III - État de santé de \" || cast(cast(THL1,string),string) || \" \"" } },
+                "page" : "15.1",
+                "label" : "\"III - État de santé de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "MAL_CHRO" ],
+            [ "prenom",
+              "MAL_CHRO",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -508,68 +724,86 @@
             { "name" : "MAL_CHRO" } },
           
           { "id" : "kerai3vx",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.4",
-            "label" : "\"➡ 11. \" || cast(cast(THL1,string),string) || \" est-il\/elle limité(e), depuis au moins six mois, à cause d’un problème de santé, dans les activités que les gens font habituellement ? \"",
+            "page" : "15.4",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" est-il\/elle limité(e), depuis au moins six mois, à cause d’un problème de santé, dans les activités que les gens font habituellement ? \"",
             "declarations" : 
             [ 
               { "id" : "kerai3vx-keramper",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
-                "label" : "\"Ne pas tenir compte des problèmes de santé passagers ou temporaires (comme la grippe par exemple). \"" } ],
-            "conditionFilter" : "\"normal\"",
+                "label" : "\"Ne tenez pas compte des problèmes de santé passagers ou temporaires (comme la grippe par exemple).\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejydb2m",
-                "page" : "8.1",
-                "label" : "\"III - État de santé de \" || cast(cast(THL1,string),string) || \" \"" } },
+                "page" : "15.1",
+                "label" : "\"III - État de santé de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "LIMITAT" ],
+            [ "prenom",
+              "LIMITAT",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
-                "label" : "\"Oui\"" },
+                "label" : "\"Oui, fortement limité(e)\"" },
               
               { "value" : "2",
-                "label" : "\"Non\"" } ],
+                "label" : "\"Oui, limité(e) mais pas fortement\"" },
+              
+              { "value" : "3",
+                "label" : "\"Non, pas limité(e) du tout\"" } ],
             "response" : 
             { "name" : "LIMITAT" } },
           
           { "id" : "kejy3aq4",
             "componentType" : "Sequence",
-            "page" : "8.5",
-            "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"",
-            "declarations" : 
-            [ 
-              { "id" : "kejy3aq4-kejy55wk",
-                "declarationType" : "INSTRUCTION",
-                "position" : "AFTER_QUESTION_TEXT",
-                "label" : "\"​​\"" } ],
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.5",
+            "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1" ] },
+            [ "prenom",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ] },
           
           { "id" : "kejyo1dk",
             "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.6",
-            "label" : "\"➡ 12. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour voir, même avec des lunettes ou des lentilles de contact s’il\/elle en porte ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.6",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour voir, même avec des lunettes ou des lentilles de contact s’il\/elle en porte ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "VUE" ],
+            [ "prenom",
+              "VUE",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -587,25 +821,26 @@
             { "name" : "VUE" } },
           
           { "id" : "kerbdhdo",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.7",
-            "label" : "\"➡ 13. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour entendre, même avec un implant ou un appareil auditif s’il\/si elle en porte ? \"",
-            "declarations" : 
-            [ 
-              { "id" : "kerbdhdo-kerbk6nu",
-                "declarationType" : "INSTRUCTION",
-                "position" : "AFTER_QUESTION_TEXT",
-                "label" : "\"Renseignez la difficulté la plus importante. Par exemple, si la personne n’a pas de difficulté à marcher 500 mètres, mais ne peut pas du tout monter un escalier, cochez ’’ne peut pas du tout’’. Pour un enfant, indiquez par rapport aux autres enfants du même âge.\"" } ],
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.7",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour entendre, même avec un implant ou un appareil auditif s’il\/si elle en porte ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "AUDITIF" ],
+            [ "prenom",
+              "AUDITIF",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -618,24 +853,37 @@
                 "label" : "\"Oui, beaucoup\"" },
               
               { "value" : "4",
-                "label" : "\"Ne peut pas du tout\"" } ],
+                "label" : "\"N’entend pas du tout\"" } ],
             "response" : 
             { "name" : "AUDITIF" } },
           
           { "id" : "keratll0",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.8",
-            "label" : "\"➡ 14. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour monter un étage d’escalier ou marcher sur 500 mètres ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.8",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour monter un étage d’escalier ou marcher sur 500 mètres ? \"",
+            "declarations" : 
+            [ 
+              { "id" : "keratll0-kh3vbt7m",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"Renseignez la difficulté la plus importante. Par exemple, si la personne peut marcher 500 mètres, mais ne peut pas du tout monter un escalier, cochez \"ne peut pas du tout\".Pour un enfant, indiquez par rapport aux autres enfants du même âge.\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "MARCHE" ],
+            [ "prenom",
+              "MARCHE",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -653,19 +901,26 @@
             { "name" : "MARCHE" } },
           
           { "id" : "kerbmp96",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.9",
-            "label" : "\"➡ 15. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour lever un bras au-dessus de la tête ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.9",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour lever un bras au-dessus de la tête ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "BRAS" ],
+            [ "prenom",
+              "BRAS",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -683,25 +938,32 @@
             { "name" : "BRAS" } },
           
           { "id" : "kerbgriu",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.10",
-            "label" : "\"➡ 16. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour se servir de ses mains ou de ses doigts (par exemple pour saisir un crayon ou utiliser des ciseaux) ? \"",
+            "page" : "15.10",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour se servir de ses mains ou de ses doigts (par exemple pour saisir un crayon ou utiliser des ciseaux) ? \"",
             "declarations" : 
             [ 
               { "id" : "kerbgriu-kerbebji",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
                 "label" : "\"Renseignez la difficulté la plus importante. Pour un enfant, indiquez par rapport aux autres enfants du même âge.\"" } ],
-            "conditionFilter" : "\"normal\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "MAIN" ],
+            [ "prenom",
+              "MAIN",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -719,25 +981,32 @@
             { "name" : "MAIN" } },
           
           { "id" : "kerbvsyb",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.11",
-            "label" : "\"➡ 17. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour se concentrer plus de 10 minutes ? \"",
+            "page" : "15.11",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour se concentrer plus de 10 minutes ? \"",
             "declarations" : 
             [ 
               { "id" : "kerbvsyb-kerbnmj3",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
                 "label" : "\"Pour un enfant, indiquez par rapport aux autres enfants du même âge.\"" } ],
-            "conditionFilter" : "\"normal\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "CONCENTRA" ],
+            [ "prenom",
+              "CONCENTRA",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -755,25 +1024,32 @@
             { "name" : "CONCENTRA" } },
           
           { "id" : "kerc3cf4",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.12",
-            "label" : "\"➡ 18. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour prendre des décisions adaptées dans la vie de tous les jours ? \"",
+            "page" : "15.12",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour prendre des décisions adaptées dans la vie de tous les jours ? \"",
             "declarations" : 
             [ 
               { "id" : "kerc3cf4-kerc3flo",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
                 "label" : "\"Pour un enfant, indiquez par rapport aux autres enfants du même âge.\"" } ],
-            "conditionFilter" : "\"normal\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "DECISION" ],
+            [ "prenom",
+              "DECISION",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -791,25 +1067,32 @@
             { "name" : "DECISION" } },
           
           { "id" : "kerbtdqa",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.13",
-            "label" : "\"➡ 19. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour sortir de son logement ? \"",
+            "page" : "15.13",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour sortir de son logement ? \"",
             "declarations" : 
             [ 
               { "id" : "kerbtdqa-kerbxwk2",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
                 "label" : "\"Pour un enfant, indiquez par rapport aux autres enfants du même âge.\"" } ],
-            "conditionFilter" : "\"normal\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "SORTIES" ],
+            [ "prenom",
+              "SORTIES",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -827,19 +1110,32 @@
             { "name" : "SORTIES" } },
           
           { "id" : "kerbtgyo",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.14",
-            "label" : "\"➡ 20. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés pour comprendre les autres ou se faire comprendre des autres ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.14",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés pour comprendre les autres ou se faire comprendre des autres ? \"",
+            "declarations" : 
+            [ 
+              { "id" : "kerbtgyo-kh4mvpj3",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"Ne tenez pas compte des différences de langue.\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "COMPRENDRE" ],
+            [ "prenom",
+              "COMPRENDRE",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -857,19 +1153,26 @@
             { "name" : "COMPRENDRE" } },
           
           { "id" : "kercar5k",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.15",
-            "label" : "\"➡ 21. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés psychiques ou psychologiques qui perturbent sa vie quotidienne ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.15",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés psychiques ou psychologiques qui perturbent sa vie quotidienne ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "PRNOMATILE" ],
+            [ "prenom",
+              "PSY",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -881,22 +1184,29 @@
               { "value" : "3",
                 "label" : "\"Oui, beaucoup\"" } ],
             "response" : 
-            { "name" : "PRNOMATILE" } },
+            { "name" : "PSY" } },
           
           { "id" : "kerc3trw",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.16",
-            "label" : "\"➡ 22. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle déjà été hospitalisé(e) dans un service de psychiatrie (ou de pédopsychiatrie) depuis moins de 10 ans ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.16",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle déjà été hospitalisé(e) dans un service de psychiatrie (ou de pédopsychiatrie) au cours des 10 dernières années ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
               { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+                "page" : "15.5",
+                "label" : "\"IV - Difficultés dans les activités de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "HPSY" ],
+            [ "prenom",
+              "HPSY",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -907,20 +1217,53 @@
             "response" : 
             { "name" : "HPSY" } },
           
+          { "id" : "kejy62it",
+            "componentType" : "Sequence",
+            "page" : "15.17",
+            "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"",
+            "declarations" : 
+            [ 
+              { "id" : "kejy62it-kejy4b99",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"​​\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
+            "hierarchy" : 
+            { "sequence" : 
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
+            "bindingDependencies" : 
+            [ "prenom",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ] },
+          
           { "id" : "kejyhnd2",
             "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.17",
-            "label" : "\"➡ 23. En raison d’un problème de santé, d’un handicap ou d’une perte d’autonomie, \" || cast(cast(THL1,string),string) || \" reçoit-il\/elle l’aide de professionnels dans la vie quotidienne ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.18",
+            "label" : "\"➡ En raison d’un problème de santé, d’un handicap ou d’une perte d’autonomie, \" || cast(cast(prenom,string),string) || \" reçoit-il\/elle l’aide de professionnels (infirmier, aide-ménagère, etc.) dans la vie quotidienne ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "AIDPRO" ],
+            [ "prenom",
+              "AIDPRO",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -932,25 +1275,32 @@
             { "name" : "AIDPRO" } },
           
           { "id" : "kercbo8b",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.18",
-            "label" : "\"➡ 24. En raison d’un problème de santé, d’un handicap ou d’une perte d’autonomie, \" || cast(cast(THL1,string),string) || \" reçoit-t-il\/elle l’aide de proches (conjoint, parent, enfant, ami, etc.) dans la vie quotidienne ? \"",
+            "page" : "15.19",
+            "label" : "\"➡ En raison d’un problème de santé, d’un handicap ou d’une perte d’autonomie, \" || cast(cast(prenom,string),string) || \" reçoit-t-il\/elle l’aide de proches (conjoint, parent, enfant, ami, etc.) dans la vie quotidienne ? \"",
             "declarations" : 
             [ 
               { "id" : "kercbo8b-kerc32v8",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
                 "label" : "\"Ces proches peuvent être payés pour cette aide.\"" } ],
-            "conditionFilter" : "\"normal\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "AIDENT" ],
+            [ "prenom",
+              "AIDENT",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -962,25 +1312,32 @@
             { "name" : "AIDENT" } },
           
           { "id" : "kerirz24",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.19",
-            "label" : "\"➡ 25. En raison d’un problème de santé, d’un handicap ou d’une perte d’autonomie, \" || cast(cast(THL1,string),string) || \" utilise-t-il\/elle des équipements ou aménagements de son logement (douche adaptée, élargissement des portes...) ? \"",
+            "page" : "15.20",
+            "label" : "\"➡ En raison d’un problème de santé, d’un handicap ou d’une perte d’autonomie, \" || cast(cast(prenom,string),string) || \" utilise-t-il\/elle des équipements ou aménagements de son logement (douche adaptée, élargissement des portes, etc.) ? \"",
             "declarations" : 
             [ 
               { "id" : "kerirz24-kerimwmw",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
-                "label" : "\"Les aménagements du logement sont des transformations ou adaptations du logement qui ne sont pas déplaçables. \"" } ],
-            "conditionFilter" : "\"normal\"",
+                "label" : "\"Ce sont des transformations ou adaptations du logement qui ne sont pas déplaçables.\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "AMENALOG" ],
+            [ "prenom",
+              "AMENALOG",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -992,25 +1349,32 @@
             { "name" : "AMENALOG" } },
           
           { "id" : "kerimtev",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.20",
-            "label" : "\"➡ 26. En raison d’un problème de santé, d’un handicap, ou de son âge, \" || cast(cast(THL1,string),string) || \" utilise-t-il\/elle régulièrement un appareillage, une prothèse ou une aide technique ? \"",
+            "page" : "15.21",
+            "label" : "\"➡ En raison d’un problème de santé, d’un handicap ou d’une perte d’autonomie, \" || cast(cast(prenom,string),string) || \" utilise-t-il\/elle régulièrement une aide technique (canne, loupe électronique, etc.), un appareillage ou une prothèse ? \"",
             "declarations" : 
             [ 
               { "id" : "kerimtev-kerizys4",
                 "declarationType" : "INSTRUCTION",
                 "position" : "AFTER_QUESTION_TEXT",
                 "label" : "\"Ne tenez pas compte des lunettes, lentilles, dentiers ou prothèses dentaires.\"" } ],
-            "conditionFilter" : "\"normal\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "AIDTECH" ],
+            [ "prenom",
+              "AIDTECH",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -1022,19 +1386,26 @@
             { "name" : "AIDTECH" } },
           
           { "id" : "keriy3hi",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.21",
-            "label" : "\"➡ 27. \" || cast(cast(THL1,string),string) || \" considère-t-il\/elle avoir un handicap ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.22",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" considère-t-il\/elle avoir un handicap ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "HANDICAP" ],
+            [ "prenom",
+              "HANDICAP",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -1046,19 +1417,26 @@
             { "name" : "HANDICAP" } },
           
           { "id" : "keriygan",
-            "componentType" : "CheckboxOne",
+            "componentType" : "Radio",
             "mandatory" : false,
-            "page" : "8.22",
-            "label" : "\"➡ 28. \" || cast(cast(THL1,string),string) || \" a-t-il\/elle une reconnaissance administrative d’un handicap ou d’une perte d’autonomie ? (pension d’invalidité, carte mobilité inclusion, accord MDPH, allocations : APA, AAH, AEEH, PCH, etc., orientation vers un établissement spécialisé, etc.) \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.23",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" a-t-il\/elle une reconnaissance administrative d’un handicap ou d’une perte d’autonomie (pension d’invalidité, carte mobilité inclusion, accord MDPH, allocations - APA, AAH, AEEH, PCH, etc. -, orientation vers un établissement spécialisé, etc.) ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "RECONNAI" ],
+            [ "prenom",
+              "RECONNAI",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -1069,20 +1447,49 @@
             "response" : 
             { "name" : "RECONNAI" } },
           
-          { "id" : "kerj7jca",
-            "componentType" : "CheckboxOne",
-            "mandatory" : false,
-            "page" : "8.23",
-            "label" : "\"➡ 29. En raison d’un handicap ou d’un problème de santé, \" || cast(cast(THL1,string),string) || \" a-t-il\/elle des difficultés d’apprentissage et\/ou des difficultés à accomplir des activités quotidiennes que font habituellement les enfants de son âge ? \"",
-            "conditionFilter" : "\"normal\"",
+          { "id" : "kh4kgl60",
+            "componentType" : "FilterDescription",
+            "page" : "15.23",
+            "filterDescription" : false,
+            "label" : "\"Si vous êtes né(e) avant le 01\/01\/2003, allez à la question AIDREG.\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "APPRENT" ],
+            [ "prenom",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ] },
+          
+          { "id" : "kerj7jca",
+            "componentType" : "Radio",
+            "mandatory" : false,
+            "page" : "15.24",
+            "label" : "\"➡ En raison d’un problème de santé ou d’un handicap, \" || cast(cast(prenom,string),string) || \" a-t-il\/elle des difficultés d’apprentissage et\/ou des difficultés à accomplir des activités quotidiennes que font habituellement les enfants de son âge ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\")))) and (not(string()  <> \"\" and  <= xs:date(\"2002-12-31\") ))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS",
+                "DTNAIS" ] },
+            "hierarchy" : 
+            { "sequence" : 
+              { "id" : "kejy62it",
+                "page" : "15.17",
+                "label" : "\"V - Les aides dans la vie de tous les jours de \" || cast(cast(prenom,string),string) || \" \"" } },
+            "bindingDependencies" : 
+            [ "prenom",
+              "APPRENT",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -1096,96 +1503,206 @@
             "response" : 
             { "name" : "APPRENT" } },
           
-          { "id" : "kejysu8y",
-            "componentType" : "CheckboxGroup",
-            "page" : "8.24",
-            "label" : "\"➡ 30. \" || cast(cast(THL1,string),string) || \" apporte-t-il\/elle une aide régulière à un proche en situation de handicap ou de perte d’autonomie vivant dans ce logement ou ailleurs ? \"",
-            "conditionFilter" : "\"normal\"",
+          { "id" : "kejygq2j",
+            "componentType" : "Sequence",
+            "page" : "15.25",
+            "label" : "\"VI - Le contexte de vie de \" || cast(cast(prenom,string),string) || \" \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejygq2j",
+                "page" : "15.25",
+                "label" : "\"VI - Le contexte de vie de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "AIDEREG1",
-              "AIDEREG2",
-              "AIDEREG3",
-              "AIDEREG4" ],
+            [ "prenom",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ] },
+          
+          { "id" : "kejysu8y",
+            "componentType" : "CheckboxGroup",
+            "page" : "15.26",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" apporte-t-il\/elle une aide régulière à un proche en situation de handicap ou de perte d’autonomie vivant dans ce logement ou ailleurs ? \"",
+            "declarations" : 
+            [ 
+              { "id" : "kejysu8y-kh9c2bm3",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"Plusieurs réponses sont possibles.\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
+            "controls" : 
+            [ 
+              { "id" : "kejysu8y-CI-0",
+                "criticality" : "WARN",
+                "control" : "not(cast(AIDREG_D,integer) ='1' and (cast(AIDREG_A,integer)='1' or cast(AIDREG_B,integer)='1' or cast(AIDREG_C,integer)='1'))",
+                "errorMessage" : "\"Attention, vous avez coché \"non\" et une autre modalité :  pouvez-vous vérifier votre réponse ? \"",
+                "bindingDependencies" : 
+                [ "AIDREG_D",
+                  "AIDREG_A",
+                  "AIDREG_B",
+                  "AIDREG_C" ] } ],
+            "hierarchy" : 
+            { "sequence" : 
+              { "id" : "kejygq2j",
+                "page" : "15.25",
+                "label" : "\"VI - Le contexte de vie de \" || cast(cast(prenom,string),string) || \" \"" } },
+            "bindingDependencies" : 
+            [ "prenom",
+              "AIDREG_A",
+              "AIDREG_B",
+              "AIDREG_C",
+              "AIDREG_D",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "responses" : 
             [ 
-              { "id" : "kejysu8y-QOP-kgs0t5ak",
+              { "id" : "kejysu8y-QOP-khqdthu1",
                 "label" : "\"Oui, une aide aux activités de la vie quotidienne\"",
                 "response" : 
-                { "name" : "AIDEREG1" } },
+                { "name" : "AIDREG_A" } },
               
-              { "id" : "kejysu8y-QOP-kgs0wayb",
+              { "id" : "kejysu8y-QOP-khqdqlwm",
                 "label" : "\"Oui, un soutien moral\"",
                 "response" : 
-                { "name" : "AIDEREG2" } },
+                { "name" : "AIDREG_B" } },
               
-              { "id" : "kejysu8y-QOP-kgs0k28v",
+              { "id" : "kejysu8y-QOP-khqde040",
                 "label" : "\"Oui, une aide financière\"",
                 "response" : 
-                { "name" : "AIDEREG3" } },
+                { "name" : "AIDREG_C" } },
               
-              { "id" : "kejysu8y-QOP-kgs0xqrf",
+              { "id" : "kejysu8y-QOP-khqdicld",
                 "label" : "\"Non\"",
                 "response" : 
-                { "name" : "AIDEREG4" } } ] },
+                { "name" : "AIDREG_D" } } ] },
+          
+          { "id" : "khaqq94x",
+            "componentType" : "FilterDescription",
+            "page" : "15.26",
+            "filterDescription" : false,
+            "label" : "\"Si NHAB=1, alors aller à RESIDANCIEN\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS" ] },
+            "hierarchy" : 
+            { "sequence" : 
+              { "id" : "kejygq2j",
+                "page" : "15.25",
+                "label" : "\"VI - Le contexte de vie de \" || cast(cast(prenom,string),string) || \" \"" } },
+            "bindingDependencies" : 
+            [ "prenom",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ] },
           
           { "id" : "kerjiih4",
             "componentType" : "CheckboxGroup",
-            "page" : "8.25",
-            "label" : "\"➡ 31. Avec qui \" || cast(cast(THL1,string),string) || \" habite-t-il\/elle ? \"",
-            "conditionFilter" : "\"normal\"",
+            "page" : "15.27",
+            "label" : "\"➡ Avec qui \" || cast(cast(prenom,string),string) || \" habite-t-il\/elle ? \"",
+            "declarations" : 
+            [ 
+              { "id" : "kerjiih4-kh9c0l5n",
+                "declarationType" : "INSTRUCTION",
+                "position" : "AFTER_QUESTION_TEXT",
+                "label" : "\"Plusieurs réponses sont possibles\"" } ],
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\")))) and (not(cast(NHAB,integer) = 1))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS",
+                "NHAB" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejygq2j",
+                "page" : "15.25",
+                "label" : "\"VI - Le contexte de vie de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "PRENOMHABI1",
-              "PRENOMHABI2",
-              "PRENOMHABI3",
-              "PRENOMHABI4" ],
+            [ "prenom",
+              "RELATION1",
+              "RELATION2",
+              "RELATION3",
+              "RELATION4",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "responses" : 
             [ 
-              { "id" : "kerjiih4-QOP-kgs0mb84",
+              { "id" : "kerjiih4-QOP-khqdhet9",
                 "label" : "\"Son\/sa conjoint(e)\"",
                 "response" : 
-                { "name" : "PRENOMHABI1" } },
+                { "name" : "RELATION1" } },
               
-              { "id" : "kerjiih4-QOP-kgs101dd",
+              { "id" : "kerjiih4-QOP-khqdtepj",
                 "label" : "\"Un enfant ou bel-enfant\"",
                 "response" : 
-                { "name" : "PRENOMHABI2" } },
+                { "name" : "RELATION2" } },
               
-              { "id" : "kerjiih4-QOP-kgs0wn4o",
+              { "id" : "kerjiih4-QOP-khqdoo9y",
                 "label" : "\"Un parent ou un beau-parent\"",
                 "response" : 
-                { "name" : "PRENOMHABI3" } },
+                { "name" : "RELATION3" } },
               
-              { "id" : "kerjiih4-QOP-kgs0n8ie",
-                "label" : "\"D’autres personnes ou seul(e)\"",
+              { "id" : "kerjiih4-QOP-khqdkdhc",
+                "label" : "\"D’autres personnes\"",
                 "response" : 
-                { "name" : "PRENOMHABI4" } } ] },
+                { "name" : "RELATION4" } } ] },
           
-          { "id" : "kerj5ll8",
-            "componentType" : "CheckboxOne",
-            "mandatory" : false,
-            "page" : "8.26",
-            "label" : "\"➡ 32. Au 1er janvier 2020, \" || cast(cast(THL1,string),string) || \" habitait-il\/elle en France ? \"",
-            "conditionFilter" : "\"normal\"",
+          { "id" : "khnaq1ub",
+            "componentType" : "FilterDescription",
+            "page" : "15.27",
+            "filterDescription" : false,
+            "label" : "\"Si la personne est né(e) après le 01\/01\/2019, allez à la fin\"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\")))) and (not(cast(NHAB,integer) = 1))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS",
+                "NHAB" ] },
             "hierarchy" : 
             { "sequence" : 
-              { "id" : "kejy3aq4",
-                "page" : "8.5",
-                "label" : "\"IV - Difficultés de \" || cast(cast(THL1,string),string) || \" dans les activités de tous les jours \"" } },
+              { "id" : "kejygq2j",
+                "page" : "15.25",
+                "label" : "\"VI - Le contexte de vie de \" || cast(cast(prenom,string),string) || \" \"" } },
             "bindingDependencies" : 
-            [ "THL1",
-              "AU1ERJANVI" ],
+            [ "prenom",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ] },
+          
+          { "id" : "kerj5ll8",
+            "componentType" : "Radio",
+            "mandatory" : false,
+            "page" : "15.28",
+            "label" : "\"➡ \" || cast(cast(prenom,string),string) || \" habitait-il\/elle en France au 1er janvier 2019 ? \"",
+            "conditionFilter" : 
+            { "value" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\")))) and (not((string()  <> \"\" and  >= xs:date(\"2019-01-01\") ) and not ((cast(NHAB,integer) = 1))))",
+              "bindingDependencies" : 
+              [ "RESIDM",
+                "OKADRESS",
+                "DTNAIS",
+                "NHAB" ] },
+            "hierarchy" : 
+            { "sequence" : 
+              { "id" : "kejygq2j",
+                "page" : "15.25",
+                "label" : "\"VI - Le contexte de vie de \" || cast(cast(prenom,string),string) || \" \"" } },
+            "bindingDependencies" : 
+            [ "prenom",
+              "RESIDANCIEN",
+              "NOM",
+              "SEXE",
+              "DTNAIS" ],
             "options" : 
             [ 
               { "value" : "1",
@@ -1194,29 +1711,42 @@
               { "value" : "2",
                 "label" : "\"Non\"" } ],
             "response" : 
-            { "name" : "AU1ERJANVI" } } ] },
-      
-      { "id" : "kfmqhl12",
-        "componentType" : "Sequence",
-        "page" : "9",
-        "label" : "\"V - Fin\"",
-        "declarations" : 
-        [ 
-          { "id" : "kfmqhl12-kfmqi33j",
-            "declarationType" : "INSTRUCTION",
-            "position" : "AFTER_QUESTION_TEXT",
-            "label" : "\"Merci d’avoir accepté de répondre\"" } ],
-        "conditionFilter" : "\"normal\"",
-        "hierarchy" : 
-        { "sequence" : 
-          { "id" : "kfmqhl12",
-            "page" : "9",
-            "label" : "\"V - Fin\"" } } } ],
+            { "name" : "RESIDANCIEN" } },
+          
+          { "id" : "COMMENT-SEQ",
+            "componentType" : "Sequence",
+            "page" : "15.29",
+            "label" : "\"Commentaire\"",
+            "conditionFilter" : 
+            { "value" : "true" },
+            "hierarchy" : 
+            { "sequence" : 
+              { "id" : "COMMENT-SEQ",
+                "page" : "15.29",
+                "label" : "\"Commentaire\"" } } },
+          
+          { "id" : "COMMENT-QUESTION",
+            "componentType" : "Textarea",
+            "mandatory" : false,
+            "page" : "15.30",
+            "maxLength" : 2000,
+            "label" : "\"Avez-vous des remarques concernant l'enquête ou des commentaires ?\"",
+            "conditionFilter" : 
+            { "value" : "true" },
+            "hierarchy" : 
+            { "sequence" : 
+              { "id" : "COMMENT-SEQ",
+                "page" : "15.29",
+                "label" : "\"Commentaire\"" } },
+            "bindingDependencies" : 
+            [ "COMMENT_QE" ],
+            "response" : 
+            { "name" : "COMMENT_QE" } } ] } ],
     "variables" : 
     [ 
       { "variableType" : "COLLECTED",
-        "name" : "NVOI_1_1",
-        "componentRef" : "kfpub47i",
+        "name" : "COMMENT_QE",
+        "componentRef" : "COMMENT-QUESTION",
         "values" : 
         { "PREVIOUS" : null,
           "COLLECTED" : null,
@@ -1225,48 +1755,8 @@
           "INPUTED" : null } },
       
       { "variableType" : "COLLECTED",
-        "name" : "NTYPC_1_2",
-        "componentRef" : "kfpub47i",
-        "values" : 
-        { "PREVIOUS" : null,
-          "COLLECTED" : null,
-          "FORCED" : null,
-          "EDITED" : null,
-          "INPUTED" : null } },
-      
-      { "variableType" : "COLLECTED",
-        "name" : "NLIB_1_3",
-        "componentRef" : "kfpub47i",
-        "values" : 
-        { "PREVIOUS" : null,
-          "COLLECTED" : null,
-          "FORCED" : null,
-          "EDITED" : null,
-          "INPUTED" : null } },
-      
-      { "variableType" : "COLLECTED",
-        "name" : "NCOMP_1_4",
-        "componentRef" : "kfpub47i",
-        "values" : 
-        { "PREVIOUS" : null,
-          "COLLECTED" : null,
-          "FORCED" : null,
-          "EDITED" : null,
-          "INPUTED" : null } },
-      
-      { "variableType" : "COLLECTED",
-        "name" : "NCODPOS_1_5",
-        "componentRef" : "kfpub47i",
-        "values" : 
-        { "PREVIOUS" : null,
-          "COLLECTED" : null,
-          "FORCED" : null,
-          "EDITED" : null,
-          "INPUTED" : null } },
-      
-      { "variableType" : "COLLECTED",
-        "name" : "NCOMMU_1_6",
-        "componentRef" : "kfpub47i",
+        "name" : "COMMENT_QE",
+        "componentRef" : "COMMENT-QUESTION",
         "values" : 
         { "PREVIOUS" : null,
           "COLLECTED" : null,
@@ -1279,7 +1769,7 @@
         "value" : null },
       
       { "variableType" : "EXTERNAL",
-        "name" : "NOMCONTACT",
+        "name" : "LIBCONTACT",
         "value" : null },
       
       { "variableType" : "COLLECTED",
@@ -1313,8 +1803,8 @@
           "INPUTED" : null } },
       
       { "variableType" : "COLLECTED",
-        "name" : "NTYPC",
-        "componentRef" : "kfpub47i",
+        "name" : "NVOIC",
+        "componentRef" : "kgw2gyze",
         "values" : 
         { "PREVIOUS" : null,
           "COLLECTED" : null,
@@ -1324,7 +1814,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "NLIB",
-        "componentRef" : "kfpub47i",
+        "componentRef" : "kgw1qalj",
         "values" : 
         { "PREVIOUS" : null,
           "COLLECTED" : null,
@@ -1334,7 +1824,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "NCOMP",
-        "componentRef" : "kfpub47i",
+        "componentRef" : "kgw22pxh",
         "values" : 
         { "PREVIOUS" : null,
           "COLLECTED" : null,
@@ -1344,7 +1834,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "NCODPOS",
-        "componentRef" : "kfpub47i",
+        "componentRef" : "kgw2dgqu",
         "values" : 
         { "PREVIOUS" : null,
           "COLLECTED" : null,
@@ -1354,7 +1844,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "NCOMMU",
-        "componentRef" : "kfpub47i",
+        "componentRef" : "kgam8uff",
         "values" : 
         { "PREVIOUS" : null,
           "COLLECTED" : null,
@@ -1373,8 +1863,8 @@
           "INPUTED" : null } },
       
       { "variableType" : "COLLECTED",
-        "name" : "THL1",
-        "componentRef" : "kgs0f5oz",
+        "name" : "prenom",
+        "componentRef" : "kjsq3mmk",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1388,8 +1878,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "THL2",
-        "componentRef" : "kgs0f5oz",
+        "name" : "NOM",
+        "componentRef" : "kjsq3mmk",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1403,8 +1893,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "THL3",
-        "componentRef" : "kgs0f5oz",
+        "name" : "SEXE",
+        "componentRef" : "kjsq3mmk",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1418,8 +1908,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "THL4",
-        "componentRef" : "kgs0f5oz",
+        "name" : "DTNAIS",
+        "componentRef" : "kjsq3mmk",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1434,7 +1924,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "ETAT_SANT",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1449,7 +1939,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "MAL_CHRO",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1464,7 +1954,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "LIMITAT",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1479,7 +1969,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "VUE",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1494,7 +1984,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "AUDITIF",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1509,7 +1999,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "MARCHE",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1524,7 +2014,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "BRAS",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1539,7 +2029,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "MAIN",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1554,7 +2044,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "CONCENTRA",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1569,7 +2059,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "DECISION",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1584,7 +2074,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "SORTIES",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1599,7 +2089,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "COMPRENDRE",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1613,8 +2103,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "PRNOMATILE",
-        "componentRef" : "kgs00j0o",
+        "name" : "PSY",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1629,7 +2119,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "HPSY",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1644,7 +2134,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "AIDPRO",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1659,7 +2149,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "AIDENT",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1674,7 +2164,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "AMENALOG",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1689,7 +2179,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "AIDTECH",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1704,7 +2194,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "HANDICAP",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1719,7 +2209,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "RECONNAI",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1734,7 +2224,7 @@
       
       { "variableType" : "COLLECTED",
         "name" : "APPRENT",
-        "componentRef" : "kgs00j0o",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1748,8 +2238,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "AIDEREG1",
-        "componentRef" : "kgs00j0o",
+        "name" : "AIDREG_A",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1763,8 +2253,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "AIDEREG2",
-        "componentRef" : "kgs00j0o",
+        "name" : "AIDREG_B",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1778,8 +2268,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "AIDEREG3",
-        "componentRef" : "kgs00j0o",
+        "name" : "AIDREG_C",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1793,8 +2283,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "AIDEREG4",
-        "componentRef" : "kgs00j0o",
+        "name" : "AIDREG_D",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1808,8 +2298,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "PRENOMHABI1",
-        "componentRef" : "kgs00j0o",
+        "name" : "RELATION1",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1823,8 +2313,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "PRENOMHABI2",
-        "componentRef" : "kgs00j0o",
+        "name" : "RELATION2",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1838,8 +2328,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "PRENOMHABI3",
-        "componentRef" : "kgs00j0o",
+        "name" : "RELATION3",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1853,8 +2343,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "PRENOMHABI4",
-        "componentRef" : "kgs00j0o",
+        "name" : "RELATION4",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1868,8 +2358,8 @@
           [ null ] } },
       
       { "variableType" : "COLLECTED",
-        "name" : "AU1ERJANVI",
-        "componentRef" : "kgs00j0o",
+        "name" : "RESIDANCIEN",
+        "componentRef" : "kjsqnqh0",
         "values" : 
         { "PREVIOUS" : 
           [ null ],
@@ -1880,4 +2370,311 @@
           "EDITED" : 
           [ null ],
           "INPUTED" : 
-          [ null ] } } ] }
+          [ null ] } },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_OKADRESS",
+        "expression" : "true" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_RESIDM",
+        "expression" : "(not(cast(OKADRESS,string)  <> \"2\"))",
+        "bindingDependencies" : 
+        [ "OKADRESS" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_NVOI",
+        "expression" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+        "bindingDependencies" : 
+        [ "OKADRESS",
+          "RESIDM" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_NVOIC",
+        "expression" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+        "bindingDependencies" : 
+        [ "OKADRESS",
+          "RESIDM" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_NLIB",
+        "expression" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+        "bindingDependencies" : 
+        [ "OKADRESS",
+          "RESIDM" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_NCOMP",
+        "expression" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+        "bindingDependencies" : 
+        [ "OKADRESS",
+          "RESIDM" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_NCODPOS",
+        "expression" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+        "bindingDependencies" : 
+        [ "OKADRESS",
+          "RESIDM" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_NCOMMU",
+        "expression" : "(not(cast(OKADRESS,string)  <> \"2\")) and (not(cast(RESIDM,string)  <>  \"3\"))",
+        "bindingDependencies" : 
+        [ "OKADRESS",
+          "RESIDM" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_NHAB",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_prenom",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "prenom" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_NOM",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "prenom" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_SEXE",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "prenom" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_DTNAIS",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "prenom" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "prenomok",
+        "expression" : "if (cast(prenom,string) =\"\") then 0 else 1",
+        "bindingDependencies" : 
+        [ "prenom" ],
+        "shapeFrom" : "prenom" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_ETAT_SANT",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_MAL_CHRO",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_LIMITAT",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_VUE",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_AUDITIF",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_MARCHE",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_BRAS",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_MAIN",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_CONCENTRA",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_DECISION",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_SORTIES",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_COMPRENDRE",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_PSY",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_HPSY",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_AIDPRO",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_AIDENT",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_AMENALOG",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_AIDTECH",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_HANDICAP",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_RECONNAI",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_APPRENT",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\")))) and (not(string()  <> \"\" and  <= xs:date(\"2002-12-31\") ))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS",
+          "DTNAIS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_AIDREG",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\"))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_RELATION",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\")))) and (not(cast(NHAB,integer) = 1))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS",
+          "NHAB" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "FILTER_RESULT_RESIDANCIEN",
+        "expression" : "(not((cast(RESIDM,string)  <>  \"3\") and not ((cast(OKADRESS,string)  <> \"2\")))) and (not((string()  <> \"\" and  >= xs:date(\"2019-01-01\") ) and not ((cast(NHAB,integer) = 1))))",
+        "bindingDependencies" : 
+        [ "RESIDM",
+          "OKADRESS",
+          "DTNAIS",
+          "NHAB" ],
+        "shapeFrom" : "ETAT_SANT" },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "nbprenomok",
+        "expression" : "sum(cast(prenomok,integer) )",
+        "bindingDependencies" : 
+        [ "prenomok",
+          "prenom" ] },
+      
+      { "variableType" : "CALCULATED",
+        "name" : "LIBINSTRUCT",
+        "expression" : "if (cast(NHAB,integer) = \"\") then \"les habitants du logement\" else if (cast(NHAB,integer) = 1) then \"l\"\"habitant du logement\" else \"les \" || string(cast(NHAB,integer)) || \" habitants du logement\"",
+        "bindingDependencies" : 
+        [ "NHAB" ] } ] }
