@@ -5,7 +5,10 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.insee.queen.api.controller.QuestionnaireModelController;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -29,7 +32,9 @@ import liquibase.pro.packaged.T;
 
 @Service
 public class UtilsServiceImpl implements UtilsService{
-	
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(UtilsServiceImpl.class);
+
 	@Value("${fr.insee.queen.pilotage.service.url.scheme:#{null}}")
 	private String pilotageScheme;
 	
@@ -105,6 +110,9 @@ public class UtilsServiceImpl implements UtilsService{
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean checkHabilitation(HttpServletRequest request, String suId, String role){
+
+		LOGGER.info("Starting check habilitation of user {} with role {} to access survey-unit {} ",request.getRemoteUser(),role,suId);
+
 		if(integrationOverride != null && integrationOverride.equals("true")) {
 			return true;
 		}
