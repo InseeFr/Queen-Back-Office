@@ -37,21 +37,18 @@ public class ParadataEventController {
 	@Autowired
 	ParadataEventService paradataEventService;
 	/**
-	 * This method is using to update a specific survey unit
+	 * This method is used to save a pardata event
 	 * 
 	 * @param request
-	 * @param surveyUnitUpdated
-	 * @param id
+	 * @param paradataValue
 	 * @return {@link HttpStatus}
 	 */
-	@ApiOperation(value = "Add a ParadataEnvent")
+	@ApiOperation(value = "Add a ParadataEvent")
 	@PostMapping(path = "/paradata")
 	public ResponseEntity<Object> updateSurveyUnit(HttpServletRequest request,
 			@RequestBody JsonNode paradataValue) {
-		if(!utilsService.isDevProfile()) {
-			return ResponseEntity.notFound().build();
-		}
 		if (paradataValue == null) {
+			LOGGER.info("POST ParadataEvent resulting in {}, in request body is missing", HttpStatus.BAD_REQUEST);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
 			ParadataEvent paradataEvent = new ParadataEvent();
