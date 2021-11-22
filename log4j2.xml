@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="60">
+
+	<Properties>
+		<property name="logRepo">/var/log</property>
+		<property name="logFileName">queen-bo</property>
+	</Properties>
+
+	<Appenders>
+		<Console name="Console-Appender" target="SYSTEM_OUT">
+			<PatternLayout>
+				<pattern>
+					[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+				</pattern>
+			</PatternLayout>
+		</Console>
+		<RollingFile name="File-Appender">
+			<FileName>${sys:logRepo}/${sys:logFileName}.log</FileName>
+			<FilePattern>${sys:logRepo}/%d{yyyy-MM-dd}-${sys:logFileName}.log
+			</FilePattern>
+			<PatternLayout>
+				<Pattern>%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} -
+					%msg%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+			</Policies>
+			<DefaultRolloverStrategy max="90" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="fr.insee.queen.api" level="info"
+			additivity="false">
+			<AppenderRef ref="File-Appender" level="info" />
+			<AppenderRef ref="Console-Appender" level="info" />
+		</Logger>
+		<Root level="info" additivity="false">
+			<AppenderRef ref="Console-Appender" />
+		</Root>
+	</Loggers>
+</Configuration>
