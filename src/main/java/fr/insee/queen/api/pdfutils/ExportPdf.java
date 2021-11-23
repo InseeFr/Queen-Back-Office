@@ -51,12 +51,14 @@ public class ExportPdf extends HttpServlet {
             throws ServletException, IOException {
 
         String filename = String.format("%s_%s.pdf", campaignId, idec);
+        logger.info(filename);
         response.setContentType("application/pdf");
         response.setHeader("Content-disposition", "attachment; filename=\""+filename+"\"");
 
         try(OutputStream out = response.getOutputStream()){
             depositProofService = new PDFDepositProofService();
             File pdfFile = depositProofService.generatePdf(date,campaignLabel, idec);
+            logger.info(pdfFile.getAbsolutePath());
             out.write(Files.readAllBytes(pdfFile.toPath()));
             pdfFile.delete();
         } catch (Exception exception) {
