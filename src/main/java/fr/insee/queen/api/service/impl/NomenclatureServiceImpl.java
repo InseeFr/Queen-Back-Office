@@ -1,5 +1,6 @@
 package fr.insee.queen.api.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -87,9 +88,17 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 
 	@Override
 	public void createNomenclature(NomenclatureDto nomenclature) {
-		Nomenclature newNomenclature = new Nomenclature(nomenclature.getId(), nomenclature.getLabel(), nomenclature.getValue());
-		nomenclatureRepository.save(newNomenclature);
+    	if(nomenclatureRepository.findById(nomenclature.getId()).isPresent()){
+			Optional<Nomenclature> nomemclatureAlreadyOnDB = nomenclatureRepository.findById(nomenclature.getId());
+			nomenclatureRepository.save(nomemclatureAlreadyOnDB.get());
+		}
+    	else{
+			Nomenclature newNomenclature = new Nomenclature(nomenclature.getId(), nomenclature.getLabel(), nomenclature.getValue());
+			nomenclatureRepository.save(newNomenclature);
+		}
+
 	}
+
 
 	@Override
 	public void delete(Nomenclature nomenclature) {
