@@ -197,6 +197,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		}
 		ExportPdf exp = new ExportPdf();
 		try {
+			LOGGER.info("Get generateDepositProof");
 			exp.doExport(response, date, campaignId, campaignLabel, userId);
 		} catch (ServletException | IOException e) {
 			throw e;

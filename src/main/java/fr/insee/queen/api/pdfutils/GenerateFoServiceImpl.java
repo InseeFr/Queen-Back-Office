@@ -1,9 +1,14 @@
 package fr.insee.queen.api.pdfutils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 
 
 public class GenerateFoServiceImpl implements GenerateFoService {
+
+    static Logger logger = LoggerFactory.getLogger(GenerateFoServiceImpl.class);
 
     private XslTransformation transformationService = new XslTransformation();
 
@@ -36,7 +41,9 @@ public class GenerateFoServiceImpl implements GenerateFoService {
     public File createFoFromFormWithData(String date,
     									String campaignLabel,
     									String idec) throws Exception{
+
         File outputFile = File.createTempFile("fo-file",".fo");
+        logger.info(outputFile.getAbsolutePath());
         InputStream inputStream =  Constants.getEmptyXml();
         OutputStream outputStream = new FileOutputStream(outputFile);
         InputStream XSL = Constants.getInputStreamFromPath(Constants.TRANSFORMATION_XSL_COMMON);
