@@ -25,5 +25,6 @@ public interface NomenclatureService extends BaseService<Nomenclature, String> {
 	void createNomenclature(NomenclatureDto nomenclature);
 	
 	void delete(Nomenclature nomenclature);
+
     
 }

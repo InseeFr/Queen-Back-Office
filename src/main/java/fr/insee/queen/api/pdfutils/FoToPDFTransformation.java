@@ -18,19 +18,30 @@ public class FoToPDFTransformation {
 
     public File transformFoToPdf(File foFile) throws Exception {
         File outFilePDF = File.createTempFile("pdf-file",".pdf");
+        logger.info(outFilePDF.getAbsolutePath());
         try{
-            InputStream isXconf = Constants.getInputStreamFromPath(Constants.FOP_CONF);
+
+            File conf = new File(FoToPDFTransformation.class.getResource("/pdf/fop.xconf").toURI());
+            InputStream isXconf = new FileInputStream(conf);
+            //InputStream isXconf = Constants.getInputStreamFromPath(Constants.FOP_CONF);
+
             URI folderBase = FoToPDFTransformation.class.getResource("/pdf/").toURI();
-            logger.info("Uri folderBase :"+folderBase);
             FopFactory fopFactory = FopFactory.newInstance(folderBase,isXconf);
-            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            //FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            //logger.info("foUserAgent instanciée");
             OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilePDF));
-            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF,foUserAgent, out);
+            //Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF,foUserAgent, out);
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
             TransformerFactory factory = TransformerFactory.newInstance();
+
             Transformer transformer = factory.newTransformer();
+
             Source src = new StreamSource(foFile);
+
             Result res = new SAXResult(fop.getDefaultHandler());
+
             transformer.transform(src, res);
+      
             out.close();
         } catch (Exception e){
             logger.error("Error during fo to pdf transformation :"+e.getMessage());

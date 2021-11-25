@@ -115,13 +115,13 @@ public class NomenclatureController {
 	}
 	
 	/**
-	* This method is using to create a nomenclature
+	* This method is using to create or update a nomenclature
 	* 
 	* @param id the id of campaign
 	* @return List of {@link String} containing nomenclature ids
 	 * @throws Exception 
 	*/
-	@ApiOperation(value = "Post new nomenclature ")
+	@ApiOperation(value = "Post new  or update a nomenclature ")
 	@PostMapping(path = "/nomenclature")
 	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature) {
 		/*if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {

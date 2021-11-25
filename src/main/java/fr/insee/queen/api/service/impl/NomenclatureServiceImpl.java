@@ -1,10 +1,15 @@
 package fr.insee.queen.api.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import fr.insee.queen.api.controller.QuestionnaireModelController;
+import fr.insee.queen.api.domain.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +31,9 @@ import fr.insee.queen.api.service.NomenclatureService;
 public class NomenclatureServiceImpl extends AbstractService<Nomenclature, String> implements NomenclatureService {
 	
     protected final NomenclatureRepository nomenclatureRepository;
-    
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(NomenclatureServiceImpl.class);
+
     @Autowired
     private CampaignRepository campaignRepository; 
     @Autowired
@@ -87,9 +94,22 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 
 	@Override
 	public void createNomenclature(NomenclatureDto nomenclature) {
-		Nomenclature newNomenclature = new Nomenclature(nomenclature.getId(), nomenclature.getLabel(), nomenclature.getValue());
-		nomenclatureRepository.save(newNomenclature);
+    	if(nomenclatureRepository.findById(nomenclature.getId()).isPresent()){
+			Optional<Nomenclature> nomemclatureAlreadyOnDB = nomenclatureRepository.findById(nomenclature.getId());
+			LOGGER.info("Update nomenclature" + nomenclature.getId());
+
+			Nomenclature nomencla = nomemclatureAlreadyOnDB.get() ;
+			nomencla.setValue(nomenclature.getValue());
+			nomenclatureRepository.save(nomencla);
+		}
+    	else{
+			Nomenclature newNomenclature = new Nomenclature(nomenclature.getId(), nomenclature.getLabel(), nomenclature.getValue());
+			LOGGER.info("Create new nomenclature" + nomenclature.getId());
+			nomenclatureRepository.save(newNomenclature);
+		}
+
 	}
+
 
 	@Override
 	public void delete(Nomenclature nomenclature) {
