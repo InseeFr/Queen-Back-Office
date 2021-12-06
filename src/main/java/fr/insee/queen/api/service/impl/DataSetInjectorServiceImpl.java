@@ -1,6 +1,8 @@
 package fr.insee.queen.api.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +11,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,6 +30,7 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.domain.StateDataType;
 import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.CommentService;
 import fr.insee.queen.api.service.DataService;
@@ -70,7 +74,6 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 	private Nomenclature n;
 	private Nomenclature n2;
 	
-	
 	public void createDataSet() {
 		LOGGER.info("Dataset creation start");
 		JsonNode jsonArrayNomenclatureCities2019 = objectMapper.createObjectNode();
@@ -85,7 +88,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		createNomenclatures(jsonArrayNomenclatureCities2019, jsonArrayRegions2019);
+		createNomenclatures1(jsonArrayNomenclatureCities2019, jsonArrayRegions2019);
 		createParadataEvents();
 		
 		
@@ -107,7 +110,101 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		Campaign camp2 = new Campaign("VQS2021X00","Everyday life and health survey 2021",null);
 		QuestionnaireModel qm2 = new QuestionnaireModel("VQS2021X00","Questionnaire of the Everyday life and health survey 2021",jsonQuestionnaireModelVqs,new HashSet<>(List.of(n, n2)),camp2);
 		createCampaign2(camp2, qm2);
+
+		createLogementDataSet();
 		LOGGER.info("Dataset creation end");	
+	}
+
+	public void createLogementDataSet() {
+		LOGGER.info("Dataset Logement creation start");
+
+		JsonNode jsonArrayNomenclatureDepNais = objectMapper.createObjectNode();
+		JsonNode jsonArrayNomenclatureNationEtr = objectMapper.createObjectNode();
+		JsonNode jsonArrayNomenclaturePaysNais = objectMapper.createObjectNode();
+		JsonNode jsonArrayNomenclatureCogCom = objectMapper.createObjectNode();
+		JsonNode jsonArrayQuestionnaireModelLogCible = objectMapper.createObjectNode();
+		JsonNode jsonArrayQuestionnaireModelLogAllegee = objectMapper.createObjectNode();
+
+
+		try {
+			jsonArrayNomenclatureDepNais = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_DEPNAIS.json").getFile()));
+			jsonArrayNomenclatureNationEtr = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_NATIONETR.json").getFile()));
+			jsonArrayNomenclaturePaysNais = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_PAYSNAIS.json").getFile()));
+			jsonArrayNomenclatureCogCom = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//cog-communes.json").getFile()));
+			jsonArrayQuestionnaireModelLogCible = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//logement_DDIS1Cible.json").getFile()));
+			jsonArrayQuestionnaireModelLogAllegee = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//logement_DDIS1Allegee.json").getFile()));
+
+	 } catch (Exception e) {
+		 e.printStackTrace();
+	 }
+
+	 LOGGER.info("Dataset Logement creation Nomenclature");
+
+	 Nomenclature nomenclatureDepNais = new Nomenclature("L_DEPNAIS","départements français",jsonArrayNomenclatureDepNais);
+	 Nomenclature nomenclatureNationEtr = new Nomenclature("L_NATIONETR","nationalités",jsonArrayNomenclatureNationEtr);
+	 Nomenclature nomenclaturePaysNais = new Nomenclature("L_PAYSNAIS","pays",jsonArrayNomenclaturePaysNais);
+	 Nomenclature nomenclatureCogCom = new Nomenclature("cog-communes","communes françaises",jsonArrayNomenclatureCogCom);
+
+	 ArrayList<Nomenclature> listNomenclature = new ArrayList<Nomenclature>(Arrays.asList(nomenclatureDepNais,nomenclatureNationEtr,nomenclaturePaysNais,nomenclatureCogCom));
+	 createNomenclatures(listNomenclature);
+
+	LOGGER.info("Dataset Logement creation Campaign Cible");
+
+	var campQmLogCible = createCampaign("LOG2021X11", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelLogCible, listNomenclature);
+	Campaign campLogCible = campQmLogCible.getFirst();
+	QuestionnaireModel qmLogCible = campQmLogCible.getSecond();
+
+	initSurveyUnit("LogCible1", campLogCible, qmLogCible);
+	initSurveyUnit("LogCible2", campLogCible, qmLogCible);
+	initSurveyUnit("LogCible3", campLogCible, qmLogCible);
+
+	LOGGER.info("Dataset Logement creation Campaign Allegee");
+
+	var campQmLogAllegee = createCampaign("LOG2021X11Allegee", "Enquête Logement 2022 - Séquence 1 - HR - Allegee", jsonArrayQuestionnaireModelLogAllegee, listNomenclature);
+	Campaign campLogAllegee = campQmLogAllegee.getFirst();
+	QuestionnaireModel qmLogAllegee = campQmLogAllegee.getSecond();
+
+	initSurveyUnit("LogAllegee1", campLogAllegee, qmLogAllegee);
+	initSurveyUnit("LogAllegee2", campLogAllegee, qmLogAllegee);
+	initSurveyUnit("LogAllegee3", campLogAllegee, qmLogAllegee);
+
+
+	}
+
+	private Pair<Campaign,QuestionnaireModel>  createCampaign(String id, String label,JsonNode jsonQm, ArrayList<Nomenclature> listNomenclature) {
+		Campaign camp = new Campaign(id,label,null); 
+		QuestionnaireModel qm = new QuestionnaireModel(id,label,jsonQm,new HashSet<>(listNomenclature),camp);
+		if(!campaignservice.findById(camp.getId()).isPresent()) {
+			camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
+			campaignservice.save(camp);
+			if(!questionnaireModelService.findById(qm.getId()).isPresent()) {
+				questionnaireModelService.save(qm);
+			}
+		}
+		return Pair.of(camp,qm);
+	}
+
+	private void initSurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel) {
+		SurveyUnit su = new SurveyUnit(id,campaign,questionnaireModel,null,null,null,null);
+		if(surveyUnitService.findById(su.getId()).isPresent()) {
+			Data data = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+			dataService.save(data);
+			su.setData(data);
+
+			Comment comment = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+			commentService.save(comment);
+			su.setComment(comment);
+
+			Personalization personalization = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+			personalizationService.save(personalization);
+			su.setPersonalization(personalization);
+
+			StateData stateData = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su);
+			stateDataService.save(stateData);
+			
+			surveyUnitService.save(su);
+		}
+
 	}
 
 	private void createCampaign2(Campaign camp2, QuestionnaireModel qm2) {
@@ -301,7 +398,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		paradataEventService.save(pde2);
 	}
 
-	private void createNomenclatures(JsonNode jsonArrayNomenclatureCities2019, JsonNode jsonArrayRegions2019) {
+	private void createNomenclatures1(JsonNode jsonArrayNomenclatureCities2019, JsonNode jsonArrayRegions2019) {
 		n = new Nomenclature("cities2019","french cities 2019",jsonArrayNomenclatureCities2019);
 		n2 = new Nomenclature("regions2019","french regions 2019",jsonArrayRegions2019);
 		if(!nomenclatureService.findById(n.getId()).isPresent()) {
@@ -310,6 +407,15 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		if(!nomenclatureService.findById(n2.getId()).isPresent()) {
 			nomenclatureService.save(n2);
 		}
+	}
+
+	private void createNomenclatures(ArrayList<Nomenclature> listNomenclature) {
+		listNomenclature.stream().forEach((nomenclature) -> {
+			if(!nomenclatureService.findById(nomenclature.getId()).isPresent()) {
+				nomenclatureService.save(n);
+			}
+		}
+		);
 	}
 
 	private JsonNode getComment() {
