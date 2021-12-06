@@ -30,7 +30,6 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.domain.StateDataType;
 import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.CommentService;
 import fr.insee.queen.api.service.DataService;
