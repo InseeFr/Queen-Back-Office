@@ -24,6 +24,7 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.addAllowedOrigin(crosOrigin);
         config.addAllowedHeader("*");
+        config.addExposedHeader("Content-Disposition");
         config.addAllowedMethod("*");
         config.setMaxAge(3600L); 
         source.registerCorsConfiguration("/**", config);
