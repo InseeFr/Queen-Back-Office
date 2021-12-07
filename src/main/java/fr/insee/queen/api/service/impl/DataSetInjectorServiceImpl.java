@@ -74,6 +74,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 	private Nomenclature n2;
 	
 	public void createDataSet() {
+
 		LOGGER.info("Dataset creation start");
 		JsonNode jsonArrayNomenclatureCities2019 = objectMapper.createObjectNode();
 		JsonNode jsonArrayRegions2019 = objectMapper.createObjectNode();
@@ -90,90 +91,104 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		createNomenclatures1(jsonArrayNomenclatureCities2019, jsonArrayRegions2019);
 		createParadataEvents();
 		
-		
 		QuestionnaireModel qmWithoutCamp = new QuestionnaireModel("QmWithoutCamp","Questionnaire with no campaign",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),null);
 		if(!questionnaireModelService.findById(qmWithoutCamp.getId()).isPresent()) {
 			questionnaireModelService.save(qmWithoutCamp);
 		}
-	
 
 		Campaign camp = new Campaign("SIMPSONS2020X00","Survey on the Simpsons tv show 2020",null); 
 		QuestionnaireModel qm = new QuestionnaireModel("simpsons","Questionnaire about the Simpsons tv show",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),camp);
 		camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
 		QuestionnaireModel qmSimpsons2 = new QuestionnaireModel("simpsonsV2","Questionnaire about the Simpsons tv show version 2",jsonQuestionnaireModelSimpsons,new HashSet<>(List.of(n)),camp);
 		camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
-		createCampaign1(camp, qm, qmSimpsons2);
-		
-		
+		createCampaign1(camp, qm, qmSimpsons2);	
 
 		Campaign camp2 = new Campaign("VQS2021X00","Everyday life and health survey 2021",null);
 		QuestionnaireModel qm2 = new QuestionnaireModel("VQS2021X00","Questionnaire of the Everyday life and health survey 2021",jsonQuestionnaireModelVqs,new HashSet<>(List.of(n, n2)),camp2);
 		createCampaign2(camp2, qm2);
 
+
 		createLogementDataSet();
+
 		LOGGER.info("Dataset creation end");	
 	}
 
 	public void createLogementDataSet() {
-		LOGGER.info("Dataset Logement creation start");
+		LOGGER.info("Dataset Queen Logement creation start");
+		
+		JsonNode jsonArrayQuestionnaireModelQueenLog = objectMapper.createObjectNode();
+		JsonNode jsonArrayQuestionnaireModelStromaeLog = objectMapper.createObjectNode();
+		JsonNode jsonArrayMetadata = objectMapper.createObjectNode();
 
+
+		try {
+			jsonArrayQuestionnaireModelQueenLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//log2021x11_tel.json").getFile()));
+			jsonArrayQuestionnaireModelStromaeLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//log2021x11_web.json").getFile()));
+			jsonArrayMetadata = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//metadata//metadata.json").getFile()));
+
+	 } catch (Exception e) {
+		 e.printStackTrace();
+	 }
+
+	LOGGER.info("Dataset Logement : creation Nomenclature");
+
+	ArrayList<Nomenclature> listNomenclature = createLogementNomenclature();
+
+	LOGGER.info("Dataset Logement : creation Campaign Queen");
+	
+	injectCampaign(listNomenclature, "LOG2021X11Tel", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelQueenLog,null);
+
+	LOGGER.info("Dataset Logement : creation Campaign Stromae");
+
+	injectCampaign(listNomenclature, "LOG2021X11Web", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelStromaeLog,jsonArrayMetadata);
+
+	LOGGER.info("Dataset Logement : end Creation");
+
+
+	}
+
+	private void injectCampaign(ArrayList<Nomenclature> listNomenclature,String id, String label,JsonNode jsonQm,JsonNode jsonMetadata) {
+		var campQm = createCampaign(id,label, jsonQm, listNomenclature);
+		Campaign camp= campQm.getFirst();
+		QuestionnaireModel qm = campQm.getSecond();
+		if (jsonMetadata != null) {
+			Metadata metadata = new Metadata(UUID.randomUUID(),jsonMetadata,camp);
+			metadataService.save(metadata);
+		}
+		
+
+		LOGGER.info("Dataset : creation SurveyUnit");
+	
+		initSurveyUnit(String.format("%s_01", id), camp, qm);
+		initSurveyUnit(String.format("%s_02", id), camp, qm);
+		initSurveyUnit(String.format("%s_03", id), camp, qm);
+
+	}
+
+	private ArrayList<Nomenclature> createLogementNomenclature() {
 		JsonNode jsonArrayNomenclatureDepNais = objectMapper.createObjectNode();
 		JsonNode jsonArrayNomenclatureNationEtr = objectMapper.createObjectNode();
 		JsonNode jsonArrayNomenclaturePaysNais = objectMapper.createObjectNode();
 		JsonNode jsonArrayNomenclatureCogCom = objectMapper.createObjectNode();
-		JsonNode jsonArrayQuestionnaireModelLogCible = objectMapper.createObjectNode();
-		JsonNode jsonArrayQuestionnaireModelLogAllegee = objectMapper.createObjectNode();
-
 
 		try {
 			jsonArrayNomenclatureDepNais = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_DEPNAIS.json").getFile()));
 			jsonArrayNomenclatureNationEtr = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_NATIONETR.json").getFile()));
 			jsonArrayNomenclaturePaysNais = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_PAYSNAIS.json").getFile()));
 			jsonArrayNomenclatureCogCom = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//cog-communes.json").getFile()));
-			jsonArrayQuestionnaireModelLogCible = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//logement_DDIS1Cible.json").getFile()));
-			jsonArrayQuestionnaireModelLogAllegee = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//logement_DDIS1Allegee.json").getFile()));
-
+			
 	 } catch (Exception e) {
 		 e.printStackTrace();
 	 }
 
-	 LOGGER.info("Dataset Logement : creation Nomenclature");
-
-	 Nomenclature nomenclatureDepNais = new Nomenclature("L_DEPNAIS","départements français",jsonArrayNomenclatureDepNais);
-	 Nomenclature nomenclatureNationEtr = new Nomenclature("L_NATIONETR","nationalités",jsonArrayNomenclatureNationEtr);
-	 Nomenclature nomenclaturePaysNais = new Nomenclature("L_PAYSNAIS","pays",jsonArrayNomenclaturePaysNais);
-	 Nomenclature nomenclatureCogCom = new Nomenclature("cog-communes","communes françaises",jsonArrayNomenclatureCogCom);
-
-	 ArrayList<Nomenclature> listNomenclature = new ArrayList<Nomenclature>(Arrays.asList(nomenclatureDepNais,nomenclatureNationEtr,nomenclaturePaysNais,nomenclatureCogCom));
-	 createNomenclatures(listNomenclature);
-
-	LOGGER.info("Dataset Logement : creation Campaign Cible");
-
-	var campQmLogCible = createCampaign("LOG2021X11", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelLogCible, listNomenclature);
-	Campaign campLogCible = campQmLogCible.getFirst();
-	QuestionnaireModel qmLogCible = campQmLogCible.getSecond();
-
-	LOGGER.info("Dataset Logement : creation SurveyUnit Cible");
-
-	initSurveyUnit("LogCible1", campLogCible, qmLogCible);
-	initSurveyUnit("LogCible2", campLogCible, qmLogCible);
-	initSurveyUnit("LogCible3", campLogCible, qmLogCible);
-
-	LOGGER.info("Dataset Logement creation Campaign Allegee");
-
-	var campQmLogAllegee = createCampaign("LOG2021X11Allegee", "Enquête Logement 2022 - Séquence 1 - HR - Allegee", jsonArrayQuestionnaireModelLogAllegee, listNomenclature);
-	Campaign campLogAllegee = campQmLogAllegee.getFirst();
-	QuestionnaireModel qmLogAllegee = campQmLogAllegee.getSecond();
-
-	LOGGER.info("Dataset Logement : creation SurveyUnit Allegee");
-
-	initSurveyUnit("LogAllegee1", campLogAllegee, qmLogAllegee);
-	initSurveyUnit("LogAllegee2", campLogAllegee, qmLogAllegee);
-	initSurveyUnit("LogAllegee3", campLogAllegee, qmLogAllegee);
-
-	LOGGER.info("Dataset Logement : end Creation");
-
-
+		Nomenclature nomenclatureDepNais = new Nomenclature("L_DEPNAIS","départements français",jsonArrayNomenclatureDepNais);
+		Nomenclature nomenclatureNationEtr = new Nomenclature("L_NATIONETR","nationalités",jsonArrayNomenclatureNationEtr);
+		Nomenclature nomenclaturePaysNais = new Nomenclature("L_PAYSNAIS","pays",jsonArrayNomenclaturePaysNais);
+		Nomenclature nomenclatureCogCom = new Nomenclature("cog-communes","communes françaises",jsonArrayNomenclatureCogCom);
+ 
+		ArrayList<Nomenclature> listNomenclature = new ArrayList<Nomenclature>(Arrays.asList(nomenclatureDepNais,nomenclatureNationEtr,nomenclaturePaysNais,nomenclatureCogCom));
+		createNomenclatures(listNomenclature);
+		return listNomenclature;
 	}
 
 	private Pair<Campaign,QuestionnaireModel>  createCampaign(String id, String label,JsonNode jsonQm, ArrayList<Nomenclature> listNomenclature) {
@@ -187,6 +202,16 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			}
 		}
 		return Pair.of(camp,qm);
+	}
+
+	private void createNomenclatures(ArrayList<Nomenclature> listNomenclature) {
+		LOGGER.info("Creation Nomenclatures");
+		listNomenclature.stream().forEach((nomenclature) -> {
+			if(!nomenclatureService.findById(nomenclature.getId()).isPresent()) {
+				nomenclatureService.save(n);
+			}
+		}
+		);
 	}
 
 	private void initSurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel) {
@@ -415,16 +440,6 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		if(!nomenclatureService.findById(n2.getId()).isPresent()) {
 			nomenclatureService.save(n2);
 		}
-	}
-
-	private void createNomenclatures(ArrayList<Nomenclature> listNomenclature) {
-		LOGGER.info("Creation Nomenclatures");
-		listNomenclature.stream().forEach((nomenclature) -> {
-			if(!nomenclatureService.findById(nomenclature.getId()).isPresent()) {
-				nomenclatureService.save(n);
-			}
-		}
-		);
 	}
 
 	private JsonNode getComment() {
