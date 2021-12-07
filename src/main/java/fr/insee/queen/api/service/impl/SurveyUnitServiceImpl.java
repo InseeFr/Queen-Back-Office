@@ -191,7 +191,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		String campaignId = su.getCampaign().getId();
 		String campaignLabel = su.getCampaign().getLabel();
 		String date = "";
-		if(su.getStateData().getState().equals(StateDataType.EXTRACTED)) {
+		if(Arrays.asList(StateDataType.EXTRACTED,StateDataType.VALIDATED).contains(su.getStateData().getState())) {
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy à HH:mm"); 
 			date = dateFormat.format(new Date(su.getStateData().getDate()));
 		}
