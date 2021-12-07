@@ -137,7 +137,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		 e.printStackTrace();
 	 }
 
-	 LOGGER.info("Dataset Logement creation Nomenclature");
+	 LOGGER.info("Dataset Logement : creation Nomenclature");
 
 	 Nomenclature nomenclatureDepNais = new Nomenclature("L_DEPNAIS","départements français",jsonArrayNomenclatureDepNais);
 	 Nomenclature nomenclatureNationEtr = new Nomenclature("L_NATIONETR","nationalités",jsonArrayNomenclatureNationEtr);
@@ -147,11 +147,13 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 	 ArrayList<Nomenclature> listNomenclature = new ArrayList<Nomenclature>(Arrays.asList(nomenclatureDepNais,nomenclatureNationEtr,nomenclaturePaysNais,nomenclatureCogCom));
 	 createNomenclatures(listNomenclature);
 
-	LOGGER.info("Dataset Logement creation Campaign Cible");
+	LOGGER.info("Dataset Logement : creation Campaign Cible");
 
 	var campQmLogCible = createCampaign("LOG2021X11", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelLogCible, listNomenclature);
 	Campaign campLogCible = campQmLogCible.getFirst();
 	QuestionnaireModel qmLogCible = campQmLogCible.getSecond();
+
+	LOGGER.info("Dataset Logement : creation SurveyUnit Cible");
 
 	initSurveyUnit("LogCible1", campLogCible, qmLogCible);
 	initSurveyUnit("LogCible2", campLogCible, qmLogCible);
@@ -163,9 +165,13 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 	Campaign campLogAllegee = campQmLogAllegee.getFirst();
 	QuestionnaireModel qmLogAllegee = campQmLogAllegee.getSecond();
 
+	LOGGER.info("Dataset Logement : creation SurveyUnit Allegee");
+
 	initSurveyUnit("LogAllegee1", campLogAllegee, qmLogAllegee);
 	initSurveyUnit("LogAllegee2", campLogAllegee, qmLogAllegee);
 	initSurveyUnit("LogAllegee3", campLogAllegee, qmLogAllegee);
+
+	LOGGER.info("Dataset Logement : end Creation");
 
 
 	}
@@ -185,7 +191,9 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 
 	private void initSurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel) {
 		SurveyUnit su = new SurveyUnit(id,campaign,questionnaireModel,null,null,null,null);
-		if(surveyUnitService.findById(su.getId()).isPresent()) {
+		if(!surveyUnitService.findById(su.getId()).isPresent()) {
+			LOGGER.info("initSurveyUnit -> SU Do not present, we create it");
+			surveyUnitService.save(su); // That save SU in DB which is necessary to add data, comment etc...
 			Data data = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 			dataService.save(data);
 			su.setData(data);
@@ -202,6 +210,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			stateDataService.save(stateData);
 			
 			surveyUnitService.save(su);
+			LOGGER.info("End of SU Creation");
 		}
 
 	}
@@ -222,7 +231,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			Personalization p2;
 			StateData sd2;
 			SurveyUnit su2 = new SurveyUnit("20",camp2,qm2,null,null,null,null);
-			if(surveyUnitService.findById(su2.getId()).isPresent()) {
+			if(!surveyUnitService.findById(su2.getId()).isPresent()) {
 				surveyUnitService.save(su2);
 				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				dataService.save(d2);
@@ -409,6 +418,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 	}
 
 	private void createNomenclatures(ArrayList<Nomenclature> listNomenclature) {
+		LOGGER.info("Creation Nomenclatures");
 		listNomenclature.stream().forEach((nomenclature) -> {
 			if(!nomenclatureService.findById(nomenclature.getId()).isPresent()) {
 				nomenclatureService.save(n);
