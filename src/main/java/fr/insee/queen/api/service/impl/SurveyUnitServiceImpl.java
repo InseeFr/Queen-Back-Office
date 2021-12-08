@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import fr.insee.queen.api.domain.*;
 import fr.insee.queen.api.repository.*;
-import org.modelmapper.internal.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

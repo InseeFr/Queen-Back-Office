@@ -147,8 +147,8 @@ public abstract class TestAuthKeycloak {
 	* 
 	* @throws InterruptedException
 	* @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
+	* @throws JsonProcessingException 
+	* @throws JsonMappingException 
 	*/
 	@Test
 	void testPostCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
