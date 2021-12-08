@@ -880,7 +880,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindNomenclatureById() throws JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/nomenclature/cities2019")
+				.when().get("api/nomenclature/cities2050")
 				.then().statusCode(200)
 				.and().assertThat().body("isEmpty()",Matchers.is(false));
 	}
