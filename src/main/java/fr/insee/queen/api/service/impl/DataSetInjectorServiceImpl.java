@@ -94,29 +94,23 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 
 	ArrayList<Nomenclature> listNomenclature = createLogementNomenclature();
 
-	LOGGER.info("Dataset Logement : creation Campaign Queen");
-	
-	injectCampaign(listNomenclature, "LOG2021X11Tel", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelQueenLog,null);
-
 	LOGGER.info("Dataset Logement : creation Campaign Stromae");
 
-	injectCampaign(listNomenclature, "LOG2021X11Web", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelStromaeLog,jsonArrayMetadata);
+	injectCampaign("LOG2021X11Web", "Enquête Logement 2022 - Séquence 1 - HR - Web", jsonArrayQuestionnaireModelStromaeLog,listNomenclature, jsonArrayMetadata);
+
+	LOGGER.info("Dataset Logement : creation Campaign Queen");
+	
+	injectCampaign("LOG2021X11Tel", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelQueenLog,listNomenclature,null);
 
 	LOGGER.info("Dataset Logement : end Creation");
 
 
 	}
 
-	private void injectCampaign(ArrayList<Nomenclature> listNomenclature,String id, String label,JsonNode jsonQm,JsonNode jsonMetadata) {
-		var campQm = createCampaign(id,label, jsonQm, listNomenclature);
+	private void injectCampaign(String id, String label,JsonNode jsonQm, ArrayList<Nomenclature> listNomenclature,JsonNode jsonMetadata) {
+		Pair<Campaign,QuestionnaireModel> campQm = createCampaign(id,label, jsonQm,jsonMetadata, listNomenclature);
 		Campaign camp= campQm.getFirst();
 		QuestionnaireModel qm = campQm.getSecond();
-		if (jsonMetadata != null) {
-			Metadata metadata = new Metadata(UUID.randomUUID(),jsonMetadata,camp);
-			metadataService.save(metadata);
-		}
-		
-
 		LOGGER.info("Dataset : creation SurveyUnit");
 	
 		initSurveyUnit(String.format("%s_01", id), camp, qm);
@@ -151,12 +145,17 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		return listNomenclature;
 	}
 
-	private Pair<Campaign,QuestionnaireModel>  createCampaign(String id, String label,JsonNode jsonQm, ArrayList<Nomenclature> listNomenclature) {
+	private Pair<Campaign,QuestionnaireModel> createCampaign(String id, String label,JsonNode jsonQm,JsonNode jsonMetadata, ArrayList<Nomenclature> listNomenclature) {
+		LOGGER.info(String.format("Create Campaing %s",id));
 		Campaign camp = new Campaign(id,label,null); 
 		QuestionnaireModel qm = new QuestionnaireModel(id,label,jsonQm,new HashSet<>(listNomenclature),camp);
 		if(!campaignservice.findById(camp.getId()).isPresent()) {
 			camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
 			campaignservice.save(camp);
+			if (jsonMetadata != null) {
+				Metadata metadata = new Metadata(UUID.randomUUID(),jsonMetadata,camp);
+				metadataService.save(metadata);
+			}
 			if(!questionnaireModelService.findById(qm.getId()).isPresent()) {
 				questionnaireModelService.save(qm);
 			}
@@ -175,9 +174,9 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 	}
 
 	private void initSurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel) {
-		SurveyUnit su = new SurveyUnit(id,campaign,questionnaireModel,null,null,null,null);
-		if(!surveyUnitService.findById(su.getId()).isPresent()) {
+		if(!surveyUnitService.findById(id).isPresent()) {
 			LOGGER.info("initSurveyUnit -> SU Do not present, we create it");
+			SurveyUnit su = new SurveyUnit(id,campaign,questionnaireModel,null,null,null,null);
 			surveyUnitService.save(su); // That save SU in DB which is necessary to add data, comment etc...
 			Data data = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 			dataService.save(data);
