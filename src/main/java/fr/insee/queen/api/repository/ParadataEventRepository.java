@@ -1,7 +1,7 @@
 package fr.insee.queen.api.repository;
 
 import java.util.UUID;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.domain.ParadataEvent;
 
 /**
@@ -10,7 +10,7 @@ import fr.insee.queen.api.domain.ParadataEvent;
 * @author Corcaud Samuel
 * 
 */
-public interface ParadataEventRepository extends ApiRepository<ParadataEvent, UUID> {
+public interface ParadataEventRepository extends JpaRepository<ParadataEvent, UUID> {
 
 
 }

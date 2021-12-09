@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -21,7 +20,6 @@ import java.util.UUID;
 	    name = "jsonb",
 	    typeClass = JsonBinaryType.class
 	)
-@Document(collection="survey_unit_temp_zone")
 public class SurveyUnitTempZone {
 
 	/**

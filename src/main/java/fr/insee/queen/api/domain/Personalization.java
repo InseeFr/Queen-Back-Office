@@ -10,14 +10,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity
 @Table(name="personalization")
-@Document(collection="personalization")
 public class Personalization {
 	
 	/**
@@ -39,7 +36,6 @@ public class Personalization {
 	/**
 	* The SurveyUnit associated to the personalization
 	*/
-	@DBRef
 	@OneToOne
 	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;

@@ -2,7 +2,7 @@ package fr.insee.queen.api.repository;
 
 import java.util.Optional;
 import java.util.UUID;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.domain.Personalization;
 
 /**
@@ -11,7 +11,7 @@ import fr.insee.queen.api.domain.Personalization;
 * @author Corcaud Samuel
 * 
 */
-public interface PersonalizationRepository extends ApiRepository<Personalization, UUID> {
+public interface PersonalizationRepository extends JpaRepository<Personalization, UUID> {
 
 	Optional<Personalization> findBySurveyUnitId(String id);
 

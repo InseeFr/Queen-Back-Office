@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import fr.insee.queen.api.domain.Data;
@@ -19,7 +19,7 @@ import fr.insee.queen.api.dto.data.DataDto;
 */
 @Transactional
 @Repository
-public interface DataRepository extends ApiRepository<Data, UUID> {
+public interface DataRepository extends JpaRepository<Data, UUID> {
 	/**
 	* This method retrieve all Data in DB
 	* 

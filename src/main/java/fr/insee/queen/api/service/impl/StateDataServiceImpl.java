@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.domain.StateDataType;
 import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.repository.ApiRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.StateDataRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.StateDataService;
@@ -31,7 +31,7 @@ public class StateDataServiceImpl extends AbstractService<StateData, UUID> imple
     }
 
     @Override
-    protected ApiRepository<StateData, UUID> getRepository() {
+    protected JpaRepository<StateData, UUID> getRepository() {
         return stateDataRepository;
     }
 

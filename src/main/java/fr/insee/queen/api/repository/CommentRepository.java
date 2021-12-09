@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import fr.insee.queen.api.domain.Comment;
@@ -19,7 +19,7 @@ import fr.insee.queen.api.dto.comment.CommentDto;
 */
 @Transactional
 @Repository
-public interface CommentRepository extends ApiRepository<Comment, UUID> {
+public interface CommentRepository extends JpaRepository<Comment, UUID> {
 	
 	/**
 	* This method retrieve all Comment  in DB
