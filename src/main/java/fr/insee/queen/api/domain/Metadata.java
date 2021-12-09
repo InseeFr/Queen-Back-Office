@@ -9,14 +9,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity
 @Table(name="metadata")
-@Document(collection="metadata")
 public class Metadata {
 	
 	/**
@@ -36,7 +33,6 @@ public class Metadata {
 	/**
 	 * The campaign associated to the Metadata
 	 */
-	@DBRef
 	@OneToOne
 	private Campaign campaign;
 

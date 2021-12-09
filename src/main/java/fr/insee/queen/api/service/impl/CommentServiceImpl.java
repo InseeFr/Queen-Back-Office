@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import fr.insee.queen.api.domain.Comment;
 import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.repository.ApiRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.CommentRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.CommentService;
@@ -25,7 +25,7 @@ public class CommentServiceImpl extends AbstractService<Comment, UUID> implement
     }
 
     @Override
-    protected ApiRepository<Comment, UUID> getRepository() {
+    protected JpaRepository<Comment, UUID> getRepository() {
         return commentRepository;
     }
 

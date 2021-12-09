@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
@@ -87,7 +89,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
     }
 
     @Override
-    protected ApiRepository<SurveyUnit, String> getRepository() {
+    protected JpaRepository<SurveyUnit, String> getRepository() {
         return surveyUnitRepository;
     }
 

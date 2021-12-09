@@ -11,12 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 @Entity
 @Table(name = "state_data")
-@Document(collection="state_data")
 public class StateData {
 
 	/**
@@ -49,7 +45,6 @@ public class StateData {
 	/**
 	* The SurveyUnit associated to the StateData
 	*/
-	@DBRef
 	@OneToOne
 	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;

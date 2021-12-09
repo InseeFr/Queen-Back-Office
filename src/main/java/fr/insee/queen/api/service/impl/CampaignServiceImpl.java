@@ -19,7 +19,8 @@ import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 import fr.insee.queen.api.exception.NotFoundException;
-import fr.insee.queen.api.repository.ApiRepository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.MetadataRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
@@ -52,7 +53,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
     }
 
     @Override
-    protected ApiRepository<Campaign, String> getRepository() {
+    protected JpaRepository<Campaign, String> getRepository() {
         return campaignRepository;
     }
 
