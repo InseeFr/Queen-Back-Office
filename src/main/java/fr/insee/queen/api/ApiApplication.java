@@ -20,8 +20,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 
 import fr.insee.queen.api.service.DataSetInjectorService;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = "fr.insee.queen.api")
+@EnableJpaRepositories(basePackages = "fr.insee.queen.api.repository")
 public class ApiApplication extends SpringBootServletInitializer{
 	private static final Logger LOG = LoggerFactory.getLogger(ApiApplication.class);
 
@@ -76,4 +78,5 @@ public class ApiApplication extends SpringBootServletInitializer{
 	    	injector.createDataSet();
 	    }
 	}
+
 }
