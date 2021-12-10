@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.domain.Nomenclature;
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 
@@ -16,7 +16,7 @@ import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 */
 @Transactional
 @Repository
-public interface NomenclatureRepository extends ApiRepository<Nomenclature, String>{
+public interface NomenclatureRepository extends JpaRepository<Nomenclature, String>{
 	/**
 	* This method retrieve the NomenclatureDto by id
 	* 

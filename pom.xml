@@ -6,7 +6,7 @@
 
 	<groupId>fr.insee.queen</groupId>
 	<artifactId>queen</artifactId>
-	<version>3.4.6</version>
+	<version>3.5.0</version>
 	<packaging>war</packaging>
 	<name>Queen-Back-Office</name>
 	<description>Back-office services for Queen</description>
@@ -35,16 +35,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
@@ -197,12 +187,7 @@
 			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>mongodb</artifactId>
-			<version>${testcontainers.version}</version>
-			<scope>test</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>mockserver</artifactId>
@@ -412,9 +397,6 @@
 							<include>TestAuthKeycloakJpa.java</include>
 							<include>TestNoAuthJpa.java</include>
 							<include>TestBasicAuthJpa.java</include>
-							<include>TestAuthKeycloakMongo.java</include>
-							<include>TestNoAuthMongo.java</include>
-							<include>TestBasicAuthMongo.java</include>
 						</includes>
 						<forkedProcessExitTimeoutInSeconds>500</forkedProcessExitTimeoutInSeconds>
 						<forkCount>3</forkCount>

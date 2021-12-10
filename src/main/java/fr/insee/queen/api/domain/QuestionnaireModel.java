@@ -16,8 +16,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -33,7 +31,6 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 	    name = "jsonb",
 	    typeClass = JsonBinaryType.class
 	)
-@Document(collection="questionnaire_model")
 public class QuestionnaireModel {
 	/**
 	* The id of questionnaire 
@@ -59,7 +56,6 @@ public class QuestionnaireModel {
 	/**
 	* The list of required of required nomenclature 
 	*/
-	@DBRef(lazy = true)
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch=FetchType.LAZY)
 	@JoinTable(name = "required_nomenclature", 
 	joinColumns = { @JoinColumn(name = "id_required_nomenclature") }, inverseJoinColumns = { @JoinColumn(name = "code") })
@@ -68,7 +64,6 @@ public class QuestionnaireModel {
 	/**
 	 * The campaign associated to the questionnaireModel
 	 */
-	@DBRef
 	@ManyToOne
 	private Campaign campaign;
 	

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.insee.queen.api.domain.Personalization;
 import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.repository.ApiRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.PersonalizationRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.PersonalizationService;
@@ -26,7 +26,7 @@ public class PersonalizationServiceImpl extends AbstractService<Personalization,
     }
 
     @Override
-    protected ApiRepository<Personalization, UUID> getRepository() {
+    protected JpaRepository<Personalization, UUID> getRepository() {
         return personalizationRepository;
     }
 

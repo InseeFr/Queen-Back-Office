@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import fr.insee.queen.api.domain.Metadata;
 import fr.insee.queen.api.dto.metadata.MetadataDto;
 import fr.insee.queen.api.exception.NotFoundException;
-import fr.insee.queen.api.repository.ApiRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import fr.insee.queen.api.repository.MetadataRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.MetadataService;
@@ -25,7 +26,7 @@ public class MetadataServiceImpl extends AbstractService<Metadata, UUID> impleme
     }
 
     @Override
-    protected ApiRepository<Metadata, UUID> getRepository() {
+    protected JpaRepository<Metadata, UUID> getRepository() {
         return metadataRepository;
     }
 

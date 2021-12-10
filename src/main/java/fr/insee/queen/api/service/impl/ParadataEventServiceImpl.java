@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.insee.queen.api.domain.ParadataEvent;
-import fr.insee.queen.api.repository.ApiRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.ParadataEventRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.ParadataEventService;
@@ -23,7 +23,7 @@ public class ParadataEventServiceImpl extends AbstractService<ParadataEvent, UUI
     }
 
     @Override
-    protected ApiRepository<ParadataEvent, UUID> getRepository() {
+    protected JpaRepository<ParadataEvent, UUID> getRepository() {
         return paradataEventRepository;
     }
 

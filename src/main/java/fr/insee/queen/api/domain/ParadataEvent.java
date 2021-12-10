@@ -8,13 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity
 @Table(name="paradata_event")
-@Document(collection="paradata_event")
 public class ParadataEvent {
 	
 	/**

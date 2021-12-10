@@ -2,7 +2,7 @@ package fr.insee.queen.api.repository;
 
 import java.util.Optional;
 import java.util.UUID;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.dto.data.DataDto;
@@ -13,7 +13,7 @@ import fr.insee.queen.api.dto.data.DataDto;
 * @author Claudel Benjamin
 * 
 */
-public interface StateDataRepository extends ApiRepository<StateData, UUID> {
+public interface StateDataRepository extends JpaRepository<StateData, UUID> {
 	/**
 	* This method retrieve the Data for a specific reporting_unit
 	* 
