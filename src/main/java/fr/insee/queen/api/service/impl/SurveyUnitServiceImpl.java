@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import fr.insee.queen.api.domain.*;
 import fr.insee.queen.api.repository.*;
-import org.modelmapper.internal.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,7 +192,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		String campaignId = su.getCampaign().getId();
 		String campaignLabel = su.getCampaign().getLabel();
 		String date = "";
-		if(su.getStateData().getState().equals(StateDataType.EXTRACTED)) {
+		if(Arrays.asList(StateDataType.EXTRACTED,StateDataType.VALIDATED).contains(su.getStateData().getState())) {
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy à HH:mm"); 
 			date = dateFormat.format(new Date(su.getStateData().getDate()));
 		}

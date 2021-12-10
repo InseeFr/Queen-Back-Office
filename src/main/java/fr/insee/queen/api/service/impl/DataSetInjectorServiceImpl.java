@@ -1,6 +1,8 @@
 package fr.insee.queen.api.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +11,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -63,16 +66,148 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 	private QuestionnaireModelService questionnaireModelService;
 	@Autowired
 	private NomenclatureService nomenclatureService;
-	
+
 	private static final String CURRENT_PAGE = "2.3#5";
-	
+
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private Nomenclature n;
 	private Nomenclature n2;
-	
-	
+
+
 	public void createDataSet() {
 		LOGGER.info("Dataset creation start");
+		createSimpsonVqsDataSet();
+		createLogementDataSet();
+		LOGGER.info("Dataset creation end");	
+	}
+
+	public void createLogementDataSet() {
+		LOGGER.info("Dataset Queen Logement creation start");
+		
+		JsonNode jsonArrayQuestionnaireModelQueenLog = objectMapper.createObjectNode();
+		JsonNode jsonArrayQuestionnaireModelStromaeLog = objectMapper.createObjectNode();
+		JsonNode jsonArrayMetadata = objectMapper.createObjectNode();
+
+
+		try {
+			jsonArrayQuestionnaireModelQueenLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//log2021x11_tel.json").getFile()));
+			jsonArrayQuestionnaireModelStromaeLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//log2021x11_web.json").getFile()));
+			jsonArrayMetadata = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//metadata//metadata.json").getFile()));
+
+	 } catch (Exception e) {
+		 e.printStackTrace();
+	 }
+
+	LOGGER.info("Dataset Logement : creation Nomenclature");
+
+	ArrayList<Nomenclature> listNomenclature = createLogementNomenclature();
+
+	LOGGER.info("Dataset Logement : creation Campaign Stromae");
+
+	injectCampaign("LOG2021X11Web", "Enquête Logement 2022 - Séquence 1 - HR - Web", jsonArrayQuestionnaireModelStromaeLog,listNomenclature, jsonArrayMetadata);
+
+	LOGGER.info("Dataset Logement : creation Campaign Queen");
+	
+	injectCampaign("LOG2021X11Tel", "Enquête Logement 2022 - Séquence 1 - HR", jsonArrayQuestionnaireModelQueenLog,listNomenclature,null);
+
+	LOGGER.info("Dataset Logement : end Creation");
+
+
+	}
+
+	private void injectCampaign(String id, String label,JsonNode jsonQm, ArrayList<Nomenclature> listNomenclature,JsonNode jsonMetadata) {
+		Pair<Campaign,QuestionnaireModel> campQm = createCampaign(id,label, jsonQm,jsonMetadata, listNomenclature);
+		Campaign camp= campQm.getFirst();
+		QuestionnaireModel qm = campQm.getSecond();
+		LOGGER.info("Dataset : creation SurveyUnit");
+	
+		initSurveyUnit(String.format("%s_01", id), camp, qm);
+		initSurveyUnit(String.format("%s_02", id), camp, qm);
+		initSurveyUnit(String.format("%s_03", id), camp, qm);
+
+	}
+
+	private ArrayList<Nomenclature> createLogementNomenclature() {
+		JsonNode jsonArrayNomenclatureDepNais = objectMapper.createObjectNode();
+		JsonNode jsonArrayNomenclatureNationEtr = objectMapper.createObjectNode();
+		JsonNode jsonArrayNomenclaturePaysNais = objectMapper.createObjectNode();
+		JsonNode jsonArrayNomenclatureCogCom = objectMapper.createObjectNode();
+
+		try {
+			jsonArrayNomenclatureDepNais = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_DEPNAIS.json").getFile()));
+			jsonArrayNomenclatureNationEtr = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_NATIONETR.json").getFile()));
+			jsonArrayNomenclaturePaysNais = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_PAYSNAIS.json").getFile()));
+			jsonArrayNomenclatureCogCom = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//cog-communes.json").getFile()));
+			
+	 } catch (Exception e) {
+		 e.printStackTrace();
+	 }
+
+		Nomenclature nomenclatureDepNais = new Nomenclature("L_DEPNAIS","départements français",jsonArrayNomenclatureDepNais);
+		Nomenclature nomenclatureNationEtr = new Nomenclature("L_NATIONETR","nationalités",jsonArrayNomenclatureNationEtr);
+		Nomenclature nomenclaturePaysNais = new Nomenclature("L_PAYSNAIS","pays",jsonArrayNomenclaturePaysNais);
+		Nomenclature nomenclatureCogCom = new Nomenclature("cog-communes","communes françaises",jsonArrayNomenclatureCogCom);
+ 
+		ArrayList<Nomenclature> listNomenclature = new ArrayList<Nomenclature>(Arrays.asList(nomenclatureDepNais,nomenclatureNationEtr,nomenclaturePaysNais,nomenclatureCogCom));
+		createNomenclatures(listNomenclature);
+		return listNomenclature;
+	}
+
+	private Pair<Campaign,QuestionnaireModel> createCampaign(String id, String label,JsonNode jsonQm,JsonNode jsonMetadata, ArrayList<Nomenclature> listNomenclature) {
+		LOGGER.info(String.format("Create Campaing %s",id));
+		Campaign camp = new Campaign(id,label,null); 
+		QuestionnaireModel qm = new QuestionnaireModel(id,label,jsonQm,new HashSet<>(listNomenclature),camp);
+		if(!campaignservice.findById(camp.getId()).isPresent()) {
+			camp.setQuestionnaireModels(new HashSet<>(List.of(qm)));
+			campaignservice.save(camp);
+			if (jsonMetadata != null) {
+				Metadata metadata = new Metadata(UUID.randomUUID(),jsonMetadata,camp);
+				metadataService.save(metadata);
+			}
+			if(!questionnaireModelService.findById(qm.getId()).isPresent()) {
+				questionnaireModelService.save(qm);
+			}
+		}
+		return Pair.of(camp,qm);
+	}
+
+	private void createNomenclatures(ArrayList<Nomenclature> listNomenclature) {
+		LOGGER.info("Creation Nomenclatures");
+		listNomenclature.stream().forEach((nomenclature) -> {
+			if(!nomenclatureService.findById(nomenclature.getId()).isPresent()) {
+				nomenclatureService.save(nomenclature);
+			}
+		}
+		);
+	}
+
+	private void initSurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel) {
+		if(!surveyUnitService.findById(id).isPresent()) {
+			LOGGER.info("initSurveyUnit -> SU Do not present, we create it");
+			SurveyUnit su = new SurveyUnit(id,campaign,questionnaireModel,null,null,null,null);
+			surveyUnitService.save(su); // That save SU in DB which is necessary to add data, comment etc...
+			Data data = new Data(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+			dataService.save(data);
+			su.setData(data);
+
+			Comment comment = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+			commentService.save(comment);
+			su.setComment(comment);
+
+			Personalization personalization = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+			personalizationService.save(personalization);
+			su.setPersonalization(personalization);
+
+			StateData stateData = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su);
+			stateDataService.save(stateData);
+			
+			surveyUnitService.save(su);
+			LOGGER.info("End of SU Creation");
+		}
+
+	}
+
+	private void createSimpsonVqsDataSet() {
 		JsonNode jsonArrayNomenclatureCities2019 = objectMapper.createObjectNode();
 		JsonNode jsonArrayRegions2019 = objectMapper.createObjectNode();
 		JsonNode jsonQuestionnaireModelSimpsons = objectMapper.createObjectNode();
@@ -107,7 +242,6 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		Campaign camp2 = new Campaign("VQS2021X00","Everyday life and health survey 2021",null);
 		QuestionnaireModel qm2 = new QuestionnaireModel("VQS2021X00","Questionnaire of the Everyday life and health survey 2021",jsonQuestionnaireModelVqs,new HashSet<>(List.of(n, n2)),camp2);
 		createCampaign2(camp2, qm2);
-		LOGGER.info("Dataset creation end");	
 	}
 
 	private void createCampaign2(Campaign camp2, QuestionnaireModel qm2) {
