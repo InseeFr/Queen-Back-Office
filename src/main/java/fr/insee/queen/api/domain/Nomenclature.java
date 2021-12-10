@@ -7,7 +7,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -23,7 +22,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 	    name = "jsonb",
 	    typeClass = JsonBinaryType.class
 	)
-@Document(collection="nomenclature")
+
 public class Nomenclature {
 	/**
 	* The id of nomenclature 

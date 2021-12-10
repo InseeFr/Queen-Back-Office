@@ -5,7 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 /**
@@ -16,7 +16,7 @@ import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 */
 @Transactional
 @Repository
-public interface SurveyUnitRepository extends ApiRepository<SurveyUnit, String> {
+public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> {
 	/**
 	* This method retrieve all SurveyUnit in DB
 	* 

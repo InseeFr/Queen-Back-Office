@@ -19,7 +19,7 @@ import fr.insee.queen.api.domain.Nomenclature;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 import fr.insee.queen.api.exception.NotFoundException;
-import fr.insee.queen.api.repository.ApiRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.NomenclatureRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
@@ -45,7 +45,7 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
     }
     
     @Override
-    protected ApiRepository<Nomenclature, String> getRepository() {
+    protected JpaRepository<Nomenclature, String> getRepository() {
         return nomenclatureRepository;
     }
 

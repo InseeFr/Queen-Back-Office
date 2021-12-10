@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.repository.ApiRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.DataRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.DataService;
@@ -25,7 +25,7 @@ public class DataServiceImpl extends AbstractService<Data, UUID> implements Data
     }
 
     @Override
-    protected ApiRepository<Data, UUID> getRepository() {
+    protected JpaRepository<Data, UUID> getRepository() {
         return dataRepository;
     }
 

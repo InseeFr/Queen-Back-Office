@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.stereotype.Repository;
 
 
@@ -19,7 +21,7 @@ import fr.insee.queen.api.dto.campaign.CampaignDto;
 */
 @Transactional
 @Repository
-public interface CampaignRepository extends ApiRepository<Campaign, String> {
+public interface CampaignRepository extends JpaRepository<Campaign, String> {
 	/**
 	* This method retrieve all Campaign in DB
 	* 

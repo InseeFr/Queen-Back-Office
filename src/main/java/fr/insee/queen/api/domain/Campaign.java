@@ -12,8 +12,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 /**
 * Entity Campaign : represent the entity table in DB
 * 
@@ -22,7 +20,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 */
 @Entity
 @Table(name="campaign")
-@Document(collection="campaign")
 public class Campaign {
 	/**
 	* The id of campaign 
@@ -38,11 +35,11 @@ public class Campaign {
 	@Column(length=255, nullable = false)
 	private String label;
 	
-	@DBRef
+
 	@OneToOne( mappedBy = "campaign", cascade = CascadeType.ALL )
 	private Metadata metadata;
   
-	@DBRef
+
 	@OneToMany(fetch = FetchType.LAZY, targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
 	private Set<QuestionnaireModel> questionnaireModels = new HashSet<>();
 	 

@@ -6,7 +6,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
@@ -19,7 +19,7 @@ import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 */
 @Transactional
 @Repository
-public interface QuestionnaireModelRepository extends ApiRepository<QuestionnaireModel, String> {
+public interface QuestionnaireModelRepository extends JpaRepository<QuestionnaireModel, String> {
 	/**
 	* This method retrieve questionnaire model for a specific campaign
 	* 

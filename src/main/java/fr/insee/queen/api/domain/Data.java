@@ -11,8 +11,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -29,7 +27,6 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 	    name = "jsonb",
 	    typeClass = JsonBinaryType.class
 	)
-@Document(collection="data")
 public class Data {
 	
 	
@@ -50,7 +47,6 @@ public class Data {
 	/**
 	* The SurveyUnit associated to the comment
 	*/
-	@DBRef
 	@OneToOne
 	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
 	private SurveyUnit surveyUnit;

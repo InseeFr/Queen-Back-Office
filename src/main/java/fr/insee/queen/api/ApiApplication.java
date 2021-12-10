@@ -9,13 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -27,19 +20,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 
 import fr.insee.queen.api.service.DataSetInjectorService;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = "fr.insee.queen.api",
-		exclude = {
-        // Jpa Hibernate auto config off
-        DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        JpaRepositoriesAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class,
-
-        // Mongo auto config off
-        MongoAutoConfiguration.class,
-        MongoDataAutoConfiguration.class,
-        MongoRepositoriesAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = "fr.insee.queen.api")
+@EnableJpaRepositories(basePackages = "fr.insee.queen.api.repository")
 public class ApiApplication extends SpringBootServletInitializer{
 	private static final Logger LOG = LoggerFactory.getLogger(ApiApplication.class);
 
@@ -94,4 +78,5 @@ public class ApiApplication extends SpringBootServletInitializer{
 	    	injector.createDataSet();
 	    }
 	}
+
 }

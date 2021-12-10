@@ -11,7 +11,7 @@ import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelCreateDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
-import fr.insee.queen.api.repository.ApiRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.NomenclatureService;
@@ -32,7 +32,7 @@ public class QuestionnaireModelServiceImpl extends AbstractService<Questionnaire
     }
 
     @Override
-    protected ApiRepository<QuestionnaireModel, String> getRepository() {
+    protected JpaRepository<QuestionnaireModel, String> getRepository() {
         return questionnaireModelRepository;
     }
 
