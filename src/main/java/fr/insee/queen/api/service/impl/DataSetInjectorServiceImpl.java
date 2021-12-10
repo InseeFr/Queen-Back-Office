@@ -76,7 +76,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 
 	public void createDataSet() {
 		LOGGER.info("Dataset creation start");
-		createSimpsonVqsDataSetByKeyConsuting();
+		createSimpsonVqsDataSet();
 		createLogementDataSet();
 		LOGGER.info("Dataset creation end");	
 	}
@@ -207,7 +207,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 
 	}
 
-	private void createSimpsonVqsDataSetByKeyConsuting() {
+	private void createSimpsonVqsDataSet() {
 		JsonNode jsonArrayNomenclatureCities2019 = objectMapper.createObjectNode();
 		JsonNode jsonArrayRegions2019 = objectMapper.createObjectNode();
 		JsonNode jsonQuestionnaireModelSimpsons = objectMapper.createObjectNode();
