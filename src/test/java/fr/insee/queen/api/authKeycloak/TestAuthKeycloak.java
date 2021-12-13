@@ -882,7 +882,7 @@ public abstract class TestAuthKeycloak {
 		given().auth().oauth2(accessToken())
 				.when().get("api/nomenclature/cities2019")
 				.then().statusCode(200)
-				.and().assertThat().body("isEmpty()",Matchers.is(true));
+				.and().assertThat().body("isEmpty()",Matchers.is(false));
 	}
 	/**
 	* Test that the GET endpoint "api/nomenclature/{id}" return 404 with wrong
