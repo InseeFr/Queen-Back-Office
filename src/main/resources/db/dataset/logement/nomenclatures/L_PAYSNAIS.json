@@ -1,0 +1,2004 @@
+[
+    {
+        "id": "001",
+        "label": "FRANCE",
+        "codenum": "250",
+        "codealpha": "FRA",
+        "libelle_cog": "FRANCE"
+    },
+    {
+        "id": "002",
+        "label": "BELGIQUE",
+        "codenum": "056",
+        "codealpha": "BEL",
+        "libelle_cog": "BELGIQUE"
+    },
+    {
+        "id": "003",
+        "label": "PAYS-BAS, HOLLANDE",
+        "codenum": "528",
+        "codealpha": "NLD",
+        "libelle_cog": "PAYS-BAS"
+    },
+    {
+        "id": "004",
+        "label": "ALLEMAGNE, RFA, RDA, EX-RFA, EX-RDA, REPUBLIQUE DEMOCRATIQUE ALLEMANDE, REPUBLIQUE FEDERALE D�ALLEMAGNE",
+        "codenum": "276",
+        "codealpha": "DEU",
+        "libelle_cog": "ALLEMAGNE"
+    },
+    {
+        "id": "005",
+        "label": "ITALIE",
+        "codenum": "380",
+        "codealpha": "ITA",
+        "libelle_cog": "ITALIE"
+    },
+    {
+        "id": "006",
+        "label": "ROYAUME-UNI",
+        "codenum": "826",
+        "codealpha": "GBR",
+        "libelle_cog": "ROYAUME-UNI"
+    },
+    {
+        "id": "007",
+        "label": "IRLANDE, EIRE",
+        "codenum": "372",
+        "codealpha": "IRL",
+        "libelle_cog": "IRLANDE, ou EIRE"
+    },
+    {
+        "id": "008",
+        "label": "DANEMARK",
+        "codenum": "208",
+        "codealpha": "DNK",
+        "libelle_cog": "DANEMARK"
+    },
+    {
+        "id": "009",
+        "label": "GRECE",
+        "codenum": "300",
+        "codealpha": "GRC",
+        "libelle_cog": "GRECE"
+    },
+    {
+        "id": "010",
+        "label": "PORTUGAL",
+        "codenum": "620",
+        "codealpha": "PRT",
+        "libelle_cog": "PORTUGAL"
+    },
+    {
+        "id": "011",
+        "label": "ESPAGNE",
+        "codenum": "724",
+        "codealpha": "ESP",
+        "libelle_cog": "ESPAGNE"
+    },
+    {
+        "id": "012",
+        "label": "LUXEMBOURG",
+        "codenum": "442",
+        "codealpha": "LUX",
+        "libelle_cog": "LUXEMBOURG"
+    },
+    {
+        "id": "013",
+        "label": "GRANDE-BRETAGNE",
+        "codenum": "826",
+        "codealpha": "GBR",
+        "libelle_cog": "ROYAUME-UNI"
+    },
+    {
+        "id": "014",
+        "label": "ANGLETERRE",
+        "codenum": "826",
+        "codealpha": "GBR",
+        "libelle_cog": "ROYAUME-UNI"
+    },
+    {
+        "id": "015",
+        "label": "ECOSSE",
+        "codenum": "826",
+        "codealpha": "GBR",
+        "libelle_cog": "ROYAUME-UNI"
+    },
+    {
+        "id": "016",
+        "label": "PAYS-DE-GALLES",
+        "codenum": "826",
+        "codealpha": "GBR",
+        "libelle_cog": "ROYAUME-UNI"
+    },
+    {
+        "id": "017",
+        "label": "IRLANDE DU NORD (ULSTER)",
+        "codenum": "826",
+        "codealpha": "GBR",
+        "libelle_cog": "ROYAUME-UNI"
+    },
+    {
+        "id": "018",
+        "label": "ILE DE MAN",
+        "codenum": "833",
+        "codealpha": "IMN",
+        "libelle_cog": "MAN (ILE)"
+    },
+    {
+        "id": "019",
+        "label": "ILES ANGLO-NORMANDES",
+        "codenum": "826",
+        "codealpha": "GBR",
+        "libelle_cog": "ROYAUME-UNI"
+    },
+    {
+        "id": "020",
+        "label": "LIECHTENSTEIN",
+        "codenum": "438",
+        "codealpha": "LIE",
+        "libelle_cog": "LIECHTENSTEIN"
+    },
+    {
+        "id": "021",
+        "label": "CANARIES",
+        "codenum": "901",
+        "codealpha": "CNR",
+        "libelle_cog": "CANARIES (ILES)"
+    },
+    {
+        "id": "022",
+        "label": "CEUTA ET MELILLA",
+        "codenum": "902",
+        "codealpha": "CEU",
+        "libelle_cog": "PROVINCES ESPAGNOLES D'AFRIQUE"
+    },
+    {
+        "id": "023",
+        "label": "A�ORES",
+        "codenum": "905",
+        "codealpha": "ACO",
+        "libelle_cog": "ACORES, MADERE"
+    },
+    {
+        "id": "024",
+        "label": "ISLANDE",
+        "codenum": "352",
+        "codealpha": "ISL",
+        "libelle_cog": "ISLANDE"
+    },
+    {
+        "id": "025",
+        "label": "MADERE",
+        "codenum": "905",
+        "codealpha": "ACO",
+        "libelle_cog": "ACORES, MADERE"
+    },
+    {
+        "id": "026",
+        "label": "ILE BOUVET",
+        "codenum": "074",
+        "codealpha": "BVT",
+        "libelle_cog": "BOUVET (ILE)"
+    },
+    {
+        "id": "028",
+        "label": "NORVEGE",
+        "codenum": "578",
+        "codealpha": "NOR",
+        "libelle_cog": "NORVEGE"
+    },
+    {
+        "id": "029",
+        "label": "SVALBARD, SPITSBERG, ILE JAN MAYEN",
+        "codenum": "744",
+        "codealpha": "SJM",
+        "libelle_cog": "SVALBARD et ILE JAN MAYEN"
+    },
+    {
+        "id": "030",
+        "label": "SUEDE",
+        "codenum": "752",
+        "codealpha": "SWE",
+        "libelle_cog": "SUEDE"
+    },
+    {
+        "id": "031",
+        "label": "CORSE",
+        "codenum": "250",
+        "codealpha": "FRA",
+        "libelle_cog": "FRANCE"
+    },
+    {
+        "id": "032",
+        "label": "FINLANDE",
+        "codenum": "246",
+        "codealpha": "FIN",
+        "libelle_cog": "FINLANDE"
+    },
+    {
+        "id": "033",
+        "label": "PAYS BASQUE (FRANCE)",
+        "codenum": "250",
+        "codealpha": "FRA",
+        "libelle_cog": "FRANCE"
+    },
+    {
+        "id": "034",
+        "label": "CRETE",
+        "codenum": "300",
+        "codealpha": "GRC",
+        "libelle_cog": "GRECE"
+    },
+    {
+        "id": "035",
+        "label": "SARDAIGNE",
+        "codenum": "380",
+        "codealpha": "ITA",
+        "libelle_cog": "ITALIE"
+    },
+    {
+        "id": "036",
+        "label": "SUISSE",
+        "codenum": "756",
+        "codealpha": "CHE",
+        "libelle_cog": "SUISSE"
+    },
+    {
+        "id": "037",
+        "label": "SICILE",
+        "codenum": "380",
+        "codealpha": "ITA",
+        "libelle_cog": "ITALIE"
+    },
+    {
+        "id": "038",
+        "label": "AUTRICHE",
+        "codenum": "040",
+        "codealpha": "AUT",
+        "libelle_cog": "AUTRICHE"
+    },
+    {
+        "id": "039",
+        "label": "PAYS BASQUE (ESPAGNE)",
+        "codenum": "724",
+        "codealpha": "ESP",
+        "libelle_cog": "ESPAGNE"
+    },
+    {
+        "id": "040",
+        "label": "MONACO",
+        "codenum": "492",
+        "codealpha": "MCO",
+        "libelle_cog": "MONACO"
+    },
+    {
+        "id": "041",
+        "label": "ILES FEROE",
+        "codenum": "234",
+        "codealpha": "FRO",
+        "libelle_cog": "FEROE (ILES)"
+    },
+    {
+        "id": "042",
+        "label": "REPUBLIQUE DE SAINT-MARIN",
+        "codenum": "674",
+        "codealpha": "SMR",
+        "libelle_cog": "SAINT-MARIN"
+    },
+    {
+        "id": "043",
+        "label": "ANDORRE",
+        "codenum": "020",
+        "codealpha": "AND",
+        "libelle_cog": "ANDORRE"
+    },
+    {
+        "id": "044",
+        "label": "GIBRALTAR",
+        "codenum": "292",
+        "codealpha": "GIB",
+        "libelle_cog": "GIBRALTAR"
+    },
+    {
+        "id": "045",
+        "label": "VATICAN",
+        "codenum": "336",
+        "codealpha": "VAT",
+        "libelle_cog": "VATICAN, ou SAINT-SIEGE"
+    },
+    {
+        "id": "046",
+        "label": "MALTE",
+        "codenum": "470",
+        "codealpha": "MLT",
+        "libelle_cog": "MALTE"
+    },
+    {
+        "id": "047",
+        "label": "BRETAGNE",
+        "codenum": "250",
+        "codealpha": "FRA",
+        "libelle_cog": "FRANCE"
+    },
+    {
+        "id": "050",
+        "label": "KURDISTAN (IRAQ)",
+        "codenum": "368",
+        "codealpha": "IRQ",
+        "libelle_cog": "IRAQ"
+    },
+    {
+        "id": "051",
+        "label": "KURDISTAN (TURQUIE)",
+        "codenum": "792",
+        "codealpha": "TUR",
+        "libelle_cog": "TURQUIE"
+    },
+    {
+        "id": "052",
+        "label": "TURQUIE",
+        "codenum": "792",
+        "codealpha": "TUR",
+        "libelle_cog": "TURQUIE"
+    },
+    {
+        "id": "053",
+        "label": "ESTONIE (EX-URSS)",
+        "codenum": "233",
+        "codealpha": "EST",
+        "libelle_cog": "ESTONIE"
+    },
+    {
+        "id": "054",
+        "label": "LETTONIE (EX-URSS)",
+        "codenum": "428",
+        "codealpha": "LVA",
+        "libelle_cog": "LETTONIE"
+    },
+    {
+        "id": "055",
+        "label": "LITUANIE (EX-URSS)",
+        "codenum": "440",
+        "codealpha": "LTU",
+        "libelle_cog": "LITUANIE"
+    },
+    {
+        "id": "060",
+        "label": "POLOGNE",
+        "codenum": "616",
+        "codealpha": "POL",
+        "libelle_cog": "POLOGNE"
+    },
+    {
+        "id": "061",
+        "label": "REPUBLIQUE TCHEQUE (EX-TCHECOSLOVAQUIE)",
+        "codenum": "203",
+        "codealpha": "CZE",
+        "libelle_cog": "TCHEQUE (REPUBLIQUE)"
+    },
+    {
+        "id": "063",
+        "label": "SLOVAQUIE (EX-TCHECOSLOVAQUIE)",
+        "codenum": "703",
+        "codealpha": "SVK",
+        "libelle_cog": "SLOVAQUIE"
+    },
+    {
+        "id": "064",
+        "label": "HONGRIE",
+        "codenum": "348",
+        "codealpha": "HUN",
+        "libelle_cog": "HONGRIE"
+    },
+    {
+        "id": "066",
+        "label": "ROUMANIE",
+        "codenum": "642",
+        "codealpha": "ROU",
+        "libelle_cog": "ROUMANIE"
+    },
+    {
+        "id": "068",
+        "label": "BULGARIE",
+        "codenum": "100",
+        "codealpha": "BGR",
+        "libelle_cog": "BULGARIE"
+    },
+    {
+        "id": "070",
+        "label": "ALBANIE",
+        "codenum": "008",
+        "codealpha": "ALB",
+        "libelle_cog": "ALBANIE"
+    },
+    {
+        "id": "072",
+        "label": "UKRAINE (EX-URSS)",
+        "codenum": "804",
+        "codealpha": "UKR",
+        "libelle_cog": "UKRAINE"
+    },
+    {
+        "id": "073",
+        "label": "BIELORUSSIE, BELARUS (EX-URSS)",
+        "codenum": "112",
+        "codealpha": "BLR",
+        "libelle_cog": "BIELORUSSIE"
+    },
+    {
+        "id": "074",
+        "label": "MOLDAVIE (EX-URSS)",
+        "codenum": "498",
+        "codealpha": "MDA",
+        "libelle_cog": "MOLDAVIE"
+    },
+    {
+        "id": "075",
+        "label": "RUSSIE (EX-URSS), TCHETCHENIE, DAGUESTAN",
+        "codenum": "643",
+        "codealpha": "RUS",
+        "libelle_cog": "RUSSIE"
+    },
+    {
+        "id": "076",
+        "label": "GEORGIE (EX-URSS)",
+        "codenum": "268",
+        "codealpha": "GEO",
+        "libelle_cog": "GEORGIE"
+    },
+    {
+        "id": "077",
+        "label": "ARMENIE (EX-URSS)",
+        "codenum": "051",
+        "codealpha": "ARM",
+        "libelle_cog": "ARMENIE"
+    },
+    {
+        "id": "078",
+        "label": "AZERBAIDJAN (EX-URSS)",
+        "codenum": "031",
+        "codealpha": "AZE",
+        "libelle_cog": "AZERBAIDJAN"
+    },
+    {
+        "id": "079",
+        "label": "KAZAKHSTAN (EX-URSS)",
+        "codenum": "398",
+        "codealpha": "KAZ",
+        "libelle_cog": "KAZAKHSTAN"
+    },
+    {
+        "id": "080",
+        "label": "TURKMENISTAN (EX-URSS)",
+        "codenum": "795",
+        "codealpha": "TKM",
+        "libelle_cog": "TURKMENISTAN"
+    },
+    {
+        "id": "081",
+        "label": "OUZBEKISTAN, UZBEKISTAN (EX-URSS)",
+        "codenum": "860",
+        "codealpha": "UZB",
+        "libelle_cog": "OUZBEKISTAN"
+    },
+    {
+        "id": "082",
+        "label": "TADJIKISTAN (EX-URSS)",
+        "codenum": "762",
+        "codealpha": "TJK",
+        "libelle_cog": "TADJIKISTAN"
+    },
+    {
+        "id": "083",
+        "label": "KIRGHIZISTAN, KIRGHIZIE (EX-URSS)",
+        "codenum": "417",
+        "codealpha": "KGZ",
+        "libelle_cog": "KIRGHIZISTAN"
+    },
+    {
+        "id": "086",
+        "label": "TRANSNISTRIE",
+        "codenum": "498",
+        "codealpha": "MDA",
+        "libelle_cog": "MOLDAVIE"
+    },
+    {
+        "id": "090",
+        "label": "KOSOVO",
+        "codenum": "926",
+        "codealpha": "XKX",
+        "libelle_cog": "KOSOVO"
+    },
+    {
+        "id": "091",
+        "label": "SLOVENIE (EX-YOUGOSLAVIE)",
+        "codenum": "705",
+        "codealpha": "SVN",
+        "libelle_cog": "SLOVENIE"
+    },
+    {
+        "id": "092",
+        "label": "CROATIE (EX-YOUGOSLAVIE)",
+        "codenum": "191",
+        "codealpha": "HRV",
+        "libelle_cog": "CROATIE"
+    },
+    {
+        "id": "093",
+        "label": "BOSNIE-HERZEGOVINE (EX-YOUGOSLAVIE)",
+        "codenum": "070",
+        "codealpha": "BIH",
+        "libelle_cog": "BOSNIE-HERZEGOVINE"
+    },
+    {
+        "id": "094",
+        "label": "SERBIE",
+        "codenum": "688",
+        "codealpha": "SRB",
+        "libelle_cog": "SERBIE"
+    },
+    {
+        "id": "096",
+        "label": "MACEDOINE, REPUBLIQUE DE MACEDOINE DU NORD (EX-YOUGOSLAVIE)",
+        "codenum": "807",
+        "codealpha": "MKD",
+        "libelle_cog": "REPUBLIQUE DE MACEDOINE DU NORD"
+    },
+    {
+        "id": "097",
+        "label": "MONTENEGRO",
+        "codenum": "499",
+        "codealpha": "MNE",
+        "libelle_cog": "MONTENEGRO"
+    },
+    {
+        "id": "204",
+        "label": "MAROC",
+        "codenum": "504",
+        "codealpha": "MAR",
+        "libelle_cog": "MAROC"
+    },
+    {
+        "id": "208",
+        "label": "ALGERIE",
+        "codenum": "012",
+        "codealpha": "DZA",
+        "libelle_cog": "ALGERIE"
+    },
+    {
+        "id": "210",
+        "label": "KABYLIE",
+        "codenum": "012",
+        "codealpha": "DZA",
+        "libelle_cog": "ALGERIE"
+    },
+    {
+        "id": "212",
+        "label": "TUNISIE",
+        "codenum": "788",
+        "codealpha": "TUN",
+        "libelle_cog": "TUNISIE"
+    },
+    {
+        "id": "216",
+        "label": "LIBYE",
+        "codenum": "434",
+        "codealpha": "LBY",
+        "libelle_cog": "LIBYE"
+    },
+    {
+        "id": "220",
+        "label": "EGYPTE",
+        "codenum": "818",
+        "codealpha": "EGY",
+        "libelle_cog": "EGYPTE"
+    },
+    {
+        "id": "224",
+        "label": "SOUDAN",
+        "codenum": "729",
+        "codealpha": "SDN",
+        "libelle_cog": "SOUDAN"
+    },
+    {
+        "id": "226",
+        "label": "SOUDAN DU SUD",
+        "codenum": "728",
+        "codealpha": "SSD",
+        "libelle_cog": "SOUDAN DU SUD"
+    },
+    {
+        "id": "228",
+        "label": "MAURITANIE",
+        "codenum": "478",
+        "codealpha": "MRT",
+        "libelle_cog": "MAURITANIE"
+    },
+    {
+        "id": "232",
+        "label": "MALI",
+        "codenum": "466",
+        "codealpha": "MLI",
+        "libelle_cog": "MALI"
+    },
+    {
+        "id": "236",
+        "label": "BURKINA FASO",
+        "codenum": "854",
+        "codealpha": "BFA",
+        "libelle_cog": "BURKINA"
+    },
+    {
+        "id": "240",
+        "label": "NIGER",
+        "codenum": "562",
+        "codealpha": "NER",
+        "libelle_cog": "NIGER"
+    },
+    {
+        "id": "244",
+        "label": "TCHAD",
+        "codenum": "148",
+        "codealpha": "TCD",
+        "libelle_cog": "TCHAD"
+    },
+    {
+        "id": "247",
+        "label": "CAP-VERT",
+        "codenum": "132",
+        "codealpha": "CPV",
+        "libelle_cog": "CAP-VERT"
+    },
+    {
+        "id": "248",
+        "label": "SENEGAL",
+        "codenum": "686",
+        "codealpha": "SEN",
+        "libelle_cog": "SENEGAL"
+    },
+    {
+        "id": "252",
+        "label": "GAMBIE",
+        "codenum": "270",
+        "codealpha": "GMB",
+        "libelle_cog": "GAMBIE"
+    },
+    {
+        "id": "257",
+        "label": "GUINEE-BISSAU, GUINEE-BISSAO",
+        "codenum": "624",
+        "codealpha": "GNB",
+        "libelle_cog": "GUINEE-BISSAU"
+    },
+    {
+        "id": "260",
+        "label": "REPUBLIQUE DE GUINEE, GUINEE",
+        "codenum": "324",
+        "codealpha": "GIN",
+        "libelle_cog": "GUINEE"
+    },
+    {
+        "id": "264",
+        "label": "SIERRA LEONE",
+        "codenum": "694",
+        "codealpha": "SLE",
+        "libelle_cog": "SIERRA LEONE"
+    },
+    {
+        "id": "268",
+        "label": "LIBERIA",
+        "codenum": "430",
+        "codealpha": "LBR",
+        "libelle_cog": "LIBERIA"
+    },
+    {
+        "id": "272",
+        "label": "COTE-D'IVOIRE",
+        "codenum": "384",
+        "codealpha": "CIV",
+        "libelle_cog": "COTE D'IVOIRE"
+    },
+    {
+        "id": "276",
+        "label": "GHANA",
+        "codenum": "288",
+        "codealpha": "GHA",
+        "libelle_cog": "GHANA"
+    },
+    {
+        "id": "280",
+        "label": "TOGO",
+        "codenum": "768",
+        "codealpha": "TGO",
+        "libelle_cog": "TOGO"
+    },
+    {
+        "id": "284",
+        "label": "BENIN",
+        "codenum": "204",
+        "codealpha": "BEN",
+        "libelle_cog": "BENIN"
+    },
+    {
+        "id": "288",
+        "label": "NIGERIA",
+        "codenum": "566",
+        "codealpha": "NGA",
+        "libelle_cog": "NIGERIA"
+    },
+    {
+        "id": "302",
+        "label": "CAMEROUN",
+        "codenum": "120",
+        "codealpha": "CMR",
+        "libelle_cog": "CAMEROUN"
+    },
+    {
+        "id": "306",
+        "label": "REPUBLIQUE CENTRAFRICAINE, RCA",
+        "codenum": "140",
+        "codealpha": "CAF",
+        "libelle_cog": "CENTRAFRICAINE (REPUBLIQUE)"
+    },
+    {
+        "id": "310",
+        "label": "GUINEE EQUATORIALE",
+        "codenum": "226",
+        "codealpha": "GNQ",
+        "libelle_cog": "GUINEE EQUATORIALE"
+    },
+    {
+        "id": "311",
+        "label": "SAO TOME-ET-PRINCIPE",
+        "codenum": "678",
+        "codealpha": "STP",
+        "libelle_cog": "SAO TOME-ET-PRINCIPE"
+    },
+    {
+        "id": "314",
+        "label": "GABON",
+        "codenum": "266",
+        "codealpha": "GAB",
+        "libelle_cog": "GABON"
+    },
+    {
+        "id": "318",
+        "label": "REPUBLIQUE DU CONGO, CONGO, CONGO-BRAZZAVILLE",
+        "codenum": "178",
+        "codealpha": "COG",
+        "libelle_cog": "CONGO"
+    },
+    {
+        "id": "322",
+        "label": "REPUBLIQUE DEMOCRATIQUE DU CONGO, ZA�RE, EX-ZA�RE",
+        "codenum": "180",
+        "codealpha": "COD",
+        "libelle_cog": "CONGO (REPUBLIQUE DEMOCRATIQUE)"
+    },
+    {
+        "id": "324",
+        "label": "RWANDA, RUANDA",
+        "codenum": "646",
+        "codealpha": "RWA",
+        "libelle_cog": "RWANDA"
+    },
+    {
+        "id": "328",
+        "label": "BURUNDI",
+        "codenum": "108",
+        "codealpha": "BDI",
+        "libelle_cog": "BURUNDI"
+    },
+    {
+        "id": "330",
+        "label": "ANGOLA",
+        "codenum": "024",
+        "codealpha": "AGO",
+        "libelle_cog": "ANGOLA"
+    },
+    {
+        "id": "331",
+        "label": "CABINDA",
+        "codenum": "024",
+        "codealpha": "AGO",
+        "libelle_cog": "ANGOLA"
+    },
+    {
+        "id": "334",
+        "label": "ETHIOPIE",
+        "codenum": "231",
+        "codealpha": "ETH",
+        "libelle_cog": "ETHIOPIE"
+    },
+    {
+        "id": "335",
+        "label": "ERYTHREE",
+        "codenum": "232",
+        "codealpha": "ERI",
+        "libelle_cog": "ERYTHREE"
+    },
+    {
+        "id": "338",
+        "label": "DJIBOUTI",
+        "codenum": "262",
+        "codealpha": "DJI",
+        "libelle_cog": "DJIBOUTI"
+    },
+    {
+        "id": "342",
+        "label": "SOMALIE",
+        "codenum": "706",
+        "codealpha": "SOM",
+        "libelle_cog": "SOMALIE"
+    },
+    {
+        "id": "346",
+        "label": "KENYA",
+        "codenum": "404",
+        "codealpha": "KEN",
+        "libelle_cog": "KENYA"
+    },
+    {
+        "id": "350",
+        "label": "OUGANDA",
+        "codenum": "800",
+        "codealpha": "UGA",
+        "libelle_cog": "OUGANDA"
+    },
+    {
+        "id": "352",
+        "label": "TANZANIE",
+        "codenum": "834",
+        "codealpha": "TZA",
+        "libelle_cog": "TANZANIE"
+    },
+    {
+        "id": "355",
+        "label": "SEYCHELLES",
+        "codenum": "690",
+        "codealpha": "SYC",
+        "libelle_cog": "SEYCHELLES"
+    },
+    {
+        "id": "356",
+        "label": "ILE DE L'ASCENSION",
+        "codenum": "654",
+        "codealpha": "SHN",
+        "libelle_cog": "SAINTE HELENE, ASCENSION ET TRISTAN DA CUNHA"
+    },
+    {
+        "id": "357",
+        "label": "ILES TRISTAN DE CUNHA",
+        "codenum": "654",
+        "codealpha": "SHN",
+        "libelle_cog": "SAINTE HELENE, ASCENSION ET TRISTAN DA CUNHA"
+    },
+    {
+        "id": "358",
+        "label": "SAINTE-HELENE",
+        "codenum": "654",
+        "codealpha": "SHN",
+        "libelle_cog": "SAINTE HELENE, ASCENSION ET TRISTAN DA CUNHA"
+    },
+    {
+        "id": "359",
+        "label": "ILES CHAGOS",
+        "codenum": "086",
+        "codealpha": "IOT",
+        "libelle_cog": "OCEAN INDIEN (TERRITOIRE BRITANNIQUE DE L')"
+    },
+    {
+        "id": "366",
+        "label": "MOZAMBIQUE",
+        "codenum": "508",
+        "codealpha": "MOZ",
+        "libelle_cog": "MOZAMBIQUE"
+    },
+    {
+        "id": "370",
+        "label": "MADAGASCAR",
+        "codenum": "450",
+        "codealpha": "MDG",
+        "libelle_cog": "MADAGASCAR"
+    },
+    {
+        "id": "372",
+        "label": "REUNION",
+        "codenum": "638",
+        "codealpha": "REU",
+        "libelle_cog": "LA REUNION"
+    },
+    {
+        "id": "373",
+        "label": "ILE MAURICE",
+        "codenum": "480",
+        "codealpha": "MUS",
+        "libelle_cog": "MAURICE"
+    },
+    {
+        "id": "375",
+        "label": "COMORES",
+        "codenum": "174",
+        "codealpha": "COM",
+        "libelle_cog": "COMORES"
+    },
+    {
+        "id": "377",
+        "label": "MAYOTTE",
+        "codenum": "175",
+        "codealpha": "MYT",
+        "libelle_cog": "MAYOTTE"
+    },
+    {
+        "id": "378",
+        "label": "ZAMBIE",
+        "codenum": "894",
+        "codealpha": "ZMB",
+        "libelle_cog": "ZAMBIE"
+    },
+    {
+        "id": "380",
+        "label": "SAHARA OCCIDENTAL",
+        "codenum": "732",
+        "codealpha": "ESH",
+        "libelle_cog": "SAHARA OCCIDENTAL"
+    },
+    {
+        "id": "382",
+        "label": "ZIMBABWE",
+        "codenum": "716",
+        "codealpha": "ZWE",
+        "libelle_cog": "ZIMBABWE"
+    },
+    {
+        "id": "386",
+        "label": "MALAWI",
+        "codenum": "454",
+        "codealpha": "MWI",
+        "libelle_cog": "MALAWI"
+    },
+    {
+        "id": "388",
+        "label": "AFRIQUE DU SUD",
+        "codenum": "710",
+        "codealpha": "ZAF",
+        "libelle_cog": "AFRIQUE DU SUD"
+    },
+    {
+        "id": "389",
+        "label": "NAMIBIE",
+        "codenum": "516",
+        "codealpha": "NAM",
+        "libelle_cog": "NAMIBIE"
+    },
+    {
+        "id": "391",
+        "label": "BOTSWANA",
+        "codenum": "072",
+        "codealpha": "BWA",
+        "libelle_cog": "BOTSWANA"
+    },
+    {
+        "id": "393",
+        "label": "SWAZILAND, ESWATINI",
+        "codenum": "748",
+        "codealpha": "SWZ",
+        "libelle_cog": "ESWATINI"
+    },
+    {
+        "id": "395",
+        "label": "LESOTHO",
+        "codenum": "426",
+        "codealpha": "LSO",
+        "libelle_cog": "LESOTHO"
+    },
+    {
+        "id": "400",
+        "label": "ETATS-UNIS D'AMERIQUE, USA, ALASKA, HAWAII",
+        "codenum": "840",
+        "codealpha": "USA",
+        "libelle_cog": "ETATS-UNIS"
+    },
+    {
+        "id": "404",
+        "label": "CANADA",
+        "codenum": "124",
+        "codealpha": "CAN",
+        "libelle_cog": "CANADA"
+    },
+    {
+        "id": "405",
+        "label": "QUEBEC",
+        "codenum": "124",
+        "codealpha": "CAN",
+        "libelle_cog": "CANADA"
+    },
+    {
+        "id": "406",
+        "label": "GROENLAND",
+        "codenum": "304",
+        "codealpha": "GRL",
+        "libelle_cog": "GROENLAND"
+    },
+    {
+        "id": "412",
+        "label": "MEXIQUE",
+        "codenum": "484",
+        "codealpha": "MEX",
+        "libelle_cog": "MEXIQUE"
+    },
+    {
+        "id": "413",
+        "label": "BERMUDES",
+        "codenum": "060",
+        "codealpha": "BMU",
+        "libelle_cog": "BERMUDES"
+    },
+    {
+        "id": "416",
+        "label": "GUATEMALA",
+        "codenum": "320",
+        "codealpha": "GTM",
+        "libelle_cog": "GUATEMALA"
+    },
+    {
+        "id": "421",
+        "label": "BELIZE",
+        "codenum": "084",
+        "codealpha": "BLZ",
+        "libelle_cog": "BELIZE"
+    },
+    {
+        "id": "424",
+        "label": "HONDURAS",
+        "codenum": "340",
+        "codealpha": "HND",
+        "libelle_cog": "HONDURAS"
+    },
+    {
+        "id": "428",
+        "label": "EL SALVADOR",
+        "codenum": "222",
+        "codealpha": "SLV",
+        "libelle_cog": "EL SALVADOR"
+    },
+    {
+        "id": "432",
+        "label": "NICARAGUA",
+        "codenum": "558",
+        "codealpha": "NIC",
+        "libelle_cog": "NICARAGUA"
+    },
+    {
+        "id": "436",
+        "label": "COSTA RICA",
+        "codenum": "188",
+        "codealpha": "CRI",
+        "libelle_cog": "COSTA RICA"
+    },
+    {
+        "id": "442",
+        "label": "PANAMA",
+        "codenum": "591",
+        "codealpha": "PAN",
+        "libelle_cog": "PANAMA"
+    },
+    {
+        "id": "448",
+        "label": "CUBA",
+        "codenum": "192",
+        "codealpha": "CUB",
+        "libelle_cog": "CUBA"
+    },
+    {
+        "id": "449",
+        "label": "PORTO RICO",
+        "codenum": "630",
+        "codealpha": "PRI",
+        "libelle_cog": "PORTO RICO"
+    },
+    {
+        "id": "451",
+        "label": "SAINT-KITTS ET NEVIS",
+        "codenum": "659",
+        "codealpha": "KNA",
+        "libelle_cog": "SAINT-CHRISTOPHE-ET-NIEVES"
+    },
+    {
+        "id": "452",
+        "label": "HAITI",
+        "codenum": "332",
+        "codealpha": "HTI",
+        "libelle_cog": "HAITI"
+    },
+    {
+        "id": "453",
+        "label": "BAHAMAS",
+        "codenum": "044",
+        "codealpha": "BHS",
+        "libelle_cog": "BAHAMAS"
+    },
+    {
+        "id": "454",
+        "label": "ILES TURQUES ET CA�QUES, ILES TURKS ET CA�COS",
+        "codenum": "796",
+        "codealpha": "TCA",
+        "libelle_cog": "TURKS ET CAIQUES (ILES)"
+    },
+    {
+        "id": "456",
+        "label": "REPUBLIQUE DOMINICAINE",
+        "codenum": "214",
+        "codealpha": "DOM",
+        "libelle_cog": "DOMINICAINE (REPUBLIQUE)"
+    },
+    {
+        "id": "457",
+        "label": "ILES VIERGES AMERICAINES",
+        "codenum": "850",
+        "codealpha": "VIR",
+        "libelle_cog": "VIERGES DES ETATS-UNIS (ILES)"
+    },
+    {
+        "id": "458",
+        "label": "GUADELOUPE",
+        "codenum": "312",
+        "codealpha": "GLP",
+        "libelle_cog": "GUADELOUPE"
+    },
+    {
+        "id": "459",
+        "label": "ANTIGUA ET BARBUDA",
+        "codenum": "028",
+        "codealpha": "ATG",
+        "libelle_cog": "ANTIGUA-ET-BARBUDA"
+    },
+    {
+        "id": "460",
+        "label": "DOMINIQUE",
+        "codenum": "212",
+        "codealpha": "DMA",
+        "libelle_cog": "DOMINIQUE"
+    },
+    {
+        "id": "461",
+        "label": "ILES VIERGES BRITANNIQUES",
+        "codenum": "092",
+        "codealpha": "VGB",
+        "libelle_cog": "VIERGES BRITANNIQUES (ILES)"
+    },
+    {
+        "id": "462",
+        "label": "MARTINIQUE",
+        "codenum": "474",
+        "codealpha": "MTQ",
+        "libelle_cog": "MARTINIQUE"
+    },
+    {
+        "id": "463",
+        "label": "ILES CAYMAN",
+        "codenum": "136",
+        "codealpha": "CYM",
+        "libelle_cog": "CAIMANES (ILES)"
+    },
+    {
+        "id": "464",
+        "label": "JAMAIQUE",
+        "codenum": "388",
+        "codealpha": "JAM",
+        "libelle_cog": "JAMAIQUE"
+    },
+    {
+        "id": "465",
+        "label": "SAINTE-LUCIE",
+        "codenum": "662",
+        "codealpha": "LCA",
+        "libelle_cog": "SAINTE-LUCIE"
+    },
+    {
+        "id": "466",
+        "label": "SINT MAARTEN, SAINT-MARTIN (NEERLANDAISE)",
+        "codenum": "534",
+        "codealpha": "SXM",
+        "libelle_cog": "SAINT-MARTIN (PARTIE NEERLANDAISE)"
+    },
+    {
+        "id": "467",
+        "label": "SAINT-VINCENT-ET-LES-GRENADINES",
+        "codenum": "670",
+        "codealpha": "VCT",
+        "libelle_cog": "SAINT-VINCENT-ET-LES GRENADINES"
+    },
+    {
+        "id": "469",
+        "label": "BARBADE",
+        "codenum": "052",
+        "codealpha": "BRB",
+        "libelle_cog": "BARBADE"
+    },
+    {
+        "id": "470",
+        "label": "ANGUILLA",
+        "codenum": "660",
+        "codealpha": "AIA",
+        "libelle_cog": "ANGUILLA"
+    },
+    {
+        "id": "471",
+        "label": "MONTSERRAT",
+        "codenum": "500",
+        "codealpha": "MSR",
+        "libelle_cog": "MONTSERRAT"
+    },
+    {
+        "id": "472",
+        "label": "TRINIDAD ET TOBAGO, TRINITE-ET-TOBAGO",
+        "codenum": "780",
+        "codealpha": "TTO",
+        "libelle_cog": "TRINITE-ET-TOBAGO"
+    },
+    {
+        "id": "473",
+        "label": "GRENADE",
+        "codenum": "308",
+        "codealpha": "GRD",
+        "libelle_cog": "GRENADE"
+    },
+    {
+        "id": "474",
+        "label": "ARUBA",
+        "codenum": "533",
+        "codealpha": "ABW",
+        "libelle_cog": "ARUBA"
+    },
+    {
+        "id": "475",
+        "label": "SAINT-EUSTACHE",
+        "codenum": "535",
+        "codealpha": "BES",
+        "libelle_cog": "BONAIRE, SAINT EUSTACHE ET SABA"
+    },
+    {
+        "id": "476",
+        "label": "SABA",
+        "codenum": "535",
+        "codealpha": "BES",
+        "libelle_cog": "BONAIRE, SAINT EUSTACHE ET SABA"
+    },
+    {
+        "id": "477",
+        "label": "CURA�AO",
+        "codenum": "531",
+        "codealpha": "CUW",
+        "libelle_cog": "CURA�AO"
+    },
+    {
+        "id": "478",
+        "label": "ANTILLES NEERLANDAISES",
+        "codenum": "530",
+        "codealpha": "ANT",
+        "libelle_cog": "ANTILLES NEERLANDAISES"
+    },
+    {
+        "id": "479",
+        "label": "BONAIRE",
+        "codenum": "535",
+        "codealpha": "BES",
+        "libelle_cog": "BONAIRE, SAINT EUSTACHE ET SABA"
+    },
+    {
+        "id": "480",
+        "label": "COLOMBIE",
+        "codenum": "170",
+        "codealpha": "COL",
+        "libelle_cog": "COLOMBIE"
+    },
+    {
+        "id": "484",
+        "label": "VENEZUELA",
+        "codenum": "862",
+        "codealpha": "VEN",
+        "libelle_cog": "VENEZUELA"
+    },
+    {
+        "id": "488",
+        "label": "GUYANA",
+        "codenum": "328",
+        "codealpha": "GUY",
+        "libelle_cog": "GUYANA"
+    },
+    {
+        "id": "492",
+        "label": "SURINAM",
+        "codenum": "740",
+        "codealpha": "SUR",
+        "libelle_cog": "SURINAME"
+    },
+    {
+        "id": "496",
+        "label": "GUYANE FRAN�AISE",
+        "codenum": "254",
+        "codealpha": "GUF",
+        "libelle_cog": "GUYANE"
+    },
+    {
+        "id": "500",
+        "label": "EQUATEUR",
+        "codenum": "218",
+        "codealpha": "ECU",
+        "libelle_cog": "EQUATEUR"
+    },
+    {
+        "id": "504",
+        "label": "PEROU",
+        "codenum": "604",
+        "codealpha": "PER",
+        "libelle_cog": "PEROU"
+    },
+    {
+        "id": "508",
+        "label": "BRESIL",
+        "codenum": "076",
+        "codealpha": "BRA",
+        "libelle_cog": "BRESIL"
+    },
+    {
+        "id": "512",
+        "label": "CHILI",
+        "codenum": "152",
+        "codealpha": "CHL",
+        "libelle_cog": "CHILI"
+    },
+    {
+        "id": "516",
+        "label": "BOLIVIE",
+        "codenum": "068",
+        "codealpha": "BOL",
+        "libelle_cog": "BOLIVIE"
+    },
+    {
+        "id": "520",
+        "label": "PARAGUAY",
+        "codenum": "600",
+        "codealpha": "PRY",
+        "libelle_cog": "PARAGUAY"
+    },
+    {
+        "id": "524",
+        "label": "URUGUAY",
+        "codenum": "858",
+        "codealpha": "URY",
+        "libelle_cog": "URUGUAY"
+    },
+    {
+        "id": "528",
+        "label": "ARGENTINE",
+        "codenum": "032",
+        "codealpha": "ARG",
+        "libelle_cog": "ARGENTINE"
+    },
+    {
+        "id": "529",
+        "label": "ILES FALKLAND, ILES MALOUINES",
+        "codenum": "238",
+        "codealpha": "FLK",
+        "libelle_cog": "MALOUINES, OU FALKLAND (ILES)"
+    },
+    {
+        "id": "530",
+        "label": "GEORGIE DU SUD",
+        "codenum": "239",
+        "codealpha": "SGS",
+        "libelle_cog": "GEORGIE DU SUD ET LES ILES SANDWICH DU SUD"
+    },
+    {
+        "id": "531",
+        "label": "ILES SANDWICH DU SUD",
+        "codenum": "239",
+        "codealpha": "SGS",
+        "libelle_cog": "GEORGIE DU SUD ET LES ILES SANDWICH DU SUD"
+    },
+    {
+        "id": "532",
+        "label": "TERRITOIRE ANTARCTIQUE BRITANNIQUE",
+        "codenum": "900",
+        "codealpha": "ATT",
+        "libelle_cog": "TERRITOIRE ANTARCTIQUE BRITANNIQUE"
+    },
+    {
+        "id": "600",
+        "label": "CHYPRE",
+        "codenum": "196",
+        "codealpha": "CYP",
+        "libelle_cog": "CHYPRE"
+    },
+    {
+        "id": "604",
+        "label": "LIBAN",
+        "codenum": "422",
+        "codealpha": "LBN",
+        "libelle_cog": "LIBAN"
+    },
+    {
+        "id": "608",
+        "label": "SYRIE",
+        "codenum": "760",
+        "codealpha": "SYR",
+        "libelle_cog": "SYRIE"
+    },
+    {
+        "id": "612",
+        "label": "IRAQ, IRAK",
+        "codenum": "368",
+        "codealpha": "IRQ",
+        "libelle_cog": "IRAQ"
+    },
+    {
+        "id": "616",
+        "label": "IRAN",
+        "codenum": "364",
+        "codealpha": "IRN",
+        "libelle_cog": "IRAN"
+    },
+    {
+        "id": "624",
+        "label": "ISRA�L",
+        "codenum": "376",
+        "codealpha": "ISR",
+        "libelle_cog": "ISRAEL"
+    },
+    {
+        "id": "625",
+        "label": "PALESTINE",
+        "codenum": "275",
+        "codealpha": "PSE",
+        "libelle_cog": "PALESTINE (Etat de)"
+    },
+    {
+        "id": "628",
+        "label": "JORDANIE",
+        "codenum": "400",
+        "codealpha": "JOR",
+        "libelle_cog": "JORDANIE"
+    },
+    {
+        "id": "632",
+        "label": "ARABIE SAOUDITE",
+        "codenum": "682",
+        "codealpha": "SAU",
+        "libelle_cog": "ARABIE SAOUDITE"
+    },
+    {
+        "id": "636",
+        "label": "KOWE�T",
+        "codenum": "414",
+        "codealpha": "KWT",
+        "libelle_cog": "KOWEIT"
+    },
+    {
+        "id": "640",
+        "label": "BAHREIN",
+        "codenum": "048",
+        "codealpha": "BHR",
+        "libelle_cog": "BAHREIN"
+    },
+    {
+        "id": "641",
+        "label": "FUDJAYRA, FOUDJA�RAH",
+        "codenum": "784",
+        "codealpha": "ARE",
+        "libelle_cog": "EMIRATS ARABES UNIS"
+    },
+    {
+        "id": "642",
+        "label": "UMM AL QAYWAYN, OUM AL QA�WA�N",
+        "codenum": "784",
+        "codealpha": "ARE",
+        "libelle_cog": "EMIRATS ARABES UNIS"
+    },
+    {
+        "id": "643",
+        "label": "ADJMAN",
+        "codenum": "784",
+        "codealpha": "ARE",
+        "libelle_cog": "EMIRATS ARABES UNIS"
+    },
+    {
+        "id": "644",
+        "label": "QATAR",
+        "codenum": "634",
+        "codealpha": "QAT",
+        "libelle_cog": "QATAR"
+    },
+    {
+        "id": "645",
+        "label": "ABU DHABI, ABOU DABI",
+        "codenum": "784",
+        "codealpha": "ARE",
+        "libelle_cog": "EMIRATS ARABES UNIS"
+    },
+    {
+        "id": "646",
+        "label": "DUBA�, DOUBA�",
+        "codenum": "784",
+        "codealpha": "ARE",
+        "libelle_cog": "EMIRATS ARABES UNIS"
+    },
+    {
+        "id": "647",
+        "label": "EMIRATS ARABES UNIS",
+        "codenum": "784",
+        "codealpha": "ARE",
+        "libelle_cog": "EMIRATS ARABES UNIS"
+    },
+    {
+        "id": "648",
+        "label": "CHARDJA",
+        "codenum": "784",
+        "codealpha": "ARE",
+        "libelle_cog": "EMIRATS ARABES UNIS"
+    },
+    {
+        "id": "649",
+        "label": "OMAN",
+        "codenum": "512",
+        "codealpha": "OMN",
+        "libelle_cog": "OMAN"
+    },
+    {
+        "id": "650",
+        "label": "RAS AL-KHAYMA, RAS AL KHA�MAH",
+        "codenum": "784",
+        "codealpha": "ARE",
+        "libelle_cog": "EMIRATS ARABES UNIS"
+    },
+    {
+        "id": "653",
+        "label": "YEMEN",
+        "codenum": "887",
+        "codealpha": "YEM",
+        "libelle_cog": "YEMEN"
+    },
+    {
+        "id": "660",
+        "label": "AFGHANISTAN",
+        "codenum": "004",
+        "codealpha": "AFG",
+        "libelle_cog": "AFGHANISTAN"
+    },
+    {
+        "id": "662",
+        "label": "PAKISTAN",
+        "codenum": "586",
+        "codealpha": "PAK",
+        "libelle_cog": "PAKISTAN"
+    },
+    {
+        "id": "664",
+        "label": "INDE",
+        "codenum": "356",
+        "codealpha": "IND",
+        "libelle_cog": "INDE"
+    },
+    {
+        "id": "666",
+        "label": "BANGLADESH",
+        "codenum": "050",
+        "codealpha": "BGD",
+        "libelle_cog": "BANGLADESH"
+    },
+    {
+        "id": "667",
+        "label": "MALDIVES",
+        "codenum": "462",
+        "codealpha": "MDV",
+        "libelle_cog": "MALDIVES"
+    },
+    {
+        "id": "669",
+        "label": "SRI LANKA, CEYLAN",
+        "codenum": "144",
+        "codealpha": "LKA",
+        "libelle_cog": "SRI LANKA"
+    },
+    {
+        "id": "672",
+        "label": "NEPAL",
+        "codenum": "524",
+        "codealpha": "NPL",
+        "libelle_cog": "NEPAL"
+    },
+    {
+        "id": "675",
+        "label": "BHOUTAN, BHUTAN",
+        "codenum": "064",
+        "codealpha": "BTN",
+        "libelle_cog": "BHOUTAN"
+    },
+    {
+        "id": "676",
+        "label": "MYANMAR, BIRMANIE",
+        "codenum": "104",
+        "codealpha": "MMR",
+        "libelle_cog": "BIRMANIE"
+    },
+    {
+        "id": "680",
+        "label": "THAILANDE",
+        "codenum": "764",
+        "codealpha": "THA",
+        "libelle_cog": "THAILANDE"
+    },
+    {
+        "id": "684",
+        "label": "LAOS",
+        "codenum": "418",
+        "codealpha": "LAO",
+        "libelle_cog": "LAOS"
+    },
+    {
+        "id": "690",
+        "label": "VIET NAM, VIET NAM DU NORD, VIET NAM DU SUD",
+        "codenum": "704",
+        "codealpha": "VNM",
+        "libelle_cog": "VIET NAM"
+    },
+    {
+        "id": "696",
+        "label": "CAMBODGE",
+        "codenum": "116",
+        "codealpha": "KHM",
+        "libelle_cog": "CAMBODGE"
+    },
+    {
+        "id": "700",
+        "label": "INDONESIE",
+        "codenum": "360",
+        "codealpha": "IDN",
+        "libelle_cog": "INDONESIE"
+    },
+    {
+        "id": "701",
+        "label": "MALAISIE",
+        "codenum": "458",
+        "codealpha": "MYS",
+        "libelle_cog": "MALAISIE"
+    },
+    {
+        "id": "702",
+        "label": "TIMOR ORIENTAL",
+        "codenum": "626",
+        "codealpha": "TLS",
+        "libelle_cog": "TIMOR ORIENTAL"
+    },
+    {
+        "id": "703",
+        "label": "BRUNEI",
+        "codenum": "096",
+        "codealpha": "BRN",
+        "libelle_cog": "BRUNEI"
+    },
+    {
+        "id": "706",
+        "label": "SINGAPOUR",
+        "codenum": "702",
+        "codealpha": "SGP",
+        "libelle_cog": "SINGAPOUR"
+    },
+    {
+        "id": "708",
+        "label": "PHILIPPINES",
+        "codenum": "608",
+        "codealpha": "PHL",
+        "libelle_cog": "PHILIPPINES"
+    },
+    {
+        "id": "716",
+        "label": "MONGOLIE",
+        "codenum": "496",
+        "codealpha": "MNG",
+        "libelle_cog": "MONGOLIE"
+    },
+    {
+        "id": "720",
+        "label": "REPUBLIQUE POPULAIRE DE CHINE, CHINE",
+        "codenum": "156",
+        "codealpha": "CHN",
+        "libelle_cog": "CHINE"
+    },
+    {
+        "id": "721",
+        "label": "TIBET",
+        "codenum": "156",
+        "codealpha": "CHN",
+        "libelle_cog": "CHINE"
+    },
+    {
+        "id": "724",
+        "label": "REPUBLIQUE POPULAIRE DEMOCRATIQUE DE COREE, COREE DU NORD",
+        "codenum": "408",
+        "codealpha": "PRK",
+        "libelle_cog": "COREE (REPUBLIQUE POPULAIRE DEMOCRATIQUE DE)"
+    },
+    {
+        "id": "728",
+        "label": "REPUBLIQUE DE COREE, COREE DU SUD",
+        "codenum": "410",
+        "codealpha": "KOR",
+        "libelle_cog": "COREE (REPUBLIQUE DE)"
+    },
+    {
+        "id": "732",
+        "label": "JAPON",
+        "codenum": "392",
+        "codealpha": "JPN",
+        "libelle_cog": "JAPON"
+    },
+    {
+        "id": "736",
+        "label": "TAIWAN, FORMOSE",
+        "codenum": "158",
+        "codealpha": "TWN",
+        "libelle_cog": "TAIWAN"
+    },
+    {
+        "id": "740",
+        "label": "HONG-KONG",
+        "codenum": "344",
+        "codealpha": "HKG",
+        "libelle_cog": "HONG-KONG"
+    },
+    {
+        "id": "743",
+        "label": "MACAO",
+        "codenum": "446",
+        "codealpha": "MAC",
+        "libelle_cog": "MACAO"
+    },
+    {
+        "id": "800",
+        "label": "AUSTRALIE",
+        "codenum": "036",
+        "codealpha": "AUS",
+        "libelle_cog": "AUSTRALIE"
+    },
+    {
+        "id": "801",
+        "label": "PAPOUASIE-NOUVELLE-GUINEE",
+        "codenum": "598",
+        "codealpha": "PNG",
+        "libelle_cog": "PAPOUASIE-NOUVELLE-GUINEE"
+    },
+    {
+        "id": "802",
+        "label": "ILE HEARD, ILES MACDONALD",
+        "codenum": "334",
+        "codealpha": "HMD",
+        "libelle_cog": "HEARD ET MACDONALD (ILES)"
+    },
+    {
+        "id": "803",
+        "label": "NAURU",
+        "codenum": "520",
+        "codealpha": "NRU",
+        "libelle_cog": "NAURU"
+    },
+    {
+        "id": "804",
+        "label": "NOUVELLE-ZELANDE",
+        "codenum": "554",
+        "codealpha": "NZL",
+        "libelle_cog": "NOUVELLE-ZELANDE"
+    },
+    {
+        "id": "805",
+        "label": "ILES COOK",
+        "codenum": "184",
+        "codealpha": "COK",
+        "libelle_cog": "COOK (ILES)"
+    },
+    {
+        "id": "806",
+        "label": "ILES SALOMON",
+        "codenum": "090",
+        "codealpha": "SLB",
+        "libelle_cog": "SALOMON (ILES)"
+    },
+    {
+        "id": "807",
+        "label": "ILES TOKELAU",
+        "codenum": "772",
+        "codealpha": "TKL",
+        "libelle_cog": "TOKELAU"
+    },
+    {
+        "id": "808",
+        "label": "ILES NORFOLK",
+        "codenum": "574",
+        "codealpha": "NFK",
+        "libelle_cog": "NORFOLK (ILE)"
+    },
+    {
+        "id": "809",
+        "label": "ILES CHRISTMAS",
+        "codenum": "162",
+        "codealpha": "CXR",
+        "libelle_cog": "CHRISTMAS (ILE)"
+    },
+    {
+        "id": "810",
+        "label": "ILES COCOS, ILES KEELING",
+        "codenum": "166",
+        "codealpha": "CCK",
+        "libelle_cog": "COCOS ou KEELING (ILES)"
+    },
+    {
+        "id": "811",
+        "label": "WALLIS ET FUTUNA",
+        "codenum": "876",
+        "codealpha": "WLF",
+        "libelle_cog": "WALLIS-ET-FUTUNA"
+    },
+    {
+        "id": "812",
+        "label": "ILES KIRIBATI, ILE GILBERT",
+        "codenum": "296",
+        "codealpha": "KIR",
+        "libelle_cog": "KIRIBATI"
+    },
+    {
+        "id": "813",
+        "label": "ILE PITCAIRN",
+        "codenum": "612",
+        "codealpha": "PCN",
+        "libelle_cog": "PITCAIRN (ILE)"
+    },
+    {
+        "id": "814",
+        "label": "NIUE, SAVAGE",
+        "codenum": "570",
+        "codealpha": "NIU",
+        "libelle_cog": "NIUE"
+    },
+    {
+        "id": "815",
+        "label": "FIDJI",
+        "codenum": "242",
+        "codealpha": "FJI",
+        "libelle_cog": "FIDJI"
+    },
+    {
+        "id": "816",
+        "label": "VANUATU",
+        "codenum": "548",
+        "codealpha": "VUT",
+        "libelle_cog": "VANUATU"
+    },
+    {
+        "id": "817",
+        "label": "TONGA",
+        "codenum": "776",
+        "codealpha": "TON",
+        "libelle_cog": "TONGA"
+    },
+    {
+        "id": "818",
+        "label": "GUAM",
+        "codenum": "316",
+        "codealpha": "GUM",
+        "libelle_cog": "GUAM"
+    },
+    {
+        "id": "819",
+        "label": "SAMOA OCCIDENTALES",
+        "codenum": "882",
+        "codealpha": "WSM",
+        "libelle_cog": "SAMOA OCCIDENTALES"
+    },
+    {
+        "id": "820",
+        "label": "ILES MARIANNES",
+        "codenum": "580",
+        "codealpha": "MNP",
+        "libelle_cog": "MARIANNES DU NORD (ILES)"
+    },
+    {
+        "id": "821",
+        "label": "SAMOA AMERICAINES, SAMOA ORIENTALES",
+        "codenum": "016",
+        "codealpha": "ASM",
+        "libelle_cog": "SAMOA AMERICAINES"
+    },
+    {
+        "id": "822",
+        "label": "TUVALU",
+        "codenum": "798",
+        "codealpha": "TUV",
+        "libelle_cog": "TUVALU"
+    },
+    {
+        "id": "823",
+        "label": "MICRONESIE",
+        "codenum": "583",
+        "codealpha": "FSM",
+        "libelle_cog": "MICRONESIE (ETATS FEDERES DE)"
+    },
+    {
+        "id": "824",
+        "label": "ILES MARSHALL",
+        "codenum": "584",
+        "codealpha": "MHL",
+        "libelle_cog": "MARSHALL (ILES)"
+    },
+    {
+        "id": "826",
+        "label": "POLYNESIE FRAN�AISE",
+        "codenum": "258",
+        "codealpha": "PYF",
+        "libelle_cog": "POLYNESIE FRANCAISE"
+    },
+    {
+        "id": "827",
+        "label": "NOUVELLE-CALEDONIE",
+        "codenum": "540",
+        "codealpha": "NCL",
+        "libelle_cog": "NOUVELLE-CALEDONIE"
+    },
+    {
+        "id": "829",
+        "label": "REPUBLIQUE DES ILES PALAOS, PALAU, BELAU",
+        "codenum": "585",
+        "codealpha": "PLW",
+        "libelle_cog": "PALAOS (ILES)"
+    },
+    {
+        "id": "830",
+        "label": "KANAKIE",
+        "codenum": "540",
+        "codealpha": "NCL",
+        "libelle_cog": "NOUVELLE-CALEDONIE"
+    },
+    {
+        "id": "831",
+        "label": "SAINT-PIERRE ET MIQUELON",
+        "codenum": "666",
+        "codealpha": "SPM",
+        "libelle_cog": "SAINT-PIERRE-ET-MIQUELON"
+    },
+    {
+        "id": "901",
+        "label": "GUERNESEY",
+        "codenum": "831",
+        "codealpha": "GGY",
+        "libelle_cog": "GUERNESEY"
+    },
+    {
+        "id": "902",
+        "label": "JERSEY",
+        "codenum": "832",
+        "codealpha": "JEY",
+        "libelle_cog": "JERSEY"
+    },
+    {
+        "id": "903",
+        "label": "SAINT-BARTHELEMY",
+        "codenum": "652",
+        "codealpha": "BLM",
+        "libelle_cog": "SAINT-BARTHELEMY"
+    },
+    {
+        "id": "904",
+        "label": "SAINT-MARTIN",
+        "codenum": "663",
+        "codealpha": "MAF",
+        "libelle_cog": "SAINT-MARTIN"
+    },
+    {
+        "id": "905",
+        "label": "TERRES AUSTRALES FRAN�AISES",
+        "codenum": "260",
+        "codealpha": "ATF",
+        "libelle_cog": "TERRES AUSTRALES FRANCAISES"
+    }
+]

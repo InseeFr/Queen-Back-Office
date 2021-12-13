@@ -147,8 +147,8 @@ public abstract class TestAuthKeycloak {
 	* 
 	* @throws InterruptedException
 	* @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
+	* @throws JsonProcessingException 
+	* @throws JsonMappingException 
 	*/
 	@Test
 	void testPostCampaign() throws JSONException, JsonMappingException, JsonProcessingException {
@@ -882,7 +882,7 @@ public abstract class TestAuthKeycloak {
 		given().auth().oauth2(accessToken())
 				.when().get("api/nomenclature/cities2019")
 				.then().statusCode(200)
-				.and().assertThat().body("isEmpty()",Matchers.is(false));
+				.and().assertThat().body("isEmpty()",Matchers.is(true));
 	}
 	/**
 	* Test that the GET endpoint "api/nomenclature/{id}" return 404 with wrong
