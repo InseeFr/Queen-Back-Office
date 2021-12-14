@@ -18,5 +18,8 @@ public interface StateDataService extends BaseService<StateData, UUID> {
 	public void updateStateDataFromJson(StateData sd, JsonNode json);
 
 	ResponseEntity<Object> updateStateData(String id, JsonNode dataValue, SurveyUnit surveyUnit);
-    
+
+	ResponseEntity<Object> updateStateData(String id, JsonNode dataValue);
+
+
 }
