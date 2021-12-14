@@ -3,6 +3,8 @@ package fr.insee.queen.api.service.impl;
 import java.util.Optional;
 import java.util.UUID;
 
+import fr.insee.queen.api.repository.SimpleApiRepository;
+import fr.insee.queen.api.service.SurveyUnitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,12 @@ public class StateDataServiceImpl extends AbstractService<StateData, UUID> imple
 	private static final Logger LOGGER = LoggerFactory.getLogger(StateDataServiceImpl.class);
 
     protected final StateDataRepository stateDataRepository;
+
+	@Autowired(required = false)
+	private SimpleApiRepository simpleApiRepository;
+
+	@Autowired
+	public SurveyUnitService surveyUnitService;
 
     @Autowired
     public StateDataServiceImpl(StateDataRepository repository) {
@@ -56,8 +64,23 @@ public class StateDataServiceImpl extends AbstractService<StateData, UUID> imple
 		}
 		updateStateDataFromJson(stateData, json);
 		stateDataRepository.save(stateData);
-		LOGGER.info("PUT data for reporting unit with id {} resulting in 200", id);
+		LOGGER.info("PUT statedata for reporting unit with id {} resulting in 200", id);
 		return ResponseEntity.ok().build();
+	}
+
+	public ResponseEntity<Object> updateStateData(String id, JsonNode json) {
+
+		if(simpleApiRepository != null){
+			LOGGER.info("Method without hibernate");
+			simpleApiRepository.updateSurveyUnitStateDate(id, json);
+			LOGGER.info("PUT statedata for reporting unit with id {} resulting in 200", id);
+			return ResponseEntity.ok().build();
+		}
+		else {
+			LOGGER.info("Method with hibernate");
+			Optional<SurveyUnit> su = surveyUnitService.findById(id);
+			return updateStateData(id, json, su.get());
+		}
 	}
 	
 	public void updateStateDataFromJson(StateData sd, JsonNode json) {

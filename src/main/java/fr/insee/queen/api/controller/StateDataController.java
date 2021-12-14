@@ -109,17 +109,12 @@ public class StateDataController {
 	@ApiOperation(value = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/state-data")
 	public ResponseEntity<Object> setStateData(@RequestBody JsonNode dataValue, HttpServletRequest request, @PathVariable(value = "id") String id) {
-		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);
-		if (!surveyUnitOptional.isPresent()) {
-			LOGGER.error("PUT state-data for reporting unit with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		}
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals("GUEST") && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
 			LOGGER.error("PUT state-data for reporting unit with id {} resulting in 403", id);
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-		return stateDataService.updateStateData(id, dataValue, surveyUnitOptional.get());
+		return stateDataService.updateStateData(id, dataValue);
 		
 	}
 }
