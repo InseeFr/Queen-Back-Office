@@ -35,13 +35,17 @@ public interface SurveyUnitService extends BaseService<SurveyUnit, String> {
 
 	void updateSurveyUnit(SurveyUnit su, JsonNode surveyUnit);
 
+	void updateSurveyUnitImproved(String id, JsonNode surveyUnit);
+
 	public void generateDepositProof(SurveyUnit su, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException;
 	
 	public Collection<SurveyUnitResponseDto> getSurveyUnitsByCampaign(String id, HttpServletRequest request) throws BadRequestException;
 
 	void createSurveyUnit(SurveyUnitResponseDto su, Campaign campaign, QuestionnaireModel questionnaireModel);
+
 	HttpStatus postSurveyUnit(String id, SurveyUnitResponseDto su);
+	HttpStatus postSurveyUnitImproved(String id, SurveyUnitResponseDto su);
 
 	Iterable<SurveyUnit> findByIds(List<String> lstSurveyUnitId);
 	

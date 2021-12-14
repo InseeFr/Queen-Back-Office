@@ -6,7 +6,7 @@
 
 	<groupId>fr.insee.queen</groupId>
 	<artifactId>queen</artifactId>
-	<version>3.5.4</version>
+	<version>3.5.5</version>
 	<packaging>war</packaging>
 	<name>Queen-Back-Office</name>
 	<description>Back-office services for Queen</description>
@@ -24,7 +24,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jdk.version>1.11</jdk.version>
 		<java.version>1.11</java.version>
-		<log4j.version>2.12.1</log4j.version>
+		<log4j.version>2.15.0</log4j.version>
 		<maven.compiler.release>11</maven.compiler.release>
 		<testcontainers.version>1.15.2</testcontainers.version>
 		<fop.version>2.6</fop.version>

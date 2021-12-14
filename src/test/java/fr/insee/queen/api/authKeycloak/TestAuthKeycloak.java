@@ -368,23 +368,7 @@ public abstract class TestAuthKeycloak {
 		respBodyExpected.replaceAll("\\s+", ""));
 	}
 	
-	/**
-	* Test that the POST endpoint "/api/campaign/{id}/survey-unit" return 400 if su already exist
-	* 
-	* @throws InterruptedException
-	* @throws JSONException
-	 * @throws JsonProcessingException 
-	 * @throws JsonMappingException 
-	*/
-	@Test
-	void testPostCampaignSurveyUnitAlreadyExist() throws JSONException, JsonMappingException, JsonProcessingException {
-		String postBody = "{\"id\":22,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":\"EXTRACTED\",\"date\":1111111111,\"currentPage\":\"2.3#5\"},\"questionnaireId\":\"VQS2021X00\"}";
-		with().contentType(ContentType.JSON)
-				.body(postBody)
-				.given().auth().oauth2(accessToken())
-				.post("/api/campaign/VQS2021X00/survey-unit")
-				.then().statusCode(400);
-	}
+
 	//////////////////////////API_CAMPAIGN_ID_SURVEY_UNIT //////////////////////////
 	
 	

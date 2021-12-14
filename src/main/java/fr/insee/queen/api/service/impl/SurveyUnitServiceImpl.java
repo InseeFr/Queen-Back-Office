@@ -77,7 +77,10 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	
 	@Autowired
 	private PersonalizationRepository personalizationRepository;
-	
+
+	@Autowired(required = false)
+	private SimpleApiRepository simpleApiRepository;
+
 	@Autowired
 	private QuestionnaireModelService questionnaireModelService;
 
@@ -138,7 +141,31 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			}
 			surveyUnitRepository.save(newSU);
 		}
-	
+
+	@Override
+	public void updateSurveyUnitImproved(String id, JsonNode surveyUnit) {
+		if(simpleApiRepository!=null){
+			LOGGER.info("Method without hibernate");
+			if(surveyUnit.get("personalization") != null) {
+				simpleApiRepository.updateSurveyUnitPersonalization(id,surveyUnit.get("personalization"));
+			}
+			if(surveyUnit.get("comment") != null) {
+				simpleApiRepository.updateSurveyUnitComment(id,surveyUnit.get("comment"));
+			}
+			if(surveyUnit.get("data") != null) {
+				simpleApiRepository.updateSurveyUnitData(id,surveyUnit.get("data"));
+			}
+			if(surveyUnit.get("stateData") != null) {
+				simpleApiRepository.updateSurveyUnitStateDate(id, surveyUnit.get("stateData"));
+			}
+		} else {
+			LOGGER.info("Method with hibernate");
+			// if sqlRepo is null, use classic method
+			Optional<SurveyUnit> su = findById(id);
+			updateSurveyUnit(su.get(),surveyUnit);
+		}
+	}
+
 	private void updateStateData(SurveyUnit newSU, JsonNode surveyUnit) {
 		JsonNode statedata = surveyUnit.get("stateData");
 		if(newSU.getStateData()!=null) {
@@ -284,6 +311,17 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 		}
 		createSurveyUnit(su, campaignOptional.get(), questionnaireModelOptional.get());
 		return HttpStatus.OK;
+	}
+
+	@Override
+	public HttpStatus postSurveyUnitImproved(String id, SurveyUnitResponseDto su) {
+		try{
+			// TODO check if campaign or questionnaire exist
+			simpleApiRepository.createSurveyUnit(id,su);
+			return HttpStatus.OK;
+		}catch (Exception e){
+			return HttpStatus.BAD_REQUEST;
+		}
 	}
 
 	@Override
