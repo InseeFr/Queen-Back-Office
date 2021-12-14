@@ -718,20 +718,7 @@ public abstract class TestAuthKeycloak {
 		response.getBody().asString().replaceAll("\\s+", ""));
 	}
 	
-	/**
-	* Test that the PUT endpoint "api/survey-unit/{id}/state-data" return 404
-	* 
-	* @throws InterruptedException
-	* @throws JSONException
-	*/
-	@Test
-	void testPutStateDataBySurveyUnitNotExists() throws JsonMappingException, JSONException, JsonProcessingException {
-		with().contentType(ContentType.JSON)
-				.body("{\"state\":\"INIT\",\"currentPage\":\"11\",\"date\":11111111111}")
-				.given().auth().oauth2(accessToken())
-				.put("api/survey-unit/99/state-data")
-				.then().statusCode(404);
-	}
+
 	//////////////////////////API_SURVEYUNIT_ID_STATEDATA //////////////////////////
 	
 	
