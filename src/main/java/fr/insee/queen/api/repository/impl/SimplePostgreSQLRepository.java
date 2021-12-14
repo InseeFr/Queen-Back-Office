@@ -47,6 +47,8 @@ public class SimplePostgreSQLRepository implements SimpleApiRepository {
         jdbcTemplate.update(qString,currentPage,date,state,id);
     }
 
+
+
     @Override
     public void createSurveyUnit(String campaignId, SurveyUnitResponseDto surveyUnitResponseDto) {
         String su ="INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id)\n" +
