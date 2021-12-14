@@ -17,12 +17,19 @@ jobs:
         with:
           java-version: 11
       - name: Build with Maven
-        run: mvn install --file pom.xml
-      - name: Upload war
+        run: mvn install -DskipTests=true --file pom.xml
+      - name: Get Glow Root
+          run: |
+            curl -L https://github.com/glowroot/glowroot/releases/download/v0.13.6/glowroot-0.13.6-dist.zip -o glowroot.zip
+            unzip glowroot.zip
+            rm -rf glowroot.zip
+      - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: war
-          path: target/*.war
+          name: artifacts
+          path: |
+            target/*.war
+            glowroot
   release:
     runs-on: ubuntu-latest
     steps:
@@ -51,8 +58,8 @@ jobs:
         id: download
         uses: actions/download-artifact@v2
         with:
-          name: war
-          path: target/
+          name: artifacts
+          path: ./
       - name: Get current version
         id: version
         run: echo "::set-output name=prop::$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)"

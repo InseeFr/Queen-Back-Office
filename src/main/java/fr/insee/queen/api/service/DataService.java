@@ -15,5 +15,7 @@ public interface DataService extends BaseService<Data, UUID> {
 	void save(Data comment);
 	
 	public void updateData(SurveyUnit su, JsonNode dataValue);
-    
+
+	void updateDataImproved(String id, JsonNode dataValue);
+
 }

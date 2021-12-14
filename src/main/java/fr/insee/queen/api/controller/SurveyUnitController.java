@@ -106,6 +106,23 @@ public class SurveyUnitController {
 	@ApiOperation(value = "Put survey-unit")
 	@PutMapping(path = "/survey-unit/{id}")
 	public ResponseEntity<Object> getSurveyUnitById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
+		String userId = utilsService.getUserId(request);
+		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
+			LOGGER.error("PUT survey-unit for reporting unit with id {} resulting in 403", id);
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		surveyUnitService.updateSurveyUnitImproved(id, surveyUnit);
+		LOGGER.info("PUT survey-units resulting in 200");
+		return ResponseEntity.ok().build();
+	}
+
+
+	/**
+	 * This method is used to update a survey-unit by id
+	 */
+	@ApiOperation(value = "Put survey-unit")
+	@PutMapping(path = "/survey-unit/old/{id}")
+	public ResponseEntity<Object> getSurveyUnitByIdOld(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<SurveyUnit> su = surveyUnitService.findById(id);
 		if(!su.isPresent()) {
 			LOGGER.error("PUT survey-unit with id {} resulting in 404", id);
@@ -120,6 +137,7 @@ public class SurveyUnitController {
 		LOGGER.info("PUT survey-units resulting in 200");
 		return ResponseEntity.ok().build();
 	}
+
 
 	/**
 	 * This method is used to post a survey-unit by id to a temp-zone
@@ -233,10 +251,19 @@ public class SurveyUnitController {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
 			return ResponseEntity.notFound().build();
 		}
-		HttpStatus status = surveyUnitService.postSurveyUnit(id, su);
+		HttpStatus status = surveyUnitService.postSurveyUnitImproved(id, su);
 		return new ResponseEntity<>(status);
 	}
-	
+
+
+	/**
+	 * This method is using to create a survey-unit
+	 *
+	 * @param id the id of campaign
+	 * @return List of {@link String} containing nomenclature ids
+	 */
+
+
 	/**
 	* This method is using to delete a survey-unit
 	* 

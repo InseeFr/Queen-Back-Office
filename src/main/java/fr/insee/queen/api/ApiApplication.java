@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.AbstractEnvironment;
@@ -21,6 +22,9 @@ import org.springframework.core.env.MutablePropertySources;
 
 import fr.insee.queen.api.service.DataSetInjectorService;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 
 @SpringBootApplication(scanBasePackages = "fr.insee.queen.api")
 @EnableJpaRepositories(basePackages = "fr.insee.queen.api.repository")
@@ -78,5 +82,16 @@ public class ApiApplication extends SpringBootServletInitializer{
 	    	injector.createDataSet();
 	    }
 	}
+
+
+
+	@Bean
+	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		jdbcTemplate.setResultsMapCaseInsensitive(true);
+		return jdbcTemplate;
+	}
+
+
 
 }

@@ -159,8 +159,8 @@ public class QuestionnaireModelController {
 			LOGGER.error("POST questionnaire with id {} resulting in 400 because it already exists", questionnaireModel.getIdQuestionnaireModel());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		if(!questionnaireModel.getRequiredNomenclatureIds().isEmpty() && 
-			Boolean.FALSE.equals(nomenclatureService.checkIfNomenclatureExists(questionnaireModel.getRequiredNomenclatureIds()))) {
+		if(!questionnaireModel.getRequiredNomenclatureIds().isEmpty() &&
+				Boolean.FALSE.equals(nomenclatureService.checkIfNomenclatureExists(questionnaireModel.getRequiredNomenclatureIds()))) {
 			LOGGER.error("POST questionnaire with id {} resulting in 400 because a nomenclature does not exist", questionnaireModel.getIdQuestionnaireModel());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
