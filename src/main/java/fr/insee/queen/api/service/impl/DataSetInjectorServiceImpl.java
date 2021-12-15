@@ -90,8 +90,8 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 
 
 		try {
-			jsonArrayQuestionnaireModelQueenLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//log2021x11_tel.json").getFile()));
-			jsonArrayQuestionnaireModelStromaeLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//log2021x11_web.json").getFile()));
+			jsonArrayQuestionnaireModelQueenLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//logS1Tel.json").getFile()));
+			jsonArrayQuestionnaireModelStromaeLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//logS1Web.json").getFile()));
 			jsonArrayMetadata = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//metadata//metadata.json").getFile()));
 
 	 } catch (Exception e) {
