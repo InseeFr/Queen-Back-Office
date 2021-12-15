@@ -98,7 +98,7 @@ public class StateDataController {
 	}
 	
 	/**
-	* This method is using to update the data associated to a specific reporting unit 
+	* This method is using to update the state-data associated to a specific reporting unit
 	* 
 	* @param dataValue	the value to update
 	* @param id	the id of reporting unit
