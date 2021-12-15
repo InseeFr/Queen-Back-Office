@@ -1,10 +1,13 @@
 package fr.insee.queen.api.repository.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import fr.insee.queen.api.controller.StateDataController;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 import fr.insee.queen.api.repository.SimpleApiRepository;
 import org.postgresql.util.PGobject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,7 +23,7 @@ public class SimplePostgreSQLRepository implements SimpleApiRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimplePostgreSQLRepository.class);
 
     @Override
     public void updateSurveyUnitData(String id, JsonNode data) {
@@ -39,12 +42,24 @@ public class SimplePostgreSQLRepository implements SimpleApiRepository {
 
     @Override
     public void updateSurveyUnitStateDate(String id, JsonNode stateData){
+
+        String qStringGetSU = "SELECT count(*) FROM state_data WHERE survey_unit_id=?";
         Long date = stateData.get("date").longValue();
         String state = stateData.get("state").textValue();
         String currentPage = stateData.get("currentPage").textValue();
 
-        String qString = "UPDATE state_data SET current_page=?, date=?, state=? WHERE survey_unit_id=?";
-        jdbcTemplate.update(qString,currentPage,date,state,id);
+        int nbStateData = jdbcTemplate.queryForObject(
+                qStringGetSU, new Object[] { id }, Integer.class);
+
+        if(nbStateData>0) {
+            String qString = "UPDATE state_data SET current_page=?, date=?, state=? WHERE survey_unit_id=?";
+            jdbcTemplate.update(qString, currentPage, date, state, id);
+        }else{
+            LOGGER.info("INSERT state_data for reporting unit with id {}", id);
+            String qString = "INSERT INTO state_data (id, current_page, date, state, survey_unit_id) VALUES (?, ?, ?, ?, ?)";
+            jdbcTemplate.update(qString, UUID.randomUUID(), currentPage, date, state, id);
+        }
+
     }
 
 
