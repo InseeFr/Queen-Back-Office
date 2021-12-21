@@ -1,30 +1,27 @@
 package fr.insee.queen.api.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import fr.insee.queen.api.controller.QuestionnaireModelController;
-import fr.insee.queen.api.domain.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.Nomenclature;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 import fr.insee.queen.api.exception.NotFoundException;
-import org.springframework.data.jpa.repository.JpaRepository;
 import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.NomenclatureRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.NomenclatureService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -50,6 +47,7 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
     }
 
 	@Override
+	@Cacheable("nomenclature")
 	public Optional<Nomenclature> findById(String id) {
 		return nomenclatureRepository.findById(id);
 	}
@@ -62,7 +60,8 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 		}
 		return q.get().getNomenclatures().parallelStream().distinct().map(Nomenclature::getId).collect(Collectors.toList());
 	}
-	
+
+	@Cacheable("required-nomenclatures")
 	public List<String> findRequiredNomenclatureByCampaign(String campaignId) throws NotFoundException {
 		Optional<Campaign> campaignOptional = campaignRepository.findById(campaignId);
 		if (campaignOptional.isPresent()) {

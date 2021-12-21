@@ -6,7 +6,7 @@
 
 	<groupId>fr.insee.queen</groupId>
 	<artifactId>queen</artifactId>
-	<version>3.5.9</version>
+	<version>3.5.10</version>
 	<packaging>war</packaging>
 	<name>Queen-Back-Office</name>
 	<description>Back-office services for Queen</description>
@@ -136,6 +136,13 @@
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
+		</dependency>
+
+		<!-- Cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+			<version>2.6.1</version>
 		</dependency>
 
 		<!-- TESTS -->
