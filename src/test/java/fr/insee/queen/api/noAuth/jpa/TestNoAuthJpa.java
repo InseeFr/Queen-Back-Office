@@ -27,7 +27,6 @@ import liquibase.Liquibase;
 @ActiveProfiles({ "test", "dev" })
 @ContextConfiguration(initializers = { TestNoAuthJpa.Initializer.class})
 @Testcontainers
-@EnableCaching
 class TestNoAuthJpa extends TestNoAuth {
 	
   public Liquibase liquibase;

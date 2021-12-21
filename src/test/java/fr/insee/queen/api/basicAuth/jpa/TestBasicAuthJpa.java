@@ -24,7 +24,6 @@ import liquibase.Liquibase;
 @ActiveProfiles({ "test", "dev" })
 @ContextConfiguration(initializers = { TestBasicAuthJpa.Initializer.class})
 @Testcontainers
-@EnableCaching
 class TestBasicAuthJpa extends TestBasicAuth {
 	
 	public Liquibase liquibase;
