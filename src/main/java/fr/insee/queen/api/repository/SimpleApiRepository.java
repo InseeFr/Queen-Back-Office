@@ -11,7 +11,7 @@ public interface SimpleApiRepository {
     void updateSurveyUnitPersonalization(String id, JsonNode personalization);
     void updateSurveyUnitStateDate(String id, JsonNode stateData);
 
-
+    String getCampaignIdFromSuId(String id);
 
     void createSurveyUnit(String campaignId, SurveyUnitResponseDto surveyUnitResponseDto);
 
