@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.insee.queen.api.repository.SimpleApiRepository;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,9 @@ public class UtilsServiceImpl implements UtilsService{
 	
 	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
 	private String integrationOverride;
-	
+
+	@Autowired(required = false)
+	private SimpleApiRepository simpleApiRepository;
 
 	@Autowired
 	Environment environment;
@@ -123,11 +126,16 @@ public class UtilsServiceImpl implements UtilsService{
 			return false;
 		
 		String campaignId = "";
-		Optional<SurveyUnit> su = surveyUnitRepository.findById(suId);
-		if(su.isPresent()) {
-			campaignId = su.get().getCampaign().getId();
+
+		if(simpleApiRepository != null){
+			campaignId  = simpleApiRepository.getCampaignIdFromSuId(suId);
 		}
-		
+		else {
+			Optional<SurveyUnit> su = surveyUnitRepository.findById(suId);
+			if(su.isPresent()) {
+				campaignId = su.get().getCampaign().getId();
+			}
+		}
 		String idep = getIdepFromToken(request);
 		
 		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId

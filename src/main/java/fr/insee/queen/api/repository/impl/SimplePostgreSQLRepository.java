@@ -40,6 +40,12 @@ public class SimplePostgreSQLRepository implements SimpleApiRepository {
         updateJsonValueOfSurveyUnit("personalization",id, personalization);
     }
 
+    public String getCampaignIdFromSuId(String id){
+        String qStringGetCampaignID= "SELECT campaign_id FROM survey_unit WHERE id=?";
+        return jdbcTemplate.queryForObject(
+                qStringGetCampaignID, new Object[] { id }, String.class);
+    }
+
     @Override
     public void updateSurveyUnitStateDate(String id, JsonNode stateData){
 
