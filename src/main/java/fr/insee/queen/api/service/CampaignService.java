@@ -9,11 +9,13 @@ import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 import fr.insee.queen.api.exception.NotFoundException;
+import org.springframework.cache.annotation.Cacheable;
 
 public interface CampaignService extends BaseService<Campaign, String> {
 
 	List<CampaignDto> findDtoBy();
 
+	@Cacheable("campaign")
 	Optional<Campaign> findById(String id);
 
 	List<Campaign> findAll();
