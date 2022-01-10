@@ -83,6 +83,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.OPTIONS).permitAll()
 					// healtcheck
 					.antMatchers(HttpMethod.GET, Constants.API_HEALTH_CHECK).permitAll()
+					// actuator (actuator metrics are disabled by default)
+					.antMatchers(Constants.API_ACTUATOR).permitAll()
 					// configuration for Swagger
 					.antMatchers("/swagger-ui.html/**", "/v2/api-docs", "/csrf", "/", "/webjars/**", "/swagger-resources/**")
 					.permitAll().antMatchers("/environnement", "/healthcheck").permitAll()
@@ -153,7 +155,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         		  Constants.API_QUESTIONNAIREMODELS,
         		  Constants.API_PARADATAEVENT,
         		  Constants.API_CREATE_DATASET,
-				  Constants.API_HEALTH_CHECK)
+				  Constants.API_HEALTH_CHECK,
+				  Constants.API_ACTUATOR)
 					.permitAll();
 		}
 	}
