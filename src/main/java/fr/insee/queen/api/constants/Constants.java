@@ -47,6 +47,9 @@ public class Constants {
 
 	// HealthCheck url
 	public static final String API_HEALTH_CHECK = "/api/healthcheck";
+
+	// Actuator url
+	public static final String API_ACTUATOR = "/actuator/**";
 	
 	
 
