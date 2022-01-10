@@ -53,6 +53,7 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 	}
 
 	@Override
+	@Cacheable("required-nomenclatures")
 	public List<String> findRequiredNomenclatureByQuestionnaire(String questionnaireModelId){
 		Optional<QuestionnaireModel> q = questionnaireModelRepository.findById(questionnaireModelId);
 		if(!q.isPresent()) {
@@ -61,7 +62,6 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 		return q.get().getNomenclatures().parallelStream().distinct().map(Nomenclature::getId).collect(Collectors.toList());
 	}
 
-	@Cacheable("required-nomenclatures")
 	public List<String> findRequiredNomenclatureByCampaign(String campaignId) throws NotFoundException {
 		Optional<Campaign> campaignOptional = campaignRepository.findById(campaignId);
 		if (campaignOptional.isPresent()) {
