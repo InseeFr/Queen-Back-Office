@@ -6,7 +6,7 @@
 
 	<groupId>fr.insee.queen</groupId>
 	<artifactId>queen</artifactId>
-	<version>3.5.13</version>
+	<version>3.5.14</version>
 	<packaging>war</packaging>
 	<name>Queen-Back-Office</name>
 	<description>Back-office services for Queen</description>
