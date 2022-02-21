@@ -29,12 +29,12 @@ public interface QuestionnaireModelRepository extends JpaRepository<Questionnair
 	Optional<QuestionnaireModelDto> findDtoByCampaignId(String id);
 
 	/**
-	* This method retrieve questionnaire Id for a specific campaign
+	* This method retrieve list of questionnaire Id for a specific campaign
 	* 
 	* @param id id of the campaign
-	* @return {@link QuestionnaireModelDto}
+	* @return {@link QuestionnaireIdDto}
 	*/
-	Optional<QuestionnaireIdDto> findIdByCampaignId(String id);
+	List<QuestionnaireIdDto> findIdByCampaignId(String id);
 	
 	/**
 	* This method retrieve questionnaire model for a specific id

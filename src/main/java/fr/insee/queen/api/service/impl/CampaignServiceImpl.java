@@ -120,8 +120,8 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 		return campaigns.stream()
 				.map(camp -> new CampaignResponseDto(
 					camp.getId(), 
-					camp.getQuestionnaireModels().stream()
-						.map(QuestionnaireModel::getId)
+					questionnaireModelService.findQuestionnaireIdDtoByCampaignId(camp.getId()).stream()
+						.map(QuestionnaireIdDto::getQuestionnaireId)
 						.collect(Collectors.toList())
 					)
 				)
