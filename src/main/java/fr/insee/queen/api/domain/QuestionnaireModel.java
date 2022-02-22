@@ -3,6 +3,7 @@ package fr.insee.queen.api.domain;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,6 +52,7 @@ public class QuestionnaireModel {
 	*/
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
+	@Basic(optional = false, fetch = FetchType.LAZY)
 	private JsonNode value;
 	
 	/**
