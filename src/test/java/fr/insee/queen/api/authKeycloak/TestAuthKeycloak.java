@@ -367,6 +367,29 @@ public abstract class TestAuthKeycloak {
 		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+", ""),
 		respBodyExpected.replaceAll("\\s+", ""));
 	}
+/**
+	* Test that the POST endpoint "/api/campaign/{id}/survey-unit" with empty StateData return 200
+	* 
+	* @throws InterruptedException
+	* @throws JSONException
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	*/
+
+	@Test
+	void testPostCampaignSurveyUnitWithEmptyStateData() throws JSONException, JsonMappingException, JsonProcessingException {
+		String postBody = "{\"id\":73,\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":null,\"date\":null,\"currentPage\":null},\"questionnaireId\":\"VQS2021X00\"}";
+		String respBodyExpected = "{\"questionnaireId\":\"VQS2021X00\",\"personalization\":[{\"name\":\"whoAnswers34\",\"value\":\"MrDupond\"},{\"name\":\"whoAnswers2\",\"value\":\"\"}],\"data\":{\"EXTERNAL\":{\"LAST_BROADCAST\":\"12/07/1998\"}},\"comment\":{\"COMMENT\":\"acomment\"},\"stateData\":{\"state\":null,\"date\":null,\"currentPage\":null}}";
+		with().contentType(ContentType.JSON).body(postBody)
+				.given().auth().oauth2(accessToken())
+				.post("/api/campaign/VQS2021X00/survey-unit")
+				.then().statusCode(200);
+		Response response = given().auth().oauth2(accessToken())
+				.when().get("/api/survey-unit/73");
+		response.then().statusCode(200);
+		Assert.assertEquals(response.getBody().asString().replaceAll("\\s+", ""),
+		respBodyExpected.replaceAll("\\s+", ""));
+	}
 	
 
 	//////////////////////////API_CAMPAIGN_ID_SURVEY_UNIT //////////////////////////
