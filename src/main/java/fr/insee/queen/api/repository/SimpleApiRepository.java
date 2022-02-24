@@ -1,7 +1,7 @@
 package fr.insee.queen.api.repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fr.insee.queen.api.domain.StateData;
+
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 
 public interface SimpleApiRepository {
@@ -12,6 +12,7 @@ public interface SimpleApiRepository {
     void updateSurveyUnitStateDate(String id, JsonNode stateData);
 
     String getCampaignIdFromSuId(String id);
+    boolean idCampaignIsPresent(String id);
 
     void createSurveyUnit(String campaignId, SurveyUnitResponseDto surveyUnitResponseDto);
 

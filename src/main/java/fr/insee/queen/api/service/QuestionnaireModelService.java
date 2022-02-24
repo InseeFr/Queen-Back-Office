@@ -15,6 +15,8 @@ public interface QuestionnaireModelService extends BaseService<QuestionnaireMode
 	Optional<QuestionnaireModelDto> findQuestionnaireModelDtoByCampaignId(String id);
 
 	Optional<QuestionnaireIdDto> findQuestionnaireIdDtoByCampaignId(String id);
+	
+	List<String> findAllQuestionnaireIdDtoByCampaignId(String id);
 
 	Optional<QuestionnaireModelDto> findDtoById(String id);
 	
