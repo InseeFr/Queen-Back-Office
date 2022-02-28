@@ -108,7 +108,7 @@ public class UtilsServiceImpl implements UtilsService{
 	 * @param <T>
 	 * @param HttpServletRequest
 	 * @param String
-	 * @return Boolean
+	 * @return boolean
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean checkHabilitation(HttpServletRequest request, String suId, String role){
@@ -146,7 +146,16 @@ public class UtilsServiceImpl implements UtilsService{
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.set(Constants.AUTHORIZATION, authTokenHeader);
 		ResponseEntity<Object> resp = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, new HttpEntity<T>(headers), Object.class);
-		return Boolean.TRUE.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
+		if (!resp.getStatusCode().is2xxSuccessful()) {
+			LOGGER.info(
+					"Habilitation of user {} with role {} to access survey-unit {} denied : habilitation service returned {} ",
+					request.getRemoteUser(), role, suId, resp.getStatusCode().value());
+			return false;
+		}
+		boolean habilitationResult = Boolean.TRUE.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
+		LOGGER.info("Habilitation of user {} with role {} to access survey-unit {} : ", request.getRemoteUser(), role,
+				suId, habilitationResult ? "granted" : "denied");
+		return habilitationResult;
 	}
 	
 	public String getIdepFromToken(HttpServletRequest request) {
