@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,7 +52,10 @@ public class CampaignController {
 	
 	@Autowired
 	private IntegrationService integrationService;
-	
+
+	@Autowired
+	public Consumer<String> evictCampaignFromCache;
+
 	/**
 	* The campaign repository using to access to table 'campaign' in DB 
 	*/
@@ -91,6 +95,9 @@ public class CampaignController {
 		if (campaignOptional.isPresent()) {
 			LOGGER.error("POST campaign with id {} resulting in 400 because it already exists", campaignId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}else{
+			// prevent campaign cache from always returning empty Optional from previous call
+			evictCampaignFromCache.accept(campaignId);
 		}
 		if(Boolean.FALSE.equals(campaignservice.checkIfQuestionnaireOfCampaignExists(campaign))) {
 			LOGGER.error("POST campaign with id {} resulting in 403 besause a questionnaire does not exist or is already associated ", campaignId);

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import fr.insee.queen.api.configuration.ApplicationProperties;
@@ -118,11 +119,12 @@ public class UtilsServiceImpl implements UtilsService{
 		if(integrationOverride != null && integrationOverride.equals("true")) {
 			return true;
 		}
-		if(role.equals(Constants.INTERVIEWER))
-			role = "";
-		else if(role.equals(Constants.REVIEWER))
-			role= Constants.REVIEWER;
-		else 
+		String expectedRole;
+		if (role.equals(Constants.INTERVIEWER))
+			expectedRole = "";
+		else if (role.equals(Constants.REVIEWER))
+			expectedRole = Constants.REVIEWER;
+		else
 			return false;
 		
 		String campaignId = "";
@@ -139,20 +141,33 @@ public class UtilsServiceImpl implements UtilsService{
 		String idep = getIdepFromToken(request);
 		
 		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId
-				+ "&role=" + role + "&campaign=" + campaignId + "&idep=" + idep;
+				+ "&role=" + expectedRole + "&campaign=" + campaignId + "&idep=" + idep;
 		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.set(Constants.AUTHORIZATION, authTokenHeader);
-		ResponseEntity<Object> resp = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, new HttpEntity<T>(headers), Object.class);
-		if (!resp.getStatusCode().is2xxSuccessful()) {
+		boolean habilitationResult = false;
+		try {
+			ResponseEntity<Object> resp = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
+					new HttpEntity<T>(headers), Object.class);
+			if (!resp.getStatusCode().is2xxSuccessful()) {
+				LOGGER.info(
+						"Habilitation of user {} with role {} to access survey-unit {} denied : habilitation service returned {} ",
+						request.getRemoteUser(), role, suId, resp.getStatusCode().name());
+				return false;
+			}
+			habilitationResult = Boolean.TRUE
+					.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
+
+		} catch (RestClientException e) {
 			LOGGER.info(
-					"Habilitation of user {} with role {} to access survey-unit {} denied : habilitation service returned {} ",
-					request.getRemoteUser(), role, suId, resp.getStatusCode().value());
+					"Habilitation of user {} with role {} to access survey-unit {} denied : habilitation service error.",
+					request.getRemoteUser(), role, suId);
+			LOGGER.info(e.getMessage());
 			return false;
 		}
-		boolean habilitationResult = Boolean.TRUE.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
+
 		LOGGER.info("Habilitation of user {} with role {} to access survey-unit {} : ", request.getRemoteUser(), role,
 				suId, habilitationResult ? "granted" : "denied");
 		return habilitationResult;
