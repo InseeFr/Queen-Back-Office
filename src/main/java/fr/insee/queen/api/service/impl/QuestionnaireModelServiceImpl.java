@@ -51,6 +51,10 @@ public class QuestionnaireModelServiceImpl extends AbstractService<Questionnaire
 		return questionnaireModelRepository.findIdByCampaignId(id);
 	}
 
+	public List<String> findAllQuestionnaireIdDtoByCampaignId(String id) {
+		return questionnaireModelRepository.findAllIdByCampaignId(id);
+	}
+
 	@Override
 	public Optional<QuestionnaireModelDto> findDtoById(String id) {
 		return questionnaireModelRepository.findDtoById(id);

@@ -3,8 +3,8 @@ name: Build docker for all branches
 on:
   push:
     branches-ignore:
-      - 'develop'
-      - 'master'
+      - "develop"
+      - "master"
 
 jobs:
   build:
@@ -16,12 +16,12 @@ jobs:
         with:
           java-version: 11
       - name: Build with Maven
-        run: mvn install -DskipTests=true --file pom.xml
+        run: mvn install -DskipTests=true --file pom.xml --batch-mode --no-transfer-progress
       - name: Get Glow Root
         run: |
-           curl -L https://github.com/glowroot/glowroot/releases/download/v0.13.6/glowroot-0.13.6-dist.zip -o glowroot.zip
-           unzip glowroot.zip
-           rm -rf glowroot.zip
+          curl -L https://github.com/glowroot/glowroot/releases/download/v0.13.6/glowroot-0.13.6-dist.zip -o glowroot.zip
+          unzip glowroot.zip
+          rm -rf glowroot.zip
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
