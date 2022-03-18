@@ -36,7 +36,7 @@ public class Campaign {
 	private String label;
 	
 
-	@OneToOne( mappedBy = "campaign", cascade = CascadeType.ALL )
+	@OneToOne( mappedBy = "campaign", cascade = CascadeType.ALL, orphanRemoval = true )
 	private Metadata metadata;
   
 
