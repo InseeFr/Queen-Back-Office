@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,11 +34,12 @@ import fr.insee.queen.api.dto.campaign.CampaignResponseDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultDto;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.IntegrationService;
+import fr.insee.queen.api.service.QuestionnaireModelService;
 import fr.insee.queen.api.service.UtilsService;
 import io.swagger.annotations.ApiOperation;
 
 /**
-* CampaignController is the Controller using to manage {@link Campaign} entity
+* CampaignController is the Controller used to manage {@link Campaign} entity
 * 
 * @author Claudel Benjamin
 * 
@@ -57,26 +59,54 @@ public class CampaignController {
 	public Consumer<String> evictCampaignFromCache;
 
 	/**
-	* The campaign repository using to access to table 'campaign' in DB 
+	* The campaign repository used to access 'campaign' table in DB 
 	*/
 	@Autowired
 	private CampaignService campaignservice;
 	
+	@Autowired
+	private QuestionnaireModelService questionnaireService;
+	
 	/**
-	* This method is using to get all campaigns
+	* This method is used to get all campaigns
 	* 
 	* @return List of all {@link CampaignDto}
 	*/
-	@ApiOperation(value = "Get list of campaigns")
-	@GetMapping(path = "/campaigns")
-	public ResponseEntity<Object> getListCampaign(){
+	@ApiOperation(value = "Get list of all campaigns")
+	@GetMapping(path = "/admin/campaigns")
+	public ResponseEntity<Object> getListCampaign(HttpServletRequest request) {
+		String userId = utilsService.getUserId(request);
+		LOGGER.info("Admin {} request all campaigns", userId);
 		List<CampaignResponseDto> resp = campaignservice.getAllCampaigns();
-		LOGGER.info("GET campaigns resulting in 200");
+		LOGGER.info("GET all campaigns resulting in 200. {} campaign(s) found for {}", resp.size(), userId);
 		return new ResponseEntity<>(resp, HttpStatus.OK);
+	}
+
+	/**
+	* This method return all user related campaigns
+	* 
+	* @return List of  {@link CampaignDto}
+	*/
+	@ApiOperation(value = "Get list of user related campaigns")
+	@GetMapping(path = "/campaigns")
+	public ResponseEntity<Object> getInterviewerCampaignList(HttpServletRequest request) {
+
+		String userId = utilsService.getUserId(request);
+		LOGGER.info("User {} need his campaigns", userId);
+
+		List<CampaignResponseDto> campaigns = utilsService.getInterviewerCampaigns(request);
+		
+		// add questionnaireId
+		List<CampaignResponseDto> completeCampaigns = campaigns.stream().map(camp -> {
+			camp.setQuestionnaireIds(questionnaireService.findAllQuestionnaireIdDtoByCampaignId(camp.getId()));
+			return camp;
+		}).collect(Collectors.toList());
+		LOGGER.info("GET campaigns resulting in 200. {} campaign(s) found for {}", completeCampaigns.size(), userId);
+		return new ResponseEntity<>(completeCampaigns, HttpStatus.OK);
 	}
 	
 	/**
-	* This method is using to post a new campaign
+	* This method is used to post a new campaign
 	* 
 	* @param campaign the value to create
 	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200} 
@@ -88,6 +118,7 @@ public class CampaignController {
 	@PostMapping(path = "/campaigns")
 	public ResponseEntity<Object> createCampaign(@RequestBody CampaignDto campaign, HttpServletRequest request) {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
+			LOGGER.info("Access restricted to profiles : TEST / DEV");
 			return ResponseEntity.notFound().build();
 		}
 		String campaignId = campaign.getId().toUpperCase();
@@ -109,7 +140,7 @@ public class CampaignController {
 	}	
 	
 	/**
-	* This method is using to post a new campaign
+	* This method is used to post a new campaign
 	* 
 	* @param campaign the value to create
 	* @return {@link HttpStatus 400} if questionnaire is not found, else {@link HttpStatus 200}
@@ -133,7 +164,7 @@ public class CampaignController {
 	}
 	
 	/**
-	* This method is using to delete a campaign
+	* This method is used to delete a campaign
 	* 
 	* @param campaign the value to delete
 	* @return {@link HttpStatus}
