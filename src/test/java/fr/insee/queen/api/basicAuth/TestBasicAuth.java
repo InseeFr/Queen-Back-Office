@@ -85,7 +85,7 @@ public abstract class TestBasicAuth {
 	@Test
 	void testFindCampaign() throws InterruptedException {
 		given().auth().preemptive().basic("INTW1", "a")
-		.when().get("api/campaigns")
+		.when().get("api/admin/campaigns")
 		.then().statusCode(200)
 		.and().assertThat().body("id", hasItem("SIMPSONS2020X00"));
 	}
@@ -104,7 +104,7 @@ public abstract class TestBasicAuth {
 		.given().auth().preemptive().basic("INTW1", "a")
 		.post("api/campaigns").then().statusCode(200);
 		Response response = given().auth().preemptive().basic("INTW1", "a")
-				.get("api/campaigns");
+				.get("api/admin/campaigns");
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
 		"{\"id\":\"TESTPOSTCAMPAIGN\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));

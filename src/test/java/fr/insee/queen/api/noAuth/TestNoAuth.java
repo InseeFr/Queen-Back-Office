@@ -50,7 +50,7 @@ public abstract class TestNoAuth {
 	 */
 	@Test
 	void testFindCampaign() throws InterruptedException {
-		get("api/campaigns")
+		get("api/admin/campaigns")
 		.then().statusCode(200)
 		.and().assertThat().body("id", hasItem("SIMPSONS2020X00"));
 
@@ -68,7 +68,7 @@ public abstract class TestNoAuth {
 		.contentType(ContentType.JSON)
 		.body("{\"id\":\"testPostCampaign\",\"label\":\"label for testing post campaign\",\"metadata\":{}, \"questionnaireIds\":[\"QmWithoutCamp\"]}")
 		.post("api/campaigns").then().statusCode(200);
-		Response response = get("api/campaigns");
+		Response response = get("api/admin/campaigns");
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
 				"{\"id\":\"TESTPOSTCAMPAIGN\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));

@@ -137,7 +137,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindCampaign() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/campaigns")
+				.when().get("api/admin/campaigns")
 				.then().statusCode(200)
 				.and().assertThat().body("id", hasItem("SIMPSONS2020X00"));
 	}
@@ -157,7 +157,7 @@ public abstract class TestAuthKeycloak {
 				.given().auth().oauth2(accessToken())
 				.post("api/campaigns").then().statusCode(200);
 		Response response = given().auth().oauth2(accessToken())
-				.get("api/campaigns");
+				.get("api/admin/campaigns");
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
 		"{\"id\":\"TESTPOSTCAMPAIGN\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
@@ -307,7 +307,7 @@ public abstract class TestAuthKeycloak {
 		
 		// Campaign "ANOTHERCAMPAIGN" has been created
 		Response resp2 = given().auth().oauth2(accessToken())
-				.get("api/campaigns");
+				.get("api/admin/campaigns");
 		resp2.then().statusCode(200);
 		Assert.assertTrue(resp2.getBody().asString().contains("ANOTHERCAMPAIGN"));	
 	}

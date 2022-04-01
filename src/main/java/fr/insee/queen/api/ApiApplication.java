@@ -19,6 +19,7 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.web.client.RestTemplate;
 
 import fr.insee.queen.api.service.DataSetInjectorService;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -92,6 +93,10 @@ public class ApiApplication extends SpringBootServletInitializer{
 		return jdbcTemplate;
 	}
 
+	@Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
 
 }
