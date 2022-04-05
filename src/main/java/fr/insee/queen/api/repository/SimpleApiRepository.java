@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 
+import java.util.List;
+
 public interface SimpleApiRepository {
 
     void updateSurveyUnitData(String id, JsonNode data);
@@ -15,5 +17,7 @@ public interface SimpleApiRepository {
     boolean idCampaignIsPresent(String id);
 
     void createSurveyUnit(String campaignId, SurveyUnitResponseDto surveyUnitResponseDto);
+
+    void deleteParadataEventsBySU(List<String> lstSU);
 
 }
