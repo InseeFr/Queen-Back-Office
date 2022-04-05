@@ -192,12 +192,13 @@ public abstract class TestAuthKeycloak {
 		ParadataEvent pe = new ParadataEvent(UUID.randomUUID(),jsonObject);
 		paradataEventRepository.save(pe);
 		UUID id = pe.getId();
+		Assert.assertTrue(paradataEventRepository.existsById(id));
 
 		given().auth().oauth2(accessToken())
 				.when().delete("api/campaign/SIMPSONS2020X00")
 				.then().statusCode(200);
 
-		Assert.assertTrue(paradataEventRepository.existsById(id));
+		Assert.assertFalse(paradataEventRepository.existsById(id));
 
 		given().auth().oauth2(accessToken())
 				.when().get("api/admin/campaigns")
