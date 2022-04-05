@@ -197,7 +197,7 @@ public abstract class TestAuthKeycloak {
 				.when().delete("api/campaign/SIMPSONS2020X00")
 				.then().statusCode(200);
 
-		Assert.assertFalse(paradataEventRepository.existsById(id));
+		Assert.assertTrue(paradataEventRepository.existsById(id));
 
 		given().auth().oauth2(accessToken())
 				.when().get("api/admin/campaigns")
