@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.repository.SimpleApiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,12 +40,16 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
     protected final QuestionnaireModelRepository questionnaireModelRepository;
     
     protected final MetadataRepository metadataRepository;
+
     
     @Autowired
 	private QuestionnaireModelService questionnaireModelService;
 
     @Autowired
-    private SurveyUnitService surveyUnitService;    
+    private SurveyUnitService surveyUnitService;
+
+	@Autowired(required = false)
+	private SimpleApiRepository simpleApiRepository;
     
     @Autowired
     public CampaignServiceImpl(CampaignRepository campaignRepository, MetadataRepository metadataRepository, QuestionnaireModelRepository questionnaireModelRepository) {
@@ -148,7 +154,9 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	
 	@Override
 	public void delete(Campaign c) {
-		surveyUnitService.findByCampaignId(c.getId()).stream().forEach(su -> surveyUnitService.delete(su));
+    	List<SurveyUnit> lstSu = surveyUnitService.findByCampaignId(c.getId());
+    	simpleApiRepository.deleteParadataEventsBySU(lstSu.stream().map(SurveyUnit::getId).collect(Collectors.toList()));
+		lstSu.stream().forEach(su -> surveyUnitService.delete(su));
 		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(c.getId());
 		if(qmList!=null && !qmList.isEmpty())
 		qmList.stream().forEach(qm -> questionnaireModelRepository.delete(qm));
