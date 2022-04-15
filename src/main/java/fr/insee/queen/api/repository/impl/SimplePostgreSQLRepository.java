@@ -15,7 +15,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class SimplePostgreSQLRepository implements SimpleApiRepository {
@@ -84,6 +86,15 @@ public class SimplePostgreSQLRepository implements SimpleApiRepository {
         insertJsonValueOfSurveyUnit("comment",surveyUnitResponseDto.getId(),surveyUnitResponseDto.getComment());
         insertJsonValueOfSurveyUnit("personalization",surveyUnitResponseDto.getId(),surveyUnitResponseDto.getPersonalization());
         insertSurveyUnitStateDate(surveyUnitResponseDto.getId(),surveyUnitResponseDto.getStateData());
+    }
+
+    @Override
+    public void deleteParadataEventsBySU(List<String> lstSU) {
+        String values = lstSU.stream().map(id->"?").collect(Collectors.joining(","));
+        StringBuilder qStringBuilder = new StringBuilder("DELETE FROM paradata_event AS paradataEvent ")
+                .append("WHERE paradataEvent.value ->> 'idSU' IN (%s)");
+        String qString = String.format(qStringBuilder.toString(), values);
+        jdbcTemplate.update(qString, lstSU.toArray());
     }
 
     private void insertSurveyUnitStateDate(String surveyUnitId, StateDataDto stateData){

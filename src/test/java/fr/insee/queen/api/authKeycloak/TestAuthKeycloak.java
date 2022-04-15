@@ -3,11 +3,18 @@ package fr.insee.queen.api.authKeycloak;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.with;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.core.IsNot.not;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 import java.io.File;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+import fr.insee.queen.api.domain.ParadataEvent;
+import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.repository.ParadataEventRepository;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.junit.Assert;
@@ -17,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.testcontainers.junit.jupiter.Container;
 
@@ -42,6 +50,9 @@ public abstract class TestAuthKeycloak {
 	public static MockServerClient mockServerClient;
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
+
+	@Autowired
+	ParadataEventRepository paradataEventRepository;
 
 	@LocalServerPort
 	protected int port;
@@ -137,7 +148,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindCampaign() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/campaigns")
+				.when().get("api/admin/campaigns")
 				.then().statusCode(200)
 				.and().assertThat().body("id", hasItem("SIMPSONS2020X00"));
 	}
@@ -157,7 +168,7 @@ public abstract class TestAuthKeycloak {
 				.given().auth().oauth2(accessToken())
 				.post("api/campaigns").then().statusCode(200);
 		Response response = given().auth().oauth2(accessToken())
-				.get("api/campaigns");
+				.get("api/admin/campaigns");
 		response.then().statusCode(200);
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains(
 		"{\"id\":\"TESTPOSTCAMPAIGN\",\"questionnaireIds\":[\"QmWithoutCamp\"]}".replaceAll("\\s+", "")));
@@ -173,9 +184,28 @@ public abstract class TestAuthKeycloak {
 	*/
 	@Test
 	void testDeleteCampaignById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+
+		ArrayNode pValue = objectMapper.createArrayNode();
+		ObjectNode jsonObject = objectMapper.createObjectNode();
+		jsonObject.put("idSU", "11");
+		pValue.add(jsonObject);
+		ParadataEvent pe = new ParadataEvent(UUID.randomUUID(),jsonObject);
+		paradataEventRepository.save(pe);
+		UUID id = pe.getId();
+		Assert.assertTrue(paradataEventRepository.existsById(id));
+
 		given().auth().oauth2(accessToken())
 				.when().delete("api/campaign/SIMPSONS2020X00")
 				.then().statusCode(200);
+
+		Assert.assertFalse(paradataEventRepository.existsById(id));
+
+		given().auth().oauth2(accessToken())
+				.when().get("api/admin/campaigns")
+				.then().statusCode(200)
+				.and().assertThat().body("id", not(hasItem("SIMPSONS2020X00")));
+
+
 	}
 	
 	/**
@@ -307,7 +337,7 @@ public abstract class TestAuthKeycloak {
 		
 		// Campaign "ANOTHERCAMPAIGN" has been created
 		Response resp2 = given().auth().oauth2(accessToken())
-				.get("api/campaigns");
+				.get("api/admin/campaigns");
 		resp2.then().statusCode(200);
 		Assert.assertTrue(resp2.getBody().asString().contains("ANOTHERCAMPAIGN"));	
 	}

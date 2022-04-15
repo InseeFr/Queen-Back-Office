@@ -95,6 +95,7 @@ public class KeycloakConfig extends KeycloakWebSecurityConfigurerAdapter {
        				.antMatchers("/environnement", "/healthcheck").permitAll()
                    	// configuration for endpoints
        				.antMatchers(HttpMethod.GET, Constants.API_CAMPAIGNS) .hasAnyRole(roleAdmin, roleInterviewer, roleReviewer)
+					.antMatchers(HttpMethod.GET, Constants.API_ADMIN_CAMPAIGNS).hasAnyRole(roleAdmin)
        				.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGNS).hasAnyRole(roleAdmin)
        				.antMatchers(HttpMethod.DELETE, Constants.API_CAMPAIGN_ID).hasAnyRole(roleAdmin)
        				.antMatchers(HttpMethod.POST, Constants.API_CAMPAIGN_CONTEXT).hasAnyRole(roleAdmin)
