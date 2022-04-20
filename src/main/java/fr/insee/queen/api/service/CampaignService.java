@@ -11,6 +11,8 @@ import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 import fr.insee.queen.api.exception.NotFoundException;
 import org.springframework.cache.annotation.Cacheable;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface CampaignService extends BaseService<Campaign, String> {
 
 	List<CampaignDto> findDtoBy();
@@ -33,4 +35,6 @@ public interface CampaignService extends BaseService<Campaign, String> {
 	List<QuestionnaireModelDto> getQuestionnaireModels(String id) throws NotFoundException;
 	
 	void delete(Campaign c);
+
+    boolean isClosed(Campaign c, HttpServletRequest request);
 }

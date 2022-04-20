@@ -15,6 +15,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
@@ -57,6 +59,9 @@ public class CampaignController {
 
 	@Autowired
 	public Consumer<String> evictCampaignFromCache;
+
+	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
+	private String integrationOverride;
 
 	/**
 	* The campaign repository used to access 'campaign' table in DB 
@@ -172,14 +177,33 @@ public class CampaignController {
 	*/
 	@ApiOperation(value = "Delete a campaign")
 	@DeleteMapping(path = "/campaign/{id}")
-	public ResponseEntity<Object> deleteCampaignById(HttpServletRequest request, @PathVariable(value = "id") String id) {
+	public ResponseEntity<Object> deleteCampaignById(@RequestParam("force") String force,HttpServletRequest request, @PathVariable(value = "id") String id) {
+		Boolean isDeletable=false;
 		Optional<Campaign> campaignOptional = campaignservice.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.error("DELETE campaign with id {} resulting in 404 because it does not exists", id);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		campaignservice.delete(campaignOptional.get());
-		LOGGER.info("DELETE campaign with id {} resulting in 200", id);
-		return ResponseEntity.ok().build();
+		if(Boolean.TRUE.equals(force) || (integrationOverride != null && integrationOverride.equals("true")))
+		{
+			isDeletable=true;
+		}else {
+			try {
+				isDeletable = campaignservice.isClosed(campaignOptional.get(),request);
+			} catch(RestClientException e) {
+				LOGGER.error("Error when requesting pilotage API");
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+		}
+		if(isDeletable){
+			campaignservice.delete(campaignOptional.get());
+			LOGGER.info("DELETE campaign with id {} resulting in 200", id);
+			return ResponseEntity.ok().build();
+		}else{
+			LOGGER.info("Unable to delete campaign {}, campaign isn't closed", id);
+			return ResponseEntity.unprocessableEntity().build();
+		}
+
 	}	
 }
