@@ -15,6 +15,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,6 +59,9 @@ public class CampaignController {
 	@Autowired
 	public Consumer<String> evictCampaignFromCache;
 
+	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
+	private String integrationOverride;
+
 	/**
 	* The campaign repository used to access 'campaign' table in DB 
 	*/
@@ -94,13 +98,22 @@ public class CampaignController {
 		String userId = utilsService.getUserId(request);
 		LOGGER.info("User {} need his campaigns", userId);
 
-		List<CampaignResponseDto> campaigns = utilsService.getInterviewerCampaigns(request);
-		
-		// add questionnaireId
-		List<CampaignResponseDto> completeCampaigns = campaigns.stream().map(camp -> {
-			camp.setQuestionnaireIds(questionnaireService.findAllQuestionnaireIdDtoByCampaignId(camp.getId()));
-			return camp;
-		}).collect(Collectors.toList());
+		List<CampaignResponseDto> completeCampaigns;
+
+		if (integrationOverride != null && integrationOverride.equals("true")) {
+			completeCampaigns = campaignservice.getAllCampaigns();
+		} else {
+
+			List<CampaignResponseDto> campaigns = utilsService.getInterviewerCampaigns(request);
+
+			// add questionnaireId
+			completeCampaigns = campaigns.stream().map(camp -> {
+				camp.setQuestionnaireIds(questionnaireService.findAllQuestionnaireIdDtoByCampaignId(camp.getId()));
+				return camp;
+			}).collect(Collectors.toList());
+
+		}
+
 		LOGGER.info("GET campaigns resulting in 200. {} campaign(s) found for {}", completeCampaigns.size(), userId);
 		return new ResponseEntity<>(completeCampaigns, HttpStatus.OK);
 	}
