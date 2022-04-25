@@ -195,7 +195,7 @@ public abstract class TestAuthKeycloak {
 		Assert.assertTrue(paradataEventRepository.existsById(id));
 
 		given().auth().oauth2(accessToken())
-				.when().delete("api/campaign/SIMPSONS2020X00")
+				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
 				.then().statusCode(200);
 
 		Assert.assertFalse(paradataEventRepository.existsById(id));
@@ -219,7 +219,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testDeleteCampaignByUnexistingId() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().delete("api/campaign/unexistingcampaign")
+				.when().delete("api/campaign/unexistingcampaign?force=false")
 				.then().statusCode(404);
 	}
 	//////////////////////////API_CAMPAIGNS ///////////////////////

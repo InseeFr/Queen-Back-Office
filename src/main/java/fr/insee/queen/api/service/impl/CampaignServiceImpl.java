@@ -199,7 +199,6 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 		isClosed = Boolean.FALSE
 				.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("ongoing"));
 
-		LOGGER.info("lenquete est elle fermée? "+ isClosed);
 		return isClosed;
 	}
 }
