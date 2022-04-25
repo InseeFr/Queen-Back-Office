@@ -62,9 +62,6 @@ public abstract class TestAuthKeycloak {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Autowired
-	private MockRestServiceServer serverPilot;
-
-	@Autowired
 	ParadataEventRepository paradataEventRepository;
 
 	@LocalServerPort
@@ -80,6 +77,13 @@ public abstract class TestAuthKeycloak {
 		clientAndServer = ClientAndServer.startClientAndServer(8081);
 		mockServerClient = new MockServerClient("127.0.0.1", 8081);
 		mockServerClient.when(request().withPath(Constants.API_HABILITATION))
+				.respond(response().withStatusCode(200)
+						.withHeaders(new Header("Content-Type", "application/json; charset=utf-8"),
+								new Header("Cache-Control", "public, max-age=86400"))
+						.withBody(expectedBody));
+
+		expectedBody = "{" + "\"ongoing\": true" + "}";
+		mockServerClient.when(request().withPath(Constants.API_ONGOING))
 				.respond(response().withStatusCode(200)
 						.withHeaders(new Header("Content-Type", "application/json; charset=utf-8"),
 								new Header("Cache-Control", "public, max-age=86400"))
@@ -223,15 +227,7 @@ public abstract class TestAuthKeycloak {
 
 	@Test
 	void testDeleteClosedCampaignUnForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
-
-		serverPilot.expect(ExpectedCount.once(),
-				requestTo("campaigns/ongoing/SIMPSONS2020X00"))
-				.andExpect(method(HttpMethod.GET))
-				.andRespond(withStatus(HttpStatus.OK)
-						.contentType(MediaType.APPLICATION_JSON)
-						.body("false")
-				);
-
+		
 		given().auth().oauth2(accessToken())
 				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
 				.then().statusCode(423);
