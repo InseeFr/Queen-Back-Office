@@ -99,13 +99,22 @@ public class CampaignController {
 		String userId = utilsService.getUserId(request);
 		LOGGER.info("User {} need his campaigns", userId);
 
-		List<CampaignResponseDto> campaigns = utilsService.getInterviewerCampaigns(request);
-		
-		// add questionnaireId
-		List<CampaignResponseDto> completeCampaigns = campaigns.stream().map(camp -> {
-			camp.setQuestionnaireIds(questionnaireService.findAllQuestionnaireIdDtoByCampaignId(camp.getId()));
-			return camp;
-		}).collect(Collectors.toList());
+		List<CampaignResponseDto> completeCampaigns;
+
+		if (integrationOverride != null && integrationOverride.equals("true")) {
+			completeCampaigns = campaignservice.getAllCampaigns();
+		} else {
+
+			List<CampaignResponseDto> campaigns = utilsService.getInterviewerCampaigns(request);
+
+			// add questionnaireId
+			completeCampaigns = campaigns.stream().map(camp -> {
+				camp.setQuestionnaireIds(questionnaireService.findAllQuestionnaireIdDtoByCampaignId(camp.getId()));
+				return camp;
+			}).collect(Collectors.toList());
+
+		}
+
 		LOGGER.info("GET campaigns resulting in 200. {} campaign(s) found for {}", completeCampaigns.size(), userId);
 		return new ResponseEntity<>(completeCampaigns, HttpStatus.OK);
 	}
