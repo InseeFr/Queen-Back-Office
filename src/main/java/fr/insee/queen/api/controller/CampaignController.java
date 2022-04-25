@@ -177,14 +177,14 @@ public class CampaignController {
 	*/
 	@ApiOperation(value = "Delete a campaign")
 	@DeleteMapping(path = "/campaign/{id}")
-	public ResponseEntity<Object> deleteCampaignById(@RequestParam("force") String force,HttpServletRequest request, @PathVariable(value = "id") String id) {
+	public ResponseEntity<Object> deleteCampaignById(@RequestParam("force") Boolean force,HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Boolean isDeletable=false;
 		Optional<Campaign> campaignOptional = campaignservice.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.error("DELETE campaign with id {} resulting in 404 because it does not exists", id);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		if(Boolean.TRUE.equals(force) || (integrationOverride != null && integrationOverride.equals("true")))
+		if(force || (integrationOverride != null && integrationOverride.equals("true")))
 		{
 			isDeletable=true;
 		}else {

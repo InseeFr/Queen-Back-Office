@@ -44,7 +44,7 @@ public class Constants {
 
 	// Pilotage filter url
 	public static final String API_HABILITATION = "/api/check-habilitation";
-	public static final String API_ONGOING = "/api/campaigns/ongoing";
+	public static final String API_ONGOING = "/campaigns/ongoing";
 	public static final String API_PEARLJAM_SURVEYUNITS = "/api/survey-units";
 	public static final String API_PEARLJAM_INTERVIEWER_CAMPAIGNS = "/api/interviewer/campaigns";
 

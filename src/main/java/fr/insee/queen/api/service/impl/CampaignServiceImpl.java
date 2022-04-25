@@ -4,9 +4,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import fr.insee.queen.api.constants.Constants;
+import fr.insee.queen.api.controller.CampaignController;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.repository.SimpleApiRepository;
 import liquibase.pro.packaged.T;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -45,6 +48,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
     
     protected final MetadataRepository metadataRepository;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignServiceImpl.class);
 
 
 	@Value("${fr.insee.queen.pilotage.service.url.scheme:#{null}}")
@@ -195,7 +199,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 		isClosed = Boolean.FALSE
 				.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("ongoing"));
 
-
+		LOGGER.info("lenquete est elle fermée? "+ isClosed);
 		return isClosed;
 	}
 }
