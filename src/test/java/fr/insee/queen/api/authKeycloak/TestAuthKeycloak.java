@@ -6,8 +6,13 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import java.io.File;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +31,11 @@ import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.client.ExpectedCount;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.testcontainers.junit.jupiter.Container;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,6 +60,9 @@ public abstract class TestAuthKeycloak {
 	public static MockServerClient mockServerClient;
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
+
+	@Autowired
+	private MockRestServiceServer serverPilot;
 
 	@Autowired
 	ParadataEventRepository paradataEventRepository;
@@ -211,11 +224,18 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testDeleteClosedCampaignUnForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 
+		serverPilot.expect(ExpectedCount.once(),
+				requestTo("campaigns/ongoing/SIMPSONS2020X00"))
+				.andExpect(method(HttpMethod.GET))
+				.andRespond(withStatus(HttpStatus.OK)
+						.contentType(MediaType.APPLICATION_JSON)
+						.body("false")
+				);
 
 		given().auth().oauth2(accessToken())
 				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
 				.then().statusCode(423);
-		
+
 	}
 	
 	/**
