@@ -83,7 +83,7 @@ public abstract class TestAuthKeycloak {
 						.withBody(expectedBody));
 
 		expectedBody = "{" + "\"ongoing\": true" + "}";
-		mockServerClient.when(request().withPath(Constants.API_ONGOING))
+		mockServerClient.when(request().withPath(Constants.API_ONGOING+"/SIMPSONS2020X00"))
 				.respond(response().withStatusCode(200)
 						.withHeaders(new Header("Content-Type", "application/json; charset=utf-8"),
 								new Header("Cache-Control", "public, max-age=86400"))
@@ -227,7 +227,7 @@ public abstract class TestAuthKeycloak {
 
 	@Test
 	void testDeleteClosedCampaignUnForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
-		
+
 		given().auth().oauth2(accessToken())
 				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
 				.then().statusCode(423);
