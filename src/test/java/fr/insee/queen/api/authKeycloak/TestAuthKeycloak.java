@@ -183,7 +183,7 @@ public abstract class TestAuthKeycloak {
 	* @throws JSONException
 	*/
 	@Test
-	void testDeleteCampaignById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+	void testDeleteClosedCampaignForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 
 		ArrayNode pValue = objectMapper.createArrayNode();
 		ObjectNode jsonObject = objectMapper.createObjectNode();
@@ -195,7 +195,7 @@ public abstract class TestAuthKeycloak {
 		Assert.assertTrue(paradataEventRepository.existsById(id));
 
 		given().auth().oauth2(accessToken())
-				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
+				.when().delete("api/campaign/SIMPSONS2020X00?force=true")
 				.then().statusCode(200);
 
 		Assert.assertFalse(paradataEventRepository.existsById(id));
@@ -206,6 +206,16 @@ public abstract class TestAuthKeycloak {
 				.and().assertThat().body("id", not(hasItem("SIMPSONS2020X00")));
 
 
+	}
+
+	@Test
+	void testDeleteClosedCampaignUnForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+
+
+		given().auth().oauth2(accessToken())
+				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
+				.then().statusCode(423);
+		
 	}
 	
 	/**
