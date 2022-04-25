@@ -230,7 +230,7 @@ public abstract class TestAuthKeycloak {
 
 		given().auth().oauth2(accessToken())
 				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
-				.then().statusCode(423);
+				.then().statusCode(422);
 
 	}
 	
