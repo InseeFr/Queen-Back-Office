@@ -1,25 +1,18 @@
 package fr.insee.queen.api.authKeycloak;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.with;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.core.IsNot.not;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-
-import java.io.File;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
+import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.ParadataEvent;
-import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.repository.ParadataEventRepository;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.junit.Assert;
@@ -31,25 +24,17 @@ import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.client.ExpectedCount;
-import org.springframework.test.web.client.MockRestServiceServer;
 import org.testcontainers.junit.jupiter.Container;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.File;
+import java.util.UUID;
 
-import dasniko.testcontainers.keycloak.KeycloakContainer;
-import fr.insee.queen.api.constants.Constants;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.with;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.core.IsNot.not;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 public abstract class TestAuthKeycloak {
 
@@ -200,7 +185,7 @@ public abstract class TestAuthKeycloak {
 	* @throws JSONException
 	*/
 	@Test
-	void testDeleteClosedCampaignForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+	void testDeleteOpenedCampaignForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 
 		ArrayNode pValue = objectMapper.createArrayNode();
 		ObjectNode jsonObject = objectMapper.createObjectNode();
@@ -226,7 +211,7 @@ public abstract class TestAuthKeycloak {
 	}
 
 	@Test
-	void testDeleteClosedCampaignUnForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+	void testDeleteOpenedCampaignUnForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 
 		given().auth().oauth2(accessToken())
 				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
