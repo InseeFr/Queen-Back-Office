@@ -68,7 +68,7 @@ public abstract class TestAuthKeycloak {
 						.withBody(expectedBody));
 
 		expectedBody = "{" + "\"ongoing\": true" + "}";
-		mockServerClient.when(request().withPath(Constants.API_ONGOING+"/SIMPSONS2020X00"))
+		mockServerClient.when(request().withPath("/campaigns/SIMPSONS2020X00/ongoing"))
 				.respond(response().withStatusCode(200)
 						.withHeaders(new Header("Content-Type", "application/json; charset=utf-8"),
 								new Header("Cache-Control", "public, max-age=86400"))

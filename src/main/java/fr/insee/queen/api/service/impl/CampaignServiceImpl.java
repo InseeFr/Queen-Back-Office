@@ -188,7 +188,7 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 
 	@Override
 	public boolean isClosed(Campaign c, HttpServletRequest request) throws RestClientException{
-		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_ONGOING + "/" + c.getId();
+		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + "/campaigns/" + c.getId() + "/ongoing";
 		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
