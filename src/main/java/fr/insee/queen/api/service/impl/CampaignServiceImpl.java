@@ -178,8 +178,10 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	public void delete(Campaign c) {
 
     	List<SurveyUnit> lstSu = surveyUnitService.findByCampaignId(c.getId());
-    	simpleApiRepository.deleteParadataEventsBySU(lstSu.stream().map(SurveyUnit::getId).collect(Collectors.toList()));
-		lstSu.stream().forEach(su -> surveyUnitService.delete(su));
+    	if (lstSu.size() > 0) {
+			simpleApiRepository.deleteParadataEventsBySU(lstSu.stream().map(SurveyUnit::getId).collect(Collectors.toList()));
+			lstSu.stream().forEach(su -> surveyUnitService.delete(su));
+		}
 		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(c.getId());
 		if(qmList!=null && !qmList.isEmpty())
 		qmList.stream().forEach(qm -> questionnaireModelRepository.delete(qm));
