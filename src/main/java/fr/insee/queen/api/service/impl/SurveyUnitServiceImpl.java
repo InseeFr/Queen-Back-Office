@@ -365,6 +365,7 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	
 	@Override
 	public void delete(SurveyUnit su) {
+		surveyUnitTempZoneRepository.deleteBySurveyUnitId(su.getId());
 		surveyUnitRepository.delete(su);
 	}
 
