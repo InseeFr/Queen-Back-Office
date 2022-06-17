@@ -196,7 +196,7 @@ public class UtilsServiceImpl implements UtilsService{
 			return false;
 		}
 
-		LOGGER.info("Habilitation of user {} with role {} to access survey-unit {} : ", request.getRemoteUser(), role,
+		LOGGER.info("Habilitation of user {} with role {} to access survey-unit {} : {}", request.getRemoteUser(), role,
 				suId, habilitationResult ? "granted" : "denied");
 		return habilitationResult;
 	}
