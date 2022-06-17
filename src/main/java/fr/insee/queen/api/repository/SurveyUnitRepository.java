@@ -38,5 +38,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 	* @return {@link ReportingUnitDto}
 	*/
 	SurveyUnitDto findDtoById(String id);
-	List<SurveyUnit> findByCampaignId(String id);	
+	List<SurveyUnit> findByCampaignId(String id);
+
+	List<SurveyUnit> findAll();
 }

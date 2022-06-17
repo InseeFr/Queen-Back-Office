@@ -24,6 +24,7 @@ public class Constants {
 	public static final String API_CAMPAIGN_ID_QUESTIONAIREID = "/api/campaign/{id}/questionnaire-id";
 	public static final String API_CAMPAIGN_ID_REQUIREDNOMENCLATURES = "/api/campaign/{id}/required-nomenclatures";
 	public static final String API_SURVEYUNITS_STATEDATA = "/api/survey-units/state-data";
+	public static final String API_SURVEYUNITS = "/api/survey-units";
 	public static final String API_SURVEYUNIT_ID = "/api/survey-unit/{id}";
 	public static final String API_SURVEYUNIT_ID_DATA = "/api/survey-unit/{id}/data";
 	public static final String API_SURVEYUNIT_ID_COMMENT = "/api/survey-unit/{id}/comment";
@@ -33,6 +34,7 @@ public class Constants {
 	public static final String API_SURVEYUNIT_ID_TEMP_ZONE = "/api/survey-unit/{id}/temp-zone";
 	public static final String API_SURVEYUNITS_TEMP_ZONE = "/api/survey-units/temp-zone";
 	public static final String API_NOMENCLATURE = "/api/nomenclature";
+	public static final String API_NOMENCLATURES = "/api/nomenclatures";
 	public static final String API_NOMENCLATURE_ID = "/api/nomenclature/{id}";
 	public static final String API_QUESTIONNAIRE_ID = "/api/questionnaire/{id}";
 	public static final String API_QUESTIONNAIRE_ID_METADATA = "/api/questionnaire/{id}/metadata";

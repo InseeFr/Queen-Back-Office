@@ -561,7 +561,16 @@ public abstract class TestAuthKeycloak {
 				.then().statusCode(404);
 	}
 	//////////////////////////API_CAMPAIGN_ID_REQUIREDNOMENCLATURES //////////////////////////
-	
+
+	//////////////////////////	API_SURVEYUNITS//////////////////////////
+
+	@Test
+	void testFindSurveyUnitsIds() throws JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/surveyunits")
+				.then().statusCode(200)
+				.and().assertThat().body(hasItem("11"));
+	}
 	
 	//////////////////////////	API_SURVEYUNIT_ID //////////////////////////
 	/**
@@ -903,7 +912,16 @@ public abstract class TestAuthKeycloak {
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains("testPostNomenclature"));
 	}
 	//////////////////////////	API_NOMENCLATURE //////////////////////////
-	
+
+	//////////////////////////	API_NOMENCLATURES //////////////////////////
+
+	@Test
+	void testFindNomenclaturesIds() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/nomenclatures")
+				.then().statusCode(200)
+				.and().assertThat().body(hasItem("cities2019"));
+	}
 	
 	//////////////////////////	API_NOMENCLATURE_ID //////////////////////////
 	/**

@@ -1,8 +1,11 @@
 package fr.insee.queen.api.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import fr.insee.queen.api.domain.SurveyUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,24 @@ public class NomenclatureController {
 	*/
 	@Autowired
 	private CampaignService campaignService;
+
+	@ApiOperation(value = "Get all nomenclatures Ids ")
+	@GetMapping(path = "/nomenclatures")
+	public ResponseEntity<List<String>> getNomenclaturesId() {
+
+		LOGGER.info("GET all nomenclatures Ids resulting in 200");
+		List<Nomenclature> nomenclatures = nomenclatureservice.findAll();
+		if(nomenclatures.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}else {
+			List<String> resp = nomenclatures.stream()
+					.map(nomenc -> nomenc.getId())
+					.collect(Collectors.toList());
+			Collections.sort(resp);
+			return new ResponseEntity<>(resp, HttpStatus.OK);
+		}
+	}
+
 	
 	/**
 	* This method is using to get the a specific Nomenclature
