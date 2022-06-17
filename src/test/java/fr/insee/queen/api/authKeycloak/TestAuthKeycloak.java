@@ -567,7 +567,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testFindSurveyUnitsIds() throws JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().get("api/surveyunits")
+				.when().get("api/survey-units")
 				.then().statusCode(200)
 				.and().assertThat().body(hasItem("11"));
 	}
