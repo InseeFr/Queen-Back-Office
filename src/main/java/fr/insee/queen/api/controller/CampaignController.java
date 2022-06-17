@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
@@ -185,14 +186,33 @@ public class CampaignController {
 	*/
 	@ApiOperation(value = "Delete a campaign")
 	@DeleteMapping(path = "/campaign/{id}")
-	public ResponseEntity<Object> deleteCampaignById(HttpServletRequest request, @PathVariable(value = "id") String id) {
+	public ResponseEntity<Object> deleteCampaignById(@RequestParam("force") Boolean force,HttpServletRequest request, @PathVariable(value = "id") String id) {
+		Boolean isDeletable=false;
 		Optional<Campaign> campaignOptional = campaignservice.findById(id);
 		if (!campaignOptional.isPresent()) {
 			LOGGER.error("DELETE campaign with id {} resulting in 404 because it does not exists", id);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		campaignservice.delete(campaignOptional.get());
-		LOGGER.info("DELETE campaign with id {} resulting in 200", id);
-		return ResponseEntity.ok().build();
+		if(force || (integrationOverride != null && integrationOverride.equals("true")))
+		{
+			isDeletable=true;
+		}else {
+			try {
+				isDeletable = campaignservice.isClosed(campaignOptional.get(),request);
+			} catch(RestClientException e) {
+				LOGGER.error("Error when requesting pilotage API");
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+		}
+		if(isDeletable){
+			campaignservice.delete(campaignOptional.get());
+			LOGGER.info("DELETE campaign with id {} resulting in 200", id);
+			return ResponseEntity.ok().build();
+		}else{
+			LOGGER.info("Unable to delete campaign {}, campaign isn't closed", id);
+			return ResponseEntity.unprocessableEntity().build();
+		}
+
 	}	
 }
