@@ -569,7 +569,7 @@ public abstract class TestAuthKeycloak {
 		given().auth().oauth2(accessToken())
 				.when().get("api/survey-units")
 				.then().statusCode(200)
-				.and().assertThat().body(hasItem("11"));
+				.and().assertThat().body("$",hasItem("11"));
 	}
 	
 	//////////////////////////	API_SURVEYUNIT_ID //////////////////////////
@@ -920,7 +920,7 @@ public abstract class TestAuthKeycloak {
 		given().auth().oauth2(accessToken())
 				.when().get("api/nomenclatures")
 				.then().statusCode(200)
-				.and().assertThat().body(hasItem("cities2019"));
+				.and().assertThat().body("$",hasItem("cities2019"));
 	}
 	
 	//////////////////////////	API_NOMENCLATURE_ID //////////////////////////
