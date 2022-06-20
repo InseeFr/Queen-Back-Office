@@ -1,20 +1,18 @@
 package fr.insee.queen.api.authKeycloak;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.with;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.core.IsNot.not;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
-
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
+import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.ParadataEvent;
-import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.repository.ParadataEventRepository;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.junit.Assert;
@@ -28,18 +26,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.testcontainers.junit.jupiter.Container;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.File;
+import java.util.UUID;
 
-import dasniko.testcontainers.keycloak.KeycloakContainer;
-import fr.insee.queen.api.constants.Constants;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.with;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.core.IsNot.not;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 public abstract class TestAuthKeycloak {
 
@@ -67,6 +62,13 @@ public abstract class TestAuthKeycloak {
 		clientAndServer = ClientAndServer.startClientAndServer(8081);
 		mockServerClient = new MockServerClient("127.0.0.1", 8081);
 		mockServerClient.when(request().withPath(Constants.API_HABILITATION))
+				.respond(response().withStatusCode(200)
+						.withHeaders(new Header("Content-Type", "application/json; charset=utf-8"),
+								new Header("Cache-Control", "public, max-age=86400"))
+						.withBody(expectedBody));
+
+		expectedBody = "{" + "\"ongoing\": true" + "}";
+		mockServerClient.when(request().withPath("/campaigns/SIMPSONS2020X00/ongoing"))
 				.respond(response().withStatusCode(200)
 						.withHeaders(new Header("Content-Type", "application/json; charset=utf-8"),
 								new Header("Cache-Control", "public, max-age=86400"))
@@ -183,7 +185,7 @@ public abstract class TestAuthKeycloak {
 	* @throws JSONException
 	*/
 	@Test
-	void testDeleteCampaignById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+	void testDeleteOpenedCampaignForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 
 		ArrayNode pValue = objectMapper.createArrayNode();
 		ObjectNode jsonObject = objectMapper.createObjectNode();
@@ -195,7 +197,7 @@ public abstract class TestAuthKeycloak {
 		Assert.assertTrue(paradataEventRepository.existsById(id));
 
 		given().auth().oauth2(accessToken())
-				.when().delete("api/campaign/SIMPSONS2020X00")
+				.when().delete("api/campaign/SIMPSONS2020X00?force=true")
 				.then().statusCode(200);
 
 		Assert.assertFalse(paradataEventRepository.existsById(id));
@@ -205,6 +207,15 @@ public abstract class TestAuthKeycloak {
 				.then().statusCode(200)
 				.and().assertThat().body("id", not(hasItem("SIMPSONS2020X00")));
 
+
+	}
+
+	@Test
+	void testDeleteOpenedCampaignUnForcingById() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
+
+		given().auth().oauth2(accessToken())
+				.when().delete("api/campaign/SIMPSONS2020X00?force=false")
+				.then().statusCode(422);
 
 	}
 	
@@ -219,7 +230,7 @@ public abstract class TestAuthKeycloak {
 	@Test
 	void testDeleteCampaignByUnexistingId() throws InterruptedException, JsonMappingException, JSONException, JsonProcessingException {
 		given().auth().oauth2(accessToken())
-				.when().delete("api/campaign/unexistingcampaign")
+				.when().delete("api/campaign/unexistingcampaign?force=false")
 				.then().statusCode(404);
 	}
 	//////////////////////////API_CAMPAIGNS ///////////////////////
@@ -550,7 +561,16 @@ public abstract class TestAuthKeycloak {
 				.then().statusCode(404);
 	}
 	//////////////////////////API_CAMPAIGN_ID_REQUIREDNOMENCLATURES //////////////////////////
-	
+
+	//////////////////////////	API_SURVEYUNITS//////////////////////////
+
+	@Test
+	void testFindSurveyUnitsIds() throws JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/survey-units")
+				.then().statusCode(200)
+				.and().assertThat().body("$",hasItem("11"));
+	}
 	
 	//////////////////////////	API_SURVEYUNIT_ID //////////////////////////
 	/**
@@ -892,7 +912,16 @@ public abstract class TestAuthKeycloak {
 		Assert.assertTrue(response.getBody().asString().replaceAll("\\s+", "").contains("testPostNomenclature"));
 	}
 	//////////////////////////	API_NOMENCLATURE //////////////////////////
-	
+
+	//////////////////////////	API_NOMENCLATURES //////////////////////////
+
+	@Test
+	void testFindNomenclaturesIds() throws JsonMappingException, JSONException, JsonProcessingException {
+		given().auth().oauth2(accessToken())
+				.when().get("api/nomenclatures")
+				.then().statusCode(200)
+				.and().assertThat().body("$",hasItem("cities2019"));
+	}
 	
 	//////////////////////////	API_NOMENCLATURE_ID //////////////////////////
 	/**

@@ -1,15 +1,18 @@
 package fr.insee.queen.api.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import fr.insee.queen.api.constants.Constants;
+import fr.insee.queen.api.controller.CampaignController;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.repository.SimpleApiRepository;
+import liquibase.pro.packaged.T;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,10 @@ import fr.insee.queen.api.service.AbstractService;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
 import fr.insee.queen.api.service.SurveyUnitService;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 @Transactional
@@ -41,6 +48,18 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
     
     protected final MetadataRepository metadataRepository;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignServiceImpl.class);
+
+
+	@Value("${fr.insee.queen.pilotage.service.url.scheme:#{null}}")
+	private String pilotageScheme;
+
+	@Value("${fr.insee.queen.pilotage.service.url.host:#{null}}")
+	private String pilotageHost;
+
+	@Value("${fr.insee.queen.pilotage.service.url.port:#{null}}")
+	private String pilotagePort;
+
     
     @Autowired
 	private QuestionnaireModelService questionnaireModelService;
@@ -50,6 +69,9 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 
 	@Autowired(required = false)
 	private SimpleApiRepository simpleApiRepository;
+
+	@Autowired
+	RestTemplate restTemplate;
     
     @Autowired
     public CampaignServiceImpl(CampaignRepository campaignRepository, MetadataRepository metadataRepository, QuestionnaireModelRepository questionnaireModelRepository) {
@@ -154,12 +176,31 @@ public class CampaignServiceImpl extends AbstractService<Campaign, String> imple
 	
 	@Override
 	public void delete(Campaign c) {
+
     	List<SurveyUnit> lstSu = surveyUnitService.findByCampaignId(c.getId());
-    	simpleApiRepository.deleteParadataEventsBySU(lstSu.stream().map(SurveyUnit::getId).collect(Collectors.toList()));
-		lstSu.stream().forEach(su -> surveyUnitService.delete(su));
+    	if (lstSu.size() > 0) {
+			simpleApiRepository.deleteParadataEventsBySU(lstSu.stream().map(SurveyUnit::getId).collect(Collectors.toList()));
+			lstSu.stream().forEach(su -> surveyUnitService.delete(su));
+		}
 		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(c.getId());
 		if(qmList!=null && !qmList.isEmpty())
 		qmList.stream().forEach(qm -> questionnaireModelRepository.delete(qm));
 		campaignRepository.delete(c);
+	}
+
+	@Override
+	public boolean isClosed(Campaign c, HttpServletRequest request) throws RestClientException{
+		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + "/campaigns/" + c.getId() + "/ongoing";
+		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set(Constants.AUTHORIZATION, authTokenHeader);
+		boolean isClosed = false;
+		ResponseEntity<Object> resp = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
+				new HttpEntity<T>(headers), Object.class);
+		isClosed = Boolean.FALSE
+				.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("ongoing"));
+
+		return isClosed;
 	}
 }

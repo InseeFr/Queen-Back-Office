@@ -114,4 +114,9 @@ public class NomenclatureServiceImpl extends AbstractService<Nomenclature, Strin
 	public void delete(Nomenclature nomenclature) {
 		nomenclatureRepository.delete(nomenclature);
 	}
+
+	@Override
+	public List<Nomenclature> findAll() {
+		return nomenclatureRepository.findAll();
+	}
 }

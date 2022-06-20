@@ -15,4 +15,6 @@ import javax.transaction.Transactional;
 @Repository
 public interface SurveyUnitTempZoneRepository extends JpaRepository<SurveyUnitTempZone, String> {
 
+    void deleteBySurveyUnitId(String id);
+
 }
