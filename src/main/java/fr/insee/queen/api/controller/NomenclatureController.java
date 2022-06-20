@@ -61,13 +61,13 @@ public class NomenclatureController {
 		List<Nomenclature> nomenclatures = nomenclatureservice.findAll();
 		if(nomenclatures.isEmpty()) {
 			return ResponseEntity.notFound().build();
-		}else {
-			List<String> resp = nomenclatures.stream()
-					.map(nomenc -> nomenc.getId())
-					.collect(Collectors.toList());
-			Collections.sort(resp);
-			return new ResponseEntity<>(resp, HttpStatus.OK);
 		}
+		List<String> resp = nomenclatures.stream()
+				.map(nomenc -> nomenc.getId())
+				.collect(Collectors.toList());
+		Collections.sort(resp);
+		return new ResponseEntity<>(resp, HttpStatus.OK);
+
 	}
 
 	

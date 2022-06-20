@@ -76,13 +76,13 @@ public class SurveyUnitController {
 		List<SurveyUnit> results = surveyUnitService.findAll();
 		if(results.isEmpty()) {
 			return ResponseEntity.notFound().build();
-		}else {
-			List<String> resp = results.stream()
-					.map(su -> su.getId())
-					.collect(Collectors.toList());
-			Collections.sort(resp);
-			return new ResponseEntity<>(resp, HttpStatus.OK);
 		}
+		List<String> resp = results.stream()
+				.map(su -> su.getId())
+				.collect(Collectors.toList());
+		Collections.sort(resp);
+		return new ResponseEntity<>(resp, HttpStatus.OK);
+
 	}
 
 	/**
