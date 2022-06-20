@@ -1,7 +1,11 @@
 package fr.insee.queen.api.controller;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
