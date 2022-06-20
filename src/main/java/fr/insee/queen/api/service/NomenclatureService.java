@@ -26,5 +26,6 @@ public interface NomenclatureService extends BaseService<Nomenclature, String> {
 	
 	void delete(Nomenclature nomenclature);
 
-    
+
+    List<Nomenclature> findAll();
 }

@@ -121,6 +121,11 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 	}
 
 	@Override
+	public List<SurveyUnit> findAll() {
+		return surveyUnitRepository.findAll();
+	}
+
+	@Override
 	@Transactional
 	public void updateSurveyUnit(SurveyUnit newSU, JsonNode surveyUnit) {
 			if(surveyUnit.get("personalization") != null) {

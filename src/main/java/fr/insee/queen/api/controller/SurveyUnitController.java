@@ -1,10 +1,11 @@
 package fr.insee.queen.api.controller;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -67,8 +68,27 @@ public class SurveyUnitController {
 	
 	@Autowired
 	private CampaignService campaignService;
-	
-	
+
+	/**
+	 * This method is used to get all surveyUnits Ids
+	 */
+	@ApiOperation(value = "Get all survey-units Ids")
+	@GetMapping(path = "/survey-units")
+	public ResponseEntity<Object> getSurveyUnitIds(HttpServletRequest request){
+
+		LOGGER.info("GET survey-units id's resulting in 200");
+		List<SurveyUnit> results = surveyUnitService.findAll();
+		if(results.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		List<String> resp = results.stream()
+				.map(su -> su.getId())
+				.collect(Collectors.toList());
+		Collections.sort(resp);
+		return new ResponseEntity<>(resp, HttpStatus.OK);
+
+	}
+
 	/**
 	* This method is used to get a survey-unit by id
 	*/

@@ -34,6 +34,8 @@ public interface SurveyUnitService extends BaseService<SurveyUnit, String> {
 
 	List<SurveyUnit> findByCampaignId(String id);
 
+	List<SurveyUnit> findAll();
+
 	void updateSurveyUnit(SurveyUnit su, JsonNode surveyUnit);
 
 	void updateSurveyUnitImproved(String id, JsonNode surveyUnit);
