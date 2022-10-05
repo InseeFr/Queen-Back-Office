@@ -131,10 +131,7 @@ public class CampaignController {
 	@ApiOperation(value = "Create a campaign")
 	@PostMapping(path = "/campaigns")
 	public ResponseEntity<Object> createCampaign(@RequestBody CampaignDto campaign, HttpServletRequest request) {
-		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
-			LOGGER.info("Access restricted to profiles : TEST / DEV");
-			return ResponseEntity.notFound().build();
-		}
+
 		String campaignId = campaign.getId().toUpperCase();
 		Optional<Campaign> campaignOptional = campaignservice.findById(campaignId);
 		if (campaignOptional.isPresent()) {

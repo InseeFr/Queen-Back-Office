@@ -268,9 +268,7 @@ public class SurveyUnitController {
 	@ApiOperation(value = "Post survey-unit")
 	@PostMapping(path = "/campaign/{id}/survey-unit")
 	public ResponseEntity<String> postSurveyUnit(@RequestBody SurveyUnitResponseDto su, @PathVariable(value = "id") String id){
-		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
-			return ResponseEntity.notFound().build();
-		}
+
 		return surveyUnitService.postSurveyUnitImproved(id, su);
 	}
 
