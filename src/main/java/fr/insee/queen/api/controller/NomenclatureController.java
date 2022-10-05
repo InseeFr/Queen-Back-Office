@@ -145,9 +145,7 @@ public class NomenclatureController {
 	@ApiOperation(value = "Post new  or update a nomenclature ")
 	@PostMapping(path = "/nomenclature")
 	public ResponseEntity<Object> postNomenclature(@RequestBody NomenclatureDto nomenclature) {
-		/*if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
-			return ResponseEntity.notFound().build();
-		}*/
+
 		nomenclatureservice.createNomenclature(nomenclature);
 		return ResponseEntity.ok().build();
 	}

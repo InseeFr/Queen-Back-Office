@@ -151,9 +151,7 @@ public class QuestionnaireModelController {
 	@ApiOperation(value = "Create a Questionnaire Model")
 	@PostMapping(path = "/questionnaire-models")
 	public ResponseEntity<Object> createQuestionnaire(@RequestBody QuestionnaireModelCreateDto questionnaireModel, HttpServletRequest request) {
-		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
-			return ResponseEntity.notFound().build();
-		}
+
 		Optional<QuestionnaireModelDto> questMod = questionnaireModelService.findDtoById(questionnaireModel.getIdQuestionnaireModel());
 		if (questMod.isPresent()) {
 			LOGGER.error("POST questionnaire with id {} resulting in 400 because it already exists", questionnaireModel.getIdQuestionnaireModel());
