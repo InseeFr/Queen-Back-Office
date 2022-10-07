@@ -10,7 +10,7 @@
 		<Console name="Console-Appender" target="SYSTEM_OUT">
 			<PatternLayout>
 				<pattern>
-					[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+					 [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</Console>
@@ -19,7 +19,7 @@
 			<FilePattern>${sys:logRepo}/%d{yyyy-MM-dd}-${sys:logFileName}.log
 			</FilePattern>
 			<PatternLayout>
-				<Pattern>%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} -
+				<Pattern>%d{yyyy-MMM-dd HH:mm:ss a} ID:%X{id} Path:%X{path} Method: %X{method} User:%X{user} Operation-Time:%X{execution-duration}   [%t] %-5level %logger{36} -
 					%msg%n</Pattern>
 			</PatternLayout>
 			<Policies>
