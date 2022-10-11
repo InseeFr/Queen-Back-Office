@@ -132,6 +132,8 @@ public class CampaignController {
 	@PostMapping(path = "/campaigns")
 	public ResponseEntity<Object> createCampaign(@RequestBody CampaignDto campaign, HttpServletRequest request) {
 
+		String userId = utilsService.getUserId(request);
+		LOGGER.info("User {} requests campaign {} creation ", userId,campaign.getId());
 		String campaignId = campaign.getId().toUpperCase();
 		Optional<Campaign> campaignOptional = campaignservice.findById(campaignId);
 		if (campaignOptional.isPresent()) {
@@ -163,6 +165,9 @@ public class CampaignController {
 	@ApiOperation(value = "Integrates the context of a campaign")
 	@PostMapping(path = "/campaign/context")
 	public ResponseEntity<Object> integrateContext(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+
+		String userId = utilsService.getUserId(request);
+		LOGGER.info("User {} requests campaign creation via context ", userId);
 		IntegrationResultDto result = null;
 		try {
 			result = integrationService.integrateContext(file);
@@ -184,6 +189,9 @@ public class CampaignController {
 	@ApiOperation(value = "Delete a campaign")
 	@DeleteMapping(path = "/campaign/{id}")
 	public ResponseEntity<Object> deleteCampaignById(@RequestParam("force") Boolean force,HttpServletRequest request, @PathVariable(value = "id") String id) {
+
+		String userId = utilsService.getUserId(request);
+		LOGGER.info("Admin {} requests deletion of campaign {}", userId, id);
 		Boolean isDeletable=false;
 		Optional<Campaign> campaignOptional = campaignservice.findById(id);
 		if (!campaignOptional.isPresent()) {
