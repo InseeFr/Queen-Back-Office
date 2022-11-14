@@ -54,6 +54,13 @@ public class UtilsServiceImpl implements UtilsService{
 
 	@Autowired(required = false)
 	private SimpleApiRepository simpleApiRepository;
+	
+        @Value("${fr.insee.queen.admin.role:#{null}}")
+        private String roleAdmin;
+
+        @Value("${fr.insee.queen.webclient.role:#{null}}")
+        private String roleWebClient;
+
 
 	@Autowired
 	Environment environment;
@@ -148,6 +155,11 @@ public class UtilsServiceImpl implements UtilsService{
 		if(integrationOverride != null && integrationOverride.equals("true")) {
 			return true;
 		}
+		
+		if(request.isUserInRole(roleAdmin)||request.isUserInRole(roleWebClient)) {
+	              return true;
+		}
+		
 		String expectedRole;
 		if (role.equals(Constants.INTERVIEWER))
 			expectedRole = "";
