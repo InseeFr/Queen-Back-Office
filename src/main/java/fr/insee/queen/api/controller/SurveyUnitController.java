@@ -195,7 +195,7 @@ public class SurveyUnitController {
 	*/
 	
 	
-	@ApiOperation(value = "Get list of survey units by camapign Id ")
+	@ApiOperation(value = "Get list of survey units by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/survey-units")
 	public ResponseEntity<Object> getListSurveyUnitByCampaign(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
