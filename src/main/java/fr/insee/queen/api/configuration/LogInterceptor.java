@@ -28,8 +28,7 @@ public class LogInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        long executionStartTime = System.currentTimeMillis();
-        request.setAttribute("start-time", executionStartTime);
+
         String fishTag = UUID.randomUUID().toString();
         String method = request.getMethod();
         String operationPath = request.getRequestURI();
@@ -69,20 +68,12 @@ public class LogInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView mv) {
-        long executionStartTime = (Long) request.getAttribute("start-time");
-        long renderingStartTime = System.currentTimeMillis();
-        request.setAttribute("rendering-start-time", renderingStartTime);
-        long executionDuration = renderingStartTime - executionStartTime;
-        ThreadContext.put("execution-duration", String.valueOf(executionDuration));
+
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
                                     Exception exception) throws Exception {
-        long renderingStartTime = (Long)request.getAttribute("rendering-start-time");
-        long renderingEndTime = System.currentTimeMillis();
-        long renderingDuration = renderingEndTime - renderingStartTime;
-        ThreadContext.put("rendering-duration", String.valueOf(renderingDuration));
         ThreadContext.clearMap();
     }
 }
