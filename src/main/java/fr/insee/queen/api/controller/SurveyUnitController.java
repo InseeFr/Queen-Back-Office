@@ -126,7 +126,7 @@ public class SurveyUnitController {
 	*/
 	@ApiOperation(value = "Put survey-unit")
 	@PutMapping(path = "/survey-unit/{id}")
-	public ResponseEntity<Object> getSurveyUnitById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
+	public ResponseEntity<Object> updateSurveyUnitById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
 			LOGGER.error("PUT survey-unit for reporting unit with id {} resulting in 403", id);
