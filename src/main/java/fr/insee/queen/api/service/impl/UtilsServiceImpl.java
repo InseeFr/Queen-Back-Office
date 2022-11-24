@@ -49,6 +49,12 @@ public class UtilsServiceImpl implements UtilsService{
 	@Value("${fr.insee.queen.pilotage.service.url.port:#{null}}")
 	private String pilotagePort;
 	
+	@Value("${fr.insee.queen.pilotage.alternative-habilitation-service.url}")
+	private String alternativeHabilitationServiceURL;
+	
+	@Value("${fr.insee.queen.pilotage.alternative-habilitation-service.campaignIds}")
+	private List<String> campaignIdsWithAlternativeHabilitationService;
+	
 	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
 	private String integrationOverride;
 
@@ -181,8 +187,17 @@ public class UtilsServiceImpl implements UtilsService{
 		}
 		String idep = getIdepFromToken(request);
 		
-		final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION + "?id=" + suId
+		String uriPilotageFilter="";
+		
+		if(campaignIdsWithAlternativeHabilitationService.indexOf(campaignId)>-1) {
+			uriPilotageFilter+=alternativeHabilitationServiceURL;
+		}else {
+			uriPilotageFilter+=pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION;
+		}
+		
+		 uriPilotageFilter += "?id=" + suId
 				+ "&role=" + expectedRole + "&campaign=" + campaignId + "&idep=" + idep;
+		
 		String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
