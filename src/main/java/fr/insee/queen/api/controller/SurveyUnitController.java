@@ -1,18 +1,17 @@
 package fr.insee.queen.api.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import fr.insee.queen.api.domain.SurveyUnitTempZone;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +29,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.domain.SurveyUnitTempZone;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
@@ -125,7 +126,7 @@ public class SurveyUnitController {
 	*/
 	@ApiOperation(value = "Put survey-unit")
 	@PutMapping(path = "/survey-unit/{id}")
-	public ResponseEntity<Object> getSurveyUnitById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
+	public ResponseEntity<Object> updateSurveyUnitById(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
 		if(!userId.equals(Constants.GUEST) && !utilsService.checkHabilitation(request, id, Constants.INTERVIEWER)) {
 			LOGGER.error("PUT survey-unit for reporting unit with id {} resulting in 403", id);
@@ -194,7 +195,7 @@ public class SurveyUnitController {
 	*/
 	
 	
-	@ApiOperation(value = "Get list of survey units by camapign Id ")
+	@ApiOperation(value = "Get list of survey units by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/survey-units")
 	public ResponseEntity<Object> getListSurveyUnitByCampaign(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		Optional<Campaign> campaignOptional = campaignService.findById(id);
@@ -265,12 +266,20 @@ public class SurveyUnitController {
 	* @param id the id of campaign
 	* @return List of {@link String} containing nomenclature ids
 	*/
-	@ApiOperation(value = "Post survey-unit")
-	@PostMapping(path = "/campaign/{id}/survey-unit")
-	public ResponseEntity<String> postSurveyUnit(@RequestBody SurveyUnitResponseDto su, @PathVariable(value = "id") String id){
+        @ApiOperation(value = "Post survey-unit")
+        @PostMapping(path = "/campaign/{id}/survey-unit")
+        public ResponseEntity<String> postSurveyUnit(@RequestBody SurveyUnitResponseDto su, @PathVariable(value = "id") String id){
+            Optional<SurveyUnit> suOpt = surveyUnitService.findById(su.getId());
+            if(suOpt.isPresent()) {              
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.convertValue(su, JsonNode.class);
+                surveyUnitService.updateSurveyUnitImproved(su.getId(), node);
+                return ResponseEntity.status(HttpStatus.OK).body("Survey unit updated");
+            }
+                return surveyUnitService.postSurveyUnitImproved(id, su);
+                
 
-		return surveyUnitService.postSurveyUnitImproved(id, su);
-	}
+        }
 
 
 	/**
