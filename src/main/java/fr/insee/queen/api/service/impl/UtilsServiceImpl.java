@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,9 +53,9 @@ public class UtilsServiceImpl implements UtilsService{
 	@Value("${fr.insee.queen.pilotage.alternative-habilitation-service.url}")
 	private String alternativeHabilitationServiceURL;
 	
-	@Value("${fr.insee.queen.pilotage.alternative-habilitation-service.campaignIds}")
-	private List<String> campaignIdsWithAlternativeHabilitationService;
-	
+	@Value("${fr.insee.queen.pilotage.alternative-habilitation-service.campaignIds-regex}")
+	private String campaignIdRegexWithAlternativeHabilitationService;
+		
 	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
 	private String integrationOverride;
 
@@ -189,7 +190,8 @@ public class UtilsServiceImpl implements UtilsService{
 		
 		String uriPilotageFilter="";
 		
-		if(campaignIdsWithAlternativeHabilitationService.indexOf(campaignId)>-1) {
+		if(Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
+			LOGGER.info("Current campaignId {} requires an alternative habilitation service {} ",campaignId, alternativeHabilitationServiceURL);
 			uriPilotageFilter+=alternativeHabilitationServiceURL;
 		}else {
 			uriPilotageFilter+=pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_HABILITATION;
@@ -250,4 +252,5 @@ public class UtilsServiceImpl implements UtilsService{
 	    }   
 	    return false;
 	}
+
 }
