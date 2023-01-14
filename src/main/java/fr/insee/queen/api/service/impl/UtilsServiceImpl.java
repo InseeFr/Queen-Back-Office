@@ -53,7 +53,7 @@ public class UtilsServiceImpl implements UtilsService{
 	@Value("${fr.insee.queen.pilotage.alternative-habilitation-service.url}")
 	private String alternativeHabilitationServiceURL;
 	
-	@Value("${fr.insee.queen.pilotage.alternative-habilitation-service.campaignIds-regex}")
+	@Value("${fr.insee.queen.pilotage.alternative-habilitation-service.campaignids-regex}")
 	private String campaignIdRegexWithAlternativeHabilitationService;
 		
 	@Value("${fr.insee.queen.pilotage.integration.override:#{null}}")
