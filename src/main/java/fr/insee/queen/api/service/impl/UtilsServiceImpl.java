@@ -190,12 +190,6 @@ public class UtilsServiceImpl implements UtilsService{
 		
 		String uriPilotageFilter="";
 		
-		LOGGER.info("campaignIdRegexWithAlternativeHabilitationService : {}  " ,campaignIdRegexWithAlternativeHabilitationService);
-		LOGGER.info("alternativeHabilitationServiceURL : {} " ,alternativeHabilitationServiceURL);
-		LOGGER.info("campaignId : {} " ,campaignId);
-		LOGGER.info("Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId) : {} ",Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId) );
-
-		
 		if(Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
 			LOGGER.info("Current campaignId {} requires an alternative habilitation service {} ",campaignId, alternativeHabilitationServiceURL);
 			uriPilotageFilter+=alternativeHabilitationServiceURL;
@@ -220,8 +214,6 @@ public class UtilsServiceImpl implements UtilsService{
 						request.getRemoteUser(), role, suId, resp.getStatusCode().toString());
 				return false;
 			}
-			LOGGER.info("resp.getBody() " + resp.getBody());
-			LOGGER.info("resp.getBody()).get(\"habilitated\") " + ((LinkedHashMap<String, Boolean>)  resp.getBody()).get("habilitated"));
 
 			habilitationResult = Boolean.TRUE
 					.equals(((LinkedHashMap<String, Boolean>) resp.getBody()).get("habilitated"));
