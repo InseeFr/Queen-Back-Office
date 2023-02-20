@@ -60,7 +60,7 @@ public class SwaggerConfiguration {
     @Value("${keycloak.auth-server-url}")
     private String authUrl;
 
-    @Value("${fr.insee.queen.swagger.provider:#{null}}")
+    @Value("${fr.insee.queen.swagger.provider:#{''}}")
     String identityProvider;
 
     public static final String SECURITY_SCHEMA_OAUTH2 = "oauth2";
