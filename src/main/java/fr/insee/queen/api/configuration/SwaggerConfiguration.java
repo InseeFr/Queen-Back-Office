@@ -60,6 +60,9 @@ public class SwaggerConfiguration {
     @Value("${keycloak.auth-server-url}")
     private String authUrl;
 
+    @Value("${fr.insee.queen.swagger.provider:#{''}}")
+    String identityProvider;
+
     public static final String SECURITY_SCHEMA_OAUTH2 = "oauth2";
 
     @Autowired
@@ -130,7 +133,12 @@ public class SwaggerConfiguration {
     public SecurityConfiguration security() {
 
         Map<String, Object> additionalQueryStringParams = new HashMap<>();
-        additionalQueryStringParams.put("kc_idp_hint", "sso-insee");
+        if(identityProvider.isBlank()) {
+            additionalQueryStringParams.put("kc_idp_hint", "sso-insee");
+        }
+        else{
+            additionalQueryStringParams.put("kc_idp_hint", identityProvider);
+        }
 
         if (this.applicationProperties.getMode() == ApplicationProperties.Mode.keycloak)
             return SecurityConfigurationBuilder.builder().clientId(resource).realm(realm).scopeSeparator(",").additionalQueryStringParams(additionalQueryStringParams).build();
