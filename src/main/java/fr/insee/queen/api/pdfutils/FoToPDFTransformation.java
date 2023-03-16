@@ -17,32 +17,35 @@ public class FoToPDFTransformation {
     static Logger logger = LoggerFactory.getLogger(FoToPDFTransformation.class);
 
     public File transformFoToPdf(File foFile) throws Exception {
-        File outFilePDF = File.createTempFile("pdf-file",".pdf");
-        try{
 
-            File conf = new File(FoToPDFTransformation.class.getResource("/pdf/fop.xconf").toURI());
-            InputStream isXconf = new FileInputStream(conf);
+	logger.info("foFile = " + foFile.getPath());
+	File outFilePDF = File.createTempFile("pdf-file", ".pdf");
+	try {
 
-            URI folderBase = FoToPDFTransformation.class.getResource("/pdf/").toURI();
-            FopFactory fopFactory = FopFactory.newInstance(folderBase,isXconf);
+	    File conf = new File(FoToPDFTransformation.class.getResource("/pdf/fop.xconf").toURI());
+	    InputStream isXconf = new FileInputStream(conf);
 
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilePDF));
+	    URI folderBase = FoToPDFTransformation.class.getResource("/pdf/").toURI();
+	    FopFactory fopFactory = FopFactory.newInstance(folderBase, isXconf);
 
-            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
-            TransformerFactory factory = TransformerFactory.newInstance();
+	    OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilePDF));
 
-            Transformer transformer = factory.newTransformer();
+	    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+	    TransformerFactory factory = TransformerFactory.newInstance();
 
-            Source src = new StreamSource(foFile);
+	    Transformer transformer = factory.newTransformer();
 
-            Result res = new SAXResult(fop.getDefaultHandler());
+	    Source src = new StreamSource(foFile);
 
-            transformer.transform(src, res);
-      
-            out.close();
-        } catch (Exception e){
-            logger.error("Error during fo to pdf transformation :"+e.getMessage());
-        }
-        return outFilePDF;
+	    Result res = new SAXResult(fop.getDefaultHandler());
+
+	    transformer.transform(src, res);
+
+	    out.close();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    logger.error("Error during fo to pdf transformation :" + e.getMessage());
+	}
+	return outFilePDF;
     }
 }
