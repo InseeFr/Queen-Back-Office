@@ -31,6 +31,8 @@ public class FoToPDFTransformation {
 
 	    OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilePDF));
 	    logger.info("outFilePDF" + foFile.getPath());
+	    logger.info("HOME = " + System.getenv("HOME"));
+
 
 
 	    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
