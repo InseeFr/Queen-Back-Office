@@ -1,8 +1,13 @@
 package fr.insee.queen.api.pdfutils;
 
-import org.apache.fop.apps.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.nio.file.Path;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -10,8 +15,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
-import java.net.URI;
+
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FoToPDFTransformation {
     static Logger logger = LoggerFactory.getLogger(FoToPDFTransformation.class);
@@ -31,12 +40,11 @@ public class FoToPDFTransformation {
 
 	    OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilePDF));
 	    logger.info("outFilePDF" + foFile.getPath());
-	    logger.info("HOME = " + System.getenv("HOME"));
-
 
 
 	    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
-	    logger.info("fop=" + fop.toString());
+	    
+	    fopFactory.getFontManager().setCacheFile(Path.of(System.getProperty("java.io.tmpdir")).toUri());
 
 	    TransformerFactory factory = TransformerFactory.newInstance();
 
