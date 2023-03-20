@@ -10,10 +10,6 @@
        value is specified as auto -->
     <default-page-settings height="11in" width="8.26in"/>
     
-    <use-cache>true</use-cache>
-    <cache-file>/opt/tomcat/temp/fop.cache</cache-file>
-    
-
     <font-base>fonts</font-base>
     
      <renderers>

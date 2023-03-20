@@ -44,6 +44,8 @@ public class FoToPDFTransformation {
 
 	    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
 	    
+	    logger.info("java.io.tmpdir = " +Path.of(System.getProperty("java.io.tmpdir ")));
+	    	    
 	    fopFactory.getFontManager().setCacheFile(Path.of(System.getProperty("java.io.tmpdir")).toUri());
 
 	    TransformerFactory factory = TransformerFactory.newInstance();
