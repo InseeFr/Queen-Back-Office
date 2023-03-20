@@ -9,6 +9,10 @@
     <!-- Default page-height and page-width, in case
        value is specified as auto -->
     <default-page-settings height="11in" width="8.26in"/>
+    
+    <use-cache>true</use-cache>
+    <cache-file>${java.io.temp}/fop.cache</cache-file>
+    
 
     <font-base>fonts</font-base>
     
