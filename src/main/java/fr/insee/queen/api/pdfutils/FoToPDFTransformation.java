@@ -34,13 +34,11 @@ public class FoToPDFTransformation {
 	    File conf = new File(FoToPDFTransformation.class.getResource("/pdf/fop.xconf").toURI());
 	    InputStream isXconf = new FileInputStream(conf);
 
-
 	    URI folderBase = FoToPDFTransformation.class.getResource("/pdf/").toURI();
+	    
 	    FopFactory fopFactory = FopFactory.newInstance(folderBase, isXconf);
 
 	    OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilePDF));
-	    logger.info("outFilePDF" + foFile.getPath());
-
 
 	    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
 	        	    
