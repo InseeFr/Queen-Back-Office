@@ -31,8 +31,7 @@ public class FoToPDFTransformation {
 	File outFilePDF = File.createTempFile("pdf-file", ".pdf");
 	try {
 
-	    File conf = new File(FoToPDFTransformation.class.getResource("/pdf/fop.xconf").toURI());
-	    InputStream isXconf = new FileInputStream(conf);
+        InputStream isXconf = FoToPDFTransformation.class.getResourceAsStream("/pdf/fop.xconf");
 
 	    URI folderBase = FoToPDFTransformation.class.getResource("/pdf/").toURI();
 	    
