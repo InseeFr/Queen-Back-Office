@@ -10,6 +10,7 @@
        value is specified as auto -->
     <default-page-settings height="11in" width="8.26in"/>
     <font-base>fonts</font-base>
+    <use-cache>false</use-cache>
     
      <renderers>
         <renderer mime="application/pdf">
