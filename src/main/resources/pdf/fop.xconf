@@ -10,8 +10,9 @@
        value is specified as auto -->
     <default-page-settings height="11in" width="8.26in"/>
     <font-base>fonts</font-base>
-    <use-cache>false</use-cache>
-    
+ 	<use-cache>true</use-cache>
+    <cache-file>/opt/tomcat/temp/fop.cache</cache-file>  
+      
      <renderers>
         <renderer mime="application/pdf">
           <fonts>
