@@ -37,7 +37,7 @@ public class FoToPDFTransformation {
 	    
 	    FopFactory fopFactory = FopFactory.newInstance(folderBase, isXconf);
 	    
-	    fopFactory.getFontManager().setCacheFile(Path.of(System.getProperty("java.io.tmpdir")).toUri());
+	    fopFactory.getFontManager().setCacheFile(Path.of(System.getProperty("java.io.tmpdir")+"/fop.cache").toUri());
 
 	    OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilePDF));
 
