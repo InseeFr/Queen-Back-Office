@@ -36,13 +36,13 @@ public class FoToPDFTransformation {
 	    URI folderBase = FoToPDFTransformation.class.getResource("/pdf/").toURI();
 	    
 	    FopFactory fopFactory = FopFactory.newInstance(folderBase, isXconf);
+	    
+	    fopFactory.getFontManager().setCacheFile(Path.of(System.getProperty("java.io.tmpdir")).toUri());
 
 	    OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilePDF));
 
 	    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
 	        	    
-	    fopFactory.getFontManager().setCacheFile(Path.of(System.getProperty("java.io.tmpdir")).toUri());
-
 	    TransformerFactory factory = TransformerFactory.newInstance();
 
 	    Transformer transformer = factory.newTransformer();
