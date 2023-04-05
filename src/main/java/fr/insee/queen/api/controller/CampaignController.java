@@ -212,6 +212,7 @@ public class CampaignController {
 		}
 		if(isDeletable){
 			campaignservice.delete(campaignOptional.get());
+			evictCampaignFromCache.accept(id);
 			LOGGER.info("DELETE campaign with id {} resulting in 200", id);
 			return ResponseEntity.ok().build();
 		}else{

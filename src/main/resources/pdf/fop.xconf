@@ -9,9 +9,8 @@
     <!-- Default page-height and page-width, in case
        value is specified as auto -->
     <default-page-settings height="11in" width="8.26in"/>
-
     <font-base>fonts</font-base>
-    
+       
      <renderers>
         <renderer mime="application/pdf">
           <fonts>
