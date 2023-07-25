@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,7 +196,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			commentService.save(comment);
 			su.setComment(comment);
 
-			Personalization personalization = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+			Personalization personalization = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su);
 			personalizationService.save(personalization);
 			su.setPersonalization(personalization);
 
@@ -461,11 +463,46 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		if("11".equals(id)) {
 			return jsonValue;
 		}
-		ObjectNode jsonCollected = objectMapper.createObjectNode();
-		jsonCollected.put("COMMENT", "Love it !");
-		jsonCollected.put("READY", true);
-		jsonCollected.put("PRODUCER", "Matt Groening");
-		jsonValue.put("COLLECTED", jsonCollected);
+
+		// Create the "COLLECTED" array node
+		ArrayNode collectedArray = JsonNodeFactory.instance.arrayNode();
+
+		// Create the "COMMENT" object node
+		ObjectNode commentNode = JsonNodeFactory.instance.objectNode();
+		commentNode.putNull("EDITED");
+		commentNode.putNull("FORCED");
+		commentNode.putNull("INPUTED");
+		commentNode.putNull("PREVIOUS");
+		commentNode.put("COLLECTED", "Love it !");
+
+		// Add "COMMENT" node to the "COLLECTED" array
+		collectedArray.add(commentNode);
+
+		// Create the "READY" object node
+		ObjectNode readyNode = JsonNodeFactory.instance.objectNode();
+		readyNode.putNull("EDITED");
+		readyNode.putNull("FORCED");
+		readyNode.putNull("INPUTED");
+		readyNode.putNull("PREVIOUS");
+		readyNode.put("COLLECTED", true);
+
+		// Add "READY" node to the "COLLECTED" array
+		collectedArray.add(readyNode);
+
+		// Create the "PRODUCER" object node
+		ObjectNode producerNode = JsonNodeFactory.instance.objectNode();
+		producerNode.putNull("EDITED");
+		producerNode.putNull("FORCED");
+		producerNode.putNull("INPUTED");
+		producerNode.putNull("PREVIOUS");
+		producerNode.put("COLLECTED", "Matt Groening");
+
+		// Add "PRODUCER" node to the "COLLECTED" array
+		collectedArray.add(producerNode);
+
+		// Add the "COLLECTED" array node to the root node
+		jsonValue.set("COLLECTED", collectedArray);
+
 		return jsonValue;
 	}
 
