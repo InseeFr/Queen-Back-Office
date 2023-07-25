@@ -268,7 +268,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su2);
 				personalizationService.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
 				stateDataService.save(sd2);
@@ -285,7 +285,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su2);
 				personalizationService.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
 				stateDataService.save(sd2);
@@ -302,7 +302,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su2);
 				personalizationService.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
 				stateDataService.save(sd2);
@@ -319,7 +319,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su2);
 				personalizationService.save(p2);
 				su2.setData(d2);
 				su2.setComment(c2);
@@ -383,7 +383,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su);
 				personalizationService.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
 				stateDataService.save(sd);
@@ -400,7 +400,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su);
 				personalizationService.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
 				stateDataService.save(sd);
@@ -417,7 +417,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su);
 				personalizationService.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
 				stateDataService.save(sd);
