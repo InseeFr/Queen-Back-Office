@@ -464,8 +464,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			return jsonValue;
 		}
 
-		// Create the "COLLECTED" array node
-		ArrayNode collectedArray = JsonNodeFactory.instance.arrayNode();
+		ObjectNode collectedNode = JsonNodeFactory.instance.objectNode();
 
 		// Create the "COMMENT" object node
 		ObjectNode commentNode = JsonNodeFactory.instance.objectNode();
@@ -475,8 +474,9 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		commentNode.putNull("PREVIOUS");
 		commentNode.put("COLLECTED", "Love it !");
 
-		// Add "COMMENT" node to the "COLLECTED" array
-		collectedArray.add(commentNode);
+		// Add "COMMENT" node to the "COLLECTED" node
+		collectedNode.set("COMMENT", commentNode);
+
 
 		// Create the "READY" object node
 		ObjectNode readyNode = JsonNodeFactory.instance.objectNode();
@@ -486,8 +486,8 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		readyNode.putNull("PREVIOUS");
 		readyNode.put("COLLECTED", true);
 
-		// Add "READY" node to the "COLLECTED" array
-		collectedArray.add(readyNode);
+		// Add "READY" node to the "COLLECTED" node
+		collectedNode.set("READY", readyNode);
 
 		// Create the "PRODUCER" object node
 		ObjectNode producerNode = JsonNodeFactory.instance.objectNode();
@@ -497,11 +497,11 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		producerNode.putNull("PREVIOUS");
 		producerNode.put("COLLECTED", "Matt Groening");
 
-		// Add "PRODUCER" node to the "COLLECTED" array
-		collectedArray.add(producerNode);
+		// Add "PRODUCER" node to the "COLLECTED" node
+		collectedNode.set("PRODUCER", producerNode);
 
 		// Add the "COLLECTED" array node to the root node
-		jsonValue.set("COLLECTED", collectedArray);
+		jsonValue.set("COLLECTED", collectedNode);
 
 		return jsonValue;
 	}
