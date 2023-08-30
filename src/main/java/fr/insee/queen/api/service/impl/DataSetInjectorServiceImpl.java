@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,7 +196,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 			commentService.save(comment);
 			su.setComment(comment);
 
-			Personalization personalization = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+			Personalization personalization = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su);
 			personalizationService.save(personalization);
 			su.setPersonalization(personalization);
 
@@ -266,7 +268,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su2);
 				personalizationService.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
 				stateDataService.save(sd2);
@@ -283,7 +285,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su2);
 				personalizationService.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
 				stateDataService.save(sd2);
@@ -300,7 +302,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su2);
 				personalizationService.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
 				stateDataService.save(sd2);
@@ -317,7 +319,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
 				commentService.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su2);
+				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su2);
 				personalizationService.save(p2);
 				su2.setData(d2);
 				su2.setComment(c2);
@@ -381,7 +383,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su);
 				personalizationService.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
 				stateDataService.save(sd);
@@ -398,7 +400,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su);
 				personalizationService.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
 				stateDataService.save(sd);
@@ -415,7 +417,7 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 				dataService.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode(),su);
 				commentService.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createObjectNode(),su);
+				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode(),su);
 				personalizationService.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
 				stateDataService.save(sd);
@@ -461,11 +463,46 @@ public class DataSetInjectorServiceImpl implements DataSetInjectorService {
 		if("11".equals(id)) {
 			return jsonValue;
 		}
-		ObjectNode jsonCollected = objectMapper.createObjectNode();
-		jsonCollected.put("COMMENT", "Love it !");
-		jsonCollected.put("READY", true);
-		jsonCollected.put("PRODUCER", "Matt Groening");
-		jsonValue.put("COLLECTED", jsonCollected);
+
+		ObjectNode collectedNode = JsonNodeFactory.instance.objectNode();
+
+		// Create the "COMMENT" object node
+		ObjectNode commentNode = JsonNodeFactory.instance.objectNode();
+		commentNode.putNull("EDITED");
+		commentNode.putNull("FORCED");
+		commentNode.putNull("INPUTED");
+		commentNode.putNull("PREVIOUS");
+		commentNode.put("COLLECTED", "Love it !");
+
+		// Add "COMMENT" node to the "COLLECTED" node
+		collectedNode.set("COMMENT", commentNode);
+
+
+		// Create the "READY" object node
+		ObjectNode readyNode = JsonNodeFactory.instance.objectNode();
+		readyNode.putNull("EDITED");
+		readyNode.putNull("FORCED");
+		readyNode.putNull("INPUTED");
+		readyNode.putNull("PREVIOUS");
+		readyNode.put("COLLECTED", true);
+
+		// Add "READY" node to the "COLLECTED" node
+		collectedNode.set("READY", readyNode);
+
+		// Create the "PRODUCER" object node
+		ObjectNode producerNode = JsonNodeFactory.instance.objectNode();
+		producerNode.putNull("EDITED");
+		producerNode.putNull("FORCED");
+		producerNode.putNull("INPUTED");
+		producerNode.putNull("PREVIOUS");
+		producerNode.put("COLLECTED", "Matt Groening");
+
+		// Add "PRODUCER" node to the "COLLECTED" node
+		collectedNode.set("PRODUCER", producerNode);
+
+		// Add the "COLLECTED" array node to the root node
+		jsonValue.set("COLLECTED", collectedNode);
+
 		return jsonValue;
 	}
 
