@@ -119,6 +119,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_DATA).hasAnyRole(roleAdmin, roleWebClient, roleInterviewer, roleReviewer,roleReviewerAlternative)
        				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_COMMENT).hasAnyRole(roleAdmin, roleWebClient, roleInterviewer, roleReviewer,roleReviewerAlternative)
        				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_COMMENT).hasAnyRole(roleAdmin, roleWebClient, roleInterviewer, roleReviewer,roleReviewerAlternative)
+       				.antMatchers(HttpMethod.POST, Constants.API_SURVEYUNITS_QUESTIONNAIRE_MODEL_ID).hasAnyRole(roleAdmin, roleWebClient, roleInterviewer, roleReviewer,roleReviewerAlternative)
        				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_STATEDATA).hasAnyRole(roleAdmin, roleWebClient, roleInterviewer, roleReviewer,roleReviewerAlternative)
        				.antMatchers(HttpMethod.PUT, Constants.API_SURVEYUNIT_ID_STATEDATA).hasAnyRole(roleAdmin, roleWebClient, roleInterviewer, roleReviewer,roleReviewerAlternative)
        				.antMatchers(HttpMethod.GET, Constants.API_SURVEYUNIT_ID_DEPOSITPROOF).hasAnyRole(roleAdmin, roleWebClient, roleInterviewer, roleReviewer,roleReviewerAlternative)
