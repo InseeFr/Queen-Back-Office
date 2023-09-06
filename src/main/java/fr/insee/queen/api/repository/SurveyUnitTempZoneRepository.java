@@ -1,9 +1,12 @@
 package fr.insee.queen.api.repository;
 
 import fr.insee.queen.api.domain.SurveyUnitTempZone;
-import org.springframework.stereotype.Repository;
+import fr.insee.queen.api.dto.surveyunit.SurveyUnitTempZoneDto;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import javax.transaction.Transactional;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
 * SurveyUnitTempZone is the repository using to save surveyUnit with probleme in DB
@@ -17,4 +20,5 @@ public interface SurveyUnitTempZoneRepository extends JpaRepository<SurveyUnitTe
 
     void deleteBySurveyUnitId(String id);
 
+    List<SurveyUnitTempZoneDto> findAllProjectedBy();
 }

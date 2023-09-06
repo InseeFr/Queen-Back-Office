@@ -1,79 +1,74 @@
 package fr.insee.queen.api.configuration;
 
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.ThreadContext;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import fr.insee.queen.api.configuration.properties.ApplicationProperties;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.UUID;
+
 @Component
+@Slf4j
 public class LogInterceptor implements HandlerInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(LogInterceptor.class);
-   // @Value("${server.contextPath}")
-    // private String contextPath;
+    private final ApplicationProperties applicationProperties;
 
-    @Autowired
-    ApplicationProperties applicationProperties;
+    public LogInterceptor(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-
         String fishTag = UUID.randomUUID().toString();
         String method = request.getMethod();
         String operationPath = request.getRequestURI();
 
-        String userId = null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        switch (applicationProperties.getMode()) {
-            case basic:
-                Object basic = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                if (basic instanceof UserDetails) {
-                    userId = ((UserDetails)basic).getUsername();
-                } else {
-                    userId = basic.toString();
+        String userId = switch (applicationProperties.auth()) {
+            case BASIC -> {
+                Object basic = authentication.getPrincipal();
+                if (basic instanceof UserDetails userDetails) {
+                    yield userDetails.getUsername();
                 }
-                break;
-            case keycloak:
-                KeycloakAuthenticationToken keycloak = (KeycloakAuthenticationToken) request.getUserPrincipal();
-                if(keycloak!=null) {
-                    userId = keycloak.getPrincipal().toString();
+                yield basic.toString();
+            }
+            case KEYCLOAK -> {
+                if(authentication.getCredentials() instanceof Jwt jwt) {
+                    yield jwt.getClaims().get("preferred_username").toString();
                 }
-                break;
-            default:
-                userId = "GUEST";
-                break;
-        }
+                yield "GUEST";
+            }
+            default -> "GUEST";
+        };
 
 
-        ThreadContext.put("id", fishTag);
-        ThreadContext.put("path", operationPath);
-        ThreadContext.put("method", method);
-        ThreadContext.put("user", userId);
+        MDC.put("id", fishTag);
+        MDC.put("path", operationPath);
+        MDC.put("method", method);
+        MDC.put("user", userId);
 
-        logger.info("["+userId+"] - ["+method+"] - ["+operationPath+"]");
+        log.info("["+userId+"] - ["+method+"] - ["+operationPath+"]");
         return true;
     }
 
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView mv) {
-
+        // no need to posthandle things for this interceptor
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                    Exception exception) throws Exception {
-        ThreadContext.clearMap();
+                                Exception exception) {
+        MDC.clear();
     }
 }

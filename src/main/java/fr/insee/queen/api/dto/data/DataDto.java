@@ -1,8 +1,6 @@
 package fr.insee.queen.api.dto.data;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
-public interface DataDto {
-	JsonNode getValue();
-}
+public record DataDto (@JsonRawValue String value) {}

@@ -1,19 +1,29 @@
 package fr.insee.queen.api.service;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import fr.insee.queen.api.domain.Metadata;
 import fr.insee.queen.api.dto.metadata.MetadataDto;
-import fr.insee.queen.api.exception.NotFoundException;
+import fr.insee.queen.api.exception.EntityNotFoundException;
+import fr.insee.queen.api.repository.MetadataRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
-public interface MetadataService extends BaseService<Metadata, UUID> {
+@Service
+@AllArgsConstructor
+public class MetadataService {
 
-	void save(Metadata paradataEvent);
+	private final MetadataRepository metadataRepository;
 
-	MetadataDto findDtoByCampaignId(String id) throws NotFoundException;
+	public void save(Metadata metadata) {
+	metadataRepository.save(metadata);
+}
 
-	Optional<Metadata> findById(UUID uuid);
+	public MetadataDto getMetadata(String campaignId) throws EntityNotFoundException {
+		return metadataRepository.findByCampaignId(campaignId)
+				.orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for campaign %s was not found", campaignId)));
+	}
 
-    
+	public MetadataDto getMetadataByQuestionnaireId(String questionnaireId) {
+		return metadataRepository.findByQuestionnaireId(questionnaireId)
+				.orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for questionnaire %s was not found", questionnaireId)));
+	}
 }

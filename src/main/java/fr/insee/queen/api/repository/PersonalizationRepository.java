@@ -1,9 +1,12 @@
 package fr.insee.queen.api.repository;
 
+import fr.insee.queen.api.domain.Personalization;
+import fr.insee.queen.api.dto.personalization.PersonalizationDto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.jpa.repository.JpaRepository;
-import fr.insee.queen.api.domain.Personalization;
 
 /**
 * ParadataEventRepository is the repository using to access to ParadataEvent table in DB
@@ -11,9 +14,10 @@ import fr.insee.queen.api.domain.Personalization;
 * @author Corcaud Samuel
 * 
 */
+@Repository
 public interface PersonalizationRepository extends JpaRepository<Personalization, UUID> {
 
-	Optional<Personalization> findBySurveyUnitId(String id);
+	Optional<PersonalizationDto> findBySurveyUnitId(String id);
 
 
 }

@@ -1,32 +1,25 @@
 package fr.insee.queen.api.configuration;
 
-import java.util.function.Consumer;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableCaching
-@Profile("!test")
+@Slf4j
 public class CacheConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheConfig.class);
-
-    @Autowired
-    CacheManager cacheManager;
-
     @Bean
-    public Consumer<String> evictCampaignFromCache() {
-
-        return campaignId -> {
-            LOGGER.info("{} removed from campaign cache", campaignId);
-            cacheManager.getCache("campaign").evict(campaignId);
-        };
-    };
-
+    public CaffeineCache habilitationCache() {
+        return new CaffeineCache("habilitations",
+                Caffeine.newBuilder()
+                        .initialCapacity(200)
+                        .maximumSize(5000)
+                        .expireAfterAccess(5, TimeUnit.MINUTES)
+                        .build());
+    }
 }

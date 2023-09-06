@@ -1,18 +1,17 @@
 package fr.insee.queen.api.domain;
 
-import java.util.UUID;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import java.util.UUID;
 
 @Entity
 @Table(name = "state_data")
+@Getter
+@Setter
+@AllArgsConstructor
 public class StateData {
 
 	/**
@@ -53,84 +52,4 @@ public class StateData {
 		super();
 		this.id = UUID.randomUUID();
 	}
-
-	public StateData(UUID id, StateDataType state, Long date, String currentPage, SurveyUnit surveyUnit) {
-		super();
-		this.id = id;
-		this.state = state;
-		this.date = date;
-		this.currentPage = currentPage;
-		this.surveyUnit = surveyUnit;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public UUID getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public StateDataType getState() {
-		return state;
-	}
-
-	/**
-	 * @param state the state to set
-	 */
-	public void setState(StateDataType state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the date
-	 */
-	public Long getDate() {
-		return date;
-	}
-
-	/**
-	 * @param date the date to set
-	 */
-	public void setDate(Long date) {
-		this.date = date;
-	}
-
-	/**
-	 * @return the currentPage
-	 */
-	public String getCurrentPage() {
-		return currentPage;
-	}
-
-	/**
-	 * @param currentPage the currentPage to set
-	 */
-	public void setCurrentPage(String currentPage) {
-		this.currentPage = currentPage;
-	}
-	
-	/**
-	 * @return the surveyUnit
-	 */
-	public SurveyUnit getSurveyUnit() {
-		return surveyUnit;
-	}
-
-	/**
-	 * @param surveyUnit the surveyUnit to set
-	 */
-	public void setSurveyUnit(SurveyUnit surveyUnit) {
-		this.surveyUnit = surveyUnit;
-	}
-	
 }

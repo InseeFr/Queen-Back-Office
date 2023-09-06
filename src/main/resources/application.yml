@@ -1,0 +1,127 @@
+application:
+  host: http://localhost:8080
+  public-urls:
+    - /swagger-ui/**
+    - /v3/api-docs/**
+    - /csrf
+    - /
+    - /webjars/**
+    - /swagger-resources/**
+    - /environnement
+    - /healthcheck
+    - /actuator/**
+  roles:
+    interviewer:
+    reviewer:
+    admin:
+    webclient:
+    reviewer-alternative:
+  auth:  # KEYCLOAK | BASIC | NOAUTH
+  ## if KEYCLOAK or BASIC auth
+  #security:
+  #  # if KEYCLOAK auth enabled
+  #  keycloak:
+  #    auth-server-url:
+  #    realm:
+  #    client-id:
+  #    principal-attribute:
+  #    # other claim to read roles from in token
+  #    additional-realm:
+  #
+  #  # if BASIC auth enabled, configure users
+  #  basic:
+  #    users:
+  #      -
+  #        username: user1
+  #        password: 'xxx'
+  #        roles:
+  #          - ${application.roles.interviewer}
+  #          - ${application.roles.reviewer}
+  #      -
+  #        username: user2
+  #        password: 'yyy'
+  #        roles:
+  corsOrigin:
+
+  # Pearljam-bo url
+  pilotage:
+    service:
+      url:
+        scheme:
+        host:
+        port:
+    #alternative habilitation
+    alternative-habilitation-service:
+      url: http://alternative.url
+      campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
+    #If true, checkHabilitation and getSuFromPilotage are not used to secure the endpoints
+    integration:
+      override: false
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 2
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      id:
+        new_generator_mappings: true
+      cache:
+        use_second_level_cache: false
+        use_query_cache: false
+      generate_statistics: false
+      hbm2ddl:
+        auto: validate
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${application.security.keycloak.auth-server-url}/realms/${application.security.keycloak.realm}
+
+  liquibase:
+    enabled: true
+    contexts: prod
+    defaultSchema: public
+    change-log: classpath:db/master.xml
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: ${application.security.keycloak.client-id}
+    oauth2RedirectUrl: ${application.host}/swagger-ui/oauth2-redirect.html
+    path: /
+    syntax-highlight:
+      activated: false
+
+#Actuator Metrics
+management:
+  endpoints:
+    enabled-by-default: false
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    web:
+      exposure:
+        include: metrics,prometheus
+
+logging:
+  level:
+    root: INFO
+    liquibase: ERROR
+
+  logback:
+    rollingpolicy:
+      max-history: 90
+  

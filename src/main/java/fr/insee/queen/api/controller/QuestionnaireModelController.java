@@ -1,202 +1,133 @@
 package fr.insee.queen.api.controller;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import fr.insee.queen.api.domain.Campaign;
-import fr.insee.queen.api.domain.QuestionnaireModel;
-import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireIdDto;
-import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelCreateDto;
+import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
+import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitOkNokDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
-import fr.insee.queen.api.exception.NotFoundException;
+import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
+import fr.insee.queen.api.exception.QuestionnaireModelCreationException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.NomenclatureService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
 import fr.insee.queen.api.service.SurveyUnitService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
- * QuestionnaireModelController is the Controller using to manage
- * {@link QuestionnaireModel} entity
+ * QuestionnaireModelController is the Controller using to manage questionnaire models
  * 
  * @author Claudel Benjamin
  * 
  */
 @RestController
 @RequestMapping(path = "/api")
+@Slf4j
+@AllArgsConstructor
 public class QuestionnaireModelController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionnaireModelController.class);
 
-	@Autowired
-	private SurveyUnitService surveyUnitService;
-
+	private final SurveyUnitService surveyUnitService;
 	/**
 	 * The questionnaire model repository using to access to table
 	 * 'questionnaire_model' in DB
 	 */
-	@Autowired
-	private QuestionnaireModelService questionnaireModelService;
-
+	private final QuestionnaireModelService questionnaireModelService;
 	/**
 	 * The nomenclature service using to access to table 'nomenclature' in DB
 	 */
-	@Autowired
-	private NomenclatureService nomenclatureService;
+	private final NomenclatureService nomenclatureService;
 
 	/**
 	 * The campaign repository using to access to table 'campaign' in DB
 	 */
-	@Autowired
-	private CampaignService campaignService;
+	private final CampaignService campaignService;
 
 	/**
 	 * This method is using to get the questionnaireModel associated to a specific
 	 * campaign
 	 * 
-	 * @param id the id of campaign
+	 * @param campaignId the id of campaign
 	 * @return the {@link QuestionnaireModelDto} associated to the campaign
-	 * @throws NotFoundException
 	 */
-	@ApiOperation(value = "Get questionnnaire model by campaign Id ")
+	@Operation(summary = "Get questionnnaire model by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/questionnaires")
-	public ResponseEntity<List<QuestionnaireModelDto>> getQuestionnaireModelByCampaignId(
-			@PathVariable(value = "id") String id) {
-		Optional<Campaign> campaignOptional = campaignService.findById(id);
-		if (!campaignOptional.isPresent()) {
-			LOGGER.error("GET questionnaire for campaign with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		} else {
-			List<QuestionnaireModelDto> resp = new ArrayList<>();
-			try {
-				resp = campaignService.getQuestionnaireModels(id);
-			} catch (NotFoundException e) {
-				LOGGER.error(e.getMessage());
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			LOGGER.info("GET questionnaire for campaign with id {} resulting in 200", id);
-			return new ResponseEntity<>(resp, HttpStatus.OK);
-		}
+	public List<QuestionnaireModelDto> getQuestionnaireModelByCampaignId(
+			@PathVariable(value = "id") String campaignId) {
+		log.info("GET questionnaire for campaign with id {}", campaignId);
+		return campaignService.getQuestionnaireModels(campaignId);
 	}
 
 	/**
 	 * This method is used to retrieve a questionnaireModel by Id
 	 * 
-	 * @param id the id of questionnaire
+	 * @param questionnaireModelId the id of questionnaire
 	 * @return the {@link QuestionnaireModelDto} associated to the id
 	 */
-	@ApiOperation(value = "Get a questionnnaire model by Id ")
+	@Operation(summary = "Get a questionnnaire model by Id ")
 	@GetMapping(path = "/questionnaire/{id}")
-	public ResponseEntity<QuestionnaireModelDto> getQuestionnaireModelById(@PathVariable(value = "id") String id) {
-		Optional<QuestionnaireModel> questModel = questionnaireModelService.findById(id);
-		if (!questModel.isPresent()) {
-			LOGGER.error("GET questionnaire for id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		} else {
-			QuestionnaireModelDto questMod = new QuestionnaireModelDto(questModel.get());
-			LOGGER.info("GET questionnaire for id {} resulting in 200", id);
-			return new ResponseEntity<>(questMod, HttpStatus.OK);
-		}
+	public QuestionnaireModelDto getQuestionnaireModelById(@PathVariable(value = "id") String questionnaireModelId) {
+		log.info("GET questionnaire for id {}", questionnaireModelId);
+		return questionnaireModelService.getQuestionnaireModelDto(questionnaireModelId);
 	}
 
 	/**
-	 * This method is used to retrieve a questionnaireModel by Id
+	 * This method is used to retrieve  questionnaireModel list by a campaign id
 	 * 
-	 * @param id the id of questionnaire
-	 * @return the {@link QuestionnaireModelResponseDto} associated to the id
-	 * @throws NotFoundException
+	 * @param campaignId the id of questionnaire
+	 * @return the {@link QuestionnaireModelIdDto} list associated to the campaign id
 	 */
-	@ApiOperation(value = "Get questionnnaire id by campaign Id ")
+	@Operation(summary = "Get questionnnaire id by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/questionnaire-id")
-	public ResponseEntity<List<QuestionnaireIdDto>> getQuestionnaireModelIdByCampaignId(
-			@PathVariable(value = "id") String id) {
-		Optional<Campaign> campaignOptional = campaignService.findById(id);
-		if (!campaignOptional.isPresent()) {
-			LOGGER.error("GET questionnaire Id for campaign with id {} resulting in 404", id);
-			return ResponseEntity.notFound().build();
-		} else {
-			List<QuestionnaireIdDto> resp = new ArrayList<>();
-			try {
-				resp = campaignService.getQuestionnaireIds(id);
-			} catch (NotFoundException e) {
-				LOGGER.error(e.getMessage());
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			LOGGER.info("GET questionnaire Id for campaign with id {} resulting in 200", id);
-			return new ResponseEntity<>(resp, HttpStatus.OK);
-		}
+	public List<QuestionnaireModelIdDto> getQuestionnaireModelIdByCampaignId(
+			@PathVariable(value = "id") String campaignId) {
+		log.info("GET questionnaire Id for campaign with id {}", campaignId);
+		return campaignService.getQuestionnaireIds(campaignId);
 	}
 
 	/**
 	 * This method is using to post a new Questionnaire Model
 	 * 
-	 * @param questionnaire to create
-	 * @return {@link HttpStatus 400} if nomenclature is not found, else
-	 *         {@link HttpStatus 200}
-	 * @throws ParseException
-	 * @throws SQLException
+	 * @param questionnaireModelRest to create
 	 * 
 	 */
-	@ApiOperation(value = "Create a Questionnaire Model")
+	@Operation(summary = "Create a Questionnaire Model")
 	@PostMapping(path = "/questionnaire-models")
-	public ResponseEntity<Object> createQuestionnaire(@RequestBody QuestionnaireModelCreateDto questionnaireModel,
-			HttpServletRequest request) {
-
-		Optional<QuestionnaireModelDto> questMod = questionnaireModelService
-				.findDtoById(questionnaireModel.getIdQuestionnaireModel());
-		if (questMod.isPresent()) {
-			LOGGER.error("POST questionnaire with id {} resulting in 400 because it already exists",
-					questionnaireModel.getIdQuestionnaireModel());
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	public void createQuestionnaire(@RequestBody QuestionnaireModelInputDto questionnaireModelRest) {
+		log.info("POST campaign with id {}", questionnaireModelRest.idQuestionnaireModel());
+		if (questionnaireModelService.existsById(questionnaireModelRest.idQuestionnaireModel())) {
+			throw new QuestionnaireModelCreationException(String.format("Cannot create questionnaire model %s as it already exists",
+					questionnaireModelRest.idQuestionnaireModel()));
 		}
-		if (!questionnaireModel.getRequiredNomenclatureIds().isEmpty() &&
-				Boolean.FALSE.equals(nomenclatureService
-						.checkIfNomenclatureExists(questionnaireModel.getRequiredNomenclatureIds()))) {
-			LOGGER.error("POST questionnaire with id {} resulting in 400 because a nomenclature does not exist",
-					questionnaireModel.getIdQuestionnaireModel());
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		questionnaireModelService.createQuestionnaire(questionnaireModel);
-		LOGGER.info("POST campaign with id {} resulting in 200", questionnaireModel.getIdQuestionnaireModel());
-		return ResponseEntity.ok().build();
 
+		if (!nomenclatureService.areNomenclaturesValid(questionnaireModelRest.requiredNomenclatureIds())) {
+			throw new QuestionnaireModelCreationException(String.format("Cannot create questionnaire model %s as some nomenclatures do not exist",
+					questionnaireModelRest.idQuestionnaireModel()));
+		}
+
+		questionnaireModelService.createQuestionnaire(questionnaireModelRest);
 	}
 
-	@ApiOperation(value = "Get questionnaireModelId for all survey-units defined in request body ")
+
+
+	@Operation(summary = "Get questionnaireModelId for all survey-units defined in request body ")
 	@PostMapping(path = "/survey-units/questionnaire-model-id")
 	public ResponseEntity<SurveyUnitOkNokDto> getQuestionnaireModelIdBySurveyUnits(
-			@RequestBody List<String> lstSurveyUnitId,
-			HttpServletRequest request) {
-		List<SurveyUnit> lstSurveyUnit = (List<SurveyUnit>) surveyUnitService.findByIds(lstSurveyUnitId);
-		List<String> surveyUnitsIds = lstSurveyUnit.stream().map(SurveyUnit::getId).collect(Collectors.toList());
-		List<SurveyUnitResponseDto> surveyUnitsNOK = lstSurveyUnitId.stream()
-				.filter(su -> !surveyUnitsIds.contains(su))
-				.map(su -> new SurveyUnitResponseDto(su))
-				.collect(Collectors.toList());
-		List<SurveyUnitResponseDto> surveyUnitsOK = lstSurveyUnit.stream()
-				.map(su -> new SurveyUnitResponseDto(su.getId(), su.getQuestionnaireModelId(), null, null, null,
-						null))
-				.collect(Collectors.toList());
+			@RequestBody List<String> surveyUnitIdsToSearch) {
+		List<SurveyUnitSummaryDto> surveyUnitsFound = surveyUnitService.findSummaryByIds(surveyUnitIdsToSearch);
+		List<String> surveyUnitIdsFound = surveyUnitsFound.stream().map(SurveyUnitSummaryDto::id).toList();
+		List<SurveyUnitDto> surveyUnitsNOK = surveyUnitIdsToSearch.stream()
+				.filter(surveyUnitIdToSearch -> !surveyUnitIdsFound.contains(surveyUnitIdToSearch))
+				.map(SurveyUnitDto::createSurveyUnitNOKDto)
+				.toList();
+		List<SurveyUnitDto> surveyUnitsOK = surveyUnitsFound.stream()
+				.map(su -> SurveyUnitDto.createSurveyUnitOKDtoWithQuestionnaireModel(su.id(), su.questionnaireId()))
+				.toList();
 		return new ResponseEntity<>(new SurveyUnitOkNokDto(surveyUnitsOK, surveyUnitsNOK), HttpStatus.OK);
 	}
 }

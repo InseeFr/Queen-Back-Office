@@ -1,7 +1,5 @@
 package fr.insee.queen.api.dto.comment;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
-public interface CommentDto {
-	JsonNode getValue();
-}
+public record CommentDto(@JsonRawValue String value){}

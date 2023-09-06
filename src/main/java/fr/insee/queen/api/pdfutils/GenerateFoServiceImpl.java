@@ -1,16 +1,13 @@
 package fr.insee.queen.api.pdfutils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 
-
+@Slf4j
 public class GenerateFoServiceImpl implements GenerateFoService {
 
-    static Logger logger = LoggerFactory.getLogger(GenerateFoServiceImpl.class);
-
-    private XslTransformation transformationService = new XslTransformation();
+    private final XslTransformation transformationService = new XslTransformation();
 
     @Override
     public File generateFo(String date, String campaignLabel, String idec) throws Exception {
@@ -23,17 +20,21 @@ public class GenerateFoServiceImpl implements GenerateFoService {
         InputStream formIS = new FileInputStream(form);
         InputStream dataIS = new FileInputStream(surveyUnitData);
         OutputStream outputStream = new FileOutputStream(outputFile);
-        InputStream XSL = Constants.getInputStreamFromPath(Constants.TRANSFORMATION_XSL_MERGE_DATA_FORM);
+        InputStream xsl = Constants.getInputStreamFromPath(Constants.TRANSFORMATION_XSL_MERGE_DATA_FORM);
 
         try {
-            transformationService.xslMergeFormAndData(formIS, dataIS, XSL, outputStream);
+            transformationService.xslMergeFormAndData(formIS, dataIS, xsl, outputStream);
         }catch(Exception e) {
             throw new Exception(e.getMessage());
+        } finally {
+            formIS.close();
+            dataIS.close();
+            outputStream.close();
+            if(xsl != null) {
+                xsl.close();
+            }
         }
-        formIS.close();
-        dataIS.close();
-        outputStream.close();
-        XSL.close();
+
 
         return outputFile;
     }
@@ -43,19 +44,19 @@ public class GenerateFoServiceImpl implements GenerateFoService {
     									String idec) throws Exception{
 
         File outputFile = File.createTempFile("fo-file",".fo");
-        logger.info(outputFile.getAbsolutePath());
+        log.info(outputFile.getAbsolutePath());
         InputStream inputStream =  Constants.getEmptyXml();
         OutputStream outputStream = new FileOutputStream(outputFile);
-        InputStream XSL = Constants.getInputStreamFromPath(Constants.TRANSFORMATION_XSL_COMMON);
+        InputStream xsl = Constants.getInputStreamFromPath(Constants.TRANSFORMATION_XSL_COMMON);
 
         try {
-            transformationService.xslGenerateFo(inputStream, XSL, outputStream, date, campaignLabel, idec);
+            transformationService.xslGenerateFo(inputStream, xsl, outputStream, date, campaignLabel, idec);
         }catch(Exception e) {
             throw new Exception(e.getMessage());
         }
         inputStream.close();
         outputStream.close();
-        XSL.close();
+        xsl.close();
 
         return outputFile;
     }

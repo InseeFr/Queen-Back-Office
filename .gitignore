@@ -26,10 +26,14 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
+/logs
 
 ### VS Code ###
 .vscode/
-/application-insee.properties
+
+src/main/resources/application-*.yaml
+src/main/resources/application-*.yml
+src/main/resources/application-*.properties
 
 *.DS_Store
 /.apt_generated_tests/

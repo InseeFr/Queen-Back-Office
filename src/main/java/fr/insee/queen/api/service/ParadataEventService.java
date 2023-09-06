@@ -1,15 +1,23 @@
 package fr.insee.queen.api.service;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import fr.insee.queen.api.domain.ParadataEvent;
+import fr.insee.queen.api.repository.ParadataEventRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
-public interface ParadataEventService extends BaseService<ParadataEvent, UUID> {
+@Service
+@AllArgsConstructor
+public class ParadataEventService {
 
-	void save(ParadataEvent paradataEvent);
+    private final ParadataEventRepository paradataEventRepository;
 
-	Optional<ParadataEvent> findById(UUID uuid);
+    public void save(String paradataValue) {
+        ParadataEvent paradataEvent = new ParadataEvent();
+        paradataEvent.value(paradataValue);
+        paradataEventRepository.save(paradataEvent);
+    }
 
-    
+    public void save(ParadataEvent paradataEvent) {
+        paradataEventRepository.save(paradataEvent);
+    }
 }

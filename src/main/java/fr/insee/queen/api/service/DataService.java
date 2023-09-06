@@ -1,21 +1,32 @@
 package fr.insee.queen.api.service;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
 import fr.insee.queen.api.domain.Data;
-import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.dto.data.DataDto;
+import fr.insee.queen.api.exception.EntityNotFoundException;
+import fr.insee.queen.api.repository.DataRepository;
+import fr.insee.queen.api.repository.SurveyUnitCreateUpdateRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
-public interface DataService extends BaseService<Data, UUID> {
+@Service
+@Slf4j
+@AllArgsConstructor
+public class DataService {
+    private final DataRepository dataRepository;
+	private final SurveyUnitCreateUpdateRepository surveyUnitCreateUpdateRepository;
 
-	Optional<Data> findBySurveyUnitId(String id);
+	public DataDto getData(String surveyUnitId) {
+		return dataRepository.findBySurveyUnitId(surveyUnitId)
+				.orElseThrow(() -> new EntityNotFoundException(String.format("Data for survey unit id %s not found", surveyUnitId)));
+	}
 
-	void save(Data comment);
-	
-	public void updateData(SurveyUnit su, JsonNode dataValue);
+	public void save(Data comment) {
+		dataRepository.save(comment);
+	}
 
-	void updateDataImproved(String id, JsonNode dataValue);
-
+	public void updateData(String surveyUnitId, JsonNode dataValue) {
+		surveyUnitCreateUpdateRepository.updateSurveyUnitData(surveyUnitId, dataValue);
+	}
 }

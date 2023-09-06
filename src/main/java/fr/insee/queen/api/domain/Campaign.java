@@ -1,16 +1,12 @@
 package fr.insee.queen.api.domain;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 /**
 * Entity Campaign : represent the entity table in DB
@@ -20,6 +16,9 @@ import javax.persistence.Table;
 */
 @Entity
 @Table(name="campaign")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Campaign {
 	/**
 	* The id of campaign 
@@ -42,54 +41,11 @@ public class Campaign {
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity=QuestionnaireModel.class, cascade = CascadeType.ALL, mappedBy="campaign" )
 	private Set<QuestionnaireModel> questionnaireModels = new HashSet<>();
-	 
-	public Campaign() {
-		super();
-	}
+
 	public Campaign(String id, String label, Set<QuestionnaireModel> questionnaireModels) {
 		super();
 		this.id = id;
 		this.label = label;
 		this.questionnaireModels = questionnaireModels;
 	}
-	
-	/**
-	 * @return id of nomenclature
-	 */
-	public String getId() {
-		return id;
-	}
-	/**
-	 * @param id id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-	/**
-	 * @return label of nomenclature
-	 */
-	public String getLabel() {
-		return label;
-	}
-	/**
-	 * @param label label to set
-	 */
-	public void setLabel(String label) {
-		this.label = label;
-	}
-	
-	public Metadata getMetadata() {
-		return metadata;
-	}
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
-	
-	public Set<QuestionnaireModel> getQuestionnaireModels(){
-		return questionnaireModels;
-	}
-	public void setQuestionnaireModels(Set<QuestionnaireModel> questionnaireModels){
-		this.questionnaireModels = questionnaireModels;
-	}
-	
 }

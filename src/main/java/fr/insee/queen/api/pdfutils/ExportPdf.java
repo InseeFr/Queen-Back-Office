@@ -3,30 +3,31 @@ package fr.insee.queen.api.pdfutils;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.nio.file.Files;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class ExportPdf extends HttpServlet {
 
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = -6664666680913562382L;
-
-	static Logger logger = LoggerFactory.getLogger(ExportPdf.class);
-
+	@Serial
+    private static final long serialVersionUID = -6664666680913562382L;
+    
     private PDFDepositProofService depositProofService;
 
-    private static String configPath = "/config/properties-local-prod.xml";
-    private static String urlXpath = "/properties/property[@name='server-exist-orbeon']/@value";
+    private static final String CONFIG_PATH = "/config/properties-local-prod.xml";
+    private static final String URL_XPATH = "/properties/property[@name='server-exist-orbeon']/@value";
+
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -36,13 +37,13 @@ public class ExportPdf extends HttpServlet {
         String urlApi = "";
 
         try {
-            urlApi = XMLUtil.execXpathOnFile(pathDossier.concat(configPath), urlXpath);
+            urlApi = XMLUtil.execXpathOnFile(pathDossier.concat(CONFIG_PATH), URL_XPATH);
         } catch (Exception e) {
-            logger.error("Souci lors de la récupération de l'url.");
-            logger.error("Path du fichier utilisé : ".concat(configPath));
-            logger.error("L'erreur est la suivante :", e);
+            log.error("Souci lors de la récupération de l'url.");
+            log.error("Path du fichier utilisé : ".concat(CONFIG_PATH));
+            log.error("L'erreur est la suivante :", e);
         }
-        logger.info("L'url de l'api exist est la suivante : ".concat(urlApi));
+        log.info("L'url de l'api exist est la suivante : ".concat(urlApi));
         depositProofService = new PDFDepositProofService();
     }
     
@@ -58,7 +59,7 @@ public class ExportPdf extends HttpServlet {
             depositProofService = new PDFDepositProofService();
             File pdfFile = depositProofService.generatePdf(date,campaignLabel, idec);
             out.write(Files.readAllBytes(pdfFile.toPath()));
-            pdfFile.delete();
+            Files.delete(pdfFile.toPath());
         } catch (Exception exception) {
             exception.printStackTrace();
         }

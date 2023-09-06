@@ -1,25 +1,33 @@
 package fr.insee.queen.api.service;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.http.ResponseEntity;
-
 import fr.insee.queen.api.domain.StateData;
-import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.dto.input.StateDataInputDto;
+import fr.insee.queen.api.dto.statedata.StateDataDto;
+import fr.insee.queen.api.exception.EntityNotFoundException;
+import fr.insee.queen.api.repository.StateDataRepository;
+import fr.insee.queen.api.repository.SurveyUnitCreateUpdateRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
-public interface StateDataService extends BaseService<StateData, UUID> {
+@Service
+@Slf4j
+@AllArgsConstructor
+public class StateDataService {
 
-	void save(StateData stateData);
+	private final StateDataRepository stateDataRepository;
+	private final SurveyUnitCreateUpdateRepository surveyUnitCreateUpdateRepository;
 
-	Optional<StateData> findDtoBySurveyUnitId(String id);
-	
-	public void updateStateDataFromJson(StateData sd, JsonNode json);
+	public void save(StateData stateData) {
+		stateDataRepository.save(stateData);
+	}
 
-	ResponseEntity<Object> updateStateData(String id, JsonNode dataValue, SurveyUnit surveyUnit);
+	public void updateStateData(String surveyUnitId, StateDataInputDto stateData) {
+		surveyUnitCreateUpdateRepository.updateSurveyUnitStateData(surveyUnitId, stateData);
+	}
 
-	ResponseEntity<Object> updateStateData(String id, JsonNode dataValue);
-
-
+	public StateDataDto getStateData(String surveyUnitId) {
+		return stateDataRepository.findBySurveyUnitId(surveyUnitId)
+				.orElseThrow(() -> new EntityNotFoundException(String.format("State data not found for survey unit %s", surveyUnitId)));
+	}
 }

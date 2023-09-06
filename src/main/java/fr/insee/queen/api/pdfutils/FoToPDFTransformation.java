@@ -1,13 +1,9 @@
 package fr.insee.queen.api.pdfutils;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.nio.file.Path;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -15,19 +11,16 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
+import java.io.*;
+import java.net.URI;
+import java.nio.file.Path;
 
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.MimeConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class FoToPDFTransformation {
-    static Logger logger = LoggerFactory.getLogger(FoToPDFTransformation.class);
-
     public File transformFoToPdf(File foFile) throws Exception {
 
-	logger.info("foFile = " + foFile.getPath());
+	log.info("foFile = " + foFile.getPath());
 	File outFilePDF = File.createTempFile("pdf-file", ".pdf");
 	try {
 
@@ -56,7 +49,7 @@ public class FoToPDFTransformation {
 	    out.close();
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    logger.error("Error during fo to pdf transformation :" + e.getMessage());
+	    log.error("Error during fo to pdf transformation :" + e.getMessage());
 	}
 	return outFilePDF;
     }
