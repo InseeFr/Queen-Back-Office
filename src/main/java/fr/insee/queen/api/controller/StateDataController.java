@@ -1,5 +1,6 @@
 package fr.insee.queen.api.controller;
 
+import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,26 +50,12 @@ public class StateDataController {
 	*/
 	@Operation(summary = "Get state-data by survey-unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/state-data")
-	public StateDataDto  getStateDataBySurveyUnit(@PathVariable(value = "id") String surveyUnitId,
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+	public StateDataDto getStateDataBySurveyUnit(@PathVariable(value = "id") String surveyUnitId,
 												  Authentication auth){
 		log.info("GET statedata for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		return stateDataService.getStateData(surveyUnitId);
-	}
-	
-	@Operation(summary = "Get state-data for all survey-units defined in request body ")
-	@PostMapping(path = "survey-units/state-data")
-	public ResponseEntity<SurveyUnitOkNokDto>  getStateDataBySurveyUnits(@RequestBody List<String> surveyUnitIdsToSearch){
-		List<SurveyUnitWithStateDto> surveyUnitsFound = surveyUnitService.findWithStateByIds(surveyUnitIdsToSearch);
-		List<String> surveyUnitIdsFound = surveyUnitsFound.stream().map(SurveyUnitWithStateDto::id).toList();
-		List<SurveyUnitDto> surveyUnitsNOK = surveyUnitIdsToSearch.stream()
-				.filter(surveyUnitIdToSearch -> !surveyUnitIdsFound.contains(surveyUnitIdToSearch))
-				.map(SurveyUnitDto::createSurveyUnitNOKDto)
-				.toList();
-		List<SurveyUnitDto> surveyUnitsOK = surveyUnitsFound.stream()
-				.map(su -> SurveyUnitDto.createSurveyUnitOKDtoWithStateData(su.id(), su.stateData()))
-				.toList();
-		return new ResponseEntity<>(new SurveyUnitOkNokDto(surveyUnitsOK, surveyUnitsNOK), HttpStatus.OK);
 	}
 	
 	/**
@@ -80,6 +68,7 @@ public class StateDataController {
 	*/
 	@Operation(summary = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/state-data")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public HttpStatus setStateData(@PathVariable(value = "id") String surveyUnitId,
 								   @RequestBody StateDataInputDto stateDataInputDto,
 								   Authentication auth) {
@@ -87,5 +76,21 @@ public class StateDataController {
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		stateDataService.updateStateData(surveyUnitId, stateDataInputDto);
 		return HttpStatus.OK;
+	}
+
+	@Operation(summary = "Get state-data for all survey-units defined in request body ")
+	@PostMapping(path = "survey-units/state-data")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+	public ResponseEntity<SurveyUnitOkNokDto> getStateDataBySurveyUnits(@RequestBody List<String> surveyUnitIdsToSearch){
+		List<SurveyUnitWithStateDto> surveyUnitsFound = surveyUnitService.findWithStateByIds(surveyUnitIdsToSearch);
+		List<String> surveyUnitIdsFound = surveyUnitsFound.stream().map(SurveyUnitWithStateDto::id).toList();
+		List<SurveyUnitDto> surveyUnitsNOK = surveyUnitIdsToSearch.stream()
+				.filter(surveyUnitIdToSearch -> !surveyUnitIdsFound.contains(surveyUnitIdToSearch))
+				.map(SurveyUnitDto::createSurveyUnitNOKDto)
+				.toList();
+		List<SurveyUnitDto> surveyUnitsOK = surveyUnitsFound.stream()
+				.map(su -> SurveyUnitDto.createSurveyUnitOKDtoWithStateData(su.id(), su.stateData()))
+				.toList();
+		return new ResponseEntity<>(new SurveyUnitOkNokDto(surveyUnitsOK, surveyUnitsNOK), HttpStatus.OK);
 	}
 }

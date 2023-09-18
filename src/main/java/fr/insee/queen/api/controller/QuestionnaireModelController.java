@@ -1,8 +1,9 @@
 package fr.insee.queen.api.controller;
 
+import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
-import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitOkNokDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
@@ -16,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,6 +59,7 @@ public class QuestionnaireModelController {
 	 */
 	@Operation(summary = "Get questionnnaire model by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/questionnaires")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<QuestionnaireModelDto> getQuestionnaireModelByCampaignId(
 			@PathVariable(value = "id") String campaignId) {
 		log.info("GET questionnaire for campaign with id {}", campaignId);
@@ -71,6 +74,7 @@ public class QuestionnaireModelController {
 	 */
 	@Operation(summary = "Get a questionnnaire model by Id ")
 	@GetMapping(path = "/questionnaire/{id}")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public QuestionnaireModelDto getQuestionnaireModelById(@PathVariable(value = "id") String questionnaireModelId) {
 		log.info("GET questionnaire for id {}", questionnaireModelId);
 		return questionnaireModelService.getQuestionnaireModelDto(questionnaireModelId);
@@ -84,6 +88,7 @@ public class QuestionnaireModelController {
 	 */
 	@Operation(summary = "Get questionnnaire id by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/questionnaire-id")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<QuestionnaireModelIdDto> getQuestionnaireModelIdByCampaignId(
 			@PathVariable(value = "id") String campaignId) {
 		log.info("GET questionnaire Id for campaign with id {}", campaignId);
@@ -98,6 +103,7 @@ public class QuestionnaireModelController {
 	 */
 	@Operation(summary = "Create a Questionnaire Model")
 	@PostMapping(path = "/questionnaire-models")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public void createQuestionnaire(@RequestBody QuestionnaireModelInputDto questionnaireModelRest) {
 		log.info("POST campaign with id {}", questionnaireModelRest.idQuestionnaireModel());
 		if (questionnaireModelService.existsById(questionnaireModelRest.idQuestionnaireModel())) {
@@ -117,6 +123,7 @@ public class QuestionnaireModelController {
 
 	@Operation(summary = "Get questionnaireModelId for all survey-units defined in request body ")
 	@PostMapping(path = "/survey-units/questionnaire-model-id")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public ResponseEntity<SurveyUnitOkNokDto> getQuestionnaireModelIdBySurveyUnits(
 			@RequestBody List<String> surveyUnitIdsToSearch) {
 		List<SurveyUnitSummaryDto> surveyUnitsFound = surveyUnitService.findSummaryByIds(surveyUnitIdsToSearch);

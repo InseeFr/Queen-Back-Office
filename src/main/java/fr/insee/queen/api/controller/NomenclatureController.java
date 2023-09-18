@@ -1,11 +1,13 @@
 package fr.insee.queen.api.controller;
 
+import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.NomenclatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public class NomenclatureController {
 
 	@Operation(summary = "Get all nomenclatures Ids ")
 	@GetMapping(path = "/nomenclatures")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<String> getNomenclaturesId() {
 		log.info("GET all nomenclatures Ids");
 		return nomenclatureService.getAllNomenclatureIds();
@@ -43,6 +46,7 @@ public class NomenclatureController {
 	*/
 	@Operation(summary = "Get Nomenclature by Id ")
 	@GetMapping(path = "/nomenclature/{id}")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public String getNomenclatureById(@PathVariable(value = "id") String nomenclatureId){
 		log.info("GET nomenclature with id {}", nomenclatureId);
 		return nomenclatureService.getNomenclature(nomenclatureId).value();
@@ -57,6 +61,7 @@ public class NomenclatureController {
 	*/
 	@Operation(summary = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<String> getListRequiredNomenclature(@PathVariable(value = "id") String campaignId) {
 		log.info("GET required-nomenclatures for campaign with id {}", campaignId);
 		return nomenclatureService.findRequiredNomenclatureByCampaign(campaignId);
@@ -65,11 +70,12 @@ public class NomenclatureController {
 	/**
 	* This method is using to get all nomenclature ids associated to a specific questionnaire
 	*
-	* @param questionnaireId the id of campaign
+	* @param questionnaireId the id of questionnaire
 	* @return List of {@link String} containing nomenclature ids
 	*/
-	@Operation(summary = "Get list of required nomenclature by campaign Id ")
+	@Operation(summary = "Get list of required nomenclature by questionnaire Id ")
 	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<String> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String questionnaireId) {
 		log.info("GET required-nomenclatures for questionnaire model with id {}", questionnaireId);
 		List<String> requiredNomenclatureIds = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
@@ -86,6 +92,7 @@ public class NomenclatureController {
 	*/
 	@Operation(summary = "Post new  or update a nomenclature ")
 	@PostMapping(path = "/nomenclature")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public void postNomenclature(@RequestBody NomenclatureInputDto nomenclatureInputDto) {
 		nomenclatureService.saveNomenclature(nomenclatureInputDto);
 	}

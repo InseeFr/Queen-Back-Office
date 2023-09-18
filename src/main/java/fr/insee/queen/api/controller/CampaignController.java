@@ -1,5 +1,6 @@
 package fr.insee.queen.api.controller;
 
+import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.input.CampaignInputDto;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +50,7 @@ public class CampaignController {
 	 */
 	@Operation(summary = "Get list of all campaigns")
 	@GetMapping(path = "/admin/campaigns")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public List<CampaignSummaryDto> getListCampaign(Authentication auth) {
 		String userId = authHelper.getUserId(auth);
 		log.info("Admin {} request all campaigns", userId);
@@ -61,6 +64,7 @@ public class CampaignController {
 
 	@Operation(summary = "Get list of user related campaigns")
 	@GetMapping(path = "/campaigns")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<CampaignSummaryDto> getInterviewerCampaignList(Authentication auth) {
 
 		String userId = authHelper.getUserId(auth);
@@ -89,6 +93,7 @@ public class CampaignController {
 	*/
 	@Operation(summary = "Create a campaign")
 	@PostMapping(path = "/campaigns")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public void createCampaign(@RequestBody CampaignInputDto campaignInputDto,
 							   Authentication auth) {
 		String userId = authHelper.getUserId(auth);
@@ -105,6 +110,7 @@ public class CampaignController {
 	*/
 	@Operation(summary = "Integrates the context of a campaign")
 	@PostMapping(path = "/campaign/context")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public IntegrationResultDto integrateContext(@RequestParam("file") MultipartFile file,
 												 Authentication auth) {
 		String userId = authHelper.getUserId(auth);
@@ -120,6 +126,7 @@ public class CampaignController {
 	 */
 	@Operation(summary = "Delete a campaign")
 	@DeleteMapping(path = "/campaign/{id}")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public void deleteCampaignById(@RequestParam("force") boolean force,
 								   @PathVariable(value = "id") String campaignId,
 								   Authentication auth) {

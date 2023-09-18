@@ -1,9 +1,11 @@
 package fr.insee.queen.api.controller;
 
+import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.service.MetadataService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,7 @@ public class MetadataController {
 	*/
 	@Operation(summary = "Get metadata by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/metadata")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public String getMetadataByCampaignId(@PathVariable(value = "id") String campaignId){
 		log.info("GET metadata for campaign with id {}", campaignId);
 		return metadataService.getMetadata(campaignId).value();
@@ -45,7 +48,8 @@ public class MetadataController {
 	*/
 	@Operation(summary = "Get metadata by questionnaire Id ")
 	@GetMapping(path = "/questionnaire/{id}/metadata")
-	public String  getMetadataByQuestionnaireId(@PathVariable(value = "id") String questionnaireId) {
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+	public String getMetadataByQuestionnaireId(@PathVariable(value = "id") String questionnaireId) {
 		log.info("GET metadata for questionnaire with id {}", questionnaireId);
 		return metadataService.getMetadataByQuestionnaireId(questionnaireId).value();
 	}

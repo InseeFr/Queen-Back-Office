@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.service.PersonalizationService;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +42,7 @@ public class PersonalizationController {
 	*/
 	@Operation(summary = "Get personalization by reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/personalization")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public String  getPersonalizationBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, Authentication auth){
 		log.info("GET personalization for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
@@ -56,6 +59,7 @@ public class PersonalizationController {
 	*/
 	@Operation(summary = "Update personalization by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/personalization")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public HttpStatus setPersonalization(@PathVariable(value = "id") String surveyUnitId,
 										 @RequestBody JsonNode personalizationValues,
 										 Authentication auth) {

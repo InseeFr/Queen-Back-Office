@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.service.ParadataEventService;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +42,7 @@ public class ParadataEventController {
 	 */
 	@Operation(summary = "Add a ParadataEvent")
 	@PostMapping(path = "/paradata")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
 	public HttpStatus updateSurveyUnit(@RequestBody @NonNull JsonNode paradataValue, Authentication auth) {
 		String paradataSurveyUnitIdParameter = "idSU";
 		log.info("POST ParadataEvent");

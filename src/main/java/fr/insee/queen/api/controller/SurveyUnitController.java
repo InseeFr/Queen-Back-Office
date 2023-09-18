@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
@@ -20,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +54,7 @@ public class SurveyUnitController {
 	 */
 	@Operation(summary = "Get all survey-units Ids")
 	@GetMapping(path = "/survey-units")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public List<String> getSurveyUnitIds(){
 		log.info("GET survey-units");
 		return surveyUnitService.findAllSurveyUnitIds();
@@ -62,6 +65,7 @@ public class SurveyUnitController {
 	*/
 	@Operation(summary = "Get survey-unit")
 	@GetMapping(path = "/survey-unit/{id}")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public SurveyUnitDto getSurveyUnitById(@PathVariable(value = "id") String surveyUnitId,
 										   Authentication auth) {
 		log.info("GET survey-units with id {}", surveyUnitId);
@@ -74,6 +78,7 @@ public class SurveyUnitController {
 	*/
 	@Operation(summary = "Put survey-unit")
 	@PutMapping(path = {"/survey-unit/{id}", "/survey-unit/old/{id}"})
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
 	public void updateSurveyUnitById(@PathVariable(value = "id") String surveyUnitId,
 									 @RequestBody SurveyUnitInputDto surveyUnitInputDto,
 									 Authentication auth) {
@@ -88,6 +93,7 @@ public class SurveyUnitController {
 	 */
 	@Operation(summary = "Post survey-unit to temp-zone")
 	@PostMapping(path = "/survey-unit/{id}/temp-zone")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
 	public HttpStatus postSurveyUnitByIdInTempZone(@PathVariable(value = "id") String surveyUnitId,
 												   @RequestBody JsonNode surveyUnit,
 												   Authentication auth) {
@@ -102,6 +108,7 @@ public class SurveyUnitController {
 	 */
 	@Operation(summary = "GET all survey-units in temp-zone")
 	@GetMapping(path = "/survey-units/temp-zone")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<SurveyUnitTempZoneDto> getSurveyUnitsInTempZone() {
 		log.info("GET all survey-units in temp-zone");
 		return surveyUnitService.getAllSurveyUnitTempZoneDto();
@@ -117,6 +124,7 @@ public class SurveyUnitController {
 	
 	@Operation(summary = "Get list of survey units by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/survey-units")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<SurveyUnitSummaryDto> getListSurveyUnitByCampaign(@PathVariable(value = "id") String campaignId,
 																  Authentication auth) {
 		log.info("GET survey-units for campaign with id {}", campaignId);
@@ -143,6 +151,7 @@ public class SurveyUnitController {
 	
 	@Operation(summary = "Get deposit proof for a SU ")
 	@GetMapping(value = "/survey-unit/{id}/deposit-proof")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public void generateDepositProof(@PathVariable(value = "id") String surveyUnitId,
 									 Authentication auth,
 									 HttpServletResponse response) {
@@ -164,6 +173,7 @@ public class SurveyUnitController {
 	*/
 	@Operation(summary = "Post survey-unit")
 	@PostMapping(path = "/campaign/{id}/survey-unit")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public void createSurveyUnit(@RequestBody SurveyUnitInputDto surveyUnitInputDto, @PathVariable(value = "id") String campaignId){
 		log.info("POST survey-unit with id {}", surveyUnitInputDto.id());
 		if(surveyUnitService.existsById(surveyUnitInputDto.id())) {
@@ -182,6 +192,7 @@ public class SurveyUnitController {
 	*/
 	@Operation(summary = "Delete survey-unit")
 	@DeleteMapping(path = "/survey-unit/{id}")
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public void deleteSurveyUnit(@PathVariable(value = "id") String surveyUnitId){
 		log.info("DELETE survey-unit with id {}", surveyUnitId);
 		surveyUnitService.delete(surveyUnitId);
