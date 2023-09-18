@@ -5,10 +5,10 @@ public class Constants {
 		throw new IllegalStateException("Constants class");
 	}
 
+	public static final String ROLE_PREFIX = "ROLE_";
 	// User
 	public static final String GUEST = "GUEST";
 	public static final String CAMPAIGN = "campaign";
-	public static final String AUTHORIZATION = "Authorization";
 	public static final String INTERVIEWER = "interviewer";
 	public static final String REVIEWER = "reviewer";
 

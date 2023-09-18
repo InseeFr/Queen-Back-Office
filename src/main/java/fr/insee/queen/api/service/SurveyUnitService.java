@@ -37,7 +37,6 @@ public class SurveyUnitService {
 	private final SurveyUnitRepository surveyUnitRepository;
 
 	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
-	private final HabilitationService habilitationService;
 
 	private final CampaignRepository campaignRepository;
 	private final SurveyUnitCreateUpdateRepository surveyUnitCreateUpdateRepository;
@@ -86,8 +85,7 @@ public class SurveyUnitService {
 		}
 	}
 
-	public void generateDepositProof(SurveyUnitDepositProofDto su, HttpServletResponse response) {
-		String userId = habilitationService.getUserId();
+	public void generateDepositProof(String userId, SurveyUnitDepositProofDto su, HttpServletResponse response) {
 		String campaignId = su.campaign().id();
 		String campaignLabel = su.campaign().label();
 		String date = "";

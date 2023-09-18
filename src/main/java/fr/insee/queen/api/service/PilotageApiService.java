@@ -6,14 +6,16 @@ import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.exception.PilotageApiException;
+import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.SurveyUnitRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,19 +40,18 @@ public class PilotageApiService {
     private final String campaignIdRegexWithAlternativeHabilitationService;
     private SurveyUnitRepository surveyUnitRepository;
 
-    private SurveyUnitRepository campaignRepository;
+    private CampaignRepository campaignRepository;
 
     private final RestTemplate restTemplate;
 
-    public boolean isClosed(String campaignId, HttpServletRequest request) {
+    public boolean isClosed(String campaignId, String authToken) {
         if(!campaignRepository.existsById(campaignId)) {
             throw new EntityNotFoundException(String.format("Campaign %s was not found", campaignId));
         }
         final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + "/campaigns/" + campaignId + "/ongoing";
-        String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(Constants.AUTHORIZATION, authTokenHeader);
+        headers.setBearerAuth(authToken);
 
         try {
             ResponseEntity<LinkedHashMap<String, Boolean>> response = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
@@ -68,10 +69,10 @@ public class PilotageApiService {
         }
     }
 
-    public List<SurveyUnitSummaryDto> getSurveyUnitsByCampaign(String campaignId, HttpServletRequest request) {
+    public List<SurveyUnitSummaryDto> getSurveyUnitsByCampaign(String campaignId, String authToken) {
         Map<String, SurveyUnitSummaryDto> surveyUnitMap = new HashMap<>();
 
-        ResponseEntity<Object> result = getSuFromPilotage(request);
+        ResponseEntity<Object> result = getSuFromPilotage(authToken);
         log.info("GET survey-units from PearJam API resulting in {}", result.getStatusCode());
         if(result.getStatusCode()!=HttpStatus.OK) {
             log.error("""
@@ -121,25 +122,23 @@ public class PilotageApiService {
 
     /**
      * This method retrieve the data from the Pilotage API for the current user
-     * @param request HttpServletRequest object
+     * @param authToken authorization token header
      * @return String of UserId
      */
-    public ResponseEntity<Object> getSuFromPilotage(HttpServletRequest request){
+    public ResponseEntity<Object> getSuFromPilotage(String authToken){
         final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_PEARLJAM_SURVEYUNITS;
-        String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(Constants.AUTHORIZATION, authTokenHeader);
+        headers.setBearerAuth(authToken);
         return restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, new HttpEntity<>(headers), Object.class);
     }
 
-    public List<CampaignSummaryDto> getInterviewerCampaigns(HttpServletRequest request) {
+    public List<CampaignSummaryDto> getInterviewerCampaigns(String authToken) {
         // call pilotage API
         final String uriPilotageInterviewerCampaigns = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_PEARLJAM_INTERVIEWER_CAMPAIGNS;
-        String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(Constants.AUTHORIZATION, authTokenHeader);
+        headers.setBearerAuth(authToken);
 
         ResponseEntity<List<CampaignSummaryDto>> response = restTemplate.exchange(uriPilotageInterviewerCampaigns,
                 HttpMethod.GET, new HttpEntity<>(headers),
@@ -159,7 +158,8 @@ public class PilotageApiService {
         }
     }
 
-    public boolean hasHabilitation(HttpServletRequest request, SurveyUnitHabilitationDto surveyUnit, String role, String idep) {
+    @Cacheable("habilitations")
+    public boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, String role, String idep, String authToken) {
         String expectedRole;
         switch (role) {
             case Constants.INTERVIEWER -> expectedRole = "";
@@ -182,18 +182,20 @@ public class PilotageApiService {
         uriPilotageFilter += "?id=" + surveyUnit.id()
                 + "&role=" + expectedRole + "&campaign=" + campaignId + "&idep=" + idep;
 
-        String authTokenHeader = request.getHeader(Constants.AUTHORIZATION);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(Constants.AUTHORIZATION, authTokenHeader);
-
+        headers.setBearerAuth(authToken);
+        log.error(authToken);
         try {
+            log.error(uriPilotageFilter);
             ResponseEntity<LinkedHashMap<String, Boolean>> response = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
                     new HttpEntity<>(headers), new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>() {});
+
             if (!response.getStatusCode().is2xxSuccessful()) {
                 log.info(
                         "Habilitation of user {} with role {} to access survey-unit {} denied : habilitation service returned {} ",
-                        request.getRemoteUser(), role, surveyUnit.id(), response.getStatusCode());
+                        idep, role, surveyUnit.id(), response.getStatusCode());
                 return false;
             }
 
@@ -205,15 +207,20 @@ public class PilotageApiService {
             }
 
             boolean habilitationResult = responseBody.get("habilitated");
-            log.info("Habilitation of user {} with role {} to access survey-unit {} : {}", request.getRemoteUser(), role,
+            log.info("Habilitation of user {} with role {} to access survey-unit {} : {}", idep, role,
                     surveyUnit.id(), habilitationResult ? "granted" : "denied");
             return habilitationResult;
 
-        } catch (RestClientException e) {
+        } catch(HttpStatusCodeException e){
+            if(e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+                log.info("Habilitation of user {} with role {} to access survey-unit {} denied.",
+                        idep, role, surveyUnit.id());
+                return false;
+            }
             log.error(e.getMessage(), e);
-            log.error(
-                    "Habilitation of user {} with role {} to access survey-unit {} denied : habilitation service error.",
-                    request.getRemoteUser(), role, surveyUnit.id());
+            throw new PilotageApiException();
+        } catch(RestClientException e) {
+            log.error(e.getMessage(), e);
             throw new PilotageApiException();
         }
     }

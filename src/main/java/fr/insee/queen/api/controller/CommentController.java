@@ -2,14 +2,14 @@ package fr.insee.queen.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.constants.Constants;
+import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.dto.comment.CommentDto;
 import fr.insee.queen.api.service.CommentService;
-import fr.insee.queen.api.service.HabilitationService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -31,7 +31,7 @@ public class CommentController {
 	/**
 	* The reporting unit repository using to access to table 'reporting_unit' in DB 
 	*/
-	private final HabilitationService habilitationService;
+	private final HabilitationComponent habilitationComponent;
 	
 	/**
 	* This method is using to get the comment associated to a specific reporting unit 
@@ -41,9 +41,9 @@ public class CommentController {
 	*/
 	@Operation(summary = "Get comment for reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/comment")
-	public String getCommentBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, HttpServletRequest request){
+	public String getCommentBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, Authentication auth){
 		log.info("GET comment for reporting unit with id {}", surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		return commentService.getComment(surveyUnitId).value();
 	}
 	
@@ -57,9 +57,11 @@ public class CommentController {
 	*/
 	@Operation(summary = "Update the comment by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/comment")
-	public HttpStatus setComment(@RequestBody JsonNode commentValue, @PathVariable(value = "id") String surveyUnitId, HttpServletRequest request) {
+	public HttpStatus setComment(@RequestBody JsonNode commentValue,
+								 @PathVariable(value = "id") String surveyUnitId,
+								 Authentication auth) {
 		log.info("PUT comment for reporting unit with id {}", surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		commentService.updateComment(surveyUnitId, commentValue);
 		return HttpStatus.OK;
 	}	

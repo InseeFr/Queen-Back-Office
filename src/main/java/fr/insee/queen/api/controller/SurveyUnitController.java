@@ -2,6 +2,8 @@ package fr.insee.queen.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.constants.Constants;
+import fr.insee.queen.api.controller.utils.AuthenticationHelper;
+import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDepositProofDto;
@@ -12,14 +14,13 @@ import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.PilotageApiService;
 import fr.insee.queen.api.service.SurveyUnitService;
-import fr.insee.queen.api.service.HabilitationService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,7 +43,8 @@ public class SurveyUnitController {
 	*/
 	private final SurveyUnitService surveyUnitService;
 	private final PilotageApiService pilotageApiService;
-	private final HabilitationService habilitationService;
+	private final HabilitationComponent habilitationComponent;
+	private final AuthenticationHelper authHelper;
 	private final CampaignService campaignService;
 
 	/**
@@ -60,9 +62,10 @@ public class SurveyUnitController {
 	*/
 	@Operation(summary = "Get survey-unit")
 	@GetMapping(path = "/survey-unit/{id}")
-	public SurveyUnitDto getSurveyUnitById(HttpServletRequest request, @PathVariable(value = "id") String surveyUnitId) {
+	public SurveyUnitDto getSurveyUnitById(@PathVariable(value = "id") String surveyUnitId,
+										   Authentication auth) {
 		log.info("GET survey-units with id {}", surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
 		return surveyUnitService.getSurveyUnit(surveyUnitId);
 	}
 	
@@ -71,9 +74,11 @@ public class SurveyUnitController {
 	*/
 	@Operation(summary = "Put survey-unit")
 	@PutMapping(path = {"/survey-unit/{id}", "/survey-unit/old/{id}"})
-	public void updateSurveyUnitById(@RequestBody SurveyUnitInputDto surveyUnitInputDto, HttpServletRequest request, @PathVariable(value = "id") String surveyUnitId) {
+	public void updateSurveyUnitById(@PathVariable(value = "id") String surveyUnitId,
+									 @RequestBody SurveyUnitInputDto surveyUnitInputDto,
+									 Authentication auth) {
 		log.info("PUT survey-unit for reporting unit with id {}", surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitInputDto);
 	}
 
@@ -83,9 +88,11 @@ public class SurveyUnitController {
 	 */
 	@Operation(summary = "Post survey-unit to temp-zone")
 	@PostMapping(path = "/survey-unit/{id}/temp-zone")
-	public HttpStatus postSurveyUnitByIdInTempZone(@RequestBody JsonNode surveyUnit, @PathVariable(value = "id") String surveyUnitId) {
+	public HttpStatus postSurveyUnitByIdInTempZone(@PathVariable(value = "id") String surveyUnitId,
+												   @RequestBody JsonNode surveyUnit,
+												   Authentication auth) {
 		log.info("POST survey-unit to temp-zone");
-		String userId = habilitationService.getUserId();
+		String userId = authHelper.getUserId(auth);
 		surveyUnitService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
 		return HttpStatus.CREATED;
 	}
@@ -110,17 +117,19 @@ public class SurveyUnitController {
 	
 	@Operation(summary = "Get list of survey units by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/survey-units")
-	public List<SurveyUnitSummaryDto> getListSurveyUnitByCampaign(HttpServletRequest request, @PathVariable(value = "id") String campaignId) {
+	public List<SurveyUnitSummaryDto> getListSurveyUnitByCampaign(@PathVariable(value = "id") String campaignId,
+																  Authentication auth) {
 		log.info("GET survey-units for campaign with id {}", campaignId);
 		if(!campaignService.existsById(campaignId)) {
 			throw new EntityNotFoundException(String.format("Campaign %s was not found", campaignId));
 		}
 
 		List<SurveyUnitSummaryDto> surveyUnits;
-		String userId = habilitationService.getUserId();
+		String userId = authHelper.getUserId(auth);
 		if(!userId.equals(Constants.GUEST) &&
 		  !(integrationOverride != null && integrationOverride.equals("true"))) {
-			surveyUnits = pilotageApiService.getSurveyUnitsByCampaign(campaignId, request);
+			String authToken = authHelper.getAuthToken(auth);
+			surveyUnits = pilotageApiService.getSurveyUnitsByCampaign(campaignId, authToken);
 		} else {
 			surveyUnits = surveyUnitService.findByCampaignId(campaignId);
 		}
@@ -134,15 +143,18 @@ public class SurveyUnitController {
 	
 	@Operation(summary = "Get deposit proof for a SU ")
 	@GetMapping(value = "/survey-unit/{id}/deposit-proof")
-	public void generateDepositProof(@PathVariable(value = "id") String surveyUnitId, HttpServletRequest request, HttpServletResponse response) {
+	public void generateDepositProof(@PathVariable(value = "id") String surveyUnitId,
+									 Authentication auth,
+									 HttpServletResponse response) {
 		log.info("GET deposit-proof with survey unit id {}", surveyUnitId);
 		SurveyUnitDepositProofDto surveyUnit = surveyUnitService.getSurveyUnitDepositProof(surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
 
 		if (surveyUnit.stateData() == null) {
 			throw new EntityNotFoundException(String.format("State data for survey unit %s was not found", surveyUnitId));
 	    }
-		surveyUnitService.generateDepositProof(surveyUnit, response);
+		String username = authHelper.getUserId(auth);
+		surveyUnitService.generateDepositProof(username, surveyUnit, response);
 	}
 	
 	/**

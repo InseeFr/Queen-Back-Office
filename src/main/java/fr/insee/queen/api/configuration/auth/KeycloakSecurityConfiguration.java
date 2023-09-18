@@ -1,6 +1,7 @@
 package fr.insee.queen.api.configuration.auth;
 
 import fr.insee.queen.api.configuration.properties.KeycloakProperties;
+import fr.insee.queen.api.constants.Constants;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,9 +32,6 @@ public class KeycloakSecurityConfiguration {
     private static final String REALM_ACCESS_ROLE = "roles";
 
     private static final String REALM_ACCESS = "realm_access";
-
-    // By default, "spring security" prefixes roles with this string
-    private static final String ROLE_PREFIX = "ROLE_";
 
     public KeycloakSecurityConfiguration(KeycloakProperties keycloakProperties) {
         this.keycloakProperties = keycloakProperties;
@@ -79,7 +77,7 @@ public class KeycloakSecurityConfiguration {
                 }
 
                 return roles.stream()
-                        .map(r -> new SimpleGrantedAuthority(ROLE_PREFIX + r)).collect(Collectors
+                        .map(r -> new SimpleGrantedAuthority(Constants.ROLE_PREFIX + r)).collect(Collectors
                         .toCollection(ArrayList::new));
             }
         };

@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import fr.insee.queen.api.constants.Constants;
+import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
@@ -8,13 +9,12 @@ import fr.insee.queen.api.dto.surveyunit.SurveyUnitOkNokDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitWithStateDto;
 import fr.insee.queen.api.service.StateDataService;
 import fr.insee.queen.api.service.SurveyUnitService;
-import fr.insee.queen.api.service.HabilitationService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class StateDataController {
 	* The reporting unit repository using to access to table 'reporting_unit' in DB 
 	*/
 	private final SurveyUnitService surveyUnitService;
-	private final HabilitationService habilitationService;
+	private final HabilitationComponent habilitationComponent;
 	
 	/**
 	* This method is using to get the data associated to a specific reporting unit 
@@ -48,9 +48,10 @@ public class StateDataController {
 	*/
 	@Operation(summary = "Get state-data by survey-unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/state-data")
-	public StateDataDto  getStateDataBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, HttpServletRequest request){
+	public StateDataDto  getStateDataBySurveyUnit(@PathVariable(value = "id") String surveyUnitId,
+												  Authentication auth){
 		log.info("GET statedata for reporting unit with id {}", surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		return stateDataService.getStateData(surveyUnitId);
 	}
 	
@@ -79,9 +80,11 @@ public class StateDataController {
 	*/
 	@Operation(summary = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/state-data")
-	public HttpStatus setStateData(@RequestBody StateDataInputDto stateDataInputDto, HttpServletRequest request, @PathVariable(value = "id") String surveyUnitId) {
+	public HttpStatus setStateData(@PathVariable(value = "id") String surveyUnitId,
+								   @RequestBody StateDataInputDto stateDataInputDto,
+								   Authentication auth) {
 		log.info("PUT statedata for reporting unit with id {}", surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		stateDataService.updateStateData(surveyUnitId, stateDataInputDto);
 		return HttpStatus.OK;
 	}

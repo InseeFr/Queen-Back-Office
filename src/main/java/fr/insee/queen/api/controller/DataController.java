@@ -2,15 +2,15 @@ package fr.insee.queen.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.constants.Constants;
+import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.dto.data.DataDto;
 import fr.insee.queen.api.service.DataService;
-import fr.insee.queen.api.service.HabilitationService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -31,7 +31,7 @@ public class DataController {
 	/**
 	* The reporting unit repository using to access to table 'reporting_unit' in DB 
 	*/
-	private final HabilitationService habilitationService;
+	private final HabilitationComponent habilitationComponent;
 	
 	/**
 	* This method is using to get the data associated to a specific reporting unit 
@@ -41,9 +41,9 @@ public class DataController {
 	*/
 	@Operation(summary = "Get data by reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/data")
-	public String getDataBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, HttpServletRequest request) {
+	public String getDataBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, Authentication auth) {
 		log.info("GET Data for reporting unit with id {}", surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		return dataService.getData(surveyUnitId).value();
 	}
 
@@ -58,9 +58,9 @@ public class DataController {
 	*/
 	@Operation(summary = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/data")
-	public ResponseEntity<Object> setData(@RequestBody JsonNode dataValue, @PathVariable(value = "id") String surveyUnitId, HttpServletRequest request) {
+	public ResponseEntity<Object> setData(@RequestBody JsonNode dataValue, @PathVariable(value = "id") String surveyUnitId, Authentication auth) {
 		log.info("PUT data for reporting unit with id {}", surveyUnitId);
-		habilitationService.checkHabilitations(request, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		dataService.updateData(surveyUnitId, dataValue);
 		return ResponseEntity.ok().build();
 	}

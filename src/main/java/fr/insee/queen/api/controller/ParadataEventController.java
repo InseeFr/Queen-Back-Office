@@ -2,14 +2,14 @@ package fr.insee.queen.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.constants.Constants;
-import fr.insee.queen.api.service.HabilitationService;
+import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.service.ParadataEventService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +30,7 @@ public class ParadataEventController {
 	
 	private final ParadataEventService paradataEventService;
 
-	private final HabilitationService habilitationService;
+	private final HabilitationComponent habilitationComponent;
 
 	/**
 	 * This method is used to save a pardata event
@@ -40,7 +40,7 @@ public class ParadataEventController {
 	 */
 	@Operation(summary = "Add a ParadataEvent")
 	@PostMapping(path = "/paradata")
-	public HttpStatus updateSurveyUnit(HttpServletRequest request, @RequestBody @NonNull JsonNode paradataValue) {
+	public HttpStatus updateSurveyUnit(@RequestBody @NonNull JsonNode paradataValue, Authentication auth) {
 		String paradataSurveyUnitIdParameter = "idSU";
 		log.info("POST ParadataEvent");
 		if(!paradataValue.has(paradataSurveyUnitIdParameter)) {
@@ -52,7 +52,7 @@ public class ParadataEventController {
 			throw new IllegalArgumentException("Paradata does not contain the survey unit id");
 		}
 
-		habilitationService.checkHabilitations(request, surveyUnitNode.textValue(), Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitNode.textValue(), Constants.INTERVIEWER);
 		paradataEventService.save(paradataValue.toString());
 		return HttpStatus.OK;
 	}
