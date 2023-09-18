@@ -1,7 +1,5 @@
 package fr.insee.queen.api.service;
 
-import fr.insee.queen.api.configuration.properties.RoleProperties;
-import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.exception.HabilitationException;
@@ -16,7 +14,6 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class HabilitationService {
-	private final RoleProperties roleProperties;
 	private final SurveyUnitRepository surveyUnitRepository;
 	private final PilotageApiService pilotageApiService;
 
@@ -26,7 +23,7 @@ public class HabilitationService {
 		SurveyUnitHabilitationDto surveyUnit = 	surveyUnitRepository.findWithCampaignById(surveyUnitId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId)));
 
-		if(userRoles.contains(Constants.ROLE_PREFIX + roleProperties.admin()) || userRoles.contains(Constants.ROLE_PREFIX + roleProperties.webclient())) {
+		if(userRoles.contains("ROLE_ADMIN") || userRoles.contains("ROLE_WEBCLIENT")) {
 			return;
 		}
 
