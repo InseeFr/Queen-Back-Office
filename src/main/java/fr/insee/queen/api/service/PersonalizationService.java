@@ -5,7 +5,6 @@ import fr.insee.queen.api.domain.Personalization;
 import fr.insee.queen.api.dto.personalization.PersonalizationDto;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.repository.PersonalizationRepository;
-import fr.insee.queen.api.repository.SurveyUnitCreateUpdateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class PersonalizationService {
 
 	private final PersonalizationRepository personalizationRepository;
-	private final SurveyUnitCreateUpdateRepository surveyUnitCreateUpdateRepository;
 
 	public void save(Personalization personalization) {
 		personalizationRepository.save(personalization);
@@ -26,6 +24,6 @@ public class PersonalizationService {
 	}
 	
 	public void updatePersonalization(String surveyUnitId, JsonNode persValue) {
-		surveyUnitCreateUpdateRepository.updateSurveyUnitPersonalization(surveyUnitId, persValue);
+		personalizationRepository.updatePersonalization(surveyUnitId, persValue.toString());
 	}
 }

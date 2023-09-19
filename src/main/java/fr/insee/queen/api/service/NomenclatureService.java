@@ -29,10 +29,6 @@ public class NomenclatureService {
 
 	private final QuestionnaireModelRepository questionnaireModelRepository;
 
-	public Optional<Nomenclature> findById(String id) {
-		return nomenclatureRepository.findById(id);
-	}
-
 	public NomenclatureDto getNomenclature(String id) {
 		return nomenclatureRepository.findNomenclatureById(id)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Nomenclature %s was not found", id)));
@@ -60,10 +56,6 @@ public class NomenclatureService {
 				.parallelStream().distinct().map(Nomenclature::id).toList();
 	}
 
-	public void save(Nomenclature n) {
-		nomenclatureRepository.save(n);
-	}
-	
 	public boolean areNomenclaturesValid(Set<String> nomenclatureIds) {
 		if(nomenclatureIds.isEmpty()) {
 			return true;

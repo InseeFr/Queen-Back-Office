@@ -21,4 +21,6 @@ public interface SurveyUnitTempZoneRepository extends JpaRepository<SurveyUnitTe
     void deleteBySurveyUnitId(String id);
 
     List<SurveyUnitTempZoneDto> findAllProjectedBy();
+
+    void deleteAllBySurveyUnitIdIn(List<String> surveyUnitIds);
 }

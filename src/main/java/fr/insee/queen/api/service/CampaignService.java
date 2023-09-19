@@ -12,7 +12,7 @@ import fr.insee.queen.api.exception.CampaignCreationException;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.repository.CampaignRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
-import fr.insee.queen.api.repository.SurveyUnitCreateUpdateRepository;
+import fr.insee.queen.api.repository.SurveyUnitRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,15 +27,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @Slf4j
 public class CampaignService {
-    private final CampaignRepository campaignRepository;
+	private final SurveyUnitRepository surveyUnitRepository;
+	private final CampaignRepository campaignRepository;
     private final QuestionnaireModelRepository questionnaireModelRepository;
 	private final QuestionnaireModelService questionnaireModelService;
     private final SurveyUnitService surveyUnitService;
-	private final SurveyUnitCreateUpdateRepository surveyUnitCreateUpdateRepository;
-
-	public Optional<Campaign> findById(String id) {
-		return campaignRepository.findById(id);
-	}
 
 	public Campaign getCampaign(String campaignId) {
 		return campaignRepository.findById(campaignId)
@@ -47,10 +42,6 @@ public class CampaignService {
 		return campaignRepository.existsById(campaignId);
 	}
 
-	public void save(Campaign c) {
-		campaignRepository.save(c);
-	}
-	
 	public List<CampaignSummaryDto> getAllCampaigns() {
 		List<Campaign> campaigns = campaignRepository.findAll();
 		return campaigns.stream()
@@ -74,9 +65,9 @@ public class CampaignService {
 	
 	public void delete(String campaignId) {
     	List<SurveyUnitSummaryDto> surveyUnits = surveyUnitService.findByCampaignId(campaignId);
+		surveyUnitRepository.deleteParadataEvents(campaignId);
     	if (!surveyUnits.isEmpty()) {
-			surveyUnitCreateUpdateRepository.deleteParadataEventsBySU(surveyUnits.stream().map(SurveyUnitSummaryDto::id).toList());
-			surveyUnits.forEach(surveyUnit -> surveyUnitService.delete(surveyUnit.id()));
+			surveyUnitService.deleteAllByIds(surveyUnits.stream().map(SurveyUnitSummaryDto::id).toList());
 		}
 		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(campaignId);
 		if(qmList!=null && !qmList.isEmpty()) {
@@ -116,6 +107,6 @@ public class CampaignService {
 			Metadata m = new Metadata(UUID.randomUUID(), campaignInputDto.metadata().value().toString(), campaign);
 			campaign.metadata(m);
 		}
-		save(campaign);
+		campaignRepository.save(campaign);
 	}
 }

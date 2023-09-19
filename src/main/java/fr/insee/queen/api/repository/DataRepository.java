@@ -4,6 +4,8 @@ import fr.insee.queen.api.domain.Data;
 import fr.insee.queen.api.dto.data.DataDto;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -25,4 +27,8 @@ public interface DataRepository extends JpaRepository<Data, UUID> {
 	* @return {@link DataDto}
 	*/
 	Optional<DataDto> findBySurveyUnitId(String id);
+
+	@Modifying
+	@Query("update Data d set d.value = :dataValue where d.id = :surveyUnitId")
+	void updateData(String surveyUnit, String dataValue);
 }

@@ -1,6 +1,5 @@
 package fr.insee.queen.api.service;
 
-import fr.insee.queen.api.domain.Metadata;
 import fr.insee.queen.api.dto.metadata.MetadataDto;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.repository.MetadataRepository;
@@ -12,10 +11,6 @@ import org.springframework.stereotype.Service;
 public class MetadataService {
 
 	private final MetadataRepository metadataRepository;
-
-	public void save(Metadata metadata) {
-	metadataRepository.save(metadata);
-}
 
 	public MetadataDto getMetadata(String campaignId) throws EntityNotFoundException {
 		return metadataRepository.findByCampaignId(campaignId)

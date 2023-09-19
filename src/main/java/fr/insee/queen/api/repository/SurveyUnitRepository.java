@@ -4,6 +4,7 @@ import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.surveyunit.*;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -98,4 +99,20 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		)
 		from SurveyUnit s where s.id in :surveyUnitIds""")
 	List<SurveyUnitWithStateDto> findAllWithStateByIdIn(List<String> surveyUnitIds);
+
+
+	@Modifying
+	@Query(value = """
+		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id)
+		VALUES (:id,:campaignId,:questionnaireId)""", nativeQuery = true)
+	void createSurveyUnit(String id, String campaignId, String questionnaireId);
+
+	@Modifying
+	@Query(value = """
+	delete from paradata_event where id in (
+	    select p.id from survey_unit s inner join paradata_event p
+	        on text(s.id) = p.value->>'idSU'
+	        where s.campaign_id = :campaignId
+	)""", nativeQuery = true)
+	void deleteParadataEvents(String campaignId);
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.domain.*;
+import fr.insee.queen.api.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
@@ -18,16 +19,16 @@ import java.util.*;
 @Slf4j
 @AllArgsConstructor
 public class DataSetInjectorService {
-	private final CampaignService campaignservice;
-	private final SurveyUnitService surveyUnitService;
-	private final DataService dataService;
-	private final CommentService commentService;
-	private final ParadataEventService paradataEventService;
-	private final MetadataService metadataService;
-	private final PersonalizationService personalizationService;
-	private final StateDataService stateDataService;
-	private final QuestionnaireModelService questionnaireModelService;
-	private final NomenclatureService nomenclatureService;
+	private final CampaignRepository campaignRepository;
+	private final SurveyUnitRepository surveyUnitRepository;
+	private final DataRepository dataRepository;
+	private final CommentRepository commentRepository;
+	private final ParadataEventRepository paradataEventRepository;
+	private final MetadataRepository metadataRepository;
+	private final PersonalizationRepository personalizationRepository;
+	private final StateDataRepository stateDataRepository;
+	private final QuestionnaireModelRepository questionnaireModelRepository;
+	private final NomenclatureRepository nomenclatureRepository;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final String CURRENT_PAGE = "2.3#5";
@@ -120,15 +121,15 @@ public class DataSetInjectorService {
 		log.info(String.format("Create Campaing %s",id));
 		Campaign camp = new Campaign(id,label,null); 
 		QuestionnaireModel qm = new QuestionnaireModel(id,label,jsonQm.toString(),new HashSet<>(listNomenclature),camp);
-		if(campaignservice.findById(camp.id()).isEmpty()) {
+		if(campaignRepository.findById(camp.id()).isEmpty()) {
 			camp.questionnaireModels(new HashSet<>(List.of(qm)));
-			campaignservice.save(camp);
+			campaignRepository.save(camp);
 			if (jsonMetadata != null) {
 				Metadata metadata = new Metadata(UUID.randomUUID(),jsonMetadata.toString(),camp);
-				metadataService.save(metadata);
+				metadataRepository.save(metadata);
 			}
-			if(questionnaireModelService.findById(qm.id()).isEmpty()) {
-				questionnaireModelService.save(qm);
+			if(questionnaireModelRepository.findById(qm.id()).isEmpty()) {
+				questionnaireModelRepository.save(qm);
 			}
 		}
 		return Pair.of(camp,qm);
@@ -137,34 +138,34 @@ public class DataSetInjectorService {
 	private void createNomenclatures(ArrayList<Nomenclature> listNomenclature) {
 		log.info("Creation Nomenclatures");
 		listNomenclature.forEach(nomenclature -> {
-			if(nomenclatureService.findById(nomenclature.id()).isEmpty()) {
-				nomenclatureService.save(nomenclature);
+			if(nomenclatureRepository.findById(nomenclature.id()).isEmpty()) {
+				nomenclatureRepository.save(nomenclature);
 			}
 		}
 		);
 	}
 
 	private void initSurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel) {
-		if(surveyUnitService.findById(id).isEmpty()) {
+		if(surveyUnitRepository.findById(id).isEmpty()) {
 			log.info("initSurveyUnit -> SU Do not present, we create it");
 			SurveyUnit su = new SurveyUnit(id,campaign,questionnaireModel,null,null,null,null);
-			surveyUnitService.save(su); // That save SU in DB which is necessary to add data, comment etc...
+			surveyUnitRepository.save(su); // That save SU in DB which is necessary to add data, comment etc...
 			Data data = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-			dataService.save(data);
+			dataRepository.save(data);
 			su.data(data);
 
 			Comment comment = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-			commentService.save(comment);
+			commentRepository.save(comment);
 			su.comment(comment);
 
 			Personalization personalization = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su);
-			personalizationService.save(personalization);
+			personalizationRepository.save(personalization);
 			su.personalization(personalization);
 
 			StateData stateData = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su);
-			stateDataService.save(stateData);
+			stateDataRepository.save(stateData);
 			
-			surveyUnitService.save(su);
+			surveyUnitRepository.save(su);
 			log.info("End of SU Creation");
 		}
 
@@ -187,8 +188,8 @@ public class DataSetInjectorService {
 		Nomenclature n2 = createNomenclature("regions2019","french regions 2019",jsonArrayRegions2019);
 
 		QuestionnaireModel qmWithoutCamp = new QuestionnaireModel("QmWithoutCamp","Questionnaire with no campaign",jsonQuestionnaireModelSimpsons.toString(),new HashSet<>(List.of(n)),null);
-		if(questionnaireModelService.findById(qmWithoutCamp.id()).isEmpty()) {
-			questionnaireModelService.save(qmWithoutCamp);
+		if(questionnaireModelRepository.findById(qmWithoutCamp.id()).isEmpty()) {
+			questionnaireModelRepository.save(qmWithoutCamp);
 		}
 	
 
@@ -207,120 +208,120 @@ public class DataSetInjectorService {
 	}
 
 	private void createCampaign2(Campaign camp2, QuestionnaireModel qm2) {
-		if(campaignservice.findById(camp2.id()).isEmpty()) {
-			campaignservice.save(camp2);
-			if(questionnaireModelService.findById(qm2.id()).isEmpty()) {
-				questionnaireModelService.save(qm2);
+		if(campaignRepository.findById(camp2.id()).isEmpty()) {
+			campaignRepository.save(camp2);
+			if(questionnaireModelRepository.findById(qm2.id()).isEmpty()) {
+				questionnaireModelRepository.save(qm2);
 			}
 			camp2.questionnaireModels(new HashSet<>(List.of(qm2)));
-			campaignservice.save(camp2);
+			campaignRepository.save(camp2);
 			Metadata md2 = new Metadata(UUID.randomUUID(),objectMapper.createObjectNode().toString(),camp2);
-			metadataService.save(md2);
+			metadataRepository.save(md2);
 			
 			Data d2;
 			Comment c2;
 			Personalization p2;
 			StateData sd2;
 			SurveyUnit su2 = new SurveyUnit("20",camp2,qm2,null,null,null,null);
-			if(surveyUnitService.findById(su2.id()).isPresent()) {
-				surveyUnitService.save(su2);
+			if(surveyUnitRepository.findById(su2.id()).isPresent()) {
+				surveyUnitRepository.save(su2);
 				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				dataService.save(d2);
+				dataRepository.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				commentService.save(c2);
+				commentRepository.save(c2);
 				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su2);
-				personalizationService.save(p2);
+				personalizationRepository.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
-				stateDataService.save(sd2);
+				stateDataRepository.save(sd2);
 				su2.data(d2);
 				su2.stateData(sd2);
 				su2.comment(c2);
 				su2.personalization(p2);
-				surveyUnitService.save(su2);
+				surveyUnitRepository.save(su2);
 				createParadataEvents(su2);
 			}
 			su2 = new SurveyUnit("21",camp2,qm2,null,null,null,null);
-			if(surveyUnitService.findById(su2.id()).isEmpty()) {
-				surveyUnitService.save(su2);
+			if(surveyUnitRepository.findById(su2.id()).isEmpty()) {
+				surveyUnitRepository.save(su2);
 				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				dataService.save(d2);
+				dataRepository.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				commentService.save(c2);
+				commentRepository.save(c2);
 				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su2);
-				personalizationService.save(p2);
+				personalizationRepository.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
-				stateDataService.save(sd2);
+				stateDataRepository.save(sd2);
 				su2.data(d2);
 				su2.stateData(sd2);
 				su2.comment(c2);
 				su2.personalization(p2);
-				surveyUnitService.save(su2);
+				surveyUnitRepository.save(su2);
 				createParadataEvents(su2);
 			}
 			su2 = new SurveyUnit("22",camp2,qm2,null,null,null,null);
-			if(surveyUnitService.findById(su2.id()).isEmpty()) {
-				surveyUnitService.save(su2);
+			if(surveyUnitRepository.findById(su2.id()).isEmpty()) {
+				surveyUnitRepository.save(su2);
 				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				dataService.save(d2);
+				dataRepository.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				commentService.save(c2);
+				commentRepository.save(c2);
 				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su2);
-				personalizationService.save(p2);
+				personalizationRepository.save(p2);
 				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
-				stateDataService.save(sd2);
+				stateDataRepository.save(sd2);
 				su2.data(d2);
 				su2.stateData(sd2);
 				su2.comment(c2);
 				su2.personalization(p2);
-				surveyUnitService.save(su2);
+				surveyUnitRepository.save(su2);
 				createParadataEvents(su2);
 			}
 			su2 = new SurveyUnit("23",camp2,qm2,null,null,null,null);
-			if(surveyUnitService.findById(su2.id()).isEmpty()) {
-				surveyUnitService.save(su2);
+			if(surveyUnitRepository.findById(su2.id()).isEmpty()) {
+				surveyUnitRepository.save(su2);
 				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				dataService.save(d2);
+				dataRepository.save(d2);
 				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				commentService.save(c2);
+				commentRepository.save(c2);
 				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su2);
-				personalizationService.save(p2);
+				personalizationRepository.save(p2);
 				su2.data(d2);
 				su2.comment(c2);
 				su2.personalization(p2);
-				surveyUnitService.save(su2);
+				surveyUnitRepository.save(su2);
 				createParadataEvents(su2);
 			}
 		}
 	}
 
 	private void createCampaign1(Campaign camp, QuestionnaireModel qm, QuestionnaireModel qm2) {
-		if(campaignservice.findById(camp.id()).isEmpty()) {
-			campaignservice.save(camp);
-			if(questionnaireModelService.findById(qm.id()).isEmpty()) {
-				questionnaireModelService.save(qm);
+		if(campaignRepository.findById(camp.id()).isEmpty()) {
+			campaignRepository.save(camp);
+			if(questionnaireModelRepository.findById(qm.id()).isEmpty()) {
+				questionnaireModelRepository.save(qm);
 			}
-			if(questionnaireModelService.findById(qm2.id()).isEmpty()) {
-				questionnaireModelService.save(qm2);
+			if(questionnaireModelRepository.findById(qm2.id()).isEmpty()) {
+				questionnaireModelRepository.save(qm2);
 			}
 			Set<QuestionnaireModel> models = camp.questionnaireModels();
 			models.add(qm);
 			models.add(qm2);
-			campaignservice.save(camp);
+			campaignRepository.save(camp);
 
 			Metadata md = new Metadata(UUID.randomUUID(),objectMapper.createObjectNode().toString(),camp);
-			metadataService.save(md);
+			metadataRepository.save(md);
 			
 			Data d;
 			Comment c;
 			Personalization p;
 			StateData sd;
 			SurveyUnit su = new SurveyUnit("11",camp,qm,null,null,null,null);
-			if(surveyUnitService.findById(su.id()).isEmpty()) {
-				surveyUnitService.save(su);
+			if(surveyUnitRepository.findById(su.id()).isEmpty()) {
+				surveyUnitRepository.save(su);
 				d = new Data(UUID.randomUUID(),getDataValue(su.id()),su);
-				dataService.save(d);
+				dataRepository.save(d);
 				c = new Comment(UUID.randomUUID(),getComment(),su);
-				commentService.save(c);
+				commentRepository.save(c);
 				ArrayNode pValue = objectMapper.createArrayNode();
 				ObjectNode jsonObject = objectMapper.createObjectNode();
 				jsonObject.put("name", "whoAnswers1");
@@ -331,65 +332,65 @@ public class DataSetInjectorService {
 				jsonObject.put("value", "");
 				pValue.add(jsonObject);
 				p = new Personalization(UUID.randomUUID(),pValue.toString(),su);
-				personalizationService.save(p);
+				personalizationRepository.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.EXTRACTED,1111111111L,CURRENT_PAGE,su);
-				stateDataService.save(sd);
+				stateDataRepository.save(sd);
 				su.data(d);
 				su.stateData(sd);
 				su.comment(c);
 				su.personalization(p);
-				surveyUnitService.save(su);
+				surveyUnitRepository.save(su);
 			}
 			su = new SurveyUnit("12",camp,qm,null,null,null,null);
-			if(surveyUnitService.findById(su.id()).isEmpty()) {
-				surveyUnitService.save(su);
+			if(surveyUnitRepository.findById(su.id()).isEmpty()) {
+				surveyUnitRepository.save(su);
 				d = new Data(UUID.randomUUID(),getDataValue(su.id()),su);
-				dataService.save(d);
+				dataRepository.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-				commentService.save(c);
+				commentRepository.save(c);
 				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su);
-				personalizationService.save(p);
+				personalizationRepository.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
-				stateDataService.save(sd);
+				stateDataRepository.save(sd);
 				su.data(d);
 				su.stateData(sd);
 				su.comment(c);
 				su.personalization(p);
-				surveyUnitService.save(su);
+				surveyUnitRepository.save(su);
 			}
 			su = new SurveyUnit("13",camp,qm2,null,null,null,null);
-			if(surveyUnitService.findById(su.id()).isEmpty()) {
-				surveyUnitService.save(su);
+			if(surveyUnitRepository.findById(su.id()).isEmpty()) {
+				surveyUnitRepository.save(su);
 				d = new Data(UUID.randomUUID(),getDataValue(su.id()),su);
-				dataService.save(d);
+				dataRepository.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-				commentService.save(c);
+				commentRepository.save(c);
 				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su);
-				personalizationService.save(p);
+				personalizationRepository.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
-				stateDataService.save(sd);
+				stateDataRepository.save(sd);
 				su.data(d);
 				su.stateData(sd);
 				su.comment(c);
 				su.personalization(p);
-				surveyUnitService.save(su);
+				surveyUnitRepository.save(su);
 			}
 			su = new SurveyUnit("14",camp,qm2,null,null,null,null);
-			if(surveyUnitService.findById(su.id()).isEmpty()) {
-				surveyUnitService.save(su);
+			if(surveyUnitRepository.findById(su.id()).isEmpty()) {
+				surveyUnitRepository.save(su);
 				d = new Data(UUID.randomUUID(),getDataValue(su.id()),su);
-				dataService.save(d);
+				dataRepository.save(d);
 				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-				commentService.save(c);
+				commentRepository.save(c);
 				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su);
-				personalizationService.save(p);
+				personalizationRepository.save(p);
 				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
-				stateDataService.save(sd);
+				stateDataRepository.save(sd);
 				su.data(d);
 				su.stateData(sd);
 				su.comment(c);
 				su.personalization(p);
-				surveyUnitService.save(su);
+				surveyUnitRepository.save(su);
 			}
 		}
 	}
@@ -399,14 +400,14 @@ public class DataSetInjectorService {
 		rootNode.set("idSU", JsonNodeFactory.instance.textNode(su.id()));
 		ParadataEvent pde = new ParadataEvent(UUID.randomUUID(),rootNode.toString());
 		ParadataEvent pde2 = new ParadataEvent(UUID.randomUUID(),rootNode.toString());
-		paradataEventService.save(pde);
-		paradataEventService.save(pde2);
+		paradataEventRepository.save(pde);
+		paradataEventRepository.save(pde2);
 	}
 
 	private Nomenclature createNomenclature(String id, String label, JsonNode jsonNomenclature) {
 		Nomenclature n = new Nomenclature(id,label,jsonNomenclature.toString());
-		if(nomenclatureService.findById(n.id()).isEmpty()) {
-			nomenclatureService.save(n);
+		if(nomenclatureRepository.findById(n.id()).isEmpty()) {
+			nomenclatureRepository.save(n);
 		}
 		return n;
 	}

@@ -1,19 +1,14 @@
 package fr.insee.queen.api.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fr.insee.queen.api.domain.StateDataType;
-import fr.insee.queen.api.domain.SurveyUnit;
-import fr.insee.queen.api.domain.SurveyUnitTempZone;
+import fr.insee.queen.api.domain.*;
+import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
 import fr.insee.queen.api.dto.surveyunit.*;
 import fr.insee.queen.api.exception.DepositProofException;
 import fr.insee.queen.api.exception.EntityNotFoundException;
-import fr.insee.queen.api.exception.SurveyUnitCreateUpdateRepositoryException;
 import fr.insee.queen.api.pdfutils.ExportPdf;
-import fr.insee.queen.api.repository.CampaignRepository;
-import fr.insee.queen.api.repository.SurveyUnitCreateUpdateRepository;
-import fr.insee.queen.api.repository.SurveyUnitRepository;
-import fr.insee.queen.api.repository.SurveyUnitTempZoneRepository;
+import fr.insee.queen.api.repository.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -24,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -35,15 +27,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SurveyUnitService {
 	private final SurveyUnitRepository surveyUnitRepository;
-
 	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
-
 	private final CampaignRepository campaignRepository;
-	private final SurveyUnitCreateUpdateRepository surveyUnitCreateUpdateRepository;
-
-	public Optional<SurveyUnit> findById(String id) {
-		return surveyUnitRepository.findById(id);
-	}
+	private final CommentRepository commentRepository;
+	private final StateDataRepository stateDataRepository;
+	private final DataRepository dataRepository;
+	private final PersonalizationRepository personalizationRepository;
 
 	public boolean existsById(String surveyUnitId) {
 		return surveyUnitRepository.existsById(surveyUnitId);
@@ -72,16 +61,17 @@ public class SurveyUnitService {
 			throw new EntityNotFoundException(String.format("Survey unit id %s not found", surveyUnitId));
 		}
 		if(surveyUnit.personalization() != null) {
-			surveyUnitCreateUpdateRepository.updateSurveyUnitPersonalization(surveyUnitId,surveyUnit.personalization());
+			personalizationRepository.updatePersonalization(surveyUnitId,surveyUnit.personalization().toString());
 		}
 		if(surveyUnit.comment() != null) {
-			surveyUnitCreateUpdateRepository.updateSurveyUnitComment(surveyUnitId,surveyUnit.comment());
+			commentRepository.updateComment(surveyUnitId,surveyUnit.comment().toString());
 		}
 		if(surveyUnit.data() != null) {
-			surveyUnitCreateUpdateRepository.updateSurveyUnitData(surveyUnitId,surveyUnit.data());
+			dataRepository.updateData(surveyUnitId,surveyUnit.data().toString());
 		}
 		if(surveyUnit.stateData() != null) {
-			surveyUnitCreateUpdateRepository.updateSurveyUnitStateData(surveyUnitId,surveyUnit.stateData());
+			StateDataInputDto stateData = surveyUnit.stateData();
+			stateDataRepository.updateStateData(surveyUnitId, stateData.date(), stateData.currentPage(), stateData.state());
 		}
 	}
 
@@ -107,12 +97,23 @@ public class SurveyUnitService {
 			throw new EntityNotFoundException(String.format("Campaign %s was not found", campaignId));
 		}
 
-		try{
-			surveyUnitCreateUpdateRepository.createSurveyUnit(campaignId, surveyUnit);
-		} catch (Exception e){
-			log.error(e.getMessage(), e);
-			throw new SurveyUnitCreateUpdateRepositoryException(String.format("Error during creation/update of the survey unit %s", surveyUnit.id()));
-		}
+		String surveyUnitId = surveyUnit.id();
+		surveyUnitRepository.createSurveyUnit(surveyUnit.id(), campaignId, surveyUnit.questionnaireId());
+		SurveyUnit su = surveyUnitRepository.findById(surveyUnitId)
+						.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s should have been created, but is not", surveyUnitId)));
+
+		Personalization personalization = new Personalization(UUID.randomUUID(), surveyUnit.personalization().toString(), su);
+		personalizationRepository.save(personalization);
+
+		Comment comment = new Comment(UUID.randomUUID(), surveyUnit.comment().textValue(), su);
+		commentRepository.save(comment);
+
+		Data data = new Data(UUID.randomUUID(), surveyUnit.data().toString(), su);
+		dataRepository.save(data);
+
+		StateDataInputDto stateDataInput = surveyUnit.stateData();
+		StateData stateData = new StateData(UUID.randomUUID(), stateDataInput.state(), stateDataInput.date(), stateDataInput.currentPage(), su);
+		stateDataRepository.save(stateData);
 	}
 
 	public List<SurveyUnitSummaryDto> findSummaryByIds(List<String> surveyUnits) {
@@ -145,5 +146,10 @@ public class SurveyUnitService {
 		return surveyUnitRepository
 				.findWithCampaignAndStateById(surveyUnitId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId)));
+	}
+
+	public void deleteAllByIds(List<String> surveyUnitIds) {
+		surveyUnitRepository.deleteAllById(surveyUnitIds);
+		surveyUnitTempZoneRepository.deleteAllBySurveyUnitIdIn(surveyUnitIds);
 	}
 }

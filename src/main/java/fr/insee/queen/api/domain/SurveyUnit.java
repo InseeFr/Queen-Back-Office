@@ -50,4 +50,10 @@ public class SurveyUnit {
 
 	@OneToOne( mappedBy = "surveyUnit", cascade = CascadeType.ALL )
 	private Personalization personalization;
+
+	public SurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel) {
+		this.id = id;
+		this.campaign = campaign;
+		this.questionnaireModel = questionnaireModel;
+	}
 }

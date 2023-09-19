@@ -16,8 +16,4 @@ public class ParadataEventService {
         paradataEvent.value(paradataValue);
         paradataEventRepository.save(paradataEvent);
     }
-
-    public void save(ParadataEvent paradataEvent) {
-        paradataEventRepository.save(paradataEvent);
-    }
 }
