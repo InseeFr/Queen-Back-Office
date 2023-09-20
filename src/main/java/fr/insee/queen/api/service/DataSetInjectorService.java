@@ -21,11 +21,8 @@ import java.util.*;
 public class DataSetInjectorService {
 	private final CampaignRepository campaignRepository;
 	private final SurveyUnitRepository surveyUnitRepository;
-	private final DataRepository dataRepository;
-	private final CommentRepository commentRepository;
 	private final ParadataEventRepository paradataEventRepository;
 	private final MetadataRepository metadataRepository;
-	private final PersonalizationRepository personalizationRepository;
 	private final StateDataRepository stateDataRepository;
 	private final QuestionnaireModelRepository questionnaireModelRepository;
 	private final NomenclatureRepository nomenclatureRepository;
@@ -148,24 +145,7 @@ public class DataSetInjectorService {
 	private void initSurveyUnit(String id, Campaign campaign, QuestionnaireModel questionnaireModel) {
 		if(surveyUnitRepository.findById(id).isEmpty()) {
 			log.info("initSurveyUnit -> SU Do not present, we create it");
-			SurveyUnit su = new SurveyUnit(id,campaign,questionnaireModel,null,null,null,null);
-			surveyUnitRepository.save(su); // That save SU in DB which is necessary to add data, comment etc...
-			Data data = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-			dataRepository.save(data);
-			su.data(data);
-
-			Comment comment = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-			commentRepository.save(comment);
-			su.comment(comment);
-
-			Personalization personalization = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su);
-			personalizationRepository.save(personalization);
-			su.personalization(personalization);
-
-			StateData stateData = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su);
-			stateDataRepository.save(stateData);
-			
-			surveyUnitRepository.save(su);
+			createSurveyUnit(id, campaign, questionnaireModel);
 			log.info("End of SU Creation");
 		}
 
@@ -217,79 +197,12 @@ public class DataSetInjectorService {
 			campaignRepository.save(camp2);
 			Metadata md2 = new Metadata(UUID.randomUUID(),objectMapper.createObjectNode().toString(),camp2);
 			metadataRepository.save(md2);
-			
-			Data d2;
-			Comment c2;
-			Personalization p2;
-			StateData sd2;
-			SurveyUnit su2 = new SurveyUnit("20",camp2,qm2,null,null,null,null);
-			if(surveyUnitRepository.findById(su2.id()).isPresent()) {
-				surveyUnitRepository.save(su2);
-				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				dataRepository.save(d2);
-				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				commentRepository.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su2);
-				personalizationRepository.save(p2);
-				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
-				stateDataRepository.save(sd2);
-				su2.data(d2);
-				su2.stateData(sd2);
-				su2.comment(c2);
-				su2.personalization(p2);
-				surveyUnitRepository.save(su2);
-				createParadataEvents(su2);
-			}
-			su2 = new SurveyUnit("21",camp2,qm2,null,null,null,null);
-			if(surveyUnitRepository.findById(su2.id()).isEmpty()) {
-				surveyUnitRepository.save(su2);
-				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				dataRepository.save(d2);
-				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				commentRepository.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su2);
-				personalizationRepository.save(p2);
-				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
-				stateDataRepository.save(sd2);
-				su2.data(d2);
-				su2.stateData(sd2);
-				su2.comment(c2);
-				su2.personalization(p2);
-				surveyUnitRepository.save(su2);
-				createParadataEvents(su2);
-			}
-			su2 = new SurveyUnit("22",camp2,qm2,null,null,null,null);
-			if(surveyUnitRepository.findById(su2.id()).isEmpty()) {
-				surveyUnitRepository.save(su2);
-				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				dataRepository.save(d2);
-				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				commentRepository.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su2);
-				personalizationRepository.save(p2);
-				sd2 = new StateData(UUID.randomUUID(),StateDataType.INIT,900000000L,"1",su2);
-				stateDataRepository.save(sd2);
-				su2.data(d2);
-				su2.stateData(sd2);
-				su2.comment(c2);
-				su2.personalization(p2);
-				surveyUnitRepository.save(su2);
-				createParadataEvents(su2);
-			}
-			su2 = new SurveyUnit("23",camp2,qm2,null,null,null,null);
-			if(surveyUnitRepository.findById(su2.id()).isEmpty()) {
-				surveyUnitRepository.save(su2);
-				d2 = new Data(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				dataRepository.save(d2);
-				c2 = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su2);
-				commentRepository.save(c2);
-				p2 = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su2);
-				personalizationRepository.save(p2);
-				su2.data(d2);
-				su2.comment(c2);
-				su2.personalization(p2);
-				surveyUnitRepository.save(su2);
-				createParadataEvents(su2);
+
+			List<String> surveyUnitIds = List.of("20", "21", "22", "23");
+			for(String surveyUnitId : surveyUnitIds) {
+				if(surveyUnitRepository.findById(surveyUnitId).isEmpty()) {
+					createSurveyUnitCampaign2(surveyUnitId, camp2, qm2);
+				}
 			}
 		}
 	}
@@ -310,96 +223,43 @@ public class DataSetInjectorService {
 
 			Metadata md = new Metadata(UUID.randomUUID(),objectMapper.createObjectNode().toString(),camp);
 			metadataRepository.save(md);
-			
-			Data d;
-			Comment c;
-			Personalization p;
-			StateData sd;
-			SurveyUnit su = new SurveyUnit("11",camp,qm,null,null,null,null);
-			if(surveyUnitRepository.findById(su.id()).isEmpty()) {
-				surveyUnitRepository.save(su);
-				d = new Data(UUID.randomUUID(),getDataValue(su.id()),su);
-				dataRepository.save(d);
-				c = new Comment(UUID.randomUUID(),getComment(),su);
-				commentRepository.save(c);
-				ArrayNode pValue = objectMapper.createArrayNode();
-				ObjectNode jsonObject = objectMapper.createObjectNode();
-				jsonObject.put("name", "whoAnswers1");
-				jsonObject.put("value", "Mr Dupond");
-				pValue.add(jsonObject);
-				jsonObject = objectMapper.createObjectNode();
-				jsonObject.put("name", "whoAnswers2");
-				jsonObject.put("value", "");
-				pValue.add(jsonObject);
-				p = new Personalization(UUID.randomUUID(),pValue.toString(),su);
-				personalizationRepository.save(p);
-				sd = new StateData(UUID.randomUUID(),StateDataType.EXTRACTED,1111111111L,CURRENT_PAGE,su);
-				stateDataRepository.save(sd);
-				su.data(d);
-				su.stateData(sd);
-				su.comment(c);
-				su.personalization(p);
-				surveyUnitRepository.save(su);
-			}
-			su = new SurveyUnit("12",camp,qm,null,null,null,null);
-			if(surveyUnitRepository.findById(su.id()).isEmpty()) {
-				surveyUnitRepository.save(su);
-				d = new Data(UUID.randomUUID(),getDataValue(su.id()),su);
-				dataRepository.save(d);
-				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-				commentRepository.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su);
-				personalizationRepository.save(p);
-				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
-				stateDataRepository.save(sd);
-				su.data(d);
-				su.stateData(sd);
-				su.comment(c);
-				su.personalization(p);
-				surveyUnitRepository.save(su);
-			}
-			su = new SurveyUnit("13",camp,qm2,null,null,null,null);
-			if(surveyUnitRepository.findById(su.id()).isEmpty()) {
-				surveyUnitRepository.save(su);
-				d = new Data(UUID.randomUUID(),getDataValue(su.id()),su);
-				dataRepository.save(d);
-				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-				commentRepository.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su);
-				personalizationRepository.save(p);
-				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
-				stateDataRepository.save(sd);
-				su.data(d);
-				su.stateData(sd);
-				su.comment(c);
-				su.personalization(p);
-				surveyUnitRepository.save(su);
-			}
-			su = new SurveyUnit("14",camp,qm2,null,null,null,null);
-			if(surveyUnitRepository.findById(su.id()).isEmpty()) {
-				surveyUnitRepository.save(su);
-				d = new Data(UUID.randomUUID(),getDataValue(su.id()),su);
-				dataRepository.save(d);
-				c = new Comment(UUID.randomUUID(),objectMapper.createObjectNode().toString(),su);
-				commentRepository.save(c);
-				p = new Personalization(UUID.randomUUID(),objectMapper.createArrayNode().toString(),su);
-				personalizationRepository.save(p);
-				sd = new StateData(UUID.randomUUID(),StateDataType.INIT,1111111111L,CURRENT_PAGE,su);
-				stateDataRepository.save(sd);
-				su.data(d);
-				su.stateData(sd);
-				su.comment(c);
-				su.personalization(p);
-				surveyUnitRepository.save(su);
-			}
+
+			String surveyUnitId = "11";
+			createSurveyUnitCampaign1(surveyUnitId, camp,qm,getPersonalizationValue(), getDataValue(surveyUnitId), getComment(), StateDataType.EXTRACTED);
+
+			surveyUnitId = "12";
+			createSurveyUnitCampaign1(surveyUnitId, camp, qm,
+					objectMapper.createArrayNode().toString(),
+					getDataValue(surveyUnitId),
+					objectMapper.createObjectNode().toString(),
+					StateDataType.INIT);
+
+			surveyUnitId = "13";
+			createSurveyUnitCampaign1(surveyUnitId, camp, qm2,
+					objectMapper.createArrayNode().toString(),
+					getDataValue(surveyUnitId),
+					objectMapper.createObjectNode().toString(),
+					StateDataType.INIT);
+
+			surveyUnitId = "14";
+			createSurveyUnitCampaign1(surveyUnitId, camp, qm2,
+					objectMapper.createArrayNode().toString(),
+					getDataValue(surveyUnitId),
+					objectMapper.createObjectNode().toString(),
+					StateDataType.INIT);
 		}
+	}
+
+	private StateData createStateData(StateDataType state, long date, String currentPage, SurveyUnit su) {
+		StateData stateData = new StateData(UUID.randomUUID(), state, date, currentPage, su);
+		return stateDataRepository.save(stateData);
 	}
 
 	private void createParadataEvents(SurveyUnit su) {
 		ObjectNode rootNode = JsonNodeFactory.instance.objectNode();
 		rootNode.set("idSU", JsonNodeFactory.instance.textNode(su.id()));
-		ParadataEvent pde = new ParadataEvent(UUID.randomUUID(),rootNode.toString());
-		ParadataEvent pde2 = new ParadataEvent(UUID.randomUUID(),rootNode.toString());
+		ParadataEvent pde = new ParadataEvent(UUID.randomUUID(),rootNode.toString(), su);
+		ParadataEvent pde2 = new ParadataEvent(UUID.randomUUID(),rootNode.toString(), su);
 		paradataEventRepository.save(pde);
 		paradataEventRepository.save(pde2);
 	}
@@ -416,6 +276,47 @@ public class DataSetInjectorService {
 		ObjectNode jsonValue = objectMapper.createObjectNode();
 		jsonValue.put("COMMENT", "a comment");
 		return jsonValue.toString();
+	}
+
+	private SurveyUnit createSurveyUnit(String surveyUnitId, Campaign camp, QuestionnaireModel qm) {
+		SurveyUnit su = new SurveyUnit(surveyUnitId,camp,qm,null,
+				objectMapper.createArrayNode().toString(),
+				objectMapper.createObjectNode().toString(),
+				objectMapper.createObjectNode().toString());
+		surveyUnitRepository.save(su);
+		StateData stateData = createStateData(StateDataType.INIT, 900000000L, "1", su);
+		su.stateData(stateData);
+		surveyUnitRepository.save(su);
+		createParadataEvents(su);
+		return su;
+	}
+
+	private SurveyUnit createSurveyUnitCampaign2(String surveyUnitId, Campaign camp, QuestionnaireModel qm) {
+		SurveyUnit su = createSurveyUnit(surveyUnitId, camp, qm);
+		createParadataEvents(su);
+		return su;
+	}
+
+	private SurveyUnit createSurveyUnitCampaign1(String surveyUnitId, Campaign camp, QuestionnaireModel qm,
+												 String personalization, String data, String comment, StateDataType state) {
+		SurveyUnit su = new SurveyUnit(surveyUnitId,camp,qm,null, personalization, data, comment);
+		surveyUnitRepository.save(su);
+		StateData stateData = createStateData(state, 1111111111L, CURRENT_PAGE, su);
+		su.stateData(stateData);
+		return surveyUnitRepository.save(su);
+	}
+
+	private String getPersonalizationValue() {
+		ArrayNode pValue = objectMapper.createArrayNode();
+		ObjectNode jsonObject = objectMapper.createObjectNode();
+		jsonObject.put("name", "whoAnswers1");
+		jsonObject.put("value", "Mr Dupond");
+		pValue.add(jsonObject);
+		jsonObject = objectMapper.createObjectNode();
+		jsonObject.put("name", "whoAnswers2");
+		jsonObject.put("value", "");
+		pValue.add(jsonObject);
+		return pValue.toString();
 	}
 
 	@SuppressWarnings("deprecation")

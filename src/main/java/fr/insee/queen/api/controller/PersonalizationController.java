@@ -8,7 +8,6 @@ import fr.insee.queen.api.service.PersonalizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -43,10 +42,10 @@ public class PersonalizationController {
 	@Operation(summary = "Get personalization by reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/personalization")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public String  getPersonalizationBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, Authentication auth){
+	public String getPersonalizationBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, Authentication auth){
 		log.info("GET personalization for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
-		return personalizationService.getPersonalization(surveyUnitId).value();
+		return personalizationService.getPersonalization(surveyUnitId);
 	}
 	
 	/**
@@ -54,21 +53,18 @@ public class PersonalizationController {
 	* 
 	* @param personalizationValues the value to update
 	* @param surveyUnitId	the id of reporting unit
-	* @return {@link HttpStatus 404} if personalization is not found, else {@link HttpStatus 200}
-	* 
+	*
 	*/
 	@Operation(summary = "Update personalization by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/personalization")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public HttpStatus setPersonalization(@PathVariable(value = "id") String surveyUnitId,
+	public void setPersonalization(@PathVariable(value = "id") String surveyUnitId,
 										 @RequestBody JsonNode personalizationValues,
 										 Authentication auth) {
 		log.info("PUT personalization for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		personalizationService.updatePersonalization(surveyUnitId, personalizationValues);
-		return HttpStatus.OK;
-		
 	}
-	
-	
+
+
 }

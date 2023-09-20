@@ -49,9 +49,9 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitDto(
 		    s.id,
 		    s.questionnaireModel.id,
-		    s.personalization.value,
-		    s.data.value,
-		    s.comment.value,
+		    s.personalization,
+		    s.data,
+		    s.comment,
 		    new fr.insee.queen.api.dto.statedata.StateDataDto(
 		        s.stateData.state,
 		        s.stateData.date,
@@ -103,9 +103,9 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 
 	@Modifying
 	@Query(value = """
-		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id)
-		VALUES (:id,:campaignId,:questionnaireId)""", nativeQuery = true)
-	void createSurveyUnit(String id, String campaignId, String questionnaireId);
+		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id, data, comment, personalization)
+		VALUES (:id,:campaignId,:questionnaireId, :data, :comment, :personalization)""", nativeQuery = true)
+	void createSurveyUnit(String id, String campaignId, String questionnaireId, String data, String comment, String personalization);
 
 	@Modifying
 	@Query(value = """
@@ -115,4 +115,25 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 	        where s.campaign_id = :campaignId
 	)""", nativeQuery = true)
 	void deleteParadataEvents(String campaignId);
+
+	@Modifying
+	@Query("update SurveyUnit s set s.personalization = :personalization where s.id = :surveyUnitId")
+	void updatePersonalization(String surveyUnit, String personalization);
+
+	@Modifying
+	@Query("update SurveyUnit s set s.comment = :comment where s.id = :surveyUnitId")
+	void updateComment(String surveyUnit, String comment);
+
+	@Modifying
+	@Query("update SurveyUnit s set s.data = :data where s.id = :surveyUnitId")
+	void updateData(String surveyUnit, String data);
+
+	@Query("select s.comment from SurveyUnit s where s.id=:surveyUnitId")
+	String getComment(String surveyUnitId);
+
+	@Query("select s.data from SurveyUnit s where s.id=:surveyUnitId")
+	String getData(String surveyUnitId);
+
+	@Query("select s.personalization from SurveyUnit s where s.id=:surveyUnitId")
+	String getPersonalization(String surveyUnitId);
 }

@@ -9,7 +9,6 @@ import fr.insee.queen.api.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +46,7 @@ public class CommentController {
 	public String getCommentBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, Authentication auth){
 		log.info("GET comment for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
-		return commentService.getComment(surveyUnitId).value();
+		return commentService.getComment(surveyUnitId);
 	}
 	
 	/**
@@ -55,18 +54,16 @@ public class CommentController {
 	* 
 	* @param commentValue the value to update
 	* @param surveyUnitId	the id of reporting unit
-	* @return {@link HttpStatus 404} if comment is not found, else {@link HttpStatus 200}
-	* 
+	*
 	*/
 	@Operation(summary = "Update the comment by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/comment")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public HttpStatus setComment(@RequestBody JsonNode commentValue,
+	public void setComment(@RequestBody JsonNode commentValue,
 								 @PathVariable(value = "id") String surveyUnitId,
 								 Authentication auth) {
 		log.info("PUT comment for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		commentService.updateComment(surveyUnitId, commentValue);
-		return HttpStatus.OK;
-	}	
+	}
 }

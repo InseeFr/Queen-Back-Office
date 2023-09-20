@@ -1,9 +1,6 @@
 package fr.insee.queen.api.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +30,10 @@ public class ParadataEvent {
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "jsonb")
 	private String value;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	private SurveyUnit surveyUnit;
+
 	public ParadataEvent() {
 		super();
 		this.id = UUID.randomUUID();
