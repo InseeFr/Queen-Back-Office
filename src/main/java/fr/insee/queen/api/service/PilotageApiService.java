@@ -186,9 +186,7 @@ public class PilotageApiService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(authToken);
-        log.error(authToken);
         try {
-            log.error(uriPilotageFilter);
             ResponseEntity<LinkedHashMap<String, Boolean>> response = restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
                     new HttpEntity<>(headers), new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>() {});
 

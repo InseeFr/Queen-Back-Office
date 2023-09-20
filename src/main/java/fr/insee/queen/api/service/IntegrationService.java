@@ -30,10 +30,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -217,11 +214,12 @@ public class IntegrationService {
 
 
 	private boolean validateAgainstSchema(InputStream xmlStream, String schemaFileName) throws SAXException, IOException {
-		File template = new File(getClass().getClassLoader().getResource("templates//" + schemaFileName).getFile());
+		InputStream templateStream = getClass().getClassLoader().getResourceAsStream("templates//" + schemaFileName);
 		SchemaFactory facto = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		facto.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 		facto.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-		Schema schema = facto.newSchema(template);
+		Source schemaSource = new StreamSource(templateStream);
+		Schema schema = facto.newSchema(schemaSource);
 		Validator validator = schema.newValidator();
 		validator.validate(new StreamSource(xmlStream));
 		return true;

@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -51,9 +51,9 @@ public class DataSetInjectorService {
 
 
 		try {
-			jsonArrayQuestionnaireModelQueenLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//logS1Tel.json").getFile()));
-			jsonArrayQuestionnaireModelStromaeLog = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//logS1Web.json").getFile()));
-			jsonArrayMetadata = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//metadata//metadata.json").getFile()));
+			jsonArrayQuestionnaireModelQueenLog = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/logement/logS1Tel.json"));
+			jsonArrayQuestionnaireModelStromaeLog = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/logement/logS1Web.json"));
+			jsonArrayMetadata = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/logement/metadata/metadata.json"));
 
 	 } catch (Exception e) {
 		 e.printStackTrace();
@@ -95,14 +95,14 @@ public class DataSetInjectorService {
 		JsonNode jsonArrayNomenclatureCogCom = objectMapper.createObjectNode();
 
 		try {
-			jsonArrayNomenclatureDepNais = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_DEPNAIS.json").getFile()));
-			jsonArrayNomenclatureNationEtr = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_NATIONETR.json").getFile()));
-			jsonArrayNomenclaturePaysNais = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//L_PAYSNAIS.json").getFile()));
-			jsonArrayNomenclatureCogCom = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//logement//nomenclatures//cog-communes.json").getFile()));
-			
-	 } catch (Exception e) {
-		 e.printStackTrace();
-	 }
+			jsonArrayNomenclatureDepNais = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/logement/nomenclatures/L_DEPNAIS.json"));
+			jsonArrayNomenclatureNationEtr = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/logement/nomenclatures/L_NATIONETR.json"));
+			jsonArrayNomenclaturePaysNais = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/logement/nomenclatures/L_PAYSNAIS.json"));
+			jsonArrayNomenclatureCogCom = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/logement/nomenclatures/cog-communes.json"));
+		} catch (IOException e) {
+			log.error("Error getting json nomenclatures");
+			e.printStackTrace();
+		}
 
 		Nomenclature nomenclatureDepNais = new Nomenclature("L_DEPNAIS","départements français",jsonArrayNomenclatureDepNais.toString());
 		Nomenclature nomenclatureNationEtr = new Nomenclature("L_NATIONETR","nationalités",jsonArrayNomenclatureNationEtr.toString());
@@ -157,10 +157,10 @@ public class DataSetInjectorService {
 		JsonNode jsonQuestionnaireModelSimpsons = objectMapper.createObjectNode();
 		JsonNode jsonQuestionnaireModelVqs = objectMapper.createObjectNode();
 		try {
-			 jsonArrayNomenclatureCities2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//public_communes-2019.json").getFile()));
-			 jsonArrayRegions2019 = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//public_regions-2019.json").getFile()));
-			 jsonQuestionnaireModelSimpsons = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//simpsons.json").getFile()));
-			 jsonQuestionnaireModelVqs = objectMapper.readTree(new File(getClass().getClassLoader().getResource("db//dataset//vqs.json").getFile()));
+			 jsonArrayNomenclatureCities2019 = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/public_communes-2019.json"));
+			 jsonArrayRegions2019 = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/public_regions-2019.json"));
+			 jsonQuestionnaireModelSimpsons = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/simpsons.json"));
+			 jsonQuestionnaireModelVqs = objectMapper.readTree(getClass().getClassLoader().getResourceAsStream("db/dataset/vqs.json"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -291,19 +291,18 @@ public class DataSetInjectorService {
 		return su;
 	}
 
-	private SurveyUnit createSurveyUnitCampaign2(String surveyUnitId, Campaign camp, QuestionnaireModel qm) {
+	private void createSurveyUnitCampaign2(String surveyUnitId, Campaign camp, QuestionnaireModel qm) {
 		SurveyUnit su = createSurveyUnit(surveyUnitId, camp, qm);
 		createParadataEvents(su);
-		return su;
 	}
 
-	private SurveyUnit createSurveyUnitCampaign1(String surveyUnitId, Campaign camp, QuestionnaireModel qm,
+	private void createSurveyUnitCampaign1(String surveyUnitId, Campaign camp, QuestionnaireModel qm,
 												 String personalization, String data, String comment, StateDataType state) {
 		SurveyUnit su = new SurveyUnit(surveyUnitId,camp,qm,null, personalization, data, comment);
 		surveyUnitRepository.save(su);
 		StateData stateData = createStateData(state, 1111111111L, CURRENT_PAGE, su);
 		su.stateData(stateData);
-		return surveyUnitRepository.save(su);
+		surveyUnitRepository.save(su);
 	}
 
 	private String getPersonalizationValue() {
@@ -331,7 +330,7 @@ public class DataSetInjectorService {
 
 		ObjectNode collectedNode = JsonNodeFactory.instance.objectNode();
 
-		// Create the "COMMENT" object node
+		//Create the "COMMENT" object node
 		ObjectNode commentNode = JsonNodeFactory.instance.objectNode();
 		commentNode.putNull(EDITED_PROPERTY);
 		commentNode.putNull(FORCED_PROPERTY);
@@ -339,11 +338,11 @@ public class DataSetInjectorService {
 		commentNode.putNull(PREVIOUS_PROPERTY);
 		commentNode.put(COLLECTED_PROPERTY, "Love it !");
 
-		// Add "COMMENT" node to the "COLLECTED" node
+		//Add "COMMENT" node to the "COLLECTED" node
 		collectedNode.set("COMMENT", commentNode);
 
 
-		// Create the "READY" object node
+		//Create the "READY" object node
 		ObjectNode readyNode = JsonNodeFactory.instance.objectNode();
 		readyNode.putNull(EDITED_PROPERTY);
 		readyNode.putNull(FORCED_PROPERTY);
@@ -351,10 +350,10 @@ public class DataSetInjectorService {
 		readyNode.putNull(PREVIOUS_PROPERTY);
 		readyNode.put(COLLECTED_PROPERTY, true);
 
-		// Add "READY" node to the "COLLECTED" node
+		//Add "READY" node to the "COLLECTED" node
 		collectedNode.set("READY", readyNode);
 
-		// Create the "PRODUCER" object node
+		//Create the "PRODUCER" object node
 		ObjectNode producerNode = JsonNodeFactory.instance.objectNode();
 		producerNode.putNull(EDITED_PROPERTY);
 		producerNode.putNull(FORCED_PROPERTY);
@@ -362,10 +361,10 @@ public class DataSetInjectorService {
 		producerNode.putNull(PREVIOUS_PROPERTY);
 		producerNode.put(COLLECTED_PROPERTY, "Matt Groening");
 
-		// Add "PRODUCER" node to the "COLLECTED" node
+		//Add "PRODUCER" node to the "COLLECTED" node
 		collectedNode.set("PRODUCER", producerNode);
 
-		// Add the "COLLECTED" array node to the root node
+		//Add the "COLLECTED" array node to the root node
 		jsonValue.set(COLLECTED_PROPERTY, collectedNode);
 
 		return jsonValue.toString();
