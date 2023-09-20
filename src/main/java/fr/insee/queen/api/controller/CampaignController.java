@@ -11,6 +11,9 @@ import fr.insee.queen.api.service.IntegrationService;
 import fr.insee.queen.api.service.PilotageApiService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -94,11 +97,12 @@ public class CampaignController {
 	@Operation(summary = "Create a campaign")
 	@PostMapping(path = "/campaigns")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public void createCampaign(@RequestBody CampaignInputDto campaignInputDto,
+	public HttpStatus createCampaign(@Valid @RequestBody CampaignInputDto campaignInputDto,
 							   Authentication auth) {
 		String userId = authHelper.getUserId(auth);
 		log.info("User {} requests campaign {} creation", userId, campaignInputDto.id());
 		campaignService.createCampaign(campaignInputDto);
+		return HttpStatus.CREATED;
 	}
 	
 	/**
@@ -111,7 +115,7 @@ public class CampaignController {
 	@Operation(summary = "Integrates the context of a campaign")
 	@PostMapping(path = "/campaign/context")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public IntegrationResultDto integrateContext(@RequestParam("file") MultipartFile file,
+	public IntegrationResultDto integrateContext(@NotNull @RequestParam("file") MultipartFile file,
 												 Authentication auth) {
 		String userId = authHelper.getUserId(auth);
 		log.info("User {} requests campaign creation via context ", userId);
@@ -127,8 +131,8 @@ public class CampaignController {
 	@Operation(summary = "Delete a campaign")
 	@DeleteMapping(path = "/campaign/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public void deleteCampaignById(@RequestParam("force") boolean force,
-								   @PathVariable(value = "id") String campaignId,
+	public HttpStatus deleteCampaignById(@RequestParam("force") boolean force,
+								   @NotBlank @PathVariable(value = "id") String campaignId,
 								   Authentication auth) {
 		String userId = auth.getName();
 		log.info("Admin {} requests deletion of campaign {}", userId, campaignId);
@@ -139,7 +143,7 @@ public class CampaignController {
 				pilotageApiService.isClosed(campaignId, authToken)) {
 			campaignService.delete(campaignId);
 			log.info("Campaign with id {} deleted", campaignId);
-			return;
+			return HttpStatus.NO_CONTENT;
 		}
 		throw new CampaignDeletionException(String.format("Unable to delete campaign %s, campaign isn't closed", campaignId));
 	}

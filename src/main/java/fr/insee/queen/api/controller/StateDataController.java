@@ -11,10 +11,10 @@ import fr.insee.queen.api.dto.surveyunit.SurveyUnitWithStateDto;
 import fr.insee.queen.api.service.StateDataService;
 import fr.insee.queen.api.service.SurveyUnitService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +51,7 @@ public class StateDataController {
 	@Operation(summary = "Get state-data by survey-unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/state-data")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public StateDataDto getStateDataBySurveyUnit(@PathVariable(value = "id") String surveyUnitId,
+	public StateDataDto getStateDataBySurveyUnit(@NotBlank @PathVariable(value = "id") String surveyUnitId,
 												  Authentication auth){
 		log.info("GET statedata for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
@@ -63,25 +63,23 @@ public class StateDataController {
 	* 
 	* @param stateDataInputDto	the value to update
 	* @param surveyUnitId	the id of reporting unit
-	* @return {@link HttpStatus 404} if data is not found, else {@link HttpStatus 200}
 	*
 	*/
 	@Operation(summary = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/state-data")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public HttpStatus setStateData(@PathVariable(value = "id") String surveyUnitId,
+	public void setStateData(@NotBlank @PathVariable(value = "id") String surveyUnitId,
 								   @RequestBody StateDataInputDto stateDataInputDto,
 								   Authentication auth) {
 		log.info("PUT statedata for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		stateDataService.updateStateData(surveyUnitId, stateDataInputDto);
-		return HttpStatus.OK;
 	}
 
 	@Operation(summary = "Get state-data for all survey-units defined in request body ")
 	@PostMapping(path = "survey-units/state-data")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public ResponseEntity<SurveyUnitOkNokDto> getStateDataBySurveyUnits(@RequestBody List<String> surveyUnitIdsToSearch){
+	public SurveyUnitOkNokDto getStateDataBySurveyUnits(@NotEmpty @RequestBody List<String> surveyUnitIdsToSearch){
 		List<SurveyUnitWithStateDto> surveyUnitsFound = surveyUnitService.findWithStateByIds(surveyUnitIdsToSearch);
 		List<String> surveyUnitIdsFound = surveyUnitsFound.stream().map(SurveyUnitWithStateDto::id).toList();
 		List<SurveyUnitDto> surveyUnitsNOK = surveyUnitIdsToSearch.stream()
@@ -91,6 +89,6 @@ public class StateDataController {
 		List<SurveyUnitDto> surveyUnitsOK = surveyUnitsFound.stream()
 				.map(su -> SurveyUnitDto.createSurveyUnitOKDtoWithStateData(su.id(), su.stateData()))
 				.toList();
-		return new ResponseEntity<>(new SurveyUnitOkNokDto(surveyUnitsOK, surveyUnitsNOK), HttpStatus.OK);
+		return new SurveyUnitOkNokDto(surveyUnitsOK, surveyUnitsNOK);
 	}
 }

@@ -5,8 +5,11 @@ import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.NomenclatureService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,7 +79,7 @@ public class NomenclatureController {
 	@Operation(summary = "Get list of required nomenclature by questionnaire Id ")
 	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public List<String> getListRequiredNomenclatureByQuestionnaireId(@PathVariable(value = "id") String questionnaireId) {
+	public List<String> getListRequiredNomenclatureByQuestionnaireId(@NotBlank @PathVariable(value = "id") String questionnaireId) {
 		log.info("GET required-nomenclatures for questionnaire model with id {}", questionnaireId);
 		List<String> requiredNomenclatureIds = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
 		if(requiredNomenclatureIds.isEmpty()) {
@@ -93,7 +96,8 @@ public class NomenclatureController {
 	@Operation(summary = "Post new  or update a nomenclature ")
 	@PostMapping(path = "/nomenclature")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public void postNomenclature(@RequestBody NomenclatureInputDto nomenclatureInputDto) {
+	public HttpStatus postNomenclature(@Valid @RequestBody NomenclatureInputDto nomenclatureInputDto) {
 		nomenclatureService.saveNomenclature(nomenclatureInputDto);
+		return HttpStatus.CREATED;
 	}
 }

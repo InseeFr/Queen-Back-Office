@@ -57,6 +57,6 @@ public class ParadataEventController {
 
 		habilitationComponent.checkHabilitations(auth, surveyUnitNode.textValue(), Constants.INTERVIEWER);
 		paradataEventService.save(paradataValue.toString());
-		return HttpStatus.OK;
+		return HttpStatus.CREATED;
 	}
 }
