@@ -1,6 +1,7 @@
 package fr.insee.queen.api.dto.input;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -14,5 +15,6 @@ public record CampaignInputDto(
 		String label,
 		@NotEmpty
 		Set<String> questionnaireIds,
+		@Valid
 		MetadataInputDto metadata){
 }

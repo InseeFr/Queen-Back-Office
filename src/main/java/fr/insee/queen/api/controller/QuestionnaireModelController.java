@@ -106,7 +106,8 @@ public class QuestionnaireModelController {
 	@Operation(summary = "Create a Questionnaire Model")
 	@PostMapping(path = "/questionnaire-models")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public HttpStatus createQuestionnaire(@RequestBody QuestionnaireModelInputDto questionnaireModelRest) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public void createQuestionnaire(@RequestBody QuestionnaireModelInputDto questionnaireModelRest) {
 		log.info("POST campaign with id {}", questionnaireModelRest.idQuestionnaireModel());
 		if (questionnaireModelService.existsById(questionnaireModelRest.idQuestionnaireModel())) {
 			throw new QuestionnaireModelCreationException(String.format("Cannot create questionnaire model %s as it already exists",
@@ -119,7 +120,6 @@ public class QuestionnaireModelController {
 		}
 
 		questionnaireModelService.createQuestionnaire(questionnaireModelRest);
-		return HttpStatus.CREATED;
 	}
 
 

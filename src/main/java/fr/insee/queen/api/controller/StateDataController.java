@@ -11,6 +11,7 @@ import fr.insee.queen.api.dto.surveyunit.SurveyUnitWithStateDto;
 import fr.insee.queen.api.service.StateDataService;
 import fr.insee.queen.api.service.SurveyUnitService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -69,7 +70,7 @@ public class StateDataController {
 	@PutMapping(path = "/survey-unit/{id}/state-data")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public void setStateData(@NotBlank @PathVariable(value = "id") String surveyUnitId,
-								   @RequestBody StateDataInputDto stateDataInputDto,
+								   @Valid @RequestBody StateDataInputDto stateDataInputDto,
 								   Authentication auth) {
 		log.info("PUT statedata for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);

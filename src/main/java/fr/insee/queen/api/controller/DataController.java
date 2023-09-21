@@ -7,6 +7,8 @@ import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.dto.data.DataDto;
 import fr.insee.queen.api.service.DataService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,7 +44,8 @@ public class DataController {
 	@Operation(summary = "Get data by reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/data")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public String getDataBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, Authentication auth) {
+	public String getDataBySurveyUnit(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+									  Authentication auth) {
 		log.info("GET Data for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		return dataService.getData(surveyUnitId);
@@ -59,7 +62,9 @@ public class DataController {
 	@Operation(summary = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/data")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public void setData(@RequestBody JsonNode dataValue, @PathVariable(value = "id") String surveyUnitId, Authentication auth) {
+	public void setData(@NotNull @RequestBody JsonNode dataValue,
+						@NotBlank @PathVariable(value = "id") String surveyUnitId,
+						Authentication auth) {
 		log.info("PUT data for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		dataService.updateData(surveyUnitId, dataValue);

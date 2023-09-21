@@ -50,7 +50,7 @@ public class NomenclatureController {
 	@Operation(summary = "Get Nomenclature by Id ")
 	@GetMapping(path = "/nomenclature/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public String getNomenclatureById(@PathVariable(value = "id") String nomenclatureId){
+	public String getNomenclatureById(@NotBlank @PathVariable(value = "id") String nomenclatureId){
 		log.info("GET nomenclature with id {}", nomenclatureId);
 		return nomenclatureService.getNomenclature(nomenclatureId).value();
 
@@ -65,7 +65,7 @@ public class NomenclatureController {
 	@Operation(summary = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public List<String> getListRequiredNomenclature(@PathVariable(value = "id") String campaignId) {
+	public List<String> getListRequiredNomenclature(@NotBlank @PathVariable(value = "id") String campaignId) {
 		log.info("GET required-nomenclatures for campaign with id {}", campaignId);
 		return nomenclatureService.findRequiredNomenclatureByCampaign(campaignId);
 	}
@@ -96,8 +96,8 @@ public class NomenclatureController {
 	@Operation(summary = "Post new  or update a nomenclature ")
 	@PostMapping(path = "/nomenclature")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public HttpStatus postNomenclature(@Valid @RequestBody NomenclatureInputDto nomenclatureInputDto) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public void postNomenclature(@Valid @RequestBody NomenclatureInputDto nomenclatureInputDto) {
 		nomenclatureService.saveNomenclature(nomenclatureInputDto);
-		return HttpStatus.CREATED;
 	}
 }

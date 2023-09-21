@@ -1,11 +1,13 @@
 package fr.insee.queen.api.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.service.PersonalizationService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,7 +44,8 @@ public class PersonalizationController {
 	@Operation(summary = "Get personalization by reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/personalization")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public String getPersonalizationBySurveyUnit(@PathVariable(value = "id") String surveyUnitId, Authentication auth){
+	public String getPersonalizationBySurveyUnit(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+												 Authentication auth){
 		log.info("GET personalization for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		return personalizationService.getPersonalization(surveyUnitId);
@@ -58,13 +61,11 @@ public class PersonalizationController {
 	@Operation(summary = "Update personalization by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/personalization")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public void setPersonalization(@PathVariable(value = "id") String surveyUnitId,
-										 @RequestBody JsonNode personalizationValues,
-										 Authentication auth) {
+	public void setPersonalization(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+								   @NotNull @RequestBody ArrayNode personalizationValues,
+								   Authentication auth) {
 		log.info("PUT personalization for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
 		personalizationService.updatePersonalization(surveyUnitId, personalizationValues);
 	}
-
-
 }

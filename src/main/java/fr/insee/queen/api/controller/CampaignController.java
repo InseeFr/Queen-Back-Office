@@ -97,12 +97,12 @@ public class CampaignController {
 	@Operation(summary = "Create a campaign")
 	@PostMapping(path = "/campaigns")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public HttpStatus createCampaign(@Valid @RequestBody CampaignInputDto campaignInputDto,
+	@ResponseStatus(HttpStatus.CREATED)
+	public void createCampaign(@Valid @RequestBody CampaignInputDto campaignInputDto,
 							   Authentication auth) {
 		String userId = authHelper.getUserId(auth);
 		log.info("User {} requests campaign {} creation", userId, campaignInputDto.id());
 		campaignService.createCampaign(campaignInputDto);
-		return HttpStatus.CREATED;
 	}
 	
 	/**
@@ -131,7 +131,8 @@ public class CampaignController {
 	@Operation(summary = "Delete a campaign")
 	@DeleteMapping(path = "/campaign/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public HttpStatus deleteCampaignById(@RequestParam("force") boolean force,
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteCampaignById(@RequestParam("force") boolean force,
 								   @NotBlank @PathVariable(value = "id") String campaignId,
 								   Authentication auth) {
 		String userId = auth.getName();
@@ -143,7 +144,6 @@ public class CampaignController {
 				pilotageApiService.isClosed(campaignId, authToken)) {
 			campaignService.delete(campaignId);
 			log.info("Campaign with id {} deleted", campaignId);
-			return HttpStatus.NO_CONTENT;
 		}
 		throw new CampaignDeletionException(String.format("Unable to delete campaign %s, campaign isn't closed", campaignId));
 	}

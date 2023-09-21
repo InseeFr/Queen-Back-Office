@@ -1,6 +1,6 @@
 package fr.insee.queen.api.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.AuthenticationHelper;
@@ -19,10 +19,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -96,13 +98,13 @@ public class SurveyUnitController {
 	@Operation(summary = "Post survey-unit to temp-zone")
 	@PostMapping(path = "/survey-unit/{id}/temp-zone")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
-	public HttpStatus postSurveyUnitByIdInTempZone(@NotBlank @PathVariable(value = "id") String surveyUnitId,
-												   @RequestBody JsonNode surveyUnit,
-												   Authentication auth) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public void postSurveyUnitByIdInTempZone(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+											 @NotNull @RequestBody ObjectNode surveyUnit,
+											 Authentication auth) {
 		log.info("POST survey-unit to temp-zone");
 		String userId = authHelper.getUserId(auth);
 		surveyUnitService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
-		return HttpStatus.CREATED;
 	}
 
 	/**
@@ -176,17 +178,17 @@ public class SurveyUnitController {
 	@Operation(summary = "Post survey-unit")
 	@PostMapping(path = "/campaign/{id}/survey-unit")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public HttpStatus createSurveyUnit(@NotBlank @PathVariable(value = "id") String campaignId,
-								 @Valid @RequestBody SurveyUnitInputDto surveyUnitInputDto,
-								 Authentication auth){
+	public ResponseEntity<Void> createSurveyUnit(@NotBlank @PathVariable(value = "id") String campaignId,
+													  @Valid @RequestBody SurveyUnitInputDto surveyUnitInputDto,
+													  Authentication auth){
 		log.info("POST survey-unit with id {}", surveyUnitInputDto.id());
 		if(surveyUnitService.existsById(surveyUnitInputDto.id())) {
 			updateSurveyUnitById(surveyUnitInputDto.id(), surveyUnitInputDto, auth);
-			return HttpStatus.OK;
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		log.info("Create survey-unit with id {}", surveyUnitInputDto.id());
 		surveyUnitService.createSurveyUnit(campaignId, surveyUnitInputDto);
-		return HttpStatus.CREATED;
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	/**
@@ -197,9 +199,9 @@ public class SurveyUnitController {
 	@Operation(summary = "Delete survey-unit")
 	@DeleteMapping(path = "/survey-unit/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public HttpStatus deleteSurveyUnit(@NotBlank @PathVariable(value = "id") String surveyUnitId){
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteSurveyUnit(@NotBlank @PathVariable(value = "id") String surveyUnitId){
 		log.info("DELETE survey-unit with id {}", surveyUnitId);
 		surveyUnitService.delete(surveyUnitId);
-		return HttpStatus.NO_CONTENT;
 	}
 }
