@@ -89,7 +89,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 	Optional<List<String>> findAllIds();
 
 	@Query("""
-		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitDepositProofDto(
+		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitWithStateDto(
 		    s.id,
 		    new fr.insee.queen.api.dto.statedata.StateDataDto(
 		        s.stateData.state,

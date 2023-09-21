@@ -1,7 +1,8 @@
 package fr.insee.queen.api.dto.input;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,11 +12,11 @@ public record SurveyUnitInputDto(
 		@NotNull
 		String questionnaireId,
 		@NotNull
-		JsonNode personalization,
+		ArrayNode personalization,
 		@NotNull
-		JsonNode data,
+		ObjectNode data,
 		@NotNull
-		JsonNode comment,
+		ObjectNode comment,
 		@NotNull
 		StateDataInputDto stateData) {
 }

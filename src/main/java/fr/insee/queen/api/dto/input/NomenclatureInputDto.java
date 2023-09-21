@@ -1,7 +1,7 @@
 package fr.insee.queen.api.dto.input;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,5 +12,5 @@ public record NomenclatureInputDto(
 		@NotBlank
 		String label,
 		@NotNull
-		JsonNode value){
+		ArrayNode value){
 }

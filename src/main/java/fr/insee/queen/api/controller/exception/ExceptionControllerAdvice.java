@@ -1,5 +1,7 @@
 package fr.insee.queen.api.controller.exception;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.api.exception.*;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,6 +9,7 @@ import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -104,6 +107,27 @@ public class ExceptionControllerAdvice {
         responseObject.put("status", "error");
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseObject));
         response.getWriter().flush();
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public void handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException e, HttpServletResponse response) throws IOException {
+        log.error(e.getMessage(), e);
+
+        Throwable rootCause = e.getRootCause();
+
+        String errorMessage = "Error when deserializing JSON";
+        if (rootCause instanceof JsonParseException parseException) {
+            String location = parseException.getLocation() != null ? "[line: " + parseException.getLocation().getLineNr() + ", column: " + parseException.getLocation().getColumnNr() +"]" : "";
+            errorMessage = "Error with JSON syntax. Check that your json is well formatted: " + parseException.getOriginalMessage() + " " + location;
+        }
+        if (rootCause instanceof JsonMappingException mappingException) {
+            String location = mappingException.getLocation() != null ? "[line: " + mappingException.getLocation().getLineNr() + ", column: " + mappingException.getLocation().getColumnNr() +"]" : "";
+            errorMessage = "Error when deserializing JSON. Check that your JSON properties are of the expected types " + location;
+        }
+        writeResponse(response, HttpStatus.BAD_REQUEST,
+                new ApiBaseException(errorMessage, ErrorCode.BAD_REQUEST));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
