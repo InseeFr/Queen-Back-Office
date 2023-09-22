@@ -38,4 +38,13 @@ public interface StateDataRepository extends JpaRepository<StateData, UUID> {
 	@Modifying
 	@Query("UPDATE StateData s SET s.currentPage=:currentPage, s.date=:date, s.state=:state WHERE s.surveyUnit.id=:surveyUnitId")
 	void updateStateData(String surveyUnitId, Long date, String currentPage, StateDataType state);
+
+	@Modifying
+	@Query(value = """
+	delete from state_data st where id in (
+	    select st.id from survey_unit s
+	        where s.id = st.survey_unit_id
+	        and s.campaign_id = :campaignId
+	)""", nativeQuery = true)
+	void deleteStateDatas(String campaignId);
 }

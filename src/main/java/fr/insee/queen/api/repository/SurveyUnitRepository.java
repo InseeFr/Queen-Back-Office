@@ -100,21 +100,15 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		from SurveyUnit s where s.id in :surveyUnitIds""")
 	List<SurveyUnitWithStateDto> findAllWithStateByIdIn(List<String> surveyUnitIds);
 
+	@Modifying
+	@Query("delete from SurveyUnit s where s.campaign.id=:campaignId")
+	void deleteSurveyUnits(String campaignId);
 
 	@Modifying
 	@Query(value = """
 		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id, data, comment, personalization)
 		VALUES (:id,:campaignId,:questionnaireId, :data, :comment, :personalization)""", nativeQuery = true)
 	void createSurveyUnit(String id, String campaignId, String questionnaireId, String data, String comment, String personalization);
-
-	@Modifying
-	@Query(value = """
-	delete from paradata_event where id in (
-	    select p.id from survey_unit s inner join paradata_event p
-	        on text(s.id) = p.value->>'idSU'
-	        where s.campaign_id = :campaignId
-	)""", nativeQuery = true)
-	void deleteParadataEvents(String campaignId);
 
 	@Modifying
 	@Query("update SurveyUnit s set s.personalization = :personalization where s.id = :surveyUnitId")

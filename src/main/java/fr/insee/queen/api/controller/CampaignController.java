@@ -144,6 +144,7 @@ public class CampaignController {
 				pilotageApiService.isClosed(campaignId, authToken)) {
 			campaignService.delete(campaignId);
 			log.info("Campaign with id {} deleted", campaignId);
+			return;
 		}
 		throw new CampaignDeletionException(String.format("Unable to delete campaign %s, campaign isn't closed", campaignId));
 	}

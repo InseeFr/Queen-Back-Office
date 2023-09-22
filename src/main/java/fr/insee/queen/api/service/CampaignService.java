@@ -7,12 +7,9 @@ import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.input.CampaignInputDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
 import fr.insee.queen.api.exception.CampaignCreationException;
 import fr.insee.queen.api.exception.EntityNotFoundException;
-import fr.insee.queen.api.repository.CampaignRepository;
-import fr.insee.queen.api.repository.QuestionnaireModelRepository;
-import fr.insee.queen.api.repository.SurveyUnitRepository;
+import fr.insee.queen.api.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,11 +24,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @Slf4j
 public class CampaignService {
-	private final SurveyUnitRepository surveyUnitRepository;
+	private final ParadataEventRepository paradataEventRepository;
+	private final StateDataRepository stateDataRepository;
+	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 	private final CampaignRepository campaignRepository;
+	private final SurveyUnitRepository surveyUnitRepository;
     private final QuestionnaireModelRepository questionnaireModelRepository;
 	private final QuestionnaireModelService questionnaireModelService;
-    private final SurveyUnitService surveyUnitService;
 
 	public Campaign getCampaign(String campaignId) {
 		return campaignRepository.findById(campaignId)
@@ -50,25 +49,28 @@ public class CampaignService {
 						questionnaireModelService.findAllQuestionnaireIdDtoByCampaignId(camp.id())))
 				.toList();
 	}
-	
+
 	public List<QuestionnaireModelIdDto> getQuestionnaireIds(String campaignId) {
 		Campaign campaign = getCampaign(campaignId);
 		return campaign.questionnaireModels().stream()
 				.map(q -> new QuestionnaireModelIdDto(q.id())).toList();
 	}
-	
+
 	public List<QuestionnaireModelDto> getQuestionnaireModels(String campaignId) {
 		Campaign campaign = getCampaign(campaignId);
 		return campaign.questionnaireModels().stream()
 				.map(q -> new QuestionnaireModelDto(q.value())).toList();
 	}
-	
+
 	public void delete(String campaignId) {
-    	List<SurveyUnitSummaryDto> surveyUnits = surveyUnitService.findByCampaignId(campaignId);
-		surveyUnitRepository.deleteParadataEvents(campaignId);
-    	if (!surveyUnits.isEmpty()) {
-			surveyUnitService.deleteAllByIds(surveyUnits.stream().map(SurveyUnitSummaryDto::id).toList());
+		if(!campaignRepository.existsById(campaignId)) {
+			throw new EntityNotFoundException(String.format("Campaign %s does not exist, unable to delete", campaignId));
 		}
+		paradataEventRepository.deleteParadataEvents(campaignId);
+		stateDataRepository.deleteStateDatas(campaignId);
+		surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
+		surveyUnitRepository.deleteSurveyUnits(campaignId);
+
 		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(campaignId);
 		if(qmList!=null && !qmList.isEmpty()) {
 			questionnaireModelRepository.deleteAll(qmList);

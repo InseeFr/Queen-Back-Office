@@ -22,4 +22,13 @@ public interface ParadataEventRepository extends JpaRepository<ParadataEvent, UU
 		INSERT INTO paradata_event (id, value, survey_unit_id)
 		VALUES (:id,:paradataValue,:surveyUnitId)""", nativeQuery = true)
     void createParadataEvent(UUID id, String paradataValue, String surveyUnitId);
+
+    @Modifying
+    @Query(value = """
+	delete from paradata_event p where id in (
+	    select p.id from survey_unit s
+	        where text(s.id) = p.value->>'idSU'
+	        and s.campaign_id = :campaignId
+	)""", nativeQuery = true)
+    void deleteParadataEvents(String campaignId);
 }

@@ -148,9 +148,4 @@ public class SurveyUnitService {
 				.findWithCampaignAndStateById(surveyUnitId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId)));
 	}
-
-	public void deleteAllByIds(List<String> surveyUnitIds) {
-		surveyUnitRepository.deleteAllById(surveyUnitIds);
-		surveyUnitTempZoneRepository.deleteAllBySurveyUnitIdIn(surveyUnitIds);
-	}
 }
