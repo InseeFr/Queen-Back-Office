@@ -1,4 +1,4 @@
-package fr.insee.queen.api.configuration;
+package fr.insee.queen.api.configuration.log;
 
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import jakarta.servlet.http.HttpServletRequest;
