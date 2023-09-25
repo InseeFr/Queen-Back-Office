@@ -19,7 +19,27 @@ public class CacheConfig {
                 Caffeine.newBuilder()
                         .initialCapacity(200)
                         .maximumSize(5000)
-                        .expireAfterAccess(5, TimeUnit.MINUTES)
+                        .expireAfterAccess(10, TimeUnit.MINUTES)
+                        .build());
+    }
+
+    @Bean
+    public CaffeineCache nomenclaturesCache() {
+        return new CaffeineCache("nomenclatures",
+                Caffeine.newBuilder()
+                        .initialCapacity(10)
+                        .maximumSize(20)
+                        .expireAfterWrite(8, TimeUnit.HOURS)
+                        .build());
+    }
+
+    @Bean
+    public CaffeineCache requiredNomenclaturesByCampaignCache() {
+        return new CaffeineCache("required-nomenclatures-campaign",
+                Caffeine.newBuilder()
+                        .initialCapacity(5)
+                        .maximumSize(10)
+                        .expireAfterWrite(8, TimeUnit.HOURS)
                         .build());
     }
 }

@@ -157,8 +157,7 @@ public class PilotageApiService {
             return Collections.emptyList();
         }
     }
-
-    @Cacheable("habilitations")
+    @Cacheable(value = "habilitations", key = "{#surveyUnit.id, #surveyUnit.campaignId, #role, #idep }")
     public boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, String role, String idep, String authToken) {
         String expectedRole;
         switch (role) {

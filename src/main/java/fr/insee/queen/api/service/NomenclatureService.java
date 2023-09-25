@@ -11,6 +11,7 @@ import fr.insee.queen.api.repository.NomenclatureRepository;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class NomenclatureService {
 
 	private final QuestionnaireModelRepository questionnaireModelRepository;
 
+	@Cacheable("nomenclatures")
 	public NomenclatureDto getNomenclature(String id) {
 		return nomenclatureRepository.findNomenclatureById(id)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Nomenclature %s was not found", id)));
@@ -45,6 +47,7 @@ public class NomenclatureService {
 				.toList();
 	}
 
+	@Cacheable("required-nomenclatures-campaign")
 	public List<String> findRequiredNomenclatureByCampaign(String campaignId) {
 		Campaign campaign = campaignRepository.findById(campaignId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s was not found", campaignId)));
