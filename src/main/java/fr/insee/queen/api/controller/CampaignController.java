@@ -135,7 +135,7 @@ public class CampaignController {
 	public void deleteCampaignById(@RequestParam("force") boolean force,
 								   @NotBlank @PathVariable(value = "id") String campaignId,
 								   Authentication auth) {
-		String userId = auth.getName();
+		String userId = authHelper.getUserId(auth);
 		log.info("Admin {} requests deletion of campaign {}", userId, campaignId);
 
 		String authToken = authHelper.getAuthToken(auth);
