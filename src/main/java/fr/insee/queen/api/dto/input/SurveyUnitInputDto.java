@@ -3,11 +3,11 @@ package fr.insee.queen.api.dto.input;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.validation.constraints.NotBlank;
+import fr.insee.queen.api.controller.validation.IdValid;
 import jakarta.validation.constraints.NotNull;
 
 public record SurveyUnitInputDto(
-		@NotBlank
+		@IdValid
 		String id,
 		@NotNull
 		String questionnaireId,
