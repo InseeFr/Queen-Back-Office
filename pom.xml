@@ -19,6 +19,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<testcontainers.version>1.15.2</testcontainers.version>
 		<fop.version>2.9</fop.version>
+		<snakeyaml.version>2.0</snakeyaml.version>
 	</properties>
 
 	<dependencies>
@@ -71,7 +72,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.3.8</version>
+			<version>42.5.4</version>
 		</dependency>
 
 		<dependency>
