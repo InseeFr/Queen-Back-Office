@@ -1,0 +1,45 @@
+name: Thou shall not pass !!! (Check version & run tests)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get version
+        id: version
+        run: echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)-rc" >> $GITHUB_OUTPUT
+
+      - name: Print version
+        run: echo ${{ steps.version.outputs.version }}
+
+      - uses: mukunku/tag-exists-action@v1.2.0
+        name: Check tag existence
+        id: check-tag-exists
+        with:
+          tag: ${{ steps.version-step.outputs.version }}
+
+      - name: Tag verification
+        id: check-tag
+        run: |
+          if [[ "${{ steps.check-tag-exists.outputs.exists }}" == "true" ]]; then
+            echo "Tag ${{ steps.version-step.outputs.version }} already exists, don't forget to upgrade your pom"
+            exit 1
+          fi
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Running tests
+        run: mvn test

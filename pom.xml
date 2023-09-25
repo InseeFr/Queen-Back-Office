@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>fr.insee.queen</groupId>
 	<artifactId>queen</artifactId>
-	<version>4.0.0-SNAPSHOT</version>
+	<version>4.0.0</version>
 	<name>Queen-Back-Office</name>
 	<description>Back-office services for Queen/Stromae</description>
 	<properties>
