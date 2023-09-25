@@ -20,7 +20,7 @@ public interface ParadataEventRepository extends JpaRepository<ParadataEvent, UU
     @Modifying
     @Query(value = """
 		INSERT INTO paradata_event (id, value, survey_unit_id)
-		VALUES (:id,:paradataValue,:surveyUnitId)""", nativeQuery = true)
+		VALUES (:id, to_json(:paradataValue), :surveyUnitId)""", nativeQuery = true)
     void createParadataEvent(UUID id, String paradataValue, String surveyUnitId);
 
     @Modifying

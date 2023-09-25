@@ -47,4 +47,16 @@ public interface StateDataRepository extends JpaRepository<StateData, UUID> {
 	        and s.campaign_id = :campaignId
 	)""", nativeQuery = true)
 	void deleteStateDatas(String campaignId);
+
+	@Modifying
+	@Query(value = """
+		INSERT into state_data(id, state, date, current_page, survey_unit_id) 
+		values (:id, :#{#state.name()}, :date, :currentPage, :surveyUnitId)""", nativeQuery = true)
+	void createStateData(UUID id, StateDataType state, Long date, String currentPage, String surveyUnitId);
+
+	@Modifying
+	@Query(value = """
+		INSERT into state_data(id) 
+		values (:id)""", nativeQuery = true)
+	void createStateData(UUID id);
 }
