@@ -41,7 +41,7 @@ application:
   #        username: user2
   #        password: 'yyy'
   #        roles:
-  corsOrigin:
+  corsOrigins:
 
   # Pearljam-bo url
   pilotage:

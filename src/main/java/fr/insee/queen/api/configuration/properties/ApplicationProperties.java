@@ -1,10 +1,12 @@
 package fr.insee.queen.api.configuration.properties;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Validated
@@ -14,7 +16,8 @@ public record ApplicationProperties(
     String title,
     String description,
     String[] publicUrls,
-    String corsOrigin,
+    @NotEmpty(message = "cors origins must be specified")
+    List<String> corsOrigins,
     @NotNull(message = "application.auth must be specified (KEYCLOAK, BASIC, or NOAUTH)")
     AuthEnumProperties auth) {
 
