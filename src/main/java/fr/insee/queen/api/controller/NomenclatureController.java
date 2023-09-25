@@ -97,7 +97,7 @@ public class NomenclatureController {
 	*/
 	@Operation(summary = "Post new  or update a nomenclature ")
 	@PostMapping(path = "/nomenclature")
-	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	@ResponseStatus(HttpStatus.CREATED)
 	public void postNomenclature(@Valid @RequestBody NomenclatureInputDto nomenclatureInputDto) {
 		nomenclatureService.saveNomenclature(nomenclatureInputDto);
