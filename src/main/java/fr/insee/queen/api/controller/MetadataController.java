@@ -1,12 +1,13 @@
 package fr.insee.queen.api.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.service.MetadataService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
+@Validated
 public class MetadataController {
 
 	private final MetadataService metadataService;
@@ -36,7 +38,7 @@ public class MetadataController {
 	@Operation(summary = "Get metadata by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/metadata")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public String getMetadataByCampaignId(@NotBlank @PathVariable(value = "id") String campaignId){
+	public String getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId){
 		log.info("GET metadata for campaign with id {}", campaignId);
 		return metadataService.getMetadata(campaignId).value();
 	}
@@ -50,7 +52,7 @@ public class MetadataController {
 	@Operation(summary = "Get metadata by questionnaire Id ")
 	@GetMapping(path = "/questionnaire/{id}/metadata")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public String getMetadataByQuestionnaireId(@NotBlank @PathVariable(value = "id") String questionnaireId) {
+	public String getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
 		log.info("GET metadata for questionnaire with id {}", questionnaireId);
 		return metadataService.getMetadataByQuestionnaireId(questionnaireId).value();
 	}

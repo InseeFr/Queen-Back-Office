@@ -5,6 +5,7 @@ import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
+import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDepositProofDto;
@@ -18,7 +19,6 @@ import fr.insee.queen.api.service.SurveyUnitService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.List;
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
+@Validated
 public class SurveyUnitController {
 	@Value("${application.pilotage.integration-override}")
 	private final String integrationOverride;
@@ -70,7 +72,7 @@ public class SurveyUnitController {
 	@Operation(summary = "Get survey-unit")
 	@GetMapping(path = "/survey-unit/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public SurveyUnitDto getSurveyUnitById(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+	public SurveyUnitDto getSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
 										   Authentication auth) {
 		log.info("GET survey-units with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
@@ -83,7 +85,7 @@ public class SurveyUnitController {
 	@Operation(summary = "Put survey-unit")
 	@PutMapping(path = {"/survey-unit/{id}"})
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
-	public void updateSurveyUnitById(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+	public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
 									 @RequestBody SurveyUnitInputDto surveyUnitInputDto,
 									 Authentication auth) {
 		log.info("PUT survey-unit for reporting unit with id {}", surveyUnitId);
@@ -99,7 +101,7 @@ public class SurveyUnitController {
 	@PostMapping(path = "/survey-unit/{id}/temp-zone")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
 	@ResponseStatus(HttpStatus.CREATED)
-	public void postSurveyUnitByIdInTempZone(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+	public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
 											 @NotNull @RequestBody ObjectNode surveyUnit,
 											 Authentication auth) {
 		log.info("POST survey-unit to temp-zone");
@@ -129,7 +131,7 @@ public class SurveyUnitController {
 	@Operation(summary = "Get list of survey units by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/survey-units")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public List<SurveyUnitSummaryDto> getListSurveyUnitByCampaign(@NotBlank @PathVariable(value = "id") String campaignId,
+	public List<SurveyUnitSummaryDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId,
 																  Authentication auth) {
 		log.info("GET survey-units for campaign with id {}", campaignId);
 		if(!campaignService.existsById(campaignId)) {
@@ -156,7 +158,7 @@ public class SurveyUnitController {
 	@Operation(summary = "Get deposit proof for a SU ")
 	@GetMapping(value = "/survey-unit/{id}/deposit-proof")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public void generateDepositProof(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+	public void generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
 									 Authentication auth,
 									 HttpServletResponse response) {
 		log.info("GET deposit-proof with survey unit id {}", surveyUnitId);
@@ -178,7 +180,7 @@ public class SurveyUnitController {
 	@Operation(summary = "Post survey-unit")
 	@PostMapping(path = "/campaign/{id}/survey-unit")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public ResponseEntity<Void> createSurveyUnit(@NotBlank @PathVariable(value = "id") String campaignId,
+	public ResponseEntity<Void> createSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
 													  @Valid @RequestBody SurveyUnitInputDto surveyUnitInputDto,
 													  Authentication auth){
 		log.info("POST survey-unit with id {}", surveyUnitInputDto.id());
@@ -200,7 +202,7 @@ public class SurveyUnitController {
 	@DeleteMapping(path = "/survey-unit/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteSurveyUnit(@NotBlank @PathVariable(value = "id") String surveyUnitId){
+	public void deleteSurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId){
 		log.info("DELETE survey-unit with id {}", surveyUnitId);
 		surveyUnitService.delete(surveyUnitId);
 	}

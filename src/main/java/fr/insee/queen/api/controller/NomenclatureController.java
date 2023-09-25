@@ -1,16 +1,17 @@
 package fr.insee.queen.api.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.NomenclatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
+@Validated
 public class NomenclatureController {
 
 	/**
@@ -50,7 +52,7 @@ public class NomenclatureController {
 	@Operation(summary = "Get Nomenclature by Id ")
 	@GetMapping(path = "/nomenclature/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public String getNomenclatureById(@NotBlank @PathVariable(value = "id") String nomenclatureId){
+	public String getNomenclatureById(@IdValid @PathVariable(value = "id") String nomenclatureId){
 		log.info("GET nomenclature with id {}", nomenclatureId);
 		return nomenclatureService.getNomenclature(nomenclatureId).value();
 
@@ -65,7 +67,7 @@ public class NomenclatureController {
 	@Operation(summary = "Get list of required nomenclature by campaign Id ")
 	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public List<String> getListRequiredNomenclature(@NotBlank @PathVariable(value = "id") String campaignId) {
+	public List<String> getListRequiredNomenclature(@IdValid @PathVariable(value = "id") String campaignId) {
 		log.info("GET required-nomenclatures for campaign with id {}", campaignId);
 		return nomenclatureService.findRequiredNomenclatureByCampaign(campaignId);
 	}
@@ -79,7 +81,7 @@ public class NomenclatureController {
 	@Operation(summary = "Get list of required nomenclature by questionnaire Id ")
 	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public List<String> getListRequiredNomenclatureByQuestionnaireId(@NotBlank @PathVariable(value = "id") String questionnaireId) {
+	public List<String> getListRequiredNomenclatureByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
 		log.info("GET required-nomenclatures for questionnaire model with id {}", questionnaireId);
 		List<String> requiredNomenclatureIds = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
 		if(requiredNomenclatureIds.isEmpty()) {

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
+@Validated
 public class ParadataEventController {
 	
 	private final ParadataEventService paradataEventService;

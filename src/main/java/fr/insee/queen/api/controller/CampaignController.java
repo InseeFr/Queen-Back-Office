@@ -2,6 +2,7 @@ package fr.insee.queen.api.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.controller.utils.AuthenticationHelper;
+import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.input.CampaignInputDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultDto;
@@ -12,7 +13,6 @@ import fr.insee.queen.api.service.PilotageApiService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +36,7 @@ import java.util.List;
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
+@Validated
 public class CampaignController {
 	private final AuthenticationHelper authHelper;
 	private final IntegrationService integrationService;
@@ -133,7 +135,7 @@ public class CampaignController {
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteCampaignById(@RequestParam("force") boolean force,
-								   @NotBlank @PathVariable(value = "id") String campaignId,
+								   @IdValid @PathVariable(value = "id") String campaignId,
 								   Authentication auth) {
 		String userId = authHelper.getUserId(auth);
 		log.info("Admin {} requests deletion of campaign {}", userId, campaignId);

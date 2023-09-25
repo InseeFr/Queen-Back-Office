@@ -1,6 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
@@ -13,13 +14,13 @@ import fr.insee.queen.api.service.NomenclatureService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
 import fr.insee.queen.api.service.SurveyUnitService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.List;
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
+@Validated
 public class QuestionnaireModelController {
 
 	private final SurveyUnitService surveyUnitService;
@@ -63,7 +65,7 @@ public class QuestionnaireModelController {
 	@GetMapping(path = "/campaign/{id}/questionnaires")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<QuestionnaireModelDto> getQuestionnaireModelByCampaignId(
-			@NotBlank @PathVariable(value = "id") String campaignId) {
+			@IdValid @PathVariable(value = "id") String campaignId) {
 		log.info("GET questionnaire for campaign with id {}", campaignId);
 		return campaignService.getQuestionnaireModels(campaignId);
 	}
@@ -77,7 +79,7 @@ public class QuestionnaireModelController {
 	@Operation(summary = "Get a questionnnaire model by Id ")
 	@GetMapping(path = "/questionnaire/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public QuestionnaireModelDto getQuestionnaireModelById(@NotBlank @PathVariable(value = "id") String questionnaireModelId) {
+	public QuestionnaireModelDto getQuestionnaireModelById(@IdValid @PathVariable(value = "id") String questionnaireModelId) {
 		log.info("GET questionnaire for id {}", questionnaireModelId);
 		return questionnaireModelService.getQuestionnaireModelDto(questionnaireModelId);
 	}
@@ -92,7 +94,7 @@ public class QuestionnaireModelController {
 	@GetMapping(path = "/campaign/{id}/questionnaire-id")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public List<QuestionnaireModelIdDto> getQuestionnaireModelIdByCampaignId(
-			@NotBlank @PathVariable(value = "id") String campaignId) {
+			@IdValid @PathVariable(value = "id") String campaignId) {
 		log.info("GET questionnaire Id for campaign with id {}", campaignId);
 		return campaignService.getQuestionnaireIds(campaignId);
 	}

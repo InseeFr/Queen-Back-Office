@@ -4,15 +4,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
+import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.comment.CommentDto;
 import fr.insee.queen.api.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
+@Validated
 public class CommentController {
 	
 	/**
@@ -45,7 +47,7 @@ public class CommentController {
 	@Operation(summary = "Get comment for reporting unit Id ")
 	@GetMapping(path = "/survey-unit/{id}/comment")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public String getCommentBySurveyUnit(@NotBlank @PathVariable(value = "id") String surveyUnitId,
+	public String getCommentBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId,
 										 Authentication auth){
 		log.info("GET comment for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
@@ -63,7 +65,7 @@ public class CommentController {
 	@PutMapping(path = "/survey-unit/{id}/comment")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public void setComment(@NotNull @RequestBody ObjectNode commentValue,
-						   @NotBlank @PathVariable(value = "id") String surveyUnitId,
+						   @IdValid @PathVariable(value = "id") String surveyUnitId,
 						   Authentication auth) {
 		log.info("PUT comment for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
