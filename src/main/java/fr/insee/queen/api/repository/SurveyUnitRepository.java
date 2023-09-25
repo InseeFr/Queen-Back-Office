@@ -107,20 +107,20 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 	@Modifying
 	@Query(value = """
 		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id, data, comment, personalization)
-		VALUES (:id,:campaignId,:questionnaireId, :data, :comment, :personalization)""", nativeQuery = true)
+		VALUES (:id, :campaignId, :questionnaireId, to_json(:data), to_json(:comment), to_json(:personalization))""", nativeQuery = true)
 	void createSurveyUnit(String id, String campaignId, String questionnaireId, String data, String comment, String personalization);
 
 	@Modifying
 	@Query("update SurveyUnit s set s.personalization = :personalization where s.id = :surveyUnitId")
-	void updatePersonalization(String surveyUnit, String personalization);
+	void updatePersonalization(String surveyUnitId, String personalization);
 
 	@Modifying
 	@Query("update SurveyUnit s set s.comment = :comment where s.id = :surveyUnitId")
-	void updateComment(String surveyUnit, String comment);
+	void updateComment(String surveyUnitId, String comment);
 
 	@Modifying
 	@Query("update SurveyUnit s set s.data = :data where s.id = :surveyUnitId")
-	void updateData(String surveyUnit, String data);
+	void updateData(String surveyUnitId, String data);
 
 	@Query("select s.comment from SurveyUnit s where s.id=:surveyUnitId")
 	String getComment(String surveyUnitId);
