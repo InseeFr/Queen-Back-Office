@@ -1,9 +1,7 @@
 package fr.insee.queen.api.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fr.insee.queen.api.domain.StateData;
 import fr.insee.queen.api.domain.StateDataType;
-import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.domain.SurveyUnitTempZone;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
@@ -106,15 +104,12 @@ public class SurveyUnitService {
 				surveyUnit.comment().toString(),
 				surveyUnit.personalization().toString());
 
-		SurveyUnit su = surveyUnitRepository.findById(surveyUnitId)
-						.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s should have been created, but is not", surveyUnitId)));
-
-		StateData stateData = new StateData();
 		StateDataInputDto stateDataInput = surveyUnit.stateData();
-		if(stateDataInput != null) {
-			stateData = new StateData(UUID.randomUUID(), stateDataInput.state(), stateDataInput.date(), stateDataInput.currentPage(), su);
+		if(stateDataInput == null) {
+			stateDataRepository.createStateData(UUID.randomUUID());
+			return;
 		}
-		stateDataRepository.save(stateData);
+		stateDataRepository.createStateData(UUID.randomUUID(), stateDataInput.state(), stateDataInput.date(), stateDataInput.currentPage(), surveyUnitId);
 	}
 
 	public List<SurveyUnitSummaryDto> findSummaryByIds(List<String> surveyUnits) {
