@@ -1,13 +1,13 @@
 package fr.insee.queen.api.configuration.log;
 
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
+import fr.insee.queen.api.constants.Constants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -34,20 +34,13 @@ public class LogInterceptor implements HandlerInterceptor {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String userId = switch (applicationProperties.auth()) {
-            case BASIC -> {
-                Object basic = authentication.getPrincipal();
-                if (basic instanceof UserDetails userDetails) {
-                    yield userDetails.getUsername();
-                }
-                yield basic.toString();
-            }
             case KEYCLOAK -> {
                 if(authentication.getCredentials() instanceof Jwt jwt) {
                     yield jwt.getClaims().get("preferred_username").toString();
                 }
-                yield "GUEST";
+                yield Constants.GUEST;
             }
-            default -> "GUEST";
+            default -> Constants.GUEST;
         };
 
 

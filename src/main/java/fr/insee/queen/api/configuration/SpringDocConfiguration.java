@@ -24,23 +24,6 @@ public class SpringDocConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "application.auth", havingValue = "BASIC")
-    OpenAPI basicAuthOpenAPI(BuildProperties buildProperties) {
-        String securitySchemeName = "basicAuth";
-        return generateOpenAPI(buildProperties)
-                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
-                .components(
-                        new Components()
-                                .addSecuritySchemes(securitySchemeName,
-                                        new SecurityScheme()
-                                                .name(securitySchemeName)
-                                                .type(SecurityScheme.Type.HTTP)
-                                                .scheme("basic")
-                                )
-                );
-    }
-
-    @Bean
     @ConditionalOnProperty(name = "application.auth", havingValue = "KEYCLOAK")
     OpenAPI keycloakOpenAPI(ApplicationProperties applicationProperties, KeycloakProperties keycloakProperties, BuildProperties buildProperties) {
         String authUrl = keycloakProperties.authServerUrl() + "/realms/" + keycloakProperties.realm() + "/protocol/openid-connect";
