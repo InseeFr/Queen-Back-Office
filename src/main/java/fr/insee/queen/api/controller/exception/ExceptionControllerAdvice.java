@@ -139,6 +139,15 @@ public class ExceptionControllerAdvice {
                 new ApiBaseException(e.getMessage(), ErrorCode.OBJECT_NOT_FOUND));
     }
 
+    @ExceptionHandler(AuthenticationTokenException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public void authenticationTokenExceptionException(AuthenticationTokenException e, HttpServletResponse response) throws IOException {
+        log.error(e.getMessage(), e);
+        writeResponse(response, HttpStatus.INTERNAL_SERVER_ERROR,
+                new ApiBaseException("An error occurred", ErrorCode.SERVER_EXCEPTION));
+    }
+
     @ExceptionHandler(HabilitationException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody

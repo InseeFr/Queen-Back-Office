@@ -30,6 +30,7 @@ public class NoAuthSecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/**")
+                .csrf(csrfConfig -> csrfConfig.disable())
                 .cors(Customizer.withDefaults())
                 .headers(headers -> headers
                         .xssProtection(xssConfig -> xssConfig.headerValue(XXssProtectionHeaderWriter.HeaderValue.DISABLED))
@@ -40,7 +41,9 @@ public class NoAuthSecurityConfiguration {
                                 referrerPolicy
                                         .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN)
                         ))
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                .anonymous(anonymousConfig -> anonymousConfig
+                        .authorities("ROLE_ADMIN"))
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .build();
     }
     @Bean

@@ -2,6 +2,7 @@ application:
   host: http://localhost:8080
   public-urls:
     - /swagger-ui/**
+    - /swagger-ui.html
     - /v3/api-docs/**
     - /csrf
     - /
@@ -16,10 +17,9 @@ application:
     admin:
     webclient:
     reviewer-alternative:
-  auth:  # KEYCLOAK | BASIC | NOAUTH
-  ## if KEYCLOAK or BASIC auth
+  auth:  # KEYCLOAK | NOAUTH
+  ## if KEYCLOAK enabled
   #security:
-  #  # if KEYCLOAK auth enabled
   #  keycloak:
   #    auth-server-url:
   #    realm:
@@ -27,20 +27,6 @@ application:
   #    principal-attribute:
   #    # other claim to read roles from in token
   #    additional-realm:
-  #
-  #  # if BASIC auth enabled, configure users
-  #  basic:
-  #    users:
-  #      -
-  #        username: user1
-  #        password: 'xxx'
-  #        roles:
-  #          - ${application.roles.interviewer}
-  #          - ${application.roles.reviewer}
-  #      -
-  #        username: user2
-  #        password: 'yyy'
-  #        roles:
   corsOrigins:
 
   # Pearljam-bo url
@@ -82,12 +68,12 @@ spring:
         auto: validate
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${application.security.keycloak.auth-server-url}/realms/${application.security.keycloak.realm}
+  ## if Keycloak enabled
+  #security:
+  #  oauth2:
+  #    resourceserver:
+  #      jwt:
+  #        issuer-uri: ${application.security.keycloak.auth-server-url}/realms/${application.security.keycloak.realm}
 
   liquibase:
     enabled: true
@@ -97,9 +83,10 @@ spring:
 
 springdoc:
   swagger-ui:
-    oauth:
-      client-id: ${application.security.keycloak.client-id}
-    oauth2RedirectUrl: ${application.host}/swagger-ui/oauth2-redirect.html
+    ## if keycloak enabled
+    #oauth:
+    #  client-id: ${application.security.keycloak.client-id}
+    #oauth2RedirectUrl: ${application.host}/swagger-ui/oauth2-redirect.html
     path: /
     syntax-highlight:
       activated: false

@@ -2,10 +2,10 @@ package fr.insee.queen.api.controller.utils;
 
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.constants.Constants;
+import fr.insee.queen.api.exception.AuthenticationTokenException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.AbstractOAuth2Token;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
@@ -17,28 +17,24 @@ public class AuthenticationHelper {
     private ApplicationProperties applicationProperties;
 
     public String getAuthToken(Authentication auth) {
-        if(auth == null || !(auth.getCredentials() instanceof AbstractOAuth2Token token)) {
-            return null;
+        if(!(auth.getCredentials() instanceof AbstractOAuth2Token token)) {
+            throw new AuthenticationTokenException("Cannot retrieve token for the user. Ensure you are not in NOAUTH mode with piloteage api check enabled");
         }
         return token.getTokenValue();
     }
 
     public String getUserId(Authentication authentication) {
-        return switch (applicationProperties.auth()) {
-            case BASIC -> {
-                Object basic = authentication.getPrincipal();
-                if (basic instanceof UserDetails userDetails) {
-                    yield userDetails.getUsername();
-                }
-                yield basic.toString();
+        switch(applicationProperties.auth()) {
+            case NOAUTH -> {
+                return Constants.GUEST;
             }
             case KEYCLOAK -> {
                 if(authentication.getCredentials() instanceof Jwt jwt) {
-                    yield jwt.getClaims().get("preferred_username").toString();
+                    return jwt.getClaims().get("preferred_username").toString();
                 }
-                yield Constants.GUEST;
+                throw new AuthenticationTokenException("Cannot retrieve token for the user.");
             }
-            default -> Constants.GUEST;
-        };
+            default -> throw new AuthenticationTokenException("No authentication mode used");
+        }
     }
 }
