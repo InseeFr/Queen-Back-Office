@@ -31,8 +31,7 @@ public class HabilitationComponent {
             return;
         }
 
-        if(applicationProperties.auth().equals(AuthEnumProperties.NOAUTH) ||
-                applicationProperties.auth().equals(AuthEnumProperties.BASIC)) {
+        if(applicationProperties.auth().equals(AuthEnumProperties.NOAUTH)) {
             return;
         }
 
