@@ -48,24 +48,24 @@ jobs:
         id: previousTag
         run: echo "previousTag=$(git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | grep '^[0-9]\+\.[0-9]\+\.[0-9]\+\-rc$' | tail -1)" >> $GITHUB_OUTPUT
 
-      - name: Create release note
-        id: changelog
-        uses: requarks/changelog-action@v1
-        with:
-          fromTag: ${{ github.sha }}
-          toTag: ${{ steps.previousTag.outputs.previousTag}}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          writeToFile: false
-
-      - uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ needs.check-version.outputs.release-version }}
-          target_commitish: ${{ github.head_ref || github.ref }}
-          name: ${{ needs.check-version.outputs.release-version }}
-          body: ${{steps.changelog.outputs.changes}}
-          prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Create release note
+#        id: changelog
+#        uses: requarks/changelog-action@v1
+#        with:
+#          fromTag: ${{ github.sha }}
+#          toTag: ${{ steps.previousTag.outputs.previousTag}}
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          writeToFile: false
+#
+#      - uses: softprops/action-gh-release@v1
+#        with:
+#          tag_name: ${{ needs.check-version.outputs.release-version }}
+#          target_commitish: ${{ github.head_ref || github.ref }}
+#          name: ${{ needs.check-version.outputs.release-version }}
+#          body: ${{steps.changelog.outputs.changes}}
+#          prerelease: true
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-release:
     needs: create-release
