@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional
 @Slf4j
 @AllArgsConstructor
 public class SurveyUnitService {
@@ -56,6 +55,7 @@ public class SurveyUnitService {
 				.orElseThrow(() -> new EntityNotFoundException("List of survey unit ids not found"));
 	}
 
+	@Transactional
 	public void updateSurveyUnit(String surveyUnitId, SurveyUnitInputDto surveyUnit) {
 		if(!surveyUnitRepository.existsById(surveyUnitId)) {
 			throw new EntityNotFoundException(String.format("Survey unit id %s not found", surveyUnitId));
@@ -92,6 +92,7 @@ public class SurveyUnitService {
         }
 	}
 
+	@Transactional
 	public void createSurveyUnit(String campaignId, SurveyUnitInputDto surveyUnit) {
 		if(!campaignRepository.existsById(campaignId)) {
 			throw new EntityNotFoundException(String.format("Campaign %s was not found", campaignId));
@@ -119,7 +120,8 @@ public class SurveyUnitService {
 	public List<SurveyUnitWithStateDto> findWithStateByIds(List<String> surveyUnits) {
 		return surveyUnitRepository.findAllWithStateByIdIn(surveyUnits);
 	}
-	
+
+	@Transactional
 	public void delete(String surveyUnitId) {
 		if(!surveyUnitRepository.existsById(surveyUnitId)) {
 			throw new EntityNotFoundException(String.format("Survey unit id %s not found", surveyUnitId));

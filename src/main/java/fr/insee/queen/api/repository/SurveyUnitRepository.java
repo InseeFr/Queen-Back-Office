@@ -2,7 +2,6 @@ package fr.insee.queen.api.repository;
 
 import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.surveyunit.*;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +16,6 @@ import java.util.Optional;
 * @author Claudel Benjamin
 * 
 */
-@Transactional
 @Repository
 public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> {
 

@@ -47,7 +47,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 @Service
-@Transactional
 @Slf4j
 @AllArgsConstructor
 public class IntegrationService {
@@ -67,6 +66,7 @@ public class IntegrationService {
 	private static final String CAMPAIGN_ID = "CampaignId";
 	private static final String NOMENCLATURE = "Nomenclature";
 
+	@Transactional
 	public IntegrationResultDto integrateContext(MultipartFile file) {
 		try {
 			File zip = File.createTempFile(UUID.randomUUID().toString(), "temp");

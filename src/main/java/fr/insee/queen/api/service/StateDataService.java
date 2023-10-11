@@ -22,6 +22,11 @@ public class StateDataService {
 
 	private final StateDataRepository stateDataRepository;
 
+	public StateDataDto getStateData(String surveyUnitId) {
+		return stateDataRepository.findBySurveyUnitId(surveyUnitId)
+				.orElseThrow(() -> new EntityNotFoundException(String.format("State data not found for survey unit %s", surveyUnitId)));
+	}
+	
 	public void updateStateData(String surveyUnitId, StateDataInputDto stateDataInput) {
 		Optional<StateData> stateDataOptional = stateDataRepository.findEntityBySurveyUnitId(surveyUnitId);
 		SurveyUnit surveyUnit = surveyUnitRepository.getReferenceById(surveyUnitId);
@@ -36,10 +41,5 @@ public class StateDataService {
 		}
 		StateData stateData = new StateData(UUID.randomUUID(), stateDataInput.state(), stateDataInput.date(), stateDataInput.currentPage(), surveyUnit);
 		stateDataRepository.save(stateData);
-	}
-
-	public StateDataDto getStateData(String surveyUnitId) {
-		return stateDataRepository.findBySurveyUnitId(surveyUnitId)
-				.orElseThrow(() -> new EntityNotFoundException(String.format("State data not found for survey unit %s", surveyUnitId)));
 	}
 }

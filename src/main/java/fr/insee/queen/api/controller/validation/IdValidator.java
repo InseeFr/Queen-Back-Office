@@ -14,7 +14,6 @@ public class IdValidator implements ConstraintValidator<IdValid, String>
 
     @Override
     public boolean isValid(String identifier, ConstraintValidatorContext cxt) {
-        System.out.println("TEST");
         if(identifier == null) {
             return false;
         }

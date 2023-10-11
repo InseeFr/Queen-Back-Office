@@ -3,12 +3,10 @@ package fr.insee.queen.api.service;
 import fr.insee.queen.api.repository.ParadataEventRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class ParadataEventService {
 

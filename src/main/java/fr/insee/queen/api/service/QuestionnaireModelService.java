@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class QuestionnaireModelService {
 
@@ -48,10 +47,12 @@ public class QuestionnaireModelService {
 		return questionnaireModelRepository.findByCampaignId(id);
 	}
 
+	@Transactional
 	public void save(QuestionnaireModel qm) {
 		questionnaireModelRepository.save(qm);
 	}
 
+	@Transactional
 	public void createQuestionnaire(QuestionnaireModelInputDto qm) {
 		QuestionnaireModel questionnaireModel = new QuestionnaireModel();
 		questionnaireModel.id(qm.idQuestionnaireModel());

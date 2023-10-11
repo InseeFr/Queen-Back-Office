@@ -3,7 +3,6 @@ package fr.insee.queen.api.repository;
 import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelCampaignDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,7 +16,6 @@ import java.util.Optional;
 * @author Claudel Benjamin
 * 
 */
-@Transactional
 @Repository
 public interface QuestionnaireModelRepository extends JpaRepository<QuestionnaireModel, String> {
 	

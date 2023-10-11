@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional
 @AllArgsConstructor
 @Slf4j
 public class CampaignService {
@@ -62,6 +61,7 @@ public class CampaignService {
 				.map(q -> new QuestionnaireModelDto(q.value())).toList();
 	}
 
+	@Transactional
 	public void delete(String campaignId) {
 		if(!campaignRepository.existsById(campaignId)) {
 			throw new EntityNotFoundException(String.format("Campaign %s does not exist, unable to delete", campaignId));
@@ -78,6 +78,7 @@ public class CampaignService {
 		campaignRepository.deleteById(campaignId);
 	}
 
+	@Transactional
 	public void createCampaign(CampaignInputDto campaignInputDto) {
 		String campaignId = campaignInputDto.id().toUpperCase();
 
