@@ -12,6 +12,8 @@ import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,7 @@ public class CampaignService {
     private final QuestionnaireModelRepository questionnaireModelRepository;
 	private final QuestionnaireModelService questionnaireModelService;
 
+	@Cacheable("campaigns")
 	public Campaign getCampaign(String campaignId) {
 		return campaignRepository.findById(campaignId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s was not found", campaignId)));
@@ -62,6 +65,7 @@ public class CampaignService {
 	}
 
 	@Transactional
+	@CacheEvict("campaigns")
 	public void delete(String campaignId) {
 		if(!campaignRepository.existsById(campaignId)) {
 			throw new EntityNotFoundException(String.format("Campaign %s does not exist, unable to delete", campaignId));

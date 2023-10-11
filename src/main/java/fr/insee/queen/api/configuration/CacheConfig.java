@@ -17,9 +17,9 @@ public class CacheConfig {
     public CaffeineCache habilitationCache() {
         return new CaffeineCache("habilitations",
                 Caffeine.newBuilder()
-                        .initialCapacity(200)
-                        .maximumSize(5000)
-                        .expireAfterAccess(10, TimeUnit.MINUTES)
+                        .initialCapacity(2000)
+                        .maximumSize(10000)
+                        .expireAfterAccess(5, TimeUnit.MINUTES)
                         .build());
     }
 
@@ -28,7 +28,17 @@ public class CacheConfig {
         return new CaffeineCache("nomenclatures",
                 Caffeine.newBuilder()
                         .initialCapacity(10)
-                        .maximumSize(20)
+                        .maximumSize(100)
+                        .expireAfterWrite(8, TimeUnit.HOURS)
+                        .build());
+    }
+
+    @Bean
+    public CaffeineCache campaignsCache() {
+        return new CaffeineCache("campaigns",
+                Caffeine.newBuilder()
+                        .initialCapacity(10)
+                        .maximumSize(100)
                         .expireAfterWrite(8, TimeUnit.HOURS)
                         .build());
     }
