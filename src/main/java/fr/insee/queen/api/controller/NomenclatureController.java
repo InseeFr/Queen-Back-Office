@@ -3,7 +3,6 @@ package fr.insee.queen.api.controller;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.input.NomenclatureInputDto;
-import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.NomenclatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -56,38 +55,6 @@ public class NomenclatureController {
 		log.info("GET nomenclature with id {}", nomenclatureId);
 		return nomenclatureService.getNomenclature(nomenclatureId).value();
 
-	}
-
-	/**
-	* This method is using to get all nomenclature ids associated to a specific campaign
-	*
-	* @param campaignId the id of campaign
-	* @return List of {@link String} containing nomenclature ids
-	*/
-	@Operation(summary = "Get list of required nomenclature by campaign Id ")
-	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
-	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public List<String> getListRequiredNomenclature(@IdValid @PathVariable(value = "id") String campaignId) {
-		log.info("GET required-nomenclatures for campaign with id {}", campaignId);
-		return nomenclatureService.findRequiredNomenclatureByCampaign(campaignId);
-	}
-
-	/**
-	* This method is using to get all nomenclature ids associated to a specific questionnaire
-	*
-	* @param questionnaireId the id of questionnaire
-	* @return List of {@link String} containing nomenclature ids
-	*/
-	@Operation(summary = "Get list of required nomenclature by questionnaire Id ")
-	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
-	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public List<String> getListRequiredNomenclatureByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
-		log.info("GET required-nomenclatures for questionnaire model with id {}", questionnaireId);
-		List<String> requiredNomenclatureIds = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
-		if(requiredNomenclatureIds.isEmpty()) {
-			throw new EntityNotFoundException(String.format("No required nomenclatures found for questionnaire %s", questionnaireId));
-		}
-		return requiredNomenclatureIds;
 	}
 
 	/**

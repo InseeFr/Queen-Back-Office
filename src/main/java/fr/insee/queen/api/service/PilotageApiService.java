@@ -1,13 +1,11 @@
 package fr.insee.queen.api.service;
 
+import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
-import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.exception.PilotageApiException;
-import fr.insee.queen.api.repository.CampaignRepository;
-import fr.insee.queen.api.repository.SurveyUnitRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,16 +36,14 @@ public class PilotageApiService {
     private final String alternativeHabilitationServiceURL;
     @Value("${application.pilotage.alternative-habilitation-service.campaignids-regex}")
     private final String campaignIdRegexWithAlternativeHabilitationService;
-    private SurveyUnitRepository surveyUnitRepository;
+    private SurveyUnitService surveyUnitService;
 
-    private CampaignRepository campaignRepository;
+    private CampaignService campaignService;
 
     private final RestTemplate restTemplate;
 
     public boolean isClosed(String campaignId, String authToken) {
-        if(!campaignRepository.existsById(campaignId)) {
-            throw new EntityNotFoundException(String.format("Campaign %s was not found", campaignId));
-        }
+        campaignService.checkExistence(campaignId);
         final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + "/campaigns/" + campaignId + "/ongoing";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -94,7 +90,7 @@ public class PilotageApiService {
         for(LinkedHashMap<String, String> map : objects) {
             if(map.get("campaign").equals(campaignId)) {
                 log.info("ID : {}", map.get("id"));
-                Optional<SurveyUnitSummaryDto> su = surveyUnitRepository.findSummaryById(map.get("id"));
+                Optional<SurveyUnitSummaryDto> su = surveyUnitService.findSummaryById(map.get("id"));
                 if(su.isPresent() && surveyUnitMap.get(su.get().id())==null) {
                     SurveyUnitSummaryDto surveyUnitDto = su.get();
                     log.info("ID is present");
@@ -157,7 +153,7 @@ public class PilotageApiService {
             return Collections.emptyList();
         }
     }
-    @Cacheable(value = "habilitations", key = "{#surveyUnit.id, #surveyUnit.campaignId, #role, #idep }")
+    @Cacheable(value = CacheName.HABILITATION, key = "{#surveyUnit.id, #surveyUnit.campaignId, #role, #idep }")
     public boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, String role, String idep, String authToken) {
         String expectedRole;
         switch (role) {

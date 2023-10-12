@@ -134,9 +134,7 @@ public class SurveyUnitController {
 	public List<SurveyUnitSummaryDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId,
 																  Authentication auth) {
 		log.info("GET survey-units for campaign with id {}", campaignId);
-		if(!campaignService.existsById(campaignId)) {
-			throw new EntityNotFoundException(String.format("Campaign %s was not found", campaignId));
-		}
+		campaignService.checkExistence(campaignId);
 
 		List<SurveyUnitSummaryDto> surveyUnits;
 		String userId = authHelper.getUserId(auth);

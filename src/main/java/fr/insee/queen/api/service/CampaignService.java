@@ -1,5 +1,6 @@
 package fr.insee.queen.api.service;
 
+import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.domain.Campaign;
 import fr.insee.queen.api.domain.Metadata;
 import fr.insee.queen.api.domain.QuestionnaireModel;
@@ -12,13 +13,16 @@ import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -32,15 +36,38 @@ public class CampaignService {
 	private final SurveyUnitRepository surveyUnitRepository;
     private final QuestionnaireModelRepository questionnaireModelRepository;
 	private final QuestionnaireModelService questionnaireModelService;
+	private final CacheManager cacheManager;
 
-	@Cacheable("campaigns")
 	public Campaign getCampaign(String campaignId) {
-		return campaignRepository.findById(campaignId)
+		// not using @Cacheable annotation here, to avoid problems with proxy class generation
+		Campaign campaign = Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN)).get(campaignId, Campaign.class);
+		if(campaign != null) {
+			return campaign;
+		}
+
+		campaign = campaignRepository.findWithQuestionnairesById(campaignId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s was not found", campaignId)));
+
+		Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN)).putIfAbsent(campaignId, campaign);
+		return campaign;
 	}
 
-	public boolean existsById(String campaignId) {
-		return campaignRepository.existsById(campaignId);
+	public void checkExistence(String campaignId) {
+		if(!existsById(campaignId)) {
+			throw new EntityNotFoundException(String.format("Campaign %s was not found", campaignId));
+		}
+	}
+
+	private boolean existsById(String campaignId) {
+		// not using @Cacheable annotation here, to avoid problems with proxy class generation
+		Boolean isCampaignPresent = Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId, Boolean.class);
+		if(isCampaignPresent != null) {
+			return isCampaignPresent;
+		}
+		isCampaignPresent = campaignRepository.existsById(campaignId);
+		Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).putIfAbsent(campaignId, isCampaignPresent);
+
+		return isCampaignPresent;
 	}
 
 	public List<CampaignSummaryDto> getAllCampaigns() {
@@ -65,19 +92,31 @@ public class CampaignService {
 	}
 
 	@Transactional
-	@CacheEvict("campaigns")
+	@Caching(evict = {
+			@CacheEvict(CacheName.CAMPAIGN),
+			@CacheEvict(CacheName.CAMPAIGN_NOMENCLATURES),
+			@CacheEvict(CacheName.METADATA),
+			@CacheEvict(CacheName.CAMPAIGN_EXIST)
+	})
 	public void delete(String campaignId) {
-		if(!campaignRepository.existsById(campaignId)) {
-			throw new EntityNotFoundException(String.format("Campaign %s does not exist, unable to delete", campaignId));
-		}
+		checkExistence(campaignId);
 		paradataEventRepository.deleteParadataEvents(campaignId);
 		stateDataRepository.deleteStateDatas(campaignId);
 		surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
 		surveyUnitRepository.deleteSurveyUnits(campaignId);
 
 		List<QuestionnaireModel> qmList = questionnaireModelService.findQuestionnaireModelByCampaignId(campaignId);
+
 		if(qmList!=null && !qmList.isEmpty()) {
 			questionnaireModelRepository.deleteAll(qmList);
+			qmList.forEach(questionnaireModel -> {
+				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES))
+						.evict(questionnaireModel.id());
+				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
+						.evict(questionnaireModel.id());
+				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_EXIST))
+						.evict(questionnaireModel.id());
+			});
 		}
 		campaignRepository.deleteById(campaignId);
 	}
@@ -115,5 +154,11 @@ public class CampaignService {
 			campaign.metadata(m);
 		}
 		campaignRepository.save(campaign);
+	}
+
+	@Cacheable(CacheName.CAMPAIGN_NOMENCLATURES)
+	public List<String> findRequiredNomenclatureByCampaign(String campaignId) {
+		checkExistence(campaignId);
+		return questionnaireModelRepository.findRequiredNomenclatureByCampaignId(campaignId);
 	}
 }

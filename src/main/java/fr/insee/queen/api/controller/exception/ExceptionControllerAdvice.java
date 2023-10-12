@@ -240,7 +240,7 @@ public class ExceptionControllerAdvice {
     public void exceptions(Exception e, HttpServletResponse response) throws IOException {
         log.error(e.getMessage(), e);
         writeResponse(response, HttpStatus.INTERNAL_SERVER_ERROR,
-                new ApiBaseException(e.getMessage(), ErrorCode.SERVER_EXCEPTION));
+                new ApiBaseException("An error has occurred", ErrorCode.SERVER_EXCEPTION));
     }
 
     private void writeResponse(HttpServletResponse response, HttpStatus status, BaseException e) throws IOException {

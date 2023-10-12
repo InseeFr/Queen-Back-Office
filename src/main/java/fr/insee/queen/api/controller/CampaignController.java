@@ -125,6 +125,20 @@ public class CampaignController {
 	}
 
 	/**
+	 * This method is using to get all nomenclature ids associated to a specific campaign
+	 *
+	 * @param campaignId the id of campaign
+	 * @return List of {@link String} containing nomenclature ids
+	 */
+	@Operation(summary = "Get list of required nomenclature by campaign Id ")
+	@GetMapping(path = "/campaign/{id}/required-nomenclatures")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+	public List<String> getListRequiredNomenclature(@IdValid @PathVariable(value = "id") String campaignId) {
+		log.info("GET required-nomenclatures for campaign with id {}", campaignId);
+		return campaignService.findRequiredNomenclatureByCampaign(campaignId);
+	}
+
+	/**
 	 * This method is used to delete a campaign
 	 *
 	 * @param force force the full delettion of campaign

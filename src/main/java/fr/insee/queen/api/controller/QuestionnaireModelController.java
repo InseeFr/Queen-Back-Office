@@ -8,7 +8,6 @@ import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitOkNokDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
-import fr.insee.queen.api.exception.QuestionnaireModelCreationException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.NomenclatureService;
 import fr.insee.queen.api.service.QuestionnaireModelService;
@@ -102,26 +101,30 @@ public class QuestionnaireModelController {
 	/**
 	 * This method is using to post a new Questionnaire Model
 	 * 
-	 * @param questionnaireModelRest to create
+	 * @param questionnaireModelInput to create
 	 * 
 	 */
 	@Operation(summary = "Create a Questionnaire Model")
 	@PostMapping(path = "/questionnaire-models")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createQuestionnaire(@RequestBody QuestionnaireModelInputDto questionnaireModelRest) {
-		log.info("POST campaign with id {}", questionnaireModelRest.idQuestionnaireModel());
-		if (questionnaireModelService.existsById(questionnaireModelRest.idQuestionnaireModel())) {
-			throw new QuestionnaireModelCreationException(String.format("Cannot create questionnaire model %s as it already exists",
-					questionnaireModelRest.idQuestionnaireModel()));
-		}
+	public void createQuestionnaire(@RequestBody QuestionnaireModelInputDto questionnaireModelInput) {
+		log.info("POST Questionnaire Model with id {}", questionnaireModelInput.idQuestionnaireModel());
+		questionnaireModelService.createQuestionnaire(questionnaireModelInput);
+	}
 
-		if (!nomenclatureService.areNomenclaturesValid(questionnaireModelRest.requiredNomenclatureIds())) {
-			throw new QuestionnaireModelCreationException(String.format("Cannot create questionnaire model %s as some nomenclatures do not exist",
-					questionnaireModelRest.idQuestionnaireModel()));
-		}
-
-		questionnaireModelService.createQuestionnaire(questionnaireModelRest);
+	/**
+	 * This method is using to get all nomenclature ids associated to a specific questionnaire
+	 *
+	 * @param questionnaireId the id of questionnaire
+	 * @return List of {@link String} containing nomenclature ids
+	 */
+	@Operation(summary = "Get list of required nomenclature by questionnaire Id ")
+	@GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
+	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+	public List<String> getListRequiredNomenclatureByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
+		log.info("GET required-nomenclatures for questionnaire model with id {}", questionnaireId);
+		return questionnaireModelService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
 	}
 
 

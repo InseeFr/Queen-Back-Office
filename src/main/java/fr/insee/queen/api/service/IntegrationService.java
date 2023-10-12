@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterators;
+import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.domain.*;
 import fr.insee.queen.api.dto.integration.IntegrationResultDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
@@ -17,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.json.XML;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,6 +57,7 @@ public class IntegrationService {
 	private final QuestionnaireModelRepository questionnaireModelRepository;
 	private final NomenclatureRepository nomenclatureRepository;
 	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final CacheManager cacheManager;
 
 	private static final String CAMPAIGN_XML = "campaign.xml";
 	private static final String NOMENCLATURES_XML = "nomenclatures.xml";
@@ -271,8 +274,15 @@ public class IntegrationService {
 			String label = labelTags.item(0).getTextContent();
 			campaign.label(label);
 		}
-
 		campaignRepository.save(campaign);
+		Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN))
+				.evict(campaign.id());
+		Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_NOMENCLATURES))
+				.evict(campaign.id());
+		for(QuestionnaireModel qm : campaign.questionnaireModels()) {
+			Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA))
+					.evict(qm.id());
+		}
 	}
 
 	public String customConvertMetadataToString(Node xmlNode) throws JsonProcessingException {
@@ -488,16 +498,24 @@ public class IntegrationService {
 			);
 
 			questionnaireModel.campaign(campaign);
-
 			questionnaireModelRepository.save(questionnaireModel);
+			Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
+					.evict(questionnaireModel.id());
+			Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES))
+					.evict(questionnaireModel.id());
+			Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA))
+					.evict(questionnaireModel.id());
 
 			// Necessary for mongoDB
 			Set<QuestionnaireModel> qms = campaign.questionnaireModels();
 			if(qms.stream().filter(q -> q.id().equals(qmId)).toList().isEmpty()) {
 				qms.add(questionnaireModel);
 				campaignRepository.save(campaign);
+				Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN))
+						.evict(campaign.id());
+				Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_NOMENCLATURES))
+						.evict(campaign.id());
 			}
-
 		} catch (IOException e) {
 			log.info("Could not parse json in file {}", qmFilename);
 			results.add(new IntegrationResultUnitDto(
