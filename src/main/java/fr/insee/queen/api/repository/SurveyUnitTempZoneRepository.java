@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,7 +23,8 @@ public interface SurveyUnitTempZoneRepository extends JpaRepository<SurveyUnitTe
 
     List<SurveyUnitTempZoneDto> findAllProjectedBy();
 
-	@Modifying
+	@Transactional
+    @Modifying
     @Query(value = """
 	delete from survey_unit_temp_zone st where id in (
 	    select st.id from survey_unit s

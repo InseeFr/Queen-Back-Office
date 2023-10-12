@@ -47,4 +47,14 @@ public interface QuestionnaireModelRepository extends JpaRepository<Questionnair
 		    )
 		) from QuestionnaireModel qm where qm.id=:questionnaireId""")
 	Optional<QuestionnaireModelCampaignDto> findQuestionnaireModelWithCampaignById(String questionnaireId);
+
+	@Query("""
+	    select distinct n.id from QuestionnaireModel qm inner join qm.nomenclatures n where qm.campaign.id=:campaignId
+	""")
+	List<String> findRequiredNomenclatureByCampaignId(String campaignId);
+
+	@Query("""
+	    select n.id from QuestionnaireModel qm inner join qm.nomenclatures n where qm.id=:questionnaireId
+	""")
+	List<String> findRequiredNomenclatureByQuestionnaireId(String questionnaireId);
 }

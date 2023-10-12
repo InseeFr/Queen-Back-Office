@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -17,12 +18,14 @@ import java.util.UUID;
 @Repository
 public interface ParadataEventRepository extends JpaRepository<ParadataEvent, UUID> {
 
+    @Transactional
     @Modifying
     @Query(value = """
 		INSERT INTO paradata_event (id, value, survey_unit_id)
-		VALUES (:id, to_json(:paradataValue), :surveyUnitId)""", nativeQuery = true)
+		VALUES (:id, :paradataValue\\:\\:jsonb, :surveyUnitId)""", nativeQuery = true)
     void createParadataEvent(UUID id, String paradataValue, String surveyUnitId);
 
+    @Transactional
     @Modifying
     @Query(value = """
 	delete from paradata_event p where id in (

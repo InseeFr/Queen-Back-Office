@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,11 +36,13 @@ public interface StateDataRepository extends JpaRepository<StateData, UUID> {
 	 */
 	Optional<StateData> findEntityBySurveyUnitId(String surveyUnitId);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query("UPDATE StateData s SET s.currentPage=:currentPage, s.date=:date, s.state=:state WHERE s.surveyUnit.id=:surveyUnitId")
 	void updateStateData(String surveyUnitId, Long date, String currentPage, StateDataType state);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query(value = """
 	delete from state_data st where id in (
 	    select st.id from survey_unit s
@@ -48,13 +51,15 @@ public interface StateDataRepository extends JpaRepository<StateData, UUID> {
 	)""", nativeQuery = true)
 	void deleteStateDatas(String campaignId);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query(value = """
 		INSERT into state_data(id, state, date, current_page, survey_unit_id) 
 		values (:id, :#{#state.name()}, :date, :currentPage, :surveyUnitId)""", nativeQuery = true)
 	void createStateData(UUID id, StateDataType state, Long date, String currentPage, String surveyUnitId);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query(value = """
 		INSERT into state_data(id) 
 		values (:id)""", nativeQuery = true)

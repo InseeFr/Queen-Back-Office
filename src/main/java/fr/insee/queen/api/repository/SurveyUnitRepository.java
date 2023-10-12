@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -98,25 +99,30 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		from SurveyUnit s where s.id in :surveyUnitIds""")
 	List<SurveyUnitWithStateDto> findAllWithStateByIdIn(List<String> surveyUnitIds);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query("delete from SurveyUnit s where s.campaign.id=:campaignId")
 	void deleteSurveyUnits(String campaignId);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query(value = """
 		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id, data, comment, personalization)
-		VALUES (:id, :campaignId, :questionnaireId, to_json(:data), to_json(:comment), to_json(:personalization))""", nativeQuery = true)
+		VALUES (:id, :campaignId, :questionnaireId, :data\\:\\:jsonb, :comment\\:\\:jsonb, :personalization\\:\\:jsonb)""", nativeQuery = true)
 	void createSurveyUnit(String id, String campaignId, String questionnaireId, String data, String comment, String personalization);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query("update SurveyUnit s set s.personalization = :personalization where s.id = :surveyUnitId")
 	void updatePersonalization(String surveyUnitId, String personalization);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query("update SurveyUnit s set s.comment = :comment where s.id = :surveyUnitId")
 	void updateComment(String surveyUnitId, String comment);
 
-	@Modifying
+	@Transactional
+    @Modifying
 	@Query("update SurveyUnit s set s.data = :data where s.id = :surveyUnitId")
 	void updateData(String surveyUnitId, String data);
 
