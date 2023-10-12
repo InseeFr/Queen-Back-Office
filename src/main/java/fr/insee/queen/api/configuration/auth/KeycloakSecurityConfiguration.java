@@ -13,6 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,6 +32,7 @@ import java.util.Collection;
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @ConditionalOnProperty(name = "application.auth", havingValue = "KEYCLOAK")
 @AllArgsConstructor
 public class KeycloakSecurityConfiguration {
@@ -65,7 +67,7 @@ public class KeycloakSecurityConfiguration {
                         // actuator (actuator metrics are disabled by default)
                         .requestMatchers(HttpMethod.GET, Constants.API_ACTUATOR).permitAll()
                         .anyRequest()
-                            .permitAll()
+                            .authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter(keycloakProperties, roleProperties))))

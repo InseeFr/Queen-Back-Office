@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -46,6 +47,15 @@ public class ExceptionControllerAdvice {
         log.error(e.getMessage(), e);
         writeResponse(response, HttpStatus.NOT_FOUND,
                 new ApiBaseException(e.getMessage(), ErrorCode.NO_HANDLER_FOUND));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public void accessDeniedException(AccessDeniedException e, HttpServletResponse response) throws IOException {
+        log.error(e.getMessage(), e);
+        writeResponse(response, HttpStatus.FORBIDDEN,
+                new ApiBaseException(e.getMessage(), ErrorCode.FORBIDDEN));
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
