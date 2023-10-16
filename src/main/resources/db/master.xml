@@ -19,5 +19,6 @@
 	<include file="changelog/500_add_fields_surveyunit_and_paradataevent.xml" relativeToChangelogFile="true"/>
 	<include file="changelog/510_migrate_data_to_new_fields.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/520_delete_comment_personal_data_tables.xml" relativeToChangelogFile="true"/>
+	<include file="changelog/530_index_state_data.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
