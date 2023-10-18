@@ -17,8 +17,8 @@ public class AuthenticationHelper {
     private ApplicationProperties applicationProperties;
 
     public String getAuthToken(Authentication auth) {
-        if(!(auth.getCredentials() instanceof AbstractOAuth2Token token)) {
-            throw new AuthenticationTokenException("Cannot retrieve token for the user. Ensure you are not in NOAUTH mode with piloteage api check enabled");
+        if(auth == null ||!(auth.getCredentials() instanceof AbstractOAuth2Token token)) {
+            throw new AuthenticationTokenException("Cannot retrieve token for the user. Ensure you are not in NOAUTH mode with pilotage integration override to false");
         }
         return token.getTokenValue();
     }

@@ -41,8 +41,7 @@ application:
       url: http://alternative.url
       campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
     #If true, checkHabilitation and getSuFromPilotage are not used to secure the endpoints
-    integration:
-      override: false
+    integration-override: false
 spring:
   main:
     allow-bean-definition-overriding: true

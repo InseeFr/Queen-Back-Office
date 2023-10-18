@@ -147,21 +147,27 @@ public class CampaignController {
 	@Operation(summary = "Delete a campaign")
 	@DeleteMapping(path = "/campaign/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@ResponseStatus(HttpStatus.OK)
 	public void deleteCampaignById(@RequestParam("force") boolean force,
 								   @IdValid @PathVariable(value = "id") String campaignId,
 								   Authentication auth) {
 		String userId = authHelper.getUserId(auth);
 		log.info("Admin {} requests deletion of campaign {}", userId, campaignId);
 
-		String authToken = authHelper.getAuthToken(auth);
 		if(force ||
-				(integrationOverride != null && integrationOverride.equals("true")) ||
-				pilotageApiService.isClosed(campaignId, authToken)) {
+				(integrationOverride != null && integrationOverride.equals("true"))) {
 			campaignService.delete(campaignId);
 			log.info("Campaign with id {} deleted", campaignId);
 			return;
 		}
+
+		String authToken = authHelper.getAuthToken(auth);
+		if(pilotageApiService.isClosed(campaignId, authToken)) {
+			campaignService.delete(campaignId);
+			log.info("Campaign with id {} deleted", campaignId);
+			return;
+		}
+
 		throw new CampaignDeletionException(String.format("Unable to delete campaign %s, campaign isn't closed", campaignId));
 	}
 }

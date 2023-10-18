@@ -2,8 +2,11 @@ package fr.insee.queen.api.controller.utils;
 
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.configuration.properties.AuthEnumProperties;
+import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
+import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.exception.HabilitationException;
 import fr.insee.queen.api.service.HabilitationService;
+import fr.insee.queen.api.service.SurveyUnitService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,16 +20,19 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class HabilitationComponent {
-    private HabilitationService habilitationService;
+    private final HabilitationService habilitationService;
 
-    private ApplicationProperties applicationProperties;
-
-    private AuthenticationHelper authHelper;
+    private final ApplicationProperties applicationProperties;
+    private final AuthenticationHelper authHelper;
+    private final SurveyUnitService surveyUnitService;
 
     @Value("${application.pilotage.integration-override}")
     private final String integrationOverride;
 
     public void checkHabilitations(Authentication auth, String surveyUnitId, String... roles) {
+
+        SurveyUnitHabilitationDto surveyUnit = 	surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
+
         if(integrationOverride != null && integrationOverride.equals("true")) {
             return;
         }
@@ -42,6 +48,6 @@ public class HabilitationComponent {
         List<String> userRoles = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
-        habilitationService.checkHabilitations(authHelper.getUserId(auth), userRoles, surveyUnitId, authHelper.getAuthToken(auth), roles);
+        habilitationService.checkHabilitations(authHelper.getUserId(auth), userRoles, surveyUnit, authHelper.getAuthToken(auth), roles);
     }
 }

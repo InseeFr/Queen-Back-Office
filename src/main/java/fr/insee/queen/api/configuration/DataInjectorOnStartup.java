@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 
 @Slf4j
-@Profile("dev")
+@Profile({"dev", "test"})
 @Configuration
 public class DataInjectorOnStartup {
 

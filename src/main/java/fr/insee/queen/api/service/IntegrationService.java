@@ -17,6 +17,7 @@ import fr.insee.queen.api.repository.QuestionnaireModelRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
 import org.json.XML;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -84,13 +85,13 @@ public class IntegrationService {
 		try (FileOutputStream o = new FileOutputStream(zip)) {
 			IOUtils.copy(file.getInputStream(), o);
 			return doIntegration(zip);
-		} catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+		} catch (ParserConfigurationException | SAXException | JSONException | XPathExpressionException e) {
 			log.error(e.getMessage(), e);
 			throw new IntegrationServiceException(e.getMessage());
 		}
 	}
 
-	private IntegrationResultDto doIntegration(File zip) throws ParserConfigurationException, SAXException, XPathExpressionException {
+	private IntegrationResultDto doIntegration(File zip) throws ParserConfigurationException, SAXException, XPathExpressionException, JSONException {
 		IntegrationResultDto result = new IntegrationResultDto();
 		ZipEntry campaignXmlFile = null;
 		ZipEntry nomenclaturesXmlFile =  null;
@@ -166,7 +167,7 @@ public class IntegrationService {
 	}
 
 	private void validateAndProcessCampaign(ZipFile zf, ZipEntry campaignXmlFile,
-											IntegrationResultDto result) throws XPathExpressionException, SAXException, IOException, ParserConfigurationException {
+											IntegrationResultDto result) throws XPathExpressionException, SAXException, IOException, ParserConfigurationException, JSONException {
 		if(campaignXmlFile == null) {
 			result.campaign(new IntegrationResultUnitDto(CAMPAIGN_XML,
 					IntegrationStatus.ERROR,
@@ -230,7 +231,7 @@ public class IntegrationService {
 
 
 
-	private void processCampaign(ZipFile zf, ZipEntry campaignXmlFile, IntegrationResultDto result) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+	private void processCampaign(ZipFile zf, ZipEntry campaignXmlFile, IntegrationResultDto result) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, JSONException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
@@ -285,7 +286,7 @@ public class IntegrationService {
 		}
 	}
 
-	public String customConvertMetadataToString(Node xmlNode) throws JsonProcessingException {
+	public String customConvertMetadataToString(Node xmlNode) throws JsonProcessingException, JSONException {
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonString = XML.toJSONObject(toString(xmlNode, true, true)).toString();

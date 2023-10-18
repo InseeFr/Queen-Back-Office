@@ -178,7 +178,7 @@ public class SurveyUnitController {
 	@Operation(summary = "Post survey-unit")
 	@PostMapping(path = "/campaign/{id}/survey-unit")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public ResponseEntity<Void> createSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
+	public ResponseEntity<Void> createUpdateSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
 													  @Valid @RequestBody SurveyUnitInputDto surveyUnitInputDto,
 													  Authentication auth){
 		log.info("POST survey-unit with id {}", surveyUnitInputDto.id());

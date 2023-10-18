@@ -1,6 +1,6 @@
 package fr.insee.queen.api.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
@@ -64,7 +64,7 @@ public class DataController {
 	@Operation(summary = "Update data by reporting unit Id ")
 	@PutMapping(path = "/survey-unit/{id}/data")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-	public void setData(@NotNull @RequestBody JsonNode dataValue,
+	public void updateData(@NotNull @RequestBody ObjectNode dataValue,
 						@IdValid @PathVariable(value = "id") String surveyUnitId,
 						Authentication auth) {
 		log.info("PUT data for reporting unit with id {}", surveyUnitId);

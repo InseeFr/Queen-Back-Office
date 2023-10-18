@@ -1,0 +1,39 @@
+application:
+  corsOrigins: https://localhost
+  roles:
+    interviewer: interviewer
+    reviewer: reviewer
+    admin: admin
+    webclient: webclient
+    reviewer-alternative: alternate-reviewer
+  pilotage:
+    integration-override: true
+
+  auth: NOAUTH
+  liquibase:
+    enabled: true
+    contexts: test
+    defaultSchema: public
+    change-log: classpath:db/master.xml
+logging:
+  level:
+    root: INFO
+    liquibase: ERROR
+zonky:
+  test:
+    database:
+      type: auto                     # The type of embedded database to be created when replacing the data source.
+      provider: default              # Provider to be used to create the underlying embedded database.
+      refresh: never                 # Determines the refresh mode of the embedded database.
+      replace: any                   # Determines what type of existing DataSource beans can be replaced.
+      postgres:
+        server:
+          shared_buffers: 512MB
+          max_connections: 100
+
+#force charset for mockmvc
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true

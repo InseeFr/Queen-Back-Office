@@ -22,6 +22,18 @@
 		<snakeyaml.version>2.0</snakeyaml.version>
 	</properties>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.zonky.test.postgres</groupId>
+				<artifactId>embedded-postgres-binaries-bom</artifactId>
+				<version>14.8.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<!-- Spring Boot -->
 		<dependency>
@@ -66,6 +78,26 @@
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 			<version>3.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.zonky.test</groupId>
+			<artifactId>embedded-database-spring-test</artifactId>
+			<version>2.3.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.skyscreamer</groupId>
+			<artifactId>jsonassert</artifactId>
+			<version>1.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.zonky.test</groupId>
+			<artifactId>embedded-postgres</artifactId>
+			<version>1.2.10</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Database -->
@@ -128,11 +160,6 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-runner</artifactId>
 			<scope>test</scope>
 		</dependency>
 
