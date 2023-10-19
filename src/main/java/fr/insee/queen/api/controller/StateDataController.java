@@ -76,7 +76,7 @@ public class StateDataController {
 								   Authentication auth) {
 		log.info("PUT statedata for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
-		stateDataService.updateStateData(surveyUnitId, stateDataInputDto);
+		stateDataService.updateStateData(surveyUnitId, StateDataInputDto.toModel(stateDataInputDto));
 	}
 
 	@Operation(summary = "Get state-data for all survey-units defined in request body ")

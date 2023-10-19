@@ -3,24 +3,15 @@ package fr.insee.queen.api.domain;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
-@Entity
-@Table(name = "state_data")
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Embeddable
 public class StateData {
-
-	/**
-	 * The id of the state data
-	 */
-	@Id
-	@org.springframework.data.annotation.Id
-	@Column(name = "id")
-    protected UUID id;
 	
 	/**
 	 * The State of the state data
@@ -32,24 +23,12 @@ public class StateData {
 	/**
 	* The save date of State 
 	*/
-	@Column
+	@Column(name = "state_date")
 	private Long date;
 	
 	/**
 	 * The current page of the StateData
 	 */
-	@Column(name = "current_page")
+	@Column(name = "state_current_page")
 	private String currentPage;
-	
-	/**
-	* The SurveyUnit associated to the StateData
-	*/
-	@OneToOne
-	@JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
-	private SurveyUnit surveyUnit;
-
-	public StateData() {
-		super();
-		this.id = UUID.randomUUID();
-	}
 }

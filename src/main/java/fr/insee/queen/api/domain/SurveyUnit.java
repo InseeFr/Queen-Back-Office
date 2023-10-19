@@ -41,7 +41,7 @@ public class SurveyUnit {
 	@JoinColumn( name = "questionnaire_model_id", referencedColumnName = "id")
 	private QuestionnaireModel questionnaireModel;
 
-	@OneToOne(mappedBy = "surveyUnit", cascade = CascadeType.ALL )
+	@Embedded
 	private StateData stateData;
 
 	@JdbcTypeCode(SqlTypes.JSON)
