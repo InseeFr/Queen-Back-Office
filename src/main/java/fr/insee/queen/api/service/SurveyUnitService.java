@@ -5,11 +5,11 @@ import fr.insee.queen.api.domain.StateDataType;
 import fr.insee.queen.api.domain.SurveyUnitTempZone;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
+import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.*;
 import fr.insee.queen.api.exception.DepositProofException;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.pdfutils.ExportPdf;
-import fr.insee.queen.api.repository.StateDataRepository;
 import fr.insee.queen.api.repository.SurveyUnitRepository;
 import fr.insee.queen.api.repository.SurveyUnitTempZoneRepository;
 import jakarta.servlet.ServletException;
@@ -31,7 +31,6 @@ public class SurveyUnitService {
 	private final SurveyUnitRepository surveyUnitRepository;
 	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 	private final CampaignService campaignService;
-	private final StateDataRepository stateDataRepository;
 
 	public boolean existsById(String surveyUnitId) {
 		return surveyUnitRepository.existsById(surveyUnitId);
@@ -71,8 +70,7 @@ public class SurveyUnitService {
 			surveyUnitRepository.updateData(surveyUnitId,surveyUnit.data().toString());
 		}
 		if(surveyUnit.stateData() != null) {
-			StateDataInputDto stateData = surveyUnit.stateData();
-			stateDataRepository.updateStateData(surveyUnitId, stateData.date(), stateData.currentPage(), stateData.state());
+			surveyUnitRepository.updateStateData(surveyUnitId, StateDataInputDto.toModel(surveyUnit.stateData()));
 		}
 	}
 
@@ -97,19 +95,17 @@ public class SurveyUnitService {
 	public void createSurveyUnit(String campaignId, SurveyUnitInputDto surveyUnit) {
 		campaignService.checkExistence(campaignId);
 
-		String surveyUnitId = surveyUnit.id();
+		StateDataDto stateData = StateDataDto.createEmptyStateData();
+		if(surveyUnit.stateData() != null) {
+			stateData = StateDataInputDto.toModel(surveyUnit.stateData());
+		}
+
 		surveyUnitRepository.createSurveyUnit(surveyUnit.id(), campaignId,
 				surveyUnit.questionnaireId(),
 				surveyUnit.data().toString(),
 				surveyUnit.comment().toString(),
-				surveyUnit.personalization().toString());
-
-		StateDataInputDto stateDataInput = surveyUnit.stateData();
-		if(stateDataInput == null) {
-			stateDataRepository.createStateData(UUID.randomUUID());
-			return;
-		}
-		stateDataRepository.createStateData(UUID.randomUUID(), stateDataInput.state(), stateDataInput.date(), stateDataInput.currentPage(), surveyUnitId);
+				surveyUnit.personalization().toString(),
+				stateData);
 	}
 
 	public List<SurveyUnitSummaryDto> findSummaryByIds(List<String> surveyUnits) {
@@ -144,6 +140,11 @@ public class SurveyUnitService {
 	public SurveyUnitDepositProofDto getSurveyUnitDepositProof(String surveyUnitId) {
 		return surveyUnitRepository
 				.findWithCampaignAndStateById(surveyUnitId)
+				.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId)));
+	}
+
+	public SurveyUnitHabilitationDto getSurveyUnitWithCampaignById(String surveyUnitId) {
+		return surveyUnitRepository.findWithCampaignById(surveyUnitId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId)));
 	}
 }

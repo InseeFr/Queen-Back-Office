@@ -30,7 +30,6 @@ import java.util.UUID;
 @Slf4j
 public class CampaignService {
 	private final ParadataEventRepository paradataEventRepository;
-	private final StateDataRepository stateDataRepository;
 	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 	private final CampaignRepository campaignRepository;
 	private final SurveyUnitRepository surveyUnitRepository;
@@ -101,7 +100,6 @@ public class CampaignService {
 	public void delete(String campaignId) {
 		checkExistence(campaignId);
 		paradataEventRepository.deleteParadataEvents(campaignId);
-		stateDataRepository.deleteStateDatas(campaignId);
 		surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
 		surveyUnitRepository.deleteSurveyUnits(campaignId);
 

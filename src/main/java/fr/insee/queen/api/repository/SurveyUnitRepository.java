@@ -1,10 +1,12 @@
 package fr.insee.queen.api.repository;
 
 import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,6 +101,25 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		from SurveyUnit s where s.id in :surveyUnitIds""")
 	List<SurveyUnitWithStateDto> findAllWithStateByIdIn(List<String> surveyUnitIds);
 
+	@Query("""
+		select new fr.insee.queen.api.dto.statedata.StateDataDto(
+		    s.stateData.state,
+		    s.stateData.date,
+		    s.stateData.currentPage
+		)
+		from SurveyUnit s where s.id = :surveyUnitId""")
+	Optional<StateDataDto> findStateDataBySurveyUnitId(String surveyUnitId);
+
+	@Transactional
+	@Modifying
+	@Query("""
+		UPDATE SurveyUnit s 
+		    SET s.stateData.currentPage=:#{#stateData.currentPage},
+		    s.stateData.date=:#{#stateData.date}, 
+		    s.stateData.state=:#{#stateData.state} 
+		    WHERE s.id=:surveyUnitId""")
+	void updateStateData(String surveyUnitId, StateDataDto stateData);
+
 	@Transactional
     @Modifying
 	@Query("delete from SurveyUnit s where s.campaign.id=:campaignId")
@@ -107,9 +128,9 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 	@Transactional
     @Modifying
 	@Query(value = """
-		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id, data, comment, personalization)
-		VALUES (:id, :campaignId, :questionnaireId, :data\\:\\:jsonb, :comment\\:\\:jsonb, :personalization\\:\\:jsonb)""", nativeQuery = true)
-	void createSurveyUnit(String id, String campaignId, String questionnaireId, String data, String comment, String personalization);
+		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id, data, comment, personalization, state, state_date, state_current_page)
+		VALUES (:id, :campaignId, :questionnaireId, :data\\:\\:jsonb, :comment\\:\\:jsonb, :personalization\\:\\:jsonb, ?#{#stateData.state?.name() ?: NULL}, :#{#stateData.date}, :#{#stateData.currentPage} )""", nativeQuery = true)
+	void createSurveyUnit(String id, String campaignId, String questionnaireId, String data, String comment, String personalization, StateDataDto stateData);
 
 	@Transactional
     @Modifying

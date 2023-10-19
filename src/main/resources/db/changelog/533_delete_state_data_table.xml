@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+   <changeSet author="davdarras (generated)" id="533-1">
+      <dropForeignKeyConstraint baseTableName="state_data" constraintName="FKkjjh680qs400ap1dko1kmqh0s"/>
+   </changeSet>
+   <changeSet author="davdarras (generated)" id="533-2">
+      <dropIndex tableName="state_data" indexName="idx_state_data_su"/>
+   </changeSet>
+   <changeSet author="davdarras (generated)" id="533-3">
+      <dropTable tableName="state_data"/>
+   </changeSet>
+</databaseChangeLog>
