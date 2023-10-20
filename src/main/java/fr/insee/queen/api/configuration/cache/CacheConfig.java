@@ -44,6 +44,16 @@ public class CacheConfig {
     }
 
     @Bean
+    public CaffeineCache metadataCache() {
+        return new CaffeineCache(CacheName.METADATA,
+                Caffeine.newBuilder()
+                        .initialCapacity(10)
+                        .maximumSize(100)
+                        .expireAfterWrite(8, TimeUnit.HOURS)
+                        .build());
+    }
+
+    @Bean
     public CaffeineCache questionnairesCache() {
         return new CaffeineCache(CacheName.QUESTIONNAIRE,
                 Caffeine.newBuilder()
