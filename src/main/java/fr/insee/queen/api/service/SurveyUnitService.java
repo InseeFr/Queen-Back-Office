@@ -3,26 +3,29 @@ package fr.insee.queen.api.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.domain.StateDataType;
 import fr.insee.queen.api.domain.SurveyUnitTempZone;
+import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.*;
-import fr.insee.queen.api.exception.DepositProofException;
 import fr.insee.queen.api.exception.EntityNotFoundException;
-import fr.insee.queen.api.pdfutils.ExportPdf;
 import fr.insee.queen.api.repository.SurveyUnitRepository;
 import fr.insee.queen.api.repository.SurveyUnitTempZoneRepository;
-import jakarta.servlet.ServletException;
+import fr.insee.queen.api.service.depositproof.PDFDepositProofService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+;
 
 @Service
 @Slf4j
@@ -31,6 +34,7 @@ public class SurveyUnitService {
 	private final SurveyUnitRepository surveyUnitRepository;
 	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 	private final CampaignService campaignService;
+	private final PDFDepositProofService pdfService;
 
 	public boolean existsById(String surveyUnitId) {
 		return surveyUnitRepository.existsById(surveyUnitId);
@@ -74,21 +78,23 @@ public class SurveyUnitService {
 		}
 	}
 
-	public void generateDepositProof(String userId, SurveyUnitDepositProofDto su, HttpServletResponse response) {
-		String campaignId = su.campaign().id();
-		String campaignLabel = su.campaign().label();
+	public PdfDepositProof generateDepositProof(String userId, String surveyUnitId, HttpServletResponse response) {
+		SurveyUnitDepositProofDto surveyUnit = getSurveyUnitDepositProof(surveyUnitId);
+		String campaignId = surveyUnit.campaign().id();
+		String campaignLabel = surveyUnit.campaign().label();
 		String date = "";
-		if(Arrays.asList(StateDataType.EXTRACTED,StateDataType.VALIDATED).contains(su.stateData().state())) {
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy à HH:mm"); 
-			date = dateFormat.format(new Date(su.stateData().date()));
+
+		if (surveyUnit.stateData() == null) {
+			throw new EntityNotFoundException(String.format("State data for survey unit %s was not found", surveyUnitId));
 		}
-		ExportPdf exp = new ExportPdf();
-		try {
-			exp.doExport(response, date, campaignId, campaignLabel, userId);
-		} catch (ServletException | IOException e) {
-			log.error(e.getMessage(), e);
-			throw new DepositProofException("ERROR Export: " + e.getMessage());
-        }
+
+		if(Arrays.asList(StateDataType.EXTRACTED,StateDataType.VALIDATED).contains(surveyUnit.stateData().state())) {
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy à HH:mm"); 
+			date = dateFormat.format(new Date(surveyUnit.stateData().date()));
+		}
+		String filename = String.format("%s_%s.pdf", campaignId, userId);
+
+		return new PdfDepositProof(filename, pdfService.retrievePdf(date,campaignLabel, userId));
 	}
 
 	@Transactional
