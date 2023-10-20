@@ -136,11 +136,11 @@ public class CampaignService {
 		}
 		// check that questionnaire models exist and are not already associated with a campaign
 		boolean canQuestionnairesBeAssociated = questionnaireModels.stream()
-				.allMatch(questionnaireModel -> questionnaireModel.campaign() != null);
+				.allMatch(questionnaireModel -> questionnaireModel.campaign() == null);
 
 		if(!canQuestionnairesBeAssociated) {
 			throw new CampaignCreationException(
-					String.format("One or more questionnaires are already associated for campaign %s. Creation aborted.", campaignId));
+					"One or more questionnaires are already associated with another campaign. Creation aborted.");
 		}
 
 		Campaign campaign = new Campaign(campaignId, campaignInputDto.label(), new HashSet<>(questionnaireModels));

@@ -7,11 +7,12 @@ import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.domain.SurveyUnit;
+import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitDepositProofDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitTempZoneDto;
+import fr.insee.queen.api.exception.DepositProofException;
 import fr.insee.queen.api.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.CampaignService;
 import fr.insee.queen.api.service.PilotageApiService;
@@ -30,6 +31,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -160,14 +164,22 @@ public class SurveyUnitController {
 									 Authentication auth,
 									 HttpServletResponse response) {
 		log.info("GET deposit-proof with survey unit id {}", surveyUnitId);
-		SurveyUnitDepositProofDto surveyUnit = surveyUnitService.getSurveyUnitDepositProof(surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
 
-		if (surveyUnit.stateData() == null) {
-			throw new EntityNotFoundException(String.format("State data for survey unit %s was not found", surveyUnitId));
-	    }
 		String username = authHelper.getUserId(auth);
-		surveyUnitService.generateDepositProof(username, surveyUnit, response);
+		PdfDepositProof depositProof = surveyUnitService.generateDepositProof(username, surveyUnitId, response);
+
+		response.setContentType("application/pdf");
+		response.setHeader("Content-disposition", "attachment; filename=\""+depositProof.filename()+"\"");
+
+		try(OutputStream out = response.getOutputStream()){
+			File pdfFile = depositProof.depositProof();
+			out.write(Files.readAllBytes(pdfFile.toPath()));
+			Files.delete(pdfFile.toPath());
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new DepositProofException();
+		}
 	}
 	
 	/**
@@ -178,7 +190,7 @@ public class SurveyUnitController {
 	@Operation(summary = "Post survey-unit")
 	@PostMapping(path = "/campaign/{id}/survey-unit")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public ResponseEntity<Void> createSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
+	public ResponseEntity<Void> createUpdateSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
 													  @Valid @RequestBody SurveyUnitInputDto surveyUnitInputDto,
 													  Authentication auth){
 		log.info("POST survey-unit with id {}", surveyUnitInputDto.id());

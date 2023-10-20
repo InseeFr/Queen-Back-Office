@@ -177,6 +177,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(CampaignDeletionException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ResponseBody
     public void campaignDeletionException (CampaignDeletionException e, HttpServletResponse response) throws IOException {
         log.error(e.getMessage(), e);

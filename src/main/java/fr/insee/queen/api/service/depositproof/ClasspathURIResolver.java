@@ -1,7 +1,6 @@
-package fr.insee.queen.api.pdfutils;
+package fr.insee.queen.api.service.depositproof;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
@@ -11,13 +10,13 @@ import javax.xml.transform.stream.StreamSource;
  * i.e. import statements href are equal to <code>/path/to/resources/directory</code>
  * */
 public class ClasspathURIResolver implements URIResolver {
-
 	@Override
-	public Source resolve(String href, String base) throws TransformerException {
-
+	public Source resolve(String href, String base) {
 		String resolvedHref = "";
-		if(href.endsWith(".xsl")) resolvedHref = "/xsl/"+href;
-		return new StreamSource(ClasspathURIResolver.class.getResourceAsStream(resolvedHref));
+		if(href.endsWith(".xsl")) {
+			resolvedHref = "/xsl/" + href;
+		}
+		return new StreamSource(getClass().getResourceAsStream(resolvedHref));
 	}
 
 }

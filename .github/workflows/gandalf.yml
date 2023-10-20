@@ -42,4 +42,4 @@ jobs:
           java-version: '17'
 
       - name: Running tests
-        run: mvn test
+        run: mvn test --no-transfer-progress

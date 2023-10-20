@@ -4,7 +4,7 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
-    <springProfile name="dev,test,prod">
+    <springProfile name="dev,prod">
         <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_FILE}</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -23,7 +23,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="default,dev">
+    <springProfile name="default,dev,test">
         <root level="INFO">
             <appender-ref ref="CONSOLE" />
         </root>
