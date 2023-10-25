@@ -33,7 +33,7 @@ public class PublicSecurityFilterChain {
                                 referrerPolicy
                                         .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN)
                         ))
-                .authorizeHttpRequests((auth) -> auth
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers(publicUrls).permitAll()
                         .anyRequest()

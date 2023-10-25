@@ -133,7 +133,7 @@ public class SurveyUnitController {
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
 
 		String username = authHelper.getUserId(auth);
-		PdfDepositProof depositProof = surveyUnitService.generateDepositProof(username, surveyUnitId, response);
+		PdfDepositProof depositProof = surveyUnitService.generateDepositProof(username, surveyUnitId);
 
 		response.setContentType("application/pdf");
 		response.setHeader("Content-disposition", "attachment; filename=\""+depositProof.filename()+"\"");

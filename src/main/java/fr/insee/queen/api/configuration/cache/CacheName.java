@@ -1,12 +1,16 @@
 package fr.insee.queen.api.configuration.cache;
 
 public class CacheName {
-    public final static String QUESTIONNAIRE = "questionnaire";
-    public final static String QUESTIONNAIRE_EXIST = "is-questionnaire-present";
-    public final static String CAMPAIGN_EXIST = "is-campaign-present";
-    public final static String QUESTIONNAIRE_NOMENCLATURES = "questionnaire-required-nomenclatures";
-    public final static String CAMPAIGN_NOMENCLATURES = "campaign-required-nomenclatures";
-    public final static String NOMENCLATURE = "nomenclature";
-    public final static String METADATA_BY_QUESTIONNAIRE = "metadata";
-    public final static String HABILITATION = "habilitation";
+    private CacheName() {
+        throw new IllegalArgumentException("Utility class");
+    }
+
+    public static final String QUESTIONNAIRE = "questionnaire";
+    public static final String QUESTIONNAIRE_EXIST = "is-questionnaire-present";
+    public static final String CAMPAIGN_EXIST = "is-campaign-present";
+    public static final String QUESTIONNAIRE_NOMENCLATURES = "questionnaire-required-nomenclatures";
+    public static final String CAMPAIGN_NOMENCLATURES = "campaign-required-nomenclatures";
+    public static final String NOMENCLATURE = "nomenclature";
+    public static final String METADATA_BY_QUESTIONNAIRE = "metadata";
+    public static final String HABILITATION = "habilitation";
 }

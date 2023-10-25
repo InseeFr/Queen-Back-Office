@@ -22,27 +22,13 @@ public class GenerateFoService {
     public File generateFo(String date, String campaignLabel, String userId) throws IOException {
         File outputFile = File.createTempFile("fo-file",".fo");
         log.info(outputFile.getAbsolutePath());
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        InputStream xsl = null;
-        try {
-            inputStream = getInputStreamFromPath("/xsl/empty.xml");
-            outputStream = new FileOutputStream(outputFile);
-            xsl = getInputStreamFromPath("/xsl/common.xsl");
+        try (InputStream inputStream = getInputStreamFromPath("/xsl/empty.xml");
+                 OutputStream outputStream = new FileOutputStream(outputFile);
+                 InputStream xsl = getInputStreamFromPath("/xsl/common.xsl")) {
             xslGenerateFo(inputStream, xsl, outputStream, date, campaignLabel, userId);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new DepositProofException();
-        } finally {
-            if(inputStream != null) {
-                inputStream.close();
-            }
-            if(outputStream != null) {
-                outputStream.close();
-            }
-            if(xsl != null) {
-                xsl.close();
-            }
         }
         return outputFile;
     }

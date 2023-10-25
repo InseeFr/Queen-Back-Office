@@ -37,15 +37,17 @@ public class DataSetInjectorService {
 
     private static final String CURRENT_PAGE = "2.3#5";
 
+    private static final String SEPARATOR = "----------------------";
+
     @Transactional
     public void createDataSet() {
         log.info("Dataset creation start");
         createSimpsonsDataSet();
-        log.info("----------------------");
+        log.info(SEPARATOR);
         createVqsDataSet();
-        log.info("----------------------");
+        log.info(SEPARATOR);
         createStromaeLogementDataSet();
-        log.info("----------------------");
+        log.info(SEPARATOR);
         createQueenLogementDataSet();
         log.info("Dataset creation end");
     }

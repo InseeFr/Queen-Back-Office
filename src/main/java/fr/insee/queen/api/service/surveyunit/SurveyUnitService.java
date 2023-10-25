@@ -12,7 +12,6 @@ import fr.insee.queen.api.repository.SurveyUnitTempZoneRepository;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.depositproof.PDFDepositProofService;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-;
 
 @Service
 @Slf4j
@@ -76,7 +73,7 @@ public class SurveyUnitService {
 		}
 	}
 
-	public PdfDepositProof generateDepositProof(String userId, String surveyUnitId, HttpServletResponse response) {
+	public PdfDepositProof generateDepositProof(String userId, String surveyUnitId) {
 		SurveyUnitDepositProofDto surveyUnit = getSurveyUnitDepositProof(surveyUnitId);
 		String campaignId = surveyUnit.campaign().id();
 		String campaignLabel = surveyUnit.campaign().label();

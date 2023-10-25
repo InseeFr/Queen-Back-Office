@@ -1,9 +1,8 @@
 package fr.insee.queen.api.repository;
 
-import fr.insee.queen.api.dto.surveyunit.*;
-import fr.insee.queen.api.entity.SurveyUnitDB;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.*;
+import fr.insee.queen.api.entity.SurveyUnitDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
