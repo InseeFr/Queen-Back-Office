@@ -5,7 +5,9 @@ import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
-import fr.insee.queen.api.exception.PilotageApiException;
+import fr.insee.queen.api.service.exception.PilotageApiException;
+import fr.insee.queen.api.service.campaign.CampaignExistenceService;
+import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,14 +38,12 @@ public class PilotageApiService {
     private final String alternativeHabilitationServiceURL;
     @Value("${application.pilotage.alternative-habilitation-service.campaignids-regex}")
     private final String campaignIdRegexWithAlternativeHabilitationService;
-    private SurveyUnitService surveyUnitService;
-
-    private CampaignService campaignService;
-
+    private final SurveyUnitService surveyUnitService;
+    private final CampaignExistenceService campaignExistenceService;
     private final RestTemplate restTemplate;
 
     public boolean isClosed(String campaignId, String authToken) {
-        campaignService.checkExistence(campaignId);
+        campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + "/campaigns/" + campaignId + "/ongoing";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -66,6 +66,7 @@ public class PilotageApiService {
     }
 
     public List<SurveyUnitSummaryDto> getSurveyUnitsByCampaign(String campaignId, String authToken) {
+        campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         Map<String, SurveyUnitSummaryDto> surveyUnitMap = new HashMap<>();
 
         ResponseEntity<Object> result = getSuFromPilotage(authToken);

@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.depositproof;
 
-import fr.insee.queen.api.exception.DepositProofException;
+import fr.insee.queen.api.service.exception.DepositProofException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;

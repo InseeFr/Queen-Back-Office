@@ -1,6 +1,6 @@
 package fr.insee.queen.api.repository;
 
-import fr.insee.queen.api.domain.Metadata;
+import fr.insee.queen.api.entity.MetadataDB;
 import fr.insee.queen.api.dto.metadata.MetadataDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +16,7 @@ import java.util.UUID;
 * 
 */
 @Repository
-public interface MetadataRepository extends JpaRepository<Metadata, UUID> {
+public interface MetadataRepository extends JpaRepository<MetadataDB, UUID> {
 	
 	/**
 	* This method retrieve the Metadata for a specific campaign
@@ -28,7 +28,7 @@ public interface MetadataRepository extends JpaRepository<Metadata, UUID> {
 
 	@Query("""
 		select new fr.insee.queen.api.dto.metadata.MetadataDto(m.value)
-		from Metadata m INNER JOIN m.campaign.questionnaireModels qm
+		from MetadataDB m INNER JOIN m.campaign.questionnaireModels qm
 		where qm.id=:questionnaireId""")
 	Optional<MetadataDto> findByQuestionnaireId(String questionnaireId);
 }

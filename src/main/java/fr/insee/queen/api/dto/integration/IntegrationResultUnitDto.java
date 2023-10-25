@@ -3,7 +3,7 @@ package fr.insee.queen.api.dto.integration;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import fr.insee.queen.api.domain.IntegrationStatus;
+import fr.insee.queen.api.dto.IntegrationStatus;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record IntegrationResultUnitDto(

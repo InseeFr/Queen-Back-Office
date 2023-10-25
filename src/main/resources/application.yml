@@ -89,6 +89,8 @@ springdoc:
     path: /
     syntax-highlight:
       activated: false
+    tagsSorter: alpha
+    doc-expansion: none
 
 #Actuator Metrics
 management:
