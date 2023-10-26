@@ -1,7 +1,7 @@
 package fr.insee.queen.api.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.service.DataSetInjectorService;
+import fr.insee.queen.api.service.dataset.DataSetInjectorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;

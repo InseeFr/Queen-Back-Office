@@ -1,0 +1,983 @@
+
+ { "id" : "k1g74VQS2bisqf2",
+  "modele" : "VQS2021",
+  "enoCoreVersion" : "2.3.7",
+  "lunaticModelVersion" : "2.2.10",
+  "generatingDate" : "21-04-2022 13:17:27",
+  "missing" : true,
+  "pagination" : "question",
+  "maxPage" : "21",
+  "label" : "Questionnaire simple rallye game",
+  "components" : 
+  [ 
+   { "id" : "k1w538jc",
+    "componentType" : "Sequence",
+    "page" : "1",
+    "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"",
+    "declarations" : 
+    [ 
+     { "id" : "k1w538jc-kc1vz31h",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Débutons ce questionnaire par un aperçu de votre situation personnelle." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" } } },
+   
+   { "id" : "kc1ul90i",
+    "componentType" : "Subsequence",
+    "goToPage" : "2",
+    "label" : "Caractéristiques personnelles",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" },
+     "subSequence" : 
+     { "id" : "kc1ul90i",
+      "page" : "2",
+      "label" : "Caractéristiques personnelles" } } },
+   
+   { "id" : "kbhnq2qa",
+    "componentType" : "Input",
+    "mandatory" : false,
+    "page" : "2",
+    "maxLength" : 50,
+    "label" : "Quel est votre prénom ?",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" },
+     "subSequence" : 
+     { "id" : "kc1ul90i",
+      "page" : "2",
+      "label" : "Caractéristiques personnelles" } },
+    "missingResponse" : 
+    { "name" : "PRENOM_MISSING" },
+    "bindingDependencies" : 
+    [ "PRENOM_MISSING",
+     "PRENOM" ],
+    "response" : 
+    { "name" : "PRENOM" } },
+   
+   { "id" : "kbho0uee",
+    "componentType" : "Input",
+    "mandatory" : false,
+    "page" : "3",
+    "maxLength" : 50,
+    "label" : "Quel est votre nom de famille ?",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" },
+     "subSequence" : 
+     { "id" : "kc1ul90i",
+      "page" : "2",
+      "label" : "Caractéristiques personnelles" } },
+    "missingResponse" : 
+    { "name" : "NOM_MISSING" },
+    "bindingDependencies" : 
+    [ "NOM_MISSING",
+     "NOM" ],
+    "response" : 
+    { "name" : "NOM" } },
+   
+   { "id" : "k1g7g974",
+    "componentType" : "Radio",
+    "mandatory" : false,
+    "page" : "4",
+    "label" : "Quel est votre sexe ?",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" },
+     "subSequence" : 
+     { "id" : "kc1ul90i",
+      "page" : "2",
+      "label" : "Caractéristiques personnelles" } },
+    "missingResponse" : 
+    { "name" : "SEXE_MISSING" },
+    "bindingDependencies" : 
+    [ "SEXE_MISSING",
+     "SEXEDELAPE" ],
+    "options" : 
+    [ 
+     { "value" : "1",
+      "label" : "Homme" },
+     
+     { "value" : "2",
+      "label" : "Femme" } ],
+    "response" : 
+    { "name" : "SEXEDELAPE" } },
+   
+   { "id" : "k1g7m8vd",
+    "componentType" : "InputNumber",
+    "mandatory" : false,
+    "page" : "5",
+    "min" : 0,
+    "max" : 120,
+    "decimals" : 0,
+    "label" : "Quel est votre âge ?",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" },
+     "subSequence" : 
+     { "id" : "kc1ul90i",
+      "page" : "2",
+      "label" : "Caractéristiques personnelles" } },
+    "missingResponse" : 
+    { "name" : "DATENAISS_MISSING" },
+    "bindingDependencies" : 
+    [ "DATENAISS_MISSING",
+     "DATENAISS" ],
+    "response" : 
+    { "name" : "DATENAISS" } },
+   
+   { "id" : "kc1uk4nt",
+    "componentType" : "Subsequence",
+    "goToPage" : "6",
+    "label" : "Famille",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" },
+     "subSequence" : 
+     { "id" : "kc1uk4nt",
+      "page" : "6",
+      "label" : "Famille" } } },
+   
+   { "id" : "kbhoxyjb",
+    "componentType" : "InputNumber",
+    "mandatory" : false,
+    "page" : "6",
+    "min" : 0,
+    "max" : 10,
+    "decimals" : 0,
+    "label" : "Combien de frères avez-vous aujourd’hui, y compris vos demi-frères ?",
+    "declarations" : 
+    [ 
+     { "id" : "kbhoxyjb-kbhqzdwn",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Il s’agit de frères en vie (qu’ils vivent ou non avec vous)." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" },
+     "subSequence" : 
+     { "id" : "kc1uk4nt",
+      "page" : "6",
+      "label" : "Famille" } },
+    "missingResponse" : 
+    { "name" : "NBFRERES_MISSING" },
+    "bindingDependencies" : 
+    [ "NBFRERES_MISSING",
+     "NBFRERES" ],
+    "response" : 
+    { "name" : "NBFRERES" } },
+   
+   { "id" : "kbhppg78",
+    "componentType" : "InputNumber",
+    "mandatory" : false,
+    "page" : "7",
+    "min" : 0,
+    "max" : 10,
+    "decimals" : 0,
+    "label" : "Combien de sœurs avez-vous aujourd’hui, y compris vos demi-sœurs ?",
+    "declarations" : 
+    [ 
+     { "id" : "kbhppg78-kbhqxwgj",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Il s’agit de sœurs en vie (qu’elles vivent ou non avec vous)." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "k1w538jc",
+      "page" : "1",
+      "label" : "\"I - \" || \"Caractéristiques socio-démographiques\"" },
+     "subSequence" : 
+     { "id" : "kc1uk4nt",
+      "page" : "6",
+      "label" : "Famille" } },
+    "missingResponse" : 
+    { "name" : "NBSOEURS_MISSING" },
+    "bindingDependencies" : 
+    [ "NBSOEURS_MISSING",
+     "NBSOEURS" ],
+    "response" : 
+    { "name" : "NBSOEURS" } },
+   
+   { "id" : "kc1uujmr",
+    "componentType" : "Sequence",
+    "page" : "8",
+    "label" : "\"II - \" || \"Santé et déficiences\"",
+    "declarations" : 
+    [ 
+     { "id" : "kc1uujmr-kc1vc4bz",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Nous allons maintenant parler de votre santé." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1uujmr",
+      "page" : "8",
+      "label" : "\"II - \" || \"Santé et déficiences\"" } } },
+   
+   { "id" : "k1qc7bej",
+    "componentType" : "Radio",
+    "mandatory" : false,
+    "page" : "9",
+    "label" : "Comment est votre état de santé général ?",
+    "declarations" : 
+    [ 
+     { "id" : "k1qc7bej-k1qcywdq",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Ne pas tenir compte des problèmes de santé passagers ou temporaires (comme les grippes par exemple)." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1uujmr",
+      "page" : "8",
+      "label" : "\"II - \" || \"Santé et déficiences\"" } },
+    "missingResponse" : 
+    { "name" : "ETAT_MISSING" },
+    "bindingDependencies" : 
+    [ "ETAT_MISSING",
+     "ETAT" ],
+    "options" : 
+    [ 
+     { "value" : "1",
+      "label" : "Très bon" },
+     
+     { "value" : "2",
+      "label" : "Bon" },
+     
+     { "value" : "3",
+      "label" : "Assez bon" },
+     
+     { "value" : "4",
+      "label" : "Mauvais" },
+     
+     { "value" : "5",
+      "label" : "Très mauvais" } ],
+    "response" : 
+    { "name" : "ETAT" } },
+   
+   { "id" : "k1qcs1cm",
+    "componentType" : "Radio",
+    "mandatory" : false,
+    "page" : "10",
+    "label" : "Avez-vous une maladie ou un problème de santé qui soit chronique ou de caractère durable ?",
+    "declarations" : 
+    [ 
+     { "id" : "k1qcs1cm-k1qclsq0",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Une maladie chronique dure pendant au moins 6 mois." },
+     
+     { "id" : "k1qcs1cm-k1qczupj",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Ne pas tenir compte des problèmes de santé passagers ou temporaires (comme les grippes par exemple)." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1uujmr",
+      "page" : "8",
+      "label" : "\"II - \" || \"Santé et déficiences\"" } },
+    "missingResponse" : 
+    { "name" : "CHRONIQUE_MISSING" },
+    "bindingDependencies" : 
+    [ "CHRONIQUE_MISSING",
+     "CHRONIQUE" ],
+    "options" : 
+    [ 
+     { "value" : "1",
+      "label" : "Oui" },
+     
+     { "value" : "2",
+      "label" : "Non" } ],
+    "response" : 
+    { "name" : "CHRONIQUE" } },
+   
+   { "id" : "k1qceya0",
+    "componentType" : "Radio",
+    "mandatory" : false,
+    "page" : "11",
+    "label" : "Êtes-vous limité(e), depuis au moins six mois, à cause d’un problème de santé, dans les activités que les gens font habituellement ?",
+    "declarations" : 
+    [ 
+     { "id" : "k1qceya0-k1qcgslo",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Ne pas tenir compte des problèmes de santé passagers ou temporaires (comme les grippes par exemple)." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1uujmr",
+      "page" : "8",
+      "label" : "\"II - \" || \"Santé et déficiences\"" } },
+    "missingResponse" : 
+    { "name" : "LIMITES_MISSING" },
+    "bindingDependencies" : 
+    [ "LIMITES_MISSING",
+     "LIMITES" ],
+    "options" : 
+    [ 
+     { "value" : "1",
+      "label" : "Non" },
+     
+     { "value" : "2",
+      "label" : "Oui, un peu" },
+     
+     { "value" : "3",
+      "label" : "Oui, beaucoup" } ],
+    "response" : 
+    { "name" : "LIMITES" } },
+   
+   { "id" : "kc1vdyaf",
+    "componentType" : "Sequence",
+    "page" : "12",
+    "label" : "\"III - \" || \"Limitations fonctionnelles\"",
+    "declarations" : 
+    [ 
+     { "id" : "kc1vdyaf-kc1v8abz",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Maintenant, j’aimerais que vous pensiez aux difficultés que vous pouvez rencontrer dans la vie de tous les jours. Ignorez les problèmes temporaires ou passagers." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vdyaf",
+      "page" : "12",
+      "label" : "\"III - \" || \"Limitations fonctionnelles\"" } } },
+   
+   { "id" : "kc1uxg4e",
+    "componentType" : "Subsequence",
+    "goToPage" : "13",
+    "label" : "Limitations sensorielles (vue et ouïe)",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vdyaf",
+      "page" : "12",
+      "label" : "\"III - \" || \"Limitations fonctionnelles\"" },
+     "subSequence" : 
+     { "id" : "kc1uxg4e",
+      "page" : "13",
+      "label" : "Limitations sensorielles (vue et ouïe)" } } },
+   
+   { "id" : "k1qckpdo",
+    "componentType" : "Radio",
+    "mandatory" : false,
+    "page" : "13",
+    "label" : "Avez-vous des difficultés pour voir, même avec vos lunettes ou lentilles de contact si vous en portez ?",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vdyaf",
+      "page" : "12",
+      "label" : "\"III - \" || \"Limitations fonctionnelles\"" },
+     "subSequence" : 
+     { "id" : "kc1uxg4e",
+      "page" : "13",
+      "label" : "Limitations sensorielles (vue et ouïe)" } },
+    "missingResponse" : 
+    { "name" : "VUE_MISSING" },
+    "bindingDependencies" : 
+    [ "VUE_MISSING",
+     "VUE" ],
+    "options" : 
+    [ 
+     { "value" : "1",
+      "label" : "Non" },
+     
+     { "value" : "2",
+      "label" : "Oui, un peu" },
+     
+     { "value" : "3",
+      "label" : "Oui, beaucoup" },
+     
+     { "value" : "4",
+      "label" : "Ne voit pas du tout" } ],
+    "response" : 
+    { "name" : "VUE" } },
+   
+   { "id" : "k1qcehyr",
+    "componentType" : "Radio",
+    "mandatory" : false,
+    "page" : "14",
+    "label" : "Avez-vous des difficultés pour entendre ce qui se dit au cours d’une conversation avec plusieurs personnes, même avec votre appareil auditif si vous en portez un ?",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vdyaf",
+      "page" : "12",
+      "label" : "\"III - \" || \"Limitations fonctionnelles\"" },
+     "subSequence" : 
+     { "id" : "kc1uxg4e",
+      "page" : "13",
+      "label" : "Limitations sensorielles (vue et ouïe)" } },
+    "missingResponse" : 
+    { "name" : "OUIE_MISSING" },
+    "bindingDependencies" : 
+    [ "OUIE_MISSING",
+     "OUIE" ],
+    "options" : 
+    [ 
+     { "value" : "1",
+      "label" : "Non" },
+     
+     { "value" : "2",
+      "label" : "Oui, un peu" },
+     
+     { "value" : "3",
+      "label" : "Oui, beaucoup" },
+     
+     { "value" : "4",
+      "label" : "N’entend pas du tout" } ],
+    "response" : 
+    { "name" : "OUIE" } },
+   
+   { "id" : "kc1vc8mo",
+    "componentType" : "Subsequence",
+    "goToPage" : "15",
+    "label" : "Mémoire",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vdyaf",
+      "page" : "12",
+      "label" : "\"III - \" || \"Limitations fonctionnelles\"" },
+     "subSequence" : 
+     { "id" : "kc1vc8mo",
+      "page" : "15",
+      "label" : "Mémoire" } } },
+   
+   { "id" : "k1qcu0bm",
+    "componentType" : "Radio",
+    "mandatory" : false,
+    "page" : "15",
+    "label" : "Avez-vous des difficultés pour vous concentrer plus de 10 minutes ?",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vdyaf",
+      "page" : "12",
+      "label" : "\"III - \" || \"Limitations fonctionnelles\"" },
+     "subSequence" : 
+     { "id" : "kc1vc8mo",
+      "page" : "15",
+      "label" : "Mémoire" } },
+    "missingResponse" : 
+    { "name" : "CONCENTRER_MISSING" },
+    "bindingDependencies" : 
+    [ "CONCENTRER_MISSING",
+     "CONCENTRER" ],
+    "options" : 
+    [ 
+     { "value" : "1",
+      "label" : "Non" },
+     
+     { "value" : "2",
+      "label" : "Oui, un peu" },
+     
+     { "value" : "3",
+      "label" : "Oui, beaucoup" },
+     
+     { "value" : "4",
+      "label" : "Ne peut pas du tout" } ],
+    "response" : 
+    { "name" : "CONCENTRER" } },
+   
+   { "id" : "kc1vjrcr",
+    "componentType" : "Sequence",
+    "page" : "16",
+    "label" : "\"IV - \" || \"Lien avec les membres du logement\"",
+    "declarations" : 
+    [ 
+     { "id" : "kc1vjrcr-kc1vtltr",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Nous allons maintenant parler de vos liens avec les membres du logement." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vjrcr",
+      "page" : "16",
+      "label" : "\"IV - \" || \"Lien avec les membres du logement\"" } } },
+   
+   { "id" : "kbhok7rm",
+    "componentType" : "CheckboxGroup",
+    "page" : "17",
+    "label" : "Êtes-vous...",
+    "declarations" : 
+    [ 
+     { "id" : "kbhok7rm-kbhoaty2",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Plusieurs réponses sont possibles." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vjrcr",
+      "page" : "16",
+      "label" : "\"IV - \" || \"Lien avec les membres du logement\"" } },
+    "missingResponse" : 
+    { "name" : "SITUATPERSO_MISSING" },
+    "bindingDependencies" : 
+    [ "SITUATPERSO_MISSING",
+     "SITUATPERSO1",
+     "SITUATPERSO2",
+     "SITUATPERSO3" ],
+    "responses" : 
+    [ 
+     { "id" : "kbhok7rm-QOP-kg96swij",
+      "label" : "En couple avec une personne du logement",
+      "response" : 
+      { "name" : "SITUATPERSO1" } },
+     
+     { "id" : "kbhok7rm-QOP-kg977l6p",
+      "label" : "Enfant d’une personne du logement",
+      "response" : 
+      { "name" : "SITUATPERSO2" } },
+     
+     { "id" : "kbhok7rm-QOP-kg979m0q",
+      "label" : "Dans un autre cas",
+      "response" : 
+      { "name" : "SITUATPERSO3" } } ] },
+   
+   { "id" : "kc1vhu8c",
+    "componentType" : "Sequence",
+    "page" : "18",
+    "label" : "\"V - \" || \"Revenus individuels\"",
+    "declarations" : 
+    [ 
+     { "id" : "kc1vhu8c-kc1vvcxs",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Nous allons maintenant parler de vos sources de revenu." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vhu8c",
+      "page" : "18",
+      "label" : "\"V - \" || \"Revenus individuels\"" } } },
+   
+   { "id" : "kbhr9th9",
+    "componentType" : "InputNumber",
+    "mandatory" : false,
+    "page" : "19",
+    "min" : 0,
+    "max" : 9.99999999E8,
+    "decimals" : 2,
+    "label" : "En prenant en compte tous vos types de revenus, quel est actuellement le montant net mensuel de vos ressources ?",
+    "declarations" : 
+    [ 
+     { "id" : "kbhr9th9-kbhrl5dx",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Il s’agit du revenu net (de cotisations sociales et de C.S.G.) avant impôts. Si les revenus sont fluctuants, prendre une moyenne." },
+     
+     { "id" : "kbhr9th9-kbhrnhlv",
+      "declarationType" : "HELP",
+      "position" : "AFTER_QUESTION_TEXT",
+      "label" : "Le montant doit être déclaré en euros." } ],
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "kc1vhu8c",
+      "page" : "18",
+      "label" : "\"V - \" || \"Revenus individuels\"" } },
+    "missingResponse" : 
+    { "name" : "MONTANTREVENUS_MISSING" },
+    "bindingDependencies" : 
+    [ "MONTANTREVENUS_MISSING",
+     "MONTANTREVENUS" ],
+    "unit" : "€",
+    "response" : 
+    { "name" : "MONTANTREVENUS" } },
+   
+   { "id" : "COMMENT-SEQ",
+    "componentType" : "Sequence",
+    "page" : "20",
+    "label" : "\"Commentaire\"",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "COMMENT-SEQ",
+      "page" : "20",
+      "label" : "\"Commentaire\"" } } },
+   
+   { "id" : "COMMENT-QUESTION",
+    "componentType" : "Textarea",
+    "mandatory" : false,
+    "page" : "21",
+    "maxLength" : 2000,
+    "label" : "\"Avez-vous des remarques concernant l'enquête ou des commentaires ?\"",
+    "conditionFilter" : 
+    { "value" : "true" },
+    "hierarchy" : 
+    { "sequence" : 
+     { "id" : "COMMENT-SEQ",
+      "page" : "20",
+      "label" : "\"Commentaire\"" } },
+    "bindingDependencies" : 
+    [ "COMMENT_QE" ],
+    "response" : 
+    { "name" : "COMMENT_QE" } } ],
+  "variables" : 
+  [ 
+   { "variableType" : "COLLECTED",
+    "name" : "COMMENT_QE",
+    "componentRef" : "COMMENT-QUESTION",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "PRENOM",
+    "componentRef" : "kbhnq2qa",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "PRENOM_MISSING",
+    "componentRef" : "kbhnq2qa",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "NOM",
+    "componentRef" : "kbho0uee",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "NOM_MISSING",
+    "componentRef" : "kbho0uee",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "SEXEDELAPE",
+    "componentRef" : "k1g7g974",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "SEXE_MISSING",
+    "componentRef" : "k1g7g974",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "DATENAISS",
+    "componentRef" : "k1g7m8vd",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "DATENAISS_MISSING",
+    "componentRef" : "k1g7m8vd",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "NBFRERES",
+    "componentRef" : "kbhoxyjb",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "NBFRERES_MISSING",
+    "componentRef" : "kbhoxyjb",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "NBSOEURS",
+    "componentRef" : "kbhppg78",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "NBSOEURS_MISSING",
+    "componentRef" : "kbhppg78",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "ETAT",
+    "componentRef" : "k1qc7bej",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "ETAT_MISSING",
+    "componentRef" : "k1qc7bej",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "CHRONIQUE",
+    "componentRef" : "k1qcs1cm",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "CHRONIQUE_MISSING",
+    "componentRef" : "k1qcs1cm",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "LIMITES",
+    "componentRef" : "k1qceya0",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "LIMITES_MISSING",
+    "componentRef" : "k1qceya0",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "VUE",
+    "componentRef" : "k1qckpdo",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "VUE_MISSING",
+    "componentRef" : "k1qckpdo",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "OUIE",
+    "componentRef" : "k1qcehyr",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "OUIE_MISSING",
+    "componentRef" : "k1qcehyr",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "CONCENTRER",
+    "componentRef" : "k1qcu0bm",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "CONCENTRER_MISSING",
+    "componentRef" : "k1qcu0bm",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "SITUATPERSO1",
+    "componentRef" : "kbhok7rm",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "SITUATPERSO2",
+    "componentRef" : "kbhok7rm",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "SITUATPERSO3",
+    "componentRef" : "kbhok7rm",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "SITUATPERSO_MISSING",
+    "componentRef" : "kbhok7rm",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "MONTANTREVENUS",
+    "componentRef" : "kbhr9th9",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } },
+   
+   { "variableType" : "COLLECTED",
+    "name" : "MONTANTREVENUS_MISSING",
+    "componentRef" : "kbhr9th9",
+    "values" : 
+    { "PREVIOUS" : null,
+     "COLLECTED" : null,
+     "FORCED" : null,
+     "EDITED" : null,
+     "INPUTED" : null } } ] }

@@ -1,6 +1,6 @@
 package fr.insee.queen.api.configuration;
 
-import fr.insee.queen.api.service.DataSetInjectorService;
+import fr.insee.queen.api.service.dataset.DataSetInjectorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
