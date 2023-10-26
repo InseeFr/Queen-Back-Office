@@ -34,11 +34,7 @@ public class CampaignService {
 	}
 
 	@Transactional
-	@Caching(evict = {
-			@CacheEvict(CacheName.CAMPAIGN_NOMENCLATURES),
-			@CacheEvict(CacheName.METADATA_BY_QUESTIONNAIRE),
-			@CacheEvict(CacheName.CAMPAIGN_EXIST)
-	})
+	@CacheEvict(CacheName.CAMPAIGN_EXIST)
 	public void delete(String campaignId) {
 		paradataEventRepository.deleteParadataEvents(campaignId);
 		surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
@@ -50,20 +46,23 @@ public class CampaignService {
 		List<String> questionnaireIds = campaignSummaryDto.questionnaireIds();
 
 		if(questionnaireIds != null && !questionnaireIds.isEmpty()) {
-			questionnaireModelRepository.deleteAllFromCampaign(campaignId);
 			questionnaireIds.forEach(id -> {
 				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES))
 						.evict(id);
+				Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA_BY_QUESTIONNAIRE))
+						.evict(id);
 				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
 						.evict(id);
-				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_EXIST))
-						.evict(id);
 			});
+			questionnaireModelRepository.deleteAllFromCampaign(campaignId);
 		}
 		campaignRepository.deleteById(campaignId);
 	}
 
 	@Transactional
+	@Caching(evict = {
+			@CacheEvict(value = CacheName.CAMPAIGN_EXIST, key = "#campaign.id")
+	})
 	public void createCampaign(CampaignInputDto campaign) {
 		String campaignId = campaign.id();
 
@@ -79,6 +78,9 @@ public class CampaignService {
 		campaignRepository.createCampaign(campaignId, campaign.label(), questionnaireIds, metadataValue);
 	}
 
+	@Caching(evict = {
+			@CacheEvict(value = CacheName.METADATA_BY_QUESTIONNAIRE, allEntries = true),
+	})
 	public void updateCampaign(CampaignInputDto campaign) {
 		String campaignId = campaign.id();
 		List<String> questionnaireIds = campaign.questionnaireIds().stream().toList();
