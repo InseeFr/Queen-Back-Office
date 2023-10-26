@@ -1,60 +1,79 @@
 package fr.insee.queen.api.repository;
 
-import fr.insee.queen.api.domain.QuestionnaireModel;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelCampaignDto;
-import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelDto;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
+import fr.insee.queen.api.entity.CampaignDB;
+import fr.insee.queen.api.entity.NomenclatureDB;
+import fr.insee.queen.api.entity.QuestionnaireModelDB;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-/**
-* CampaignRepository is the repository using to access to Campaign table in DB
-* 
-* @author Claudel Benjamin
-* 
-*/
 @Repository
-public interface QuestionnaireModelRepository extends JpaRepository<QuestionnaireModel, String> {
-	
-	/**
-	* This method retrieve all questionnaires Id for a specific campaign
-	* 
-	* @param campaignId id of the campaign
-	* @return all questionnaire ids for a specific campaign
-	*/
-	@Query(value = "select qm.id from QuestionnaireModel qm where qm.campaign.id=:campaignId")
-	List<String> findAllIdByCampaignId(String campaignId);
-	
-	/**
-	* This method retrieve questionnaire model for a specific id
-	* 
-	* @param questionnaireId id of the questionnaire
-	* @return {@link QuestionnaireModelDto}
-	*/
-	Optional<QuestionnaireModelDto> findQuestionnaireModelById(String questionnaireId);
+@AllArgsConstructor
+public class QuestionnaireModelRepository {
+    private final QuestionnaireModelCrudRepository crudRepository;
 
-	List<QuestionnaireModel> findByCampaignId(String questionnaireId);
+    private final CampaignCrudRepository campaignCrudRepository;
 
-	@Query("""
-		select new fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelCampaignDto(
-		    qm.id,
-		    new fr.insee.queen.api.dto.campaign.CampaignDto(
-		        qm.campaign.id,
-		        qm.campaign.label
-		    )
-		) from QuestionnaireModel qm where qm.id=:questionnaireId""")
-	Optional<QuestionnaireModelCampaignDto> findQuestionnaireModelWithCampaignById(String questionnaireId);
+    private final NomenclatureRepository nomenclatureRepository;
 
-	@Query("""
-	    select distinct n.id from QuestionnaireModel qm inner join qm.nomenclatures n where qm.campaign.id=:campaignId
-	""")
-	List<String> findRequiredNomenclatureByCampaignId(String campaignId);
+    public List<String> findAllIdByCampaignId(String campaignId) {
+        return crudRepository.findAllIdByCampaignId(campaignId);
+    }
 
-	@Query("""
-	    select n.id from QuestionnaireModel qm inner join qm.nomenclatures n where qm.id=:questionnaireId
-	""")
-	List<String> findRequiredNomenclatureByQuestionnaireId(String questionnaireId);
+    public Optional<QuestionnaireModelValueDto> findQuestionnaireModelById(String questionnaireId) {
+        return crudRepository.findQuestionnaireModelById(questionnaireId);
+    }
+
+    public List<QuestionnaireModelDB> findByCampaignId(String questionnaireId) {
+        return crudRepository.findByCampaignId(questionnaireId);
+    }
+
+    public Optional<QuestionnaireModelCampaignDto> findQuestionnaireModelWithCampaignById(String questionnaireId) {
+        return crudRepository.findQuestionnaireModelWithCampaignById(questionnaireId);
+    }
+
+    public boolean existsById(String questionnaireId) {
+        return crudRepository.existsById(questionnaireId);
+    }
+
+    @Transactional
+    public void createQuestionnaire(String questionnaireId, String label, String value, Set<String> nomenclatureIds, String campaignId) {
+        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(nomenclatureIds);
+        QuestionnaireModelDB questionnaire = new QuestionnaireModelDB(questionnaireId, label, value, requiredNomenclatures);
+        if(campaignId != null) {
+            CampaignDB campaign = campaignCrudRepository.getReferenceById(campaignId);
+            questionnaire.campaign(campaign);
+        }
+        crudRepository.save(questionnaire);
+    }
+
+    public void updateQuestionnaire(String questionnaireId, String label, String value, Set<String> nomenclatureIds, String campaignId) {
+        QuestionnaireModelDB questionnaire = crudRepository.getReferenceById(questionnaireId);
+        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(nomenclatureIds);
+        questionnaire.label(label);
+        questionnaire.value(value);
+        questionnaire.nomenclatures(requiredNomenclatures);
+        CampaignDB campaign = campaignCrudRepository.getReferenceById(campaignId);
+        questionnaire.campaign(campaign);
+
+        crudRepository.save(questionnaire);
+    }
+
+    public Long countValidQuestionnaires(String campaignId, List<String> questionnaireIds) {
+        return crudRepository.countValidQuestionnairesByIds(campaignId, questionnaireIds);
+    }
+
+    public void deleteAllFromCampaign(String campaignId) {
+        crudRepository.deleteAllByCampaignId(campaignId);
+    }
+
+    public List<String> findAllValueByCampaignId(String campaignId) {
+        return crudRepository.findAllValueByCampaignId(campaignId);
+    }
 }

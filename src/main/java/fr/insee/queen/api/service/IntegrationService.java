@@ -7,13 +7,19 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterators;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.domain.*;
 import fr.insee.queen.api.dto.integration.IntegrationResultDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
-import fr.insee.queen.api.exception.IntegrationServiceException;
-import fr.insee.queen.api.repository.CampaignRepository;
-import fr.insee.queen.api.repository.NomenclatureRepository;
-import fr.insee.queen.api.repository.QuestionnaireModelRepository;
+import fr.insee.queen.api.dto.input.CampaignInputDto;
+import fr.insee.queen.api.dto.input.MetadataInputDto;
+import fr.insee.queen.api.dto.input.NomenclatureInputDto;
+import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
+import fr.insee.queen.api.dto.IntegrationStatus;
+import fr.insee.queen.api.service.exception.IntegrationServiceException;
+import fr.insee.queen.api.service.campaign.CampaignExistenceService;
+import fr.insee.queen.api.service.campaign.CampaignService;
+import fr.insee.queen.api.service.questionnaire.NomenclatureService;
+import fr.insee.queen.api.service.questionnaire.QuestionnaireModelExistenceService;
+import fr.insee.queen.api.service.questionnaire.QuestionnaireModelService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -54,9 +60,11 @@ import java.util.zip.ZipFile;
 @AllArgsConstructor
 public class IntegrationService {
 
-	private final CampaignRepository campaignRepository;
-	private final QuestionnaireModelRepository questionnaireModelRepository;
-	private final NomenclatureRepository nomenclatureRepository;
+	private final CampaignService campaignService;
+	private final CampaignExistenceService campaignExistenceService;
+	private final QuestionnaireModelExistenceService questionnaireModelExistenceService;
+	private final QuestionnaireModelService questionnaireModelService;
+	private final NomenclatureService nomenclatureService;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final CacheManager cacheManager;
 
@@ -229,8 +237,6 @@ public class IntegrationService {
 		return true;
 	}
 
-
-
 	private void processCampaign(ZipFile zf, ZipEntry campaignXmlFile, IntegrationResultDto result) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, JSONException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -243,56 +249,52 @@ public class IntegrationService {
 		XPathExpression expr = xpath.compile("/Campaign/Id/text()");
 
 		String id = expr.evaluate(doc, XPathConstants.STRING).toString().toUpperCase();
-		Optional<Campaign> campaignOpt = campaignRepository.findById(id);
-		Campaign campaign;
-		if(campaignOpt.isPresent()) {
-			campaign = campaignOpt.get();
-			result.campaign(new IntegrationResultUnitDto(id, IntegrationStatus.UPDATED, null));
-		}
-		else {
-			log.info("Creating campaign {}", id);
-			campaign = new Campaign();
-			campaign.id(id);
-			result.campaign(new IntegrationResultUnitDto(id, IntegrationStatus.CREATED, null));
-		}
 
 		NodeList metadataTags = doc.getElementsByTagName(METADATA);
 		NodeList labelTags = doc.getElementsByTagName(LABEL);
 
+		MetadataInputDto metadataInputDto = new MetadataInputDto(objectMapper.createObjectNode());
 		if(metadataTags.getLength() > 0) {
 			log.info("Setting metadata for campaign {}", id);
-			String metadata = customConvertMetadataToString(metadataTags.item(0));
-			if(campaign.metadata()==null) {
-				Metadata meta = new Metadata();
-				meta.campaign(campaign);
-				campaign.metadata(meta);
-			}
-			campaign.metadata().value(metadata);
+			metadataInputDto = new MetadataInputDto(convertMetadataValueToObjectNode(metadataTags.item(0)));
 		}
 
+		String label = "";
 		if(labelTags.getLength() > 0) {
 			log.info("Setting label for campaign {}", id);
-			String label = labelTags.item(0).getTextContent();
-			campaign.label(label);
+			label = labelTags.item(0).getTextContent();
 		}
-		campaignRepository.save(campaign);
-		Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN))
-				.evict(campaign.id());
+
+		IntegrationStatus status;
+		CampaignInputDto campaign = new CampaignInputDto(id, label, new HashSet<>(), metadataInputDto);
+		if(campaignExistenceService.existsById(id)) {
+			log.info("Updating campaign {}", id);
+			campaignService.updateCampaign(campaign);
+			status = IntegrationStatus.UPDATED;
+		}
+		else {
+			log.info("Creating campaign {}", id);
+			campaignService.createCampaign(campaign);
+			status = IntegrationStatus.CREATED;
+		}
+
 		Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_NOMENCLATURES))
 				.evict(campaign.id());
-		for(QuestionnaireModel qm : campaign.questionnaireModels()) {
-			Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA))
-					.evict(qm.id());
-		}
+		Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA_BY_QUESTIONNAIRE))
+				.evict(campaign.id());
+		Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_EXIST)).clear();
+		Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).clear();
+		Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).clear();
+		Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA_BY_QUESTIONNAIRE)).clear();
+		result.campaign(new IntegrationResultUnitDto(id, status, null));
 	}
 
-	public String customConvertMetadataToString(Node xmlNode) throws JsonProcessingException, JSONException {
+	public ObjectNode convertMetadataValueToObjectNode(Node xmlNode) throws JsonProcessingException, JSONException {
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonString = XML.toJSONObject(toString(xmlNode, true, true)).toString();
-		JsonNode jsonObj = mapper.readTree(jsonString);
-
-		return removeArrayLevel(jsonObj.get(METADATA), mapper).toString();
+		log.error(jsonString);
+		return mapper.readValue(jsonString, ObjectNode.class);
 	}
 
 	public JsonNode removeArrayLevel(JsonNode node, ObjectMapper mapper) {
@@ -327,7 +329,7 @@ public class IntegrationService {
 
 	private void processNomenclatures(ZipFile zf, ZipEntry nomenclaturesXmlFile,
 									  HashMap<String, ZipEntry> nomenclatureJsonFiles, IntegrationResultDto result) throws ParserConfigurationException, SAXException, IOException {
-		ArrayList<IntegrationResultUnitDto> results = new ArrayList<>();
+		List<IntegrationResultUnitDto> results = new ArrayList<>();
 		result.nomenclatures(results);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -346,13 +348,12 @@ public class IntegrationService {
 
 	private void processNomenclature(ZipFile zf, Element nomenclature,
 									 HashMap<String, ZipEntry> nomenclatureJsonFiles,
-									 ArrayList<IntegrationResultUnitDto> results) {
+									 List<IntegrationResultUnitDto> results) {
 		String nomenclatureId = nomenclature.getElementsByTagName(ID).item(0).getTextContent();
 		String nomenclatureLabel = nomenclature.getElementsByTagName(LABEL).item(0).getTextContent();
 		String nomenclatureFilename = nomenclature.getElementsByTagName(FILENAME).item(0).getTextContent();
 
-		Optional<Nomenclature> nomOpt = nomenclatureRepository.findById(nomenclatureId);
-		if(nomOpt.isPresent()) {
+		if(nomenclatureService.existsById(nomenclatureId)) {
 			log.info("Nomenclature {} already exists", nomenclatureId);
 			results.add(new IntegrationResultUnitDto(
 					nomenclatureId,
@@ -373,20 +374,17 @@ public class IntegrationService {
 			return;
 		}
 
-		String nomenclatureValue;
+		ArrayNode nomenclatureValue;
 		try {
-			nomenclatureValue = objectMapper.readTree(zf.getInputStream(nomenclatureValueEntry)).toString();
-			Nomenclature nomen = new Nomenclature();
-			nomen.id(nomenclatureId);
-			nomen.label(nomenclatureLabel);
-			nomen.value(nomenclatureValue);
+			nomenclatureValue = objectMapper.readValue(zf.getInputStream(nomenclatureValueEntry), ArrayNode.class);
+			NomenclatureInputDto nomenclatureToSave = new NomenclatureInputDto(nomenclatureId, nomenclatureLabel, nomenclatureValue);
 
 			log.info("Creating nomenclature {}", nomenclatureId);
 			results.add(new IntegrationResultUnitDto(
 					nomenclatureId,
 					IntegrationStatus.CREATED,
 					null));
-			nomenclatureRepository.save(nomen);
+			nomenclatureService.saveNomenclature(nomenclatureToSave);
 		} catch (IOException e) {
 			log.info("Could not parse json in file {}", nomenclatureFilename);
 			results.add(new IntegrationResultUnitDto(
@@ -399,7 +397,7 @@ public class IntegrationService {
 
 	private void processQuestionnaireModels(ZipFile zf, ZipEntry questionnaireModelsXmlFile,
 											HashMap<String, ZipEntry> questionnaireModelJsonFiles, IntegrationResultDto result) throws ParserConfigurationException, SAXException, IOException {
-		ArrayList<IntegrationResultUnitDto> results = new ArrayList<>();
+		List<IntegrationResultUnitDto> results = new ArrayList<>();
 		result.questionnaireModels(results);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -416,21 +414,19 @@ public class IntegrationService {
 	}
 
 	private void processQuestionnaireModel(ZipFile zf, Element qm,
-										   ArrayList<IntegrationResultUnitDto> results,
+										   List<IntegrationResultUnitDto> results,
 										   HashMap<String, ZipEntry> questionnaireModelJsonFiles) {
 		String qmId = qm.getElementsByTagName(ID).item(0).getTextContent();
 		String qmLabel = qm.getElementsByTagName(LABEL).item(0).getTextContent();
 		String qmFilename = qm.getElementsByTagName(FILENAME).item(0).getTextContent();
 		String campaignId = qm.getElementsByTagName(CAMPAIGN_ID).item(0).getTextContent();
 		NodeList requiredNomNodes = qm.getElementsByTagName(NOMENCLATURE);
-		ArrayList<String> requiredNomenclatureIds = (ArrayList<String>) IntStream.range(0, requiredNomNodes.getLength())
+		List<String> requiredNomenclatureIds = IntStream.range(0, requiredNomNodes.getLength())
 				.filter(j-> requiredNomNodes.item(j).getNodeType() == Node.ELEMENT_NODE)
 				.mapToObj(j -> requiredNomNodes.item(j).getTextContent())
 				.toList();
 		// Checking if campaign exists
-		Campaign campaign;
-		Optional<Campaign> campaignOpt = campaignRepository.findById(campaignId);
-		if(campaignOpt.isEmpty()) {
+		if(!campaignExistenceService.existsById(campaignId)) {
 			log.info("Could not create Questionnaire model {}, campaign {} does not exist", qmId, campaignId);
 			results.add(new IntegrationResultUnitDto(
 					qmId,
@@ -439,16 +435,10 @@ public class IntegrationService {
 			);
 			return;
 		}
-		campaign = campaignOpt.get();
 
 		// Checking if required nomenclatures exist
-		ArrayList<Nomenclature> requiredNomenclatures = new ArrayList<>();
 		for(String id : requiredNomenclatureIds) {
-			Optional<Nomenclature> nomenclatureOpt = nomenclatureRepository.findById(id);
-			if(nomenclatureOpt.isPresent()) {
-				requiredNomenclatures.add(nomenclatureOpt.get());
-			}
-			else {
+			if(!nomenclatureService.existsById(id)) {
 				log.info("Could not create Questionnaire model {}, nomenclature {} does not exist", qmId, id);
 				results.add(new IntegrationResultUnitDto(
 						qmId,
@@ -459,19 +449,6 @@ public class IntegrationService {
 			}
 		}
 
-		Optional<QuestionnaireModel> qmOpt = questionnaireModelRepository.findById(qmId);
-		QuestionnaireModel questionnaireModel;
-		IntegrationStatus status;
-		if(qmOpt.isPresent()) {
-			log.info("QuestionnaireModel {} already exists", qmId);
-			questionnaireModel = qmOpt.get();
-			status = IntegrationStatus.UPDATED;
-		}
-		else {
-			questionnaireModel = new QuestionnaireModel();
-			questionnaireModel.id(qmId);
-			status = IntegrationStatus.CREATED;
-		}
 		ZipEntry qmValueEntry = questionnaireModelJsonFiles.get("questionnaireModels/" +qmFilename);
 		if(qmValueEntry == null) {
 			log.info("Questionnaire model file {} could not be found in input zip", qmFilename);
@@ -483,40 +460,35 @@ public class IntegrationService {
 			return;
 		}
 
-		String qmValue;
+		ObjectNode qmValue;
 		try {
-			qmValue = objectMapper.readTree(zf.getInputStream(qmValueEntry)).toString();
-			questionnaireModel.label(qmLabel);
-			questionnaireModel.value(qmValue);
-			questionnaireModel.nomenclatures().clear();
-			questionnaireModel.nomenclatures().addAll(requiredNomenclatures);
+			qmValue = objectMapper.readValue(zf.getInputStream(qmValueEntry), ObjectNode.class);
+			QuestionnaireModelInputDto questionnaireModel = new QuestionnaireModelInputDto(qmId, qmLabel, qmValue, new HashSet<>(requiredNomenclatureIds));
 
-			log.info("Creating questionnaire model {}", qmId);
+			IntegrationStatus status;
+			if(questionnaireModelExistenceService.existsById(qmId)) {
+				log.info("QuestionnaireModel {} already exists", qmId);
+				questionnaireModelService.updateQuestionnaire(questionnaireModel, campaignId);
+				status = IntegrationStatus.UPDATED;
+			}
+			else {
+				log.info("Creating questionnaire model {}", qmId);
+				questionnaireModelService.createQuestionnaire(questionnaireModel, campaignId);
+				status = IntegrationStatus.CREATED;
+			}
+
 			results.add(new IntegrationResultUnitDto(
 					qmId,
 					status,
 					null)
 			);
 
-			questionnaireModel.campaign(campaign);
-			questionnaireModelRepository.save(questionnaireModel);
 			Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
-					.evict(questionnaireModel.id());
+					.evict(qmId);
 			Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES))
-					.evict(questionnaireModel.id());
-			Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA))
-					.evict(questionnaireModel.id());
-
-			// Necessary for mongoDB
-			Set<QuestionnaireModel> qms = campaign.questionnaireModels();
-			if(qms.stream().filter(q -> q.id().equals(qmId)).toList().isEmpty()) {
-				qms.add(questionnaireModel);
-				campaignRepository.save(campaign);
-				Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN))
-						.evict(campaign.id());
-				Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_NOMENCLATURES))
-						.evict(campaign.id());
-			}
+					.evict(qmId);
+			Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA_BY_QUESTIONNAIRE))
+					.evict(qmId);
 		} catch (IOException e) {
 			log.info("Could not parse json in file {}", qmFilename);
 			results.add(new IntegrationResultUnitDto(

@@ -34,18 +34,8 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache campaignsCache() {
-        return new CaffeineCache(CacheName.CAMPAIGN,
-                Caffeine.newBuilder()
-                        .initialCapacity(10)
-                        .maximumSize(100)
-                        .expireAfterWrite(8, TimeUnit.HOURS)
-                        .build());
-    }
-
-    @Bean
     public CaffeineCache metadataCache() {
-        return new CaffeineCache(CacheName.METADATA,
+        return new CaffeineCache(CacheName.METADATA_BY_QUESTIONNAIRE,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
                         .maximumSize(100)

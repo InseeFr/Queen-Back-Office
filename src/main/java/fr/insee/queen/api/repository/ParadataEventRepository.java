@@ -1,6 +1,6 @@
 package fr.insee.queen.api.repository;
 
-import fr.insee.queen.api.domain.ParadataEvent;
+import fr.insee.queen.api.entity.ParadataEventDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +16,7 @@ import java.util.UUID;
 * 
 */
 @Repository
-public interface ParadataEventRepository extends JpaRepository<ParadataEvent, UUID> {
+public interface ParadataEventRepository extends JpaRepository<ParadataEventDB, UUID> {
 
     @Transactional
     @Modifying

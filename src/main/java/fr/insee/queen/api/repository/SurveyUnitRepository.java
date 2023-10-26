@@ -1,12 +1,11 @@
 package fr.insee.queen.api.repository;
 
-import fr.insee.queen.api.domain.SurveyUnit;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.*;
+import fr.insee.queen.api.entity.SurveyUnitDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +19,14 @@ import java.util.Optional;
 * 
 */
 @Repository
-public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> {
+public interface SurveyUnitRepository extends JpaRepository<SurveyUnitDB, String> {
 
 	@Query("""
 		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto(
 		    s.id,
 		    s.questionnaireModel.id
 		)
-		from SurveyUnit s where s.id=:surveyUnitId""")
+		from SurveyUnitDB s where s.id=:surveyUnitId""")
 	Optional<SurveyUnitSummaryDto> findSummaryById(String surveyUnitId);
 
 	@Query("""
@@ -35,7 +34,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		    s.id,
 		    s.questionnaireModel.id
 		)
-		from SurveyUnit s where s.campaign.id=:campaignId""")
+		from SurveyUnitDB s where s.campaign.id=:campaignId""")
 	List<SurveyUnitSummaryDto> findAllSummaryByCampaignId(String campaignId);
 
 	@Query("""
@@ -43,7 +42,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		    s.id,
 		    s.questionnaireModel.id
 		)
-		from SurveyUnit s where s.id in :surveyUnitIds""")
+		from SurveyUnitDB s where s.id in :surveyUnitIds""")
 	List<SurveyUnitSummaryDto> findAllSummaryByIdIn(List<String> surveyUnitIds);
 
 	@Query("""
@@ -59,7 +58,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		        s.stateData.currentPage
 		    ) as stateData
 		)
-		from SurveyUnit s where s.id=:surveyUnitId""")
+		from SurveyUnitDB s where s.id=:surveyUnitId""")
 	Optional<SurveyUnitDto> findOneById(String surveyUnitId);
 
 	@Query("""
@@ -75,7 +74,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		        s.stateData.currentPage
 		    )
 		)
-		from SurveyUnit s where s.id=:surveyUnitId""")
+		from SurveyUnitDB s where s.id=:surveyUnitId""")
 	Optional<SurveyUnitDepositProofDto> findWithCampaignAndStateById(String surveyUnitId);
 
 	@Query("""
@@ -83,10 +82,10 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		    s.id,
 		    s.campaign.id
 		)
-		from SurveyUnit s where s.id=:surveyUnitId""")
+		from SurveyUnitDB s where s.id=:surveyUnitId""")
 	Optional<SurveyUnitHabilitationDto> findWithCampaignById(String surveyUnitId);
 
-	@Query("select s.id from SurveyUnit s order by s.id asc")
+	@Query("select s.id from SurveyUnitDB s order by s.id asc")
 	Optional<List<String>> findAllIds();
 
 	@Query("""
@@ -98,7 +97,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		        s.stateData.currentPage
 		    )
 		)
-		from SurveyUnit s where s.id in :surveyUnitIds""")
+		from SurveyUnitDB s where s.id in :surveyUnitIds""")
 	List<SurveyUnitWithStateDto> findAllWithStateByIdIn(List<String> surveyUnitIds);
 
 	@Query("""
@@ -107,13 +106,13 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 		    s.stateData.date,
 		    s.stateData.currentPage
 		)
-		from SurveyUnit s where s.id = :surveyUnitId""")
+		from SurveyUnitDB s where s.id = :surveyUnitId""")
 	Optional<StateDataDto> findStateDataBySurveyUnitId(String surveyUnitId);
 
 	@Transactional
 	@Modifying
 	@Query("""
-		UPDATE SurveyUnit s 
+		UPDATE SurveyUnitDB s 
 		    SET s.stateData.currentPage=:#{#stateData.currentPage},
 		    s.stateData.date=:#{#stateData.date}, 
 		    s.stateData.state=:#{#stateData.state} 
@@ -122,7 +121,7 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 
 	@Transactional
     @Modifying
-	@Query("delete from SurveyUnit s where s.campaign.id=:campaignId")
+	@Query("delete from SurveyUnitDB s where s.campaign.id=:campaignId")
 	void deleteSurveyUnits(String campaignId);
 
 	@Transactional
@@ -134,25 +133,25 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 
 	@Transactional
     @Modifying
-	@Query("update SurveyUnit s set s.personalization = :personalization where s.id = :surveyUnitId")
+	@Query("update SurveyUnitDB s set s.personalization = :personalization where s.id = :surveyUnitId")
 	void updatePersonalization(String surveyUnitId, String personalization);
 
 	@Transactional
     @Modifying
-	@Query("update SurveyUnit s set s.comment = :comment where s.id = :surveyUnitId")
+	@Query("update SurveyUnitDB s set s.comment = :comment where s.id = :surveyUnitId")
 	void updateComment(String surveyUnitId, String comment);
 
 	@Transactional
     @Modifying
-	@Query("update SurveyUnit s set s.data = :data where s.id = :surveyUnitId")
+	@Query("update SurveyUnitDB s set s.data = :data where s.id = :surveyUnitId")
 	void updateData(String surveyUnitId, String data);
 
-	@Query("select s.comment from SurveyUnit s where s.id=:surveyUnitId")
+	@Query("select s.comment from SurveyUnitDB s where s.id=:surveyUnitId")
 	String getComment(String surveyUnitId);
 
-	@Query("select s.data from SurveyUnit s where s.id=:surveyUnitId")
+	@Query("select s.data from SurveyUnitDB s where s.id=:surveyUnitId")
 	String getData(String surveyUnitId);
 
-	@Query("select s.personalization from SurveyUnit s where s.id=:surveyUnitId")
+	@Query("select s.personalization from SurveyUnitDB s where s.id=:surveyUnitId")
 	String getPersonalization(String surveyUnitId);
 }

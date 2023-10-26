@@ -61,7 +61,7 @@ public class KeycloakSecurityConfiguration {
                             referrerPolicy
                                     .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN)
                 ))
-                .authorizeHttpRequests((configurer) -> configurer
+                .authorizeHttpRequests(configurer -> configurer
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, Constants.API_HEALTH_CHECK).permitAll()
                         // actuator (actuator metrics are disabled by default)

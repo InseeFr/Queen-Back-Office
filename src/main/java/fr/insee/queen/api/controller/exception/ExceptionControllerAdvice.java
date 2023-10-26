@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.api.exception.*;
+import fr.insee.queen.api.service.exception.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
@@ -167,10 +168,10 @@ public class ExceptionControllerAdvice {
                 new ApiBaseException(e.getMessage(), ErrorCode.FORBIDDEN));
     }
 
-    @ExceptionHandler(CampaignCreationException.class)
+    @ExceptionHandler(CampaignServiceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public void campaignCreationException(CampaignCreationException e, HttpServletResponse response) throws IOException {
+    public void campaignCreationException(CampaignServiceException e, HttpServletResponse response) throws IOException {
         log.error(e.getMessage(), e);
         writeResponse(response, HttpStatus.BAD_REQUEST,
                 new ApiBaseException(e.getMessage(), ErrorCode.BAD_REQUEST));
@@ -185,21 +186,13 @@ public class ExceptionControllerAdvice {
                 new ApiBaseException(e.getMessage(), ErrorCode.BAD_REQUEST));
     }
 
-    @ExceptionHandler(QuestionnaireModelCreationException.class)
+    @ExceptionHandler(QuestionnaireModelServiceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public void campaignCreationException(QuestionnaireModelCreationException e, HttpServletResponse response) throws IOException {
+    public void campaignCreationException(QuestionnaireModelServiceException e, HttpServletResponse response) throws IOException {
         log.error(e.getMessage(), e);
         writeResponse(response, HttpStatus.BAD_REQUEST,
                 new ApiBaseException(e.getMessage(), ErrorCode.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(SurveyUnitCreateUpdateRepositoryException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public void campaignCreationException(SurveyUnitCreateUpdateRepositoryException e, HttpServletResponse response) throws IOException {
-        writeResponse(response, HttpStatus.INTERNAL_SERVER_ERROR,
-                new ApiBaseException(e.getMessage(), ErrorCode.SERVER_EXCEPTION));
     }
 
     @ExceptionHandler(IntegrationServiceException.class)

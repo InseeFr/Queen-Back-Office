@@ -3,6 +3,7 @@ package fr.insee.queen.api.controller;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.service.DataSetInjectorService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "10. Create Data Set", description = "Endpoints for creating dataset")
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
@@ -26,7 +28,6 @@ public class DataSetController {
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public ResponseEntity<String> createDataSet() {
 		injector.createDataSet();
-		log.info("Dataset creation end");
 		return new ResponseEntity<>("dataSet created", HttpStatus.OK);
 	}
 
