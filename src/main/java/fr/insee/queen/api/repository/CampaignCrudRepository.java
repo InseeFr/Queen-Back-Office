@@ -1,5 +1,6 @@
 package fr.insee.queen.api.repository;
 
+import fr.insee.queen.api.dto.metadata.MetadataDto;
 import fr.insee.queen.api.entity.CampaignDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,9 +19,20 @@ import java.util.Optional;
 public interface CampaignCrudRepository extends JpaRepository<CampaignDB, String> {
 	Optional<CampaignDB> findById(String id);
 
-    @Query("select c from CampaignDB c left join fetch c.questionnaireModels left join fetch c.metadata")
+    @Query("select c from CampaignDB c left join fetch c.questionnaireModels")
     List<CampaignDB> findAllWithQuestionnaireModels();
 
-    @Query("select c from CampaignDB c left join fetch c.questionnaireModels left join fetch c.metadata where c.id=:campaignId")
+    @Query("select c from CampaignDB c left join fetch c.questionnaireModels where c.id=:campaignId")
     Optional<CampaignDB> findWithQuestionnaireModels(String campaignId);
+
+    @Query("""
+		select new fr.insee.queen.api.dto.metadata.MetadataDto(c.metadata)
+		from CampaignDB c where c.id=:campaignId""")
+    Optional<MetadataDto> findMetadataByCampaignId(String campaignId);
+
+    @Query("""
+		select new fr.insee.queen.api.dto.metadata.MetadataDto(c.metadata)
+		from CampaignDB c INNER JOIN c.questionnaireModels qm
+		where qm.id=:questionnaireId""")
+    Optional<MetadataDto> findMetadataByQuestionnaireId(String questionnaireId);
 }

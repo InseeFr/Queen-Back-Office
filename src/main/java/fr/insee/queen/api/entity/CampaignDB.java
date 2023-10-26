@@ -1,9 +1,12 @@
 package fr.insee.queen.api.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +22,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CampaignDB {
 	/**
 	* The id of campaign 
@@ -33,19 +37,13 @@ public class CampaignDB {
 	*/
 	@Column(length=255, nullable = false)
 	private String label;
-	
 
-	@OneToOne( mappedBy = "campaign", cascade = CascadeType.ALL, orphanRemoval = true )
-	private MetadataDB metadata;
+
+	@JdbcTypeCode(SqlTypes.JSON)
+	@Column(name="metadata", columnDefinition = "jsonb")
+	private String metadata;
   
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity= QuestionnaireModelDB.class, cascade = CascadeType.ALL, mappedBy="campaign" )
 	private Set<QuestionnaireModelDB> questionnaireModels = new HashSet<>();
-
-	public CampaignDB(String id, String label, Set<QuestionnaireModelDB> questionnaireModels) {
-		super();
-		this.id = id;
-		this.label = label;
-		this.questionnaireModels = questionnaireModels;
-	}
 }
