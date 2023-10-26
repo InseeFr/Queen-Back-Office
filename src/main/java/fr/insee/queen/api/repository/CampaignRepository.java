@@ -1,8 +1,8 @@
 package fr.insee.queen.api.repository;
 
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
+import fr.insee.queen.api.dto.metadata.MetadataDto;
 import fr.insee.queen.api.entity.CampaignDB;
-import fr.insee.queen.api.entity.MetadataDB;
 import fr.insee.queen.api.entity.QuestionnaireModelDB;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Repository
 @AllArgsConstructor
@@ -24,14 +23,9 @@ public class CampaignRepository {
     @Transactional
     public void createCampaign(String campaignId, String label, List<String>questionnaireIds, String metadataValue) {
         Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelCrudRepository.findByIdIn(questionnaireIds);
-        CampaignDB campaign = new CampaignDB(campaignId, label, questionnaireModels);
+        CampaignDB campaign = new CampaignDB(campaignId, label, metadataValue, questionnaireModels);
         questionnaireModels.parallelStream()
                 .forEach(questionnaireModel -> questionnaireModel.campaign(campaign));
-
-        if (metadataValue != null) {
-            MetadataDB m = new MetadataDB(UUID.randomUUID(), metadataValue, campaign);
-            campaign.metadata(m);
-        }
         campaignCrudRepository.save(campaign);
     }
 
@@ -68,16 +62,18 @@ public class CampaignRepository {
         CampaignDB campaign = campaignCrudRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", id)));
         campaign.label(label);
-        MetadataDB metadata = campaign.metadata();
-        if(metadata == null) {
-            metadata = new MetadataDB(UUID.randomUUID(), metadataValue, campaign);
-            campaign.metadata(metadata);
-        } else {
-            metadata.value(metadataValue);
-        }
+        campaign.metadata(metadataValue);
         campaign.questionnaireModels().clear();
         Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelCrudRepository.findByIdIn(questionnaireIds);
         campaign.questionnaireModels(questionnaireModels);
         campaignCrudRepository.save(campaign);
+    }
+
+    public Optional<MetadataDto> findMetadataByCampaignId(String campaignId) {
+        return campaignCrudRepository.findMetadataByCampaignId(campaignId);
+    }
+
+    public Optional<MetadataDto> findMetadataByQuestionnaireId(String questionnaireId) {
+        return campaignCrudRepository.findMetadataByQuestionnaireId(questionnaireId);
     }
 }
