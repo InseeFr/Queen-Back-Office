@@ -54,16 +54,6 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache requiredNomenclaturesByCampaignCache() {
-        return new CaffeineCache(CacheName.CAMPAIGN_NOMENCLATURES,
-                Caffeine.newBuilder()
-                        .initialCapacity(5)
-                        .maximumSize(10)
-                        .expireAfterWrite(8, TimeUnit.HOURS)
-                        .build());
-    }
-
-    @Bean
     public CaffeineCache requiredNomenclaturesByQuestionnaireCache() {
         return new CaffeineCache(CacheName.QUESTIONNAIRE_NOMENCLATURES,
                 Caffeine.newBuilder()
@@ -76,16 +66,6 @@ public class CacheConfig {
     @Bean
     public CaffeineCache campaignsExistenceCache() {
         return new CaffeineCache(CacheName.CAMPAIGN_EXIST,
-                Caffeine.newBuilder()
-                        .initialCapacity(10)
-                        .maximumSize(100)
-                        .expireAfterWrite(8, TimeUnit.HOURS)
-                        .build());
-    }
-
-    @Bean
-    public CaffeineCache questionnairesExistenceCache() {
-        return new CaffeineCache(CacheName.QUESTIONNAIRE_EXIST,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
                         .maximumSize(100)

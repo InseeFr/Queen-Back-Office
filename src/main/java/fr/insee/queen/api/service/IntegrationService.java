@@ -6,17 +6,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterators;
-import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.dto.integration.IntegrationResultDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
+import fr.insee.queen.api.dto.IntegrationStatus;
 import fr.insee.queen.api.dto.input.CampaignInputDto;
 import fr.insee.queen.api.dto.input.MetadataInputDto;
 import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
-import fr.insee.queen.api.dto.IntegrationStatus;
-import fr.insee.queen.api.service.exception.IntegrationServiceException;
+import fr.insee.queen.api.dto.integration.IntegrationResultDto;
+import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.campaign.CampaignService;
+import fr.insee.queen.api.service.exception.IntegrationServiceException;
 import fr.insee.queen.api.service.questionnaire.NomenclatureService;
 import fr.insee.queen.api.service.questionnaire.QuestionnaireModelExistenceService;
 import fr.insee.queen.api.service.questionnaire.QuestionnaireModelService;
@@ -25,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.XML;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,8 +64,6 @@ public class IntegrationService {
 	private final QuestionnaireModelService questionnaireModelService;
 	private final NomenclatureService nomenclatureService;
 	private final ObjectMapper objectMapper = new ObjectMapper();
-	private final CacheManager cacheManager;
-
 	private static final String CAMPAIGN_XML = "campaign.xml";
 	private static final String NOMENCLATURES_XML = "nomenclatures.xml";
 	private static final String QUESTIONNAIREMODELS_XML = "questionnaireModels.xml";
@@ -278,14 +274,6 @@ public class IntegrationService {
 			status = IntegrationStatus.CREATED;
 		}
 
-		Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_NOMENCLATURES))
-				.evict(campaign.id());
-		Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA_BY_QUESTIONNAIRE))
-				.evict(campaign.id());
-		Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_EXIST)).clear();
-		Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).clear();
-		Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).clear();
-		Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA_BY_QUESTIONNAIRE)).clear();
 		result.campaign(new IntegrationResultUnitDto(id, status, null));
 	}
 
@@ -482,13 +470,6 @@ public class IntegrationService {
 					status,
 					null)
 			);
-
-			Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
-					.evict(qmId);
-			Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES))
-					.evict(qmId);
-			Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA_BY_QUESTIONNAIRE))
-					.evict(qmId);
 		} catch (IOException e) {
 			log.info("Could not parse json in file {}", qmFilename);
 			results.add(new IntegrationResultUnitDto(

@@ -57,7 +57,6 @@ public class NomenclatureService {
 				.orElseThrow(() -> new EntityNotFoundException("No nomenclatures found"));
 	}
 
-	@Cacheable(CacheName.CAMPAIGN_NOMENCLATURES)
 	public List<String> findRequiredNomenclatureByCampaign(String campaignId) {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
 		return nomenclatureRepository.findRequiredNomenclatureByCampaignId(campaignId);

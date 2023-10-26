@@ -10,7 +10,9 @@ import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.exception.QuestionnaireModelServiceException;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +56,11 @@ public class QuestionnaireModelService {
 		questionnaireModelRepository.createQuestionnaire(qm.idQuestionnaireModel(), qm.label(), qm.value().toString(), qm.requiredNomenclatureIds(), campaignId);
 	}
 
+	@Caching(evict = {
+			@CacheEvict(value = CacheName.QUESTIONNAIRE_NOMENCLATURES, key = "#qm.idQuestionnaireModel"),
+			@CacheEvict(value = CacheName.METADATA_BY_QUESTIONNAIRE, key = "#qm.idQuestionnaireModel"),
+			@CacheEvict(value = CacheName.QUESTIONNAIRE, key = "#qm.idQuestionnaireModel"),
+	})
 	@Transactional
 	public void updateQuestionnaire(QuestionnaireModelInputDto qm, String campaignId) {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
