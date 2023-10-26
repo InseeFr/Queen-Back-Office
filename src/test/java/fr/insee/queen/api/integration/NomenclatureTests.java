@@ -112,7 +112,15 @@ class NomenclatureTests {
 
     @Test
     void on_get_required_nomenclatures_return_nomenclatures_for_campaign() throws Exception {
-        mockMvc.perform(get("/api/campaign/VQS2021X00/required-nomenclatures"))
+        mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/required-nomenclatures"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(2)))
+                .andExpect(jsonPath("$[*]").value(containsInAnyOrder("cities2019", "regions2019")));
+    }
+
+    @Test
+    void on_get_required_nomenclatures_return_nomenclatures_for_questionnaire() throws Exception {
+        mockMvc.perform(get("/api/questionnaire/simpsons/required-nomenclatures"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
                 .andExpect(jsonPath("$[*]").value(containsInAnyOrder("cities2019", "regions2019")));

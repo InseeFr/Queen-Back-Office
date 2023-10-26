@@ -44,7 +44,7 @@ public class ParadataEventController {
 	@Operation(summary = "Create paradata event for a survey unit")
 	@PostMapping(path = "/paradata")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
-	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseStatus(HttpStatus.OK)
 	public void addParadata(@NotNull @RequestBody ObjectNode paradataValue, Authentication auth) {
 		String paradataSurveyUnitIdParameter = "idSU";
 		log.info("POST ParadataEvent");

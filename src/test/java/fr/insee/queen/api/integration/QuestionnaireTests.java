@@ -149,4 +149,39 @@ class QuestionnaireTests {
         String expectedResult = "{ \"value\": " + JsonHelper.getResourceFileAsString(questionnaireFile) + "}";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
+
+    @Test
+    void on_get_list_questionnaire_for_each_surveyunit_in_request_return_questionnaire_list() throws Exception {
+        String surveyUnitIdsInput = """
+                [
+                  "11",
+                  "12",
+                  "20",
+                  "456789",
+                  "123456"
+                ]
+                """;
+        MvcResult result = mockMvc.perform(post("/api/survey-units/questionnaire-model-id")
+                        .content(surveyUnitIdsInput)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        String expectedResult = """
+        {
+          "surveyUnitOK": [
+            {"id": "11", "questionnaireId": "simpsons"},
+            {"id": "12", "questionnaireId": "simpsons"},
+            {"id": "20", "questionnaireId": "VQS2021X00"}
+          ],
+          "surveyUnitNOK": [
+            {"id": "456789"},
+            {"id": "123456"}
+          ]
+        }
+        """;
+        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
+    }
 }
