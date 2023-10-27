@@ -189,7 +189,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(QuestionnaireModelServiceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public void campaignCreationException(QuestionnaireModelServiceException e, HttpServletResponse response) throws IOException {
+    public void questionnaireModelServiceException(QuestionnaireModelServiceException e, HttpServletResponse response) throws IOException {
         log.error(e.getMessage(), e);
         writeResponse(response, HttpStatus.BAD_REQUEST,
                 new ApiBaseException(e.getMessage(), ErrorCode.BAD_REQUEST));

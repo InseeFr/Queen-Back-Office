@@ -9,7 +9,7 @@ import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
-import fr.insee.queen.api.service.PilotageApiService;
+import fr.insee.queen.api.service.pilotage.PilotageService;
 import fr.insee.queen.api.service.exception.DepositProofException;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
@@ -51,7 +51,7 @@ public class SurveyUnitController {
 	* The survey unit repository using to access to table 'survey_unit' in DB 
 	*/
 	private final SurveyUnitService surveyUnitService;
-	private final PilotageApiService pilotageApiService;
+	private final PilotageService pilotageService;
 	private final HabilitationComponent habilitationComponent;
 	private final AuthenticationHelper authHelper;
 
@@ -107,13 +107,11 @@ public class SurveyUnitController {
 		log.info("GET survey-units for campaign with id {}", campaignId);
 
 		List<SurveyUnitSummaryDto> surveyUnits;
-		String userId = authHelper.getUserId(auth);
-		if(!userId.equals(Constants.GUEST) &&
-		  !(integrationOverride != null && integrationOverride.equals("true"))) {
-			String authToken = authHelper.getAuthToken(auth);
-			surveyUnits = pilotageApiService.getSurveyUnitsByCampaign(campaignId, authToken);
-		} else {
+		if(integrationOverride != null && integrationOverride.equals("true")) {
 			surveyUnits = surveyUnitService.findByCampaignId(campaignId);
+		} else {
+			String authToken = authHelper.getAuthToken(auth);
+			surveyUnits = pilotageService.getSurveyUnitsByCampaign(campaignId, authToken);
 		}
 
 		if(surveyUnits.isEmpty()) {

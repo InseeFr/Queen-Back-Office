@@ -1,12 +1,12 @@
-package fr.insee.queen.api.service;
+package fr.insee.queen.api.service.pilotage;
 
 import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
-import fr.insee.queen.api.service.exception.PilotageApiException;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
+import fr.insee.queen.api.service.exception.PilotageApiException;
 import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class PilotageApiService {
+public class PilotageApiService implements PilotageService {
 
     @Value("${application.pilotage.service.url.scheme}")
     private final String pilotageScheme;
@@ -70,7 +70,7 @@ public class PilotageApiService {
         Map<String, SurveyUnitSummaryDto> surveyUnitMap = new HashMap<>();
 
         ResponseEntity<Object> result = getSuFromPilotage(authToken);
-        log.info("GET survey-units from PearJam API resulting in {}", result.getStatusCode());
+        log.info("GET survey-units from PearlJam API resulting in {}", result.getStatusCode());
         if(result.getStatusCode()!=HttpStatus.OK) {
             log.error("""
 					GET survey-units for campaign with id {} resulting in 500
@@ -122,7 +122,7 @@ public class PilotageApiService {
      * @param authToken authorization token header
      * @return String of UserId
      */
-    public ResponseEntity<Object> getSuFromPilotage(String authToken){
+    private ResponseEntity<Object> getSuFromPilotage(String authToken){
         final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + Constants.API_PEARLJAM_SURVEYUNITS;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

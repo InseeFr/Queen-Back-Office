@@ -5,7 +5,7 @@ import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitTempZoneDto;
-import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
+import fr.insee.queen.api.service.surveyunit.SurveyUnitTempZoneService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -35,7 +35,7 @@ public class SurveyUnitTempZoneController {
     /**
      * The survey unit repository using to access to table 'survey_unit' in DB
      */
-    private final SurveyUnitService surveyUnitService;
+    private final SurveyUnitTempZoneService surveyUnitTempZoneService;
     private final AuthenticationHelper authHelper;
 
     /**
@@ -50,7 +50,7 @@ public class SurveyUnitTempZoneController {
                                              Authentication auth) {
         log.info("POST survey-unit to temp-zone");
         String userId = authHelper.getUserId(auth);
-        surveyUnitService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
+        surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
     }
 
     /**
@@ -61,6 +61,6 @@ public class SurveyUnitTempZoneController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<SurveyUnitTempZoneDto> getSurveyUnitsInTempZone() {
         log.info("GET all survey-units in temp-zone");
-        return surveyUnitService.getAllSurveyUnitTempZoneDto();
+        return surveyUnitTempZoneService.getAllSurveyUnitTempZoneDto();
     }
 }
