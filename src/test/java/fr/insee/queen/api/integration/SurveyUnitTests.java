@@ -1,7 +1,10 @@
 package fr.insee.queen.api.integration;
 
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -21,22 +24,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase(provider = ZONKY)
 @AutoConfigureMockMvc
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SurveyUnitTests {
     @Autowired
     private MockMvc mockMvc;
 
-    private String surveyUnitData;
-
-    @BeforeAll
-    void init() {
-        surveyUnitData = """
+    private final String surveyUnitData = """
                 {
                     "id":"test-surveyunit",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
@@ -44,7 +42,6 @@ class SurveyUnitTests {
                     "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
                     "questionnaireId":"VQS2021X00"
                 }""";
-    }
 
     // tests on list before tests on create/update
     @Test
@@ -203,6 +200,22 @@ class SurveyUnitTests {
     @Test
     void on_delete_survey_unit_when_not_exist_return_404() throws Exception {
         mockMvc.perform(delete("/api/survey-unit/not-exist")
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void on_get_deposit_proof_return_200() throws Exception {
+        mockMvc.perform(get("/api/survey-unit/11/deposit-proof")
+                        .accept(MediaType.APPLICATION_PDF)
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void on_get_deposit_proof_when_not_exist_return_404() throws Exception {
+        mockMvc.perform(get("/api/survey-unit/not-exist/deposit-proof")
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isNotFound());
