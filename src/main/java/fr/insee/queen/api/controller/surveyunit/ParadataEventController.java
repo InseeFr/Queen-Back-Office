@@ -3,8 +3,9 @@ package fr.insee.queen.api.controller.surveyunit;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
+import fr.insee.queen.api.service.exception.EntityNotFoundException;
+import fr.insee.queen.api.service.pilotage.PilotageRole;
 import fr.insee.queen.api.service.surveyunit.ParadataEventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,22 +44,22 @@ public class ParadataEventController {
 	 */
 	@Operation(summary = "Create paradata event for a survey unit")
 	@PostMapping(path = "/paradata")
-	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
 	@ResponseStatus(HttpStatus.OK)
 	public void addParadata(@NotNull @RequestBody ObjectNode paradataValue, Authentication auth) {
 		String paradataSurveyUnitIdParameter = "idSU";
 		log.info("POST ParadataEvent");
 		if(!paradataValue.has(paradataSurveyUnitIdParameter)) {
-			throw new IllegalArgumentException("Paradata does not contain the survey unit id");
+			throw new EntityNotFoundException("Paradata does not contain the survey unit id");
 		}
 
 		JsonNode surveyUnitNode = paradataValue.get(paradataSurveyUnitIdParameter);
 		if(!surveyUnitNode.isTextual() || surveyUnitNode.textValue() == null) {
-			throw new IllegalArgumentException("Paradata does not contain the survey unit id");
+			throw new EntityNotFoundException("Paradata does not contain the survey unit id");
 		}
 
 		String surveyUnitId = surveyUnitNode.textValue();
-		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
 		paradataEventService.createParadataEvent(surveyUnitId, paradataValue.toString());
 	}
 }

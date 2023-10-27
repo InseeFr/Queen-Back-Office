@@ -1,7 +1,6 @@
 package fr.insee.queen.api.controller.surveyunit;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.controller.validation.IdValid;
@@ -9,9 +8,10 @@ import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
-import fr.insee.queen.api.service.pilotage.PilotageService;
 import fr.insee.queen.api.service.exception.DepositProofException;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
+import fr.insee.queen.api.service.pilotage.PilotageRole;
+import fr.insee.queen.api.service.pilotage.PilotageService;
 import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -75,7 +75,7 @@ public class SurveyUnitController {
 	public SurveyUnitDto getSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
 										   Authentication auth) {
 		log.info("GET survey-units with id {}", surveyUnitId);
-		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
 		return surveyUnitService.getSurveyUnit(surveyUnitId);
 	}
 	
@@ -84,12 +84,12 @@ public class SurveyUnitController {
 	*/
 	@Operation(summary = "Update survey-unit")
 	@PutMapping(path = {"/survey-unit/{id}"})
-	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
+	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
 	public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
 									 @RequestBody SurveyUnitInputDto surveyUnitInputDto,
 									 Authentication auth) {
 		log.info("PUT survey-unit for reporting unit with id {}", surveyUnitId);
-		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
 		surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitInputDto);
 	}
 	
@@ -128,7 +128,7 @@ public class SurveyUnitController {
 									 Authentication auth,
 									 HttpServletResponse response) {
 		log.info("GET deposit-proof with survey unit id {}", surveyUnitId);
-		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER, Constants.REVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
 
 		String username = authHelper.getUserId(auth);
 		PdfDepositProof depositProof = surveyUnitService.generateDepositProof(username, surveyUnitId);

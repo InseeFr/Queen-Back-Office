@@ -43,7 +43,7 @@ public class SurveyUnitTempZoneController {
      */
     @Operation(summary = "Create survey-unit to temp-zone")
     @PostMapping(path = "/survey-unit/{id}/temp-zone")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.INTERVIEWER)
+    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                              @NotNull @RequestBody ObjectNode surveyUnit,

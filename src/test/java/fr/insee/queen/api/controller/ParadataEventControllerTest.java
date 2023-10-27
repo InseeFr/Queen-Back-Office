@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.controller.dummy.HabilitationFakeComponent;
 import fr.insee.queen.api.controller.surveyunit.ParadataEventController;
 import fr.insee.queen.api.service.dummy.ParadataEventFakeService;
+import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ class ParadataEventControllerTest {
         ObjectNode paradata = mapper.readValue("""
         {"idU": "11", "object": {}}
         """, ObjectNode.class);
-        assertThatThrownBy(() -> controller.addParadata(paradata, null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> controller.addParadata(paradata, null)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -57,6 +58,6 @@ class ParadataEventControllerTest {
         ObjectNode paradata = mapper.readValue("""
         {"idSU": {}, "object": {}}
         """, ObjectNode.class);
-        assertThatThrownBy(() -> controller.addParadata(paradata, null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> controller.addParadata(paradata, null)).isInstanceOf(EntityNotFoundException.class);
     }
 }

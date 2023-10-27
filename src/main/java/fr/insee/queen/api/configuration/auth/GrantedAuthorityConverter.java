@@ -36,19 +36,19 @@ public class GrantedAuthorityConverter implements Converter<Jwt, Collection<Gran
         return roles.stream()
                 .map(role -> {
                     if(role.equals(roleProperties.reviewer())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + "REVIEWER");
+                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.REVIEWER);
                     }
                     if(role.equals(roleProperties.reviewerAlternative())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + "REVIEWER_ALTERNATIVE");
+                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.REVIEWER_ALTERNATIVE);
                     }
                     if(role.equals(roleProperties.interviewer())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + "INTERVIEWER");
+                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.INTERVIEWER);
                     }
                     if(role.equals(roleProperties.admin())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + "ADMIN");
+                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.ADMIN);
                     }
                     if(role.equals(roleProperties.webclient())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + "WEBCLIENT");
+                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.WEBCLIENT);
                     }
                     return null;
                 })

@@ -3,6 +3,7 @@ package fr.insee.queen.api.service.dummy;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
+import fr.insee.queen.api.service.pilotage.PilotageRole;
 import fr.insee.queen.api.service.pilotage.PilotageService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,12 @@ public class PilotageFakeService implements PilotageService {
 
     @Setter
     private boolean isCampaignClosed = true;
+    @Setter
+    private boolean hasHabilitation = true;
     @Getter
     private boolean wentThroughInterviewerCampaigns = false;
+    @Getter
+    private int wentThroughHasHabilitation = 0;
     @Setter
     private boolean hasEmptySurveyUnits = false;
 
@@ -31,7 +36,7 @@ public class PilotageFakeService implements PilotageService {
 
     @Override
     public List<SurveyUnitSummaryDto> getSurveyUnitsByCampaign(String campaignId, String authToken) {
-        if(hasEmptySurveyUnits) {
+        if(this.hasEmptySurveyUnits) {
             return new ArrayList<>();
         }
         return List.of(
@@ -50,7 +55,8 @@ public class PilotageFakeService implements PilotageService {
     }
 
     @Override
-    public boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, String role, String idep, String authToken) {
-        return false;
+    public boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, PilotageRole role, String idep, String authToken) {
+        wentThroughHasHabilitation++;
+        return this.hasHabilitation;
     }
 }

@@ -57,7 +57,7 @@ class ParadataTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"\"idSU\": \"invalid-unit\",", ""})
+    @ValueSource(strings = {"\"idSU\": \"invalid-unit\",", "", "\"idSU\": {},"})
     void on_create_paradata_when_survey_unit_invalid_return_404(String surveyUnitJson) throws Exception {
         String paradataInput = """
         {

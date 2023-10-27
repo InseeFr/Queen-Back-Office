@@ -65,7 +65,8 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public Optional<SurveyUnitSummaryDto> findSummaryById(String surveyUnitId) {
-        return Optional.empty();
+        SurveyUnitSummaryDto surveyUnit = new SurveyUnitSummaryDto(surveyUnitId, "questionnaire-id");
+        return Optional.of(surveyUnit);
     }
 
     @Override
@@ -85,6 +86,6 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public SurveyUnitHabilitationDto getSurveyUnitWithCampaignById(String surveyUnitId) {
-        return null;
+        return new SurveyUnitHabilitationDto("survey-unit1", "campaign-id");
     }
 }

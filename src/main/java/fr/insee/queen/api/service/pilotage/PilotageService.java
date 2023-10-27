@@ -11,5 +11,5 @@ public interface PilotageService {
     boolean isClosed(String campaignId, String authToken);
     List<SurveyUnitSummaryDto> getSurveyUnitsByCampaign(String campaignId, String authToken);
     List<CampaignSummaryDto> getInterviewerCampaigns(String authToken);
-    boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, String role, String idep, String authToken);
+    boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, PilotageRole role, String idep, String authToken);
 }

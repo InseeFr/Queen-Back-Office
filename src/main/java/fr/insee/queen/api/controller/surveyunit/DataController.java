@@ -2,10 +2,10 @@ package fr.insee.queen.api.controller.surveyunit;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.data.DataDto;
+import fr.insee.queen.api.service.pilotage.PilotageRole;
 import fr.insee.queen.api.service.surveyunit.DataService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,7 +51,7 @@ public class DataController {
 	public String getDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId,
 									  Authentication auth) {
 		log.info("GET Data for reporting unit with id {}", surveyUnitId);
-		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
 		return dataService.getData(surveyUnitId);
 	}
 
@@ -70,7 +70,7 @@ public class DataController {
 						@IdValid @PathVariable(value = "id") String surveyUnitId,
 						Authentication auth) {
 		log.info("PUT data for reporting unit with id {}", surveyUnitId);
-		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
 		dataService.updateData(surveyUnitId, dataValue);
 	}
 }
