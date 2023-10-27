@@ -2,7 +2,7 @@ package fr.insee.queen.api.integration;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.api.JsonHelper;
+import fr.insee.queen.api.utils.JsonTestHelper;
 import fr.insee.queen.api.dto.input.CampaignInputDto;
 import fr.insee.queen.api.dto.input.MetadataInputDto;
 import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
@@ -54,11 +54,11 @@ class CampaignTests {
     @Order(2)
     void on_create_campaigns_return_200() throws Exception {
         String questionnaireId = "questionnaire-for-campaign-creation";
-        ObjectNode questionnaireJson = JsonHelper.getResourceFileAsObjectNode("db/dataset/simpsons.json");
+        ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode("db/dataset/simpsons.json");
         Set<String> nomenclatures = Set.of("cities2019", "regions2019");
         QuestionnaireModelInputDto questionnaire = new QuestionnaireModelInputDto(questionnaireId, "label questionnaire", questionnaireJson, nomenclatures);
         mockMvc.perform(post("/api/questionnaire-models")
-                        .content(JsonHelper.getObjectAsJsonString(questionnaire))
+                        .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )
@@ -70,7 +70,7 @@ class CampaignTests {
         MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
         CampaignInputDto campaign = new CampaignInputDto(campaignName, "label campaign", questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
-                        .content(JsonHelper.getObjectAsJsonString(campaign))
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )
@@ -101,7 +101,7 @@ class CampaignTests {
         MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
         CampaignInputDto campaign = new CampaignInputDto("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
-                        .content(JsonHelper.getObjectAsJsonString(campaign))
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )
@@ -113,7 +113,7 @@ class CampaignTests {
         MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
         CampaignInputDto campaign = new CampaignInputDto("campaign_1234", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
-                        .content(JsonHelper.getObjectAsJsonString(campaign))
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )
@@ -128,7 +128,7 @@ class CampaignTests {
         MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
         CampaignInputDto campaign = new CampaignInputDto(campaignName, "label campaign", questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
-                        .content(JsonHelper.getObjectAsJsonString(campaign))
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )

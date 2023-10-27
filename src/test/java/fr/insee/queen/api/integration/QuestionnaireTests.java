@@ -1,7 +1,7 @@
 package fr.insee.queen.api.integration;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.api.JsonHelper;
+import fr.insee.queen.api.utils.JsonTestHelper;
 import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
@@ -122,18 +122,18 @@ class QuestionnaireTests {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = "{ \"value\": " + JsonHelper.getResourceFileAsString(questionnaireFile) + "}";
+        String expectedResult = "{ \"value\": " + JsonTestHelper.getResourceFileAsString(questionnaireFile) + "}";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
     @ParameterizedTest
     @CsvSource("questionnaire-creation-test,db/dataset/simpsons.json")
     void on_create_questionnaire_check_questionnaire_created(String questionnaireId, String questionnaireFile) throws Exception {
-        ObjectNode questionnaireJson = JsonHelper.getResourceFileAsObjectNode(questionnaireFile);
+        ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode(questionnaireFile);
         Set<String> nomenclatures = Set.of("cities2019", "regions2019");
         QuestionnaireModelInputDto questionnaire = new QuestionnaireModelInputDto(questionnaireId, "label questionnaire", questionnaireJson, nomenclatures);
         mockMvc.perform(post("/api/questionnaire-models")
-                        .content(JsonHelper.getObjectAsJsonString(questionnaire))
+                        .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )
@@ -146,7 +146,7 @@ class QuestionnaireTests {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = "{ \"value\": " + JsonHelper.getResourceFileAsString(questionnaireFile) + "}";
+        String expectedResult = "{ \"value\": " + JsonTestHelper.getResourceFileAsString(questionnaireFile) + "}";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 

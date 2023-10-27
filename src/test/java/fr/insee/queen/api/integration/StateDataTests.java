@@ -1,6 +1,6 @@
 package fr.insee.queen.api.integration;
 
-import fr.insee.queen.api.JsonHelper;
+import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class StateDataTests {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonHelper.getResourceFileAsString("db/dataset/state_data.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/state_data.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
@@ -62,7 +62,7 @@ class StateDataTests {
     @Test
     void on_update_state_data_state_data_is_updated() throws Exception {
         String surveyUnitId = "12";
-        String stateDataJson = JsonHelper.getResourceFileAsString("db/dataset/state_data.json");
+        String stateDataJson = JsonTestHelper.getResourceFileAsString("db/dataset/state_data.json");
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                 )
@@ -136,7 +136,7 @@ class StateDataTests {
 
     @Test
     void on_update_state_data_when_su_not_exist_return_404() throws Exception {
-        String stateDataJson = JsonHelper.getResourceFileAsString("db/dataset/state_data.json");
+        String stateDataJson = JsonTestHelper.getResourceFileAsString("db/dataset/state_data.json");
         mockMvc.perform(put("/api/survey-unit/not-exist/state-data")
                         .content(stateDataJson)
                         .contentType(MediaType.APPLICATION_JSON)

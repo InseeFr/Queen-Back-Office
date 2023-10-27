@@ -1,4 +1,4 @@
-package fr.insee.queen.api;
+package fr.insee.queen.api.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -10,9 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
-public class JsonHelper {
+public class JsonTestHelper {
 
-    public JsonHelper() {
+    public JsonTestHelper() {
         throw new IllegalArgumentException("Utility class");
     }
     /**

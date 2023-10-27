@@ -1,7 +1,7 @@
 package fr.insee.queen.api.integration;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import fr.insee.queen.api.JsonHelper;
+import fr.insee.queen.api.utils.JsonTestHelper;
 import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
@@ -46,10 +46,10 @@ class NomenclatureTests {
         String nomenclatureName = "plop";
         String nomenclatureJsonFile = "db/dataset/nomenclature/public_regions-2019.json";
         on_get_nomenclature_when_nomenclature_not_exists_return_404(nomenclatureName);
-        ArrayNode jsonNomenclature = JsonHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
+        ArrayNode jsonNomenclature = JsonTestHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
         NomenclatureInputDto nomenclature = new NomenclatureInputDto(nomenclatureName, "label", jsonNomenclature);
         mockMvc.perform(post("/api/nomenclature")
-                        .content(JsonHelper.getObjectAsJsonString(nomenclature))
+                        .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )
@@ -65,7 +65,7 @@ class NomenclatureTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonHelper.getResourceFileAsString(nomenclatureJsonFile);
+        String expectedResult = JsonTestHelper.getResourceFileAsString(nomenclatureJsonFile);
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 
@@ -75,10 +75,10 @@ class NomenclatureTests {
         String nomenclatureName = "plop";
         String nomenclatureJsonFile = "db/dataset/nomenclature/cities_2019_nomenclature.json";
         on_get_nomenclature_return_json_nomenclature(nomenclatureName, "db/dataset/nomenclature/public_regions-2019.json");
-        ArrayNode jsonNomenclature = JsonHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
+        ArrayNode jsonNomenclature = JsonTestHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
         NomenclatureInputDto nomenclature = new NomenclatureInputDto(nomenclatureName, "label", jsonNomenclature);
         mockMvc.perform(post("/api/nomenclature")
-                        .content(JsonHelper.getObjectAsJsonString(nomenclature))
+                        .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )

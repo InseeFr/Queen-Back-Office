@@ -1,6 +1,6 @@
 package fr.insee.queen.api.integration;
 
-import fr.insee.queen.api.JsonHelper;
+import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class PersonalizationTests {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonHelper.getResourceFileAsString("db/dataset/personalization.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/personalization.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
@@ -63,7 +63,7 @@ class PersonalizationTests {
     @Test
     void on_update_personalization_personalization_is_updated() throws Exception {
         String surveyUnitId = "12";
-        String personalizationJson = JsonHelper.getResourceFileAsString("db/dataset/personalization.json");
+        String personalizationJson = JsonTestHelper.getResourceFileAsString("db/dataset/personalization.json");
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                 )

@@ -1,6 +1,6 @@
 package fr.insee.queen.api.integration;
 
-import fr.insee.queen.api.JsonHelper;
+import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -44,7 +44,7 @@ class MetadataTests {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonHelper.getResourceFileAsString("db/dataset/logement/metadata/metadata.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/logement/metadata/metadata.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 
@@ -79,7 +79,7 @@ class MetadataTests {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonHelper.getResourceFileAsString("db/dataset/logement/metadata/metadata.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/logement/metadata/metadata.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 
