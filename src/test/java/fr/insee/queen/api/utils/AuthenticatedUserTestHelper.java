@@ -36,7 +36,7 @@ public class AuthenticatedUserTestHelper {
 
     public Authentication getNotAuthenticatedUser() {
         Map<String, String> principal = new HashMap<>();
-        Authentication auth = new AnonymousAuthenticationToken("id", principal, List.of(new SimpleGrantedAuthority(Constants.ROLE_PREFIX + "anonymous")));
+        Authentication auth = new AnonymousAuthenticationToken("id", principal, List.of(new SimpleGrantedAuthority(Constants.ROLE_PREFIX + "ANONYMOUS")));
         auth.setAuthenticated(false);
         return auth;
     }
