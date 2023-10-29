@@ -1,5 +1,7 @@
 package fr.insee.queen.api.integration;
 
+import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
+import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
@@ -11,12 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,10 +35,19 @@ class DataTests {
     @Autowired
     private MockMvc mockMvc;
 
+    private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
+
+    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
+            AuthorityRoleEnum.REVIEWER,
+            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+            AuthorityRoleEnum.INTERVIEWER);
+
+    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
     @Test
     void on_get_data_return_data() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/survey-unit/11/data")
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -48,6 +61,7 @@ class DataTests {
     void on_get_data_when_su_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/survey-unit/plop/data")
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -56,6 +70,7 @@ class DataTests {
     void on_get_data_when_su_id_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/survey-unit/pl_op/data")
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -66,6 +81,7 @@ class DataTests {
         String dataJson = JsonTestHelper.getResourceFileAsString("db/dataset/data.json");
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -77,11 +93,13 @@ class DataTests {
                         .content(dataJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isOk());
 
         result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -96,6 +114,7 @@ class DataTests {
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -106,6 +125,7 @@ class DataTests {
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -116,7 +136,28 @@ class DataTests {
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_get_data_when_anonymous_user_return_401() throws Exception {
+        mockMvc.perform(get("/api/survey-unit/pl_op/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(anonymousUser))
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void on_update_data_when_anonymous_user_return_401() throws Exception {
+        mockMvc.perform(put("/api/survey-unit/12/data")
+                        .content("[]")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(anonymousUser))
+                )
+                .andExpect(status().isUnauthorized());
     }
 }

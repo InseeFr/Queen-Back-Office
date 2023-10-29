@@ -46,13 +46,13 @@ class CampaignTests {
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
     private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN.name(),
-            AuthorityRoleEnum.WEBCLIENT.name());
+            AuthorityRoleEnum.ADMIN,
+            AuthorityRoleEnum.WEBCLIENT);
 
     private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER.name(),
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE.name(),
-            AuthorityRoleEnum.INTERVIEWER.name());
+            AuthorityRoleEnum.REVIEWER,
+            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+            AuthorityRoleEnum.INTERVIEWER);
 
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 

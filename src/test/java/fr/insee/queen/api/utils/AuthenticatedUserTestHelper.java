@@ -18,13 +18,13 @@ import java.util.Map;
 public class AuthenticatedUserTestHelper {
 
     public Authentication getAuthenticatedUser() {
-        return getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER.name(), AuthorityRoleEnum.REVIEWER.name());
+        return getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER);
     }
 
-    public Authentication getAuthenticatedUser(String... roles) {
+    public Authentication getAuthenticatedUser(AuthorityRoleEnum... roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for(String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(Constants.ROLE_PREFIX + role));
+        for(AuthorityRoleEnum role : roles) {
+            authorities.add(new SimpleGrantedAuthority(Constants.ROLE_PREFIX + role.name()));
         }
 
         Map<String, Object> headers = Map.of("typ", "JWT");

@@ -39,7 +39,7 @@ class HabilitationComponentTest {
     @DisplayName("On check habilitations when integration is true do not check pilotage api")
     void testCheckHabilitations01() {
         Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(
-                AuthorityRoleEnum.INTERVIEWER.name(), AuthorityRoleEnum.REVIEWER_ALTERNATIVE.name(), AuthorityRoleEnum.REVIEWER.name());
+                AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE, AuthorityRoleEnum.REVIEWER);
         habilitationComponent = new HabilitationApiComponent(pilotageService, applicationProperties, authHelper, surveyUnitService, "true");
         habilitationComponent.checkHabilitations(authenticatedUserTestHelper.getAuthenticatedUser(), "11", PilotageRole.INTERVIEWER);
         assertThat(pilotageService.wentThroughHasHabilitation()).isZero();
@@ -67,7 +67,7 @@ class HabilitationComponentTest {
     @Test
     @DisplayName("On check habilitations when ADMIN role do not check pilotage api")
     void testCheckHabilitations04() {
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER.name(), AuthorityRoleEnum.ADMIN.name());
+        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.ADMIN);
         habilitationComponent = new HabilitationApiComponent(pilotageService, applicationProperties, authHelper, surveyUnitService, "false");
         habilitationComponent.checkHabilitations(authenticatedUser, "11", PilotageRole.INTERVIEWER);
         assertThat(pilotageService.wentThroughHasHabilitation()).isZero();
@@ -76,7 +76,7 @@ class HabilitationComponentTest {
     @Test
     @DisplayName("On check habilitations when WEBCLIENT role do not check pilotage api")
     void testCheckHabilitations05() {
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT.name());
+        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT);
         habilitationComponent = new HabilitationApiComponent(pilotageService, applicationProperties, authHelper, surveyUnitService, "false");
         habilitationComponent.checkHabilitations(authenticatedUser, "11", PilotageRole.INTERVIEWER);
         assertThat(pilotageService.wentThroughHasHabilitation()).isZero();
@@ -85,7 +85,7 @@ class HabilitationComponentTest {
     @Test
     @DisplayName("On check habilitations then check pilotage api")
     void testCheckHabilitations06() {
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER.name(), AuthorityRoleEnum.REVIEWER.name());
+        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER);
         habilitationComponent = new HabilitationApiComponent(pilotageService, applicationProperties, authHelper, surveyUnitService, "false");
         habilitationComponent.checkHabilitations(authenticatedUser, "11", PilotageRole.INTERVIEWER);
         assertThat(pilotageService.wentThroughHasHabilitation()).isEqualTo(1);
@@ -95,7 +95,7 @@ class HabilitationComponentTest {
     @DisplayName("On check habilitations when pilotage api always return false then throws exception")
     void testCheckHabilitations07() {
         Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(
-                AuthorityRoleEnum.INTERVIEWER.name(), AuthorityRoleEnum.REVIEWER_ALTERNATIVE.name(), AuthorityRoleEnum.REVIEWER.name());
+                AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE, AuthorityRoleEnum.REVIEWER);
         pilotageService.hasHabilitation(false);
         habilitationComponent = new HabilitationApiComponent(pilotageService, applicationProperties, authHelper, surveyUnitService, "false");
         assertThatThrownBy(() -> habilitationComponent.checkHabilitations(authenticatedUser, "11", PilotageRole.INTERVIEWER, PilotageRole.REVIEWER))

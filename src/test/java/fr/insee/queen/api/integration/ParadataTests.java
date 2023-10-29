@@ -1,5 +1,7 @@
 package fr.insee.queen.api.integration;
 
+import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
+import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -10,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,6 +31,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ParadataTests {
     @Autowired
     private MockMvc mockMvc;
+
+    private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
+
+    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
+            AuthorityRoleEnum.ADMIN,
+            AuthorityRoleEnum.WEBCLIENT);
+
+    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
+            AuthorityRoleEnum.REVIEWER,
+            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+            AuthorityRoleEnum.INTERVIEWER);
+
+    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
     void on_create_paradata_return_created() throws Exception {
@@ -52,6 +69,7 @@ class ParadataTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(paradataInput)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isOk());
     }
@@ -81,7 +99,44 @@ class ParadataTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(paradataInput)
+                        .with(authentication(nonAdminUser))
                 )
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void on_create_paradata_when_anonymous_user_return_401() throws Exception {
+        String paradataInput = """
+        {
+            "idSU": "11", 
+            "events": [
+                {}
+            ]
+        }""";
+        mockMvc.perform(post("/api/paradata")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(authentication(anonymousUser))
+                        .content(paradataInput)
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void on_create_paradata_when_reviewer_user_return_403() throws Exception {
+        String paradataInput = """
+        {
+            "idSU": "11", 
+            "events": [
+                {}
+            ]
+        }""";
+        mockMvc.perform(post("/api/paradata")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER)))
+                        .content(paradataInput)
+                )
+                .andExpect(status().isForbidden());
     }
 }
