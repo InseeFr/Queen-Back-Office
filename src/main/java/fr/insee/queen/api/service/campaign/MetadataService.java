@@ -19,7 +19,7 @@ public class MetadataService {
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for campaign %s was not found", campaignId)));
 	}
 
-	@Cacheable(CacheName.METADATA_BY_QUESTIONNAIRE)
+	@Cacheable(CacheName.QUESTIONNAIRE_METADATA)
 	public MetadataDto getMetadataByQuestionnaireId(String questionnaireId) {
 		return campaignRepository.findMetadataByQuestionnaireId(questionnaireId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for questionnaire %s was not found", questionnaireId)));

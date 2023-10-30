@@ -50,7 +50,7 @@ public class CampaignApiService implements CampaignService {
 			questionnaireIds.forEach(id -> {
 				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES))
 						.evict(id);
-				Objects.requireNonNull(cacheManager.getCache(CacheName.METADATA_BY_QUESTIONNAIRE))
+				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA))
 						.evict(id);
 				Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
 						.evict(id);
@@ -81,7 +81,7 @@ public class CampaignApiService implements CampaignService {
 	}
 
 	@Caching(evict = {
-			@CacheEvict(value = CacheName.METADATA_BY_QUESTIONNAIRE, allEntries = true),
+			@CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, allEntries = true),
 	})
 	@Override
 	public void updateCampaign(CampaignInputDto campaign) {

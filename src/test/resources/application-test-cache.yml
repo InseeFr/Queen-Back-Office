@@ -1,0 +1,4 @@
+application:
+  config:
+    test:
+      enable-cache: true
