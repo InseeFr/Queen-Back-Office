@@ -21,10 +21,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -92,13 +89,17 @@ public class IntegrationComponent {
             List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureComponent.process(nomenclaturesXmlFile, nomenclatureJsonFiles, zf);
             result.nomenclatures(nomenclatureResults);
 
-            Pair<String, IntegrationResultUnitDto> campaignResult = campaignComponent.process(campaignXmlFile, zf);
+            Pair<Optional<String>, IntegrationResultUnitDto> campaignResult = campaignComponent.process(campaignXmlFile, zf);
             result.campaign(campaignResult.getSecond());
 
-            String campaignId = campaignResult.getFirst();
+            Optional<String> campaignId = campaignResult.getFirst();
+            if(campaignId.isEmpty()) {
+                return result;
+            }
 
-            List<IntegrationResultUnitDto> questionnaireResults = questionnaireComponent.process(campaignId, questionnaireModelsXmlFile, questionnaireModelJsonFiles, zf);
+            List<IntegrationResultUnitDto> questionnaireResults = questionnaireComponent.process(campaignId.get(), questionnaireModelsXmlFile, questionnaireModelJsonFiles, zf);
             result.questionnaireModels(questionnaireResults);
+
             return result;
         }
         catch(IOException e) {
