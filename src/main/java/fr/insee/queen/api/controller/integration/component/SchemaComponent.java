@@ -37,7 +37,7 @@ public class SchemaComponent {
         }
         catch(Exception ex) {
             IntegrationResultErrorUnitDto resultError = new IntegrationResultErrorUnitDto(xmlFile.getName(),
-                    String.format("File %s does not fit the required template (%s)", xmlFile.getName(), ex.getMessage()));
+                    String.format(IntegrationResultLabel.FILE_INVALID, xmlFile.getName(), ex.getMessage()));
             throw new IntegrationValidationException(resultError);
         }
     }

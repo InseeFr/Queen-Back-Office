@@ -1,5 +1,6 @@
 package fr.insee.queen.api.controller.integration.component.creator;
 
+import fr.insee.queen.api.controller.integration.component.IntegrationResultLabel;
 import fr.insee.queen.api.controller.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.api.dto.input.QuestionnaireModelIntegrationInputDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
@@ -49,7 +50,7 @@ public class QuestionnaireCreator {
             log.info("Could not create Questionnaire model {}, campaign {} does not exist", qmId, campaignId);
             throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
                     qmId,
-                    "The campaign '" + campaignId + "' does not exist")
+                    String.format(IntegrationResultLabel.CAMPAIGN_DO_NOT_EXIST, campaignId))
             );
         }
 
@@ -59,8 +60,8 @@ public class QuestionnaireCreator {
                 log.info("Could not create Questionnaire model {}, nomenclature {} does not exist", qmId, nomenclatureId);
                 throw new IntegrationValidationException((new IntegrationResultErrorUnitDto(
                         qmId,
-                        "The nomenclature '" + nomenclatureId + "' does not exist")
-                ));
+                        String.format(IntegrationResultLabel.NOMENCLATURE_DO_NOT_EXIST, nomenclatureId)
+                )));
             }
         }
 

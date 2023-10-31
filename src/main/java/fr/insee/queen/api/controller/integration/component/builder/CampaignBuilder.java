@@ -6,9 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterators;
-import fr.insee.queen.api.dto.input.CampaignIntegrationInputDto;
+import fr.insee.queen.api.controller.integration.component.IntegrationResultLabel;
 import fr.insee.queen.api.controller.integration.component.SchemaComponent;
 import fr.insee.queen.api.controller.integration.component.exception.IntegrationValidationException;
+import fr.insee.queen.api.dto.input.CampaignIntegrationInputDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -55,7 +56,7 @@ public class CampaignBuilder {
         if(campaignXmlFile == null) {
             throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
                     CAMPAIGN_XML,
-                    String.format("No file %s found", CAMPAIGN_XML)));
+                    String.format(IntegrationResultLabel.FILE_NOT_FOUND, CAMPAIGN_XML)));
         }
 
         schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, campaignXmlFile, "campaign_integration_template.xsd");
@@ -88,25 +89,32 @@ public class CampaignBuilder {
             label = labelTags.item(0).getTextContent();
         }
 
-        CampaignIntegrationInputDto campaign = new CampaignIntegrationInputDto(id, label, metadataValue);
+        return buildCampaign(id, label, metadataValue);
+    }
+
+    private CampaignIntegrationInputDto buildCampaign(String id, String label, ObjectNode metadata) throws IntegrationValidationException {
+        CampaignIntegrationInputDto campaign = new CampaignIntegrationInputDto(id, label, metadata);
         Set<ConstraintViolation<CampaignIntegrationInputDto>> violations = validator.validate(campaign);
         if (violations.isEmpty()) {
             return campaign;
         }
 
-        String violationMessage = "";
+        StringBuilder violationMessage = new StringBuilder();
         for(ConstraintViolation<CampaignIntegrationInputDto> violation : violations) {
-            violationMessage += violation.getPropertyPath().toString() + ": " + violation.getMessage() + ". ";
+            violationMessage
+                    .append(violation.getPropertyPath().toString())
+                    .append(": ")
+                    .append(violation.getMessage())
+                    .append(". ");
         }
 
         throw new IntegrationValidationException(
-                new IntegrationResultErrorUnitDto(campaign.id(), violationMessage)
+                new IntegrationResultErrorUnitDto(campaign.id(), violationMessage.toString())
         );
     }
 
     public ObjectNode convertMetadataValueToObjectNode(Node xmlNode) throws JsonProcessingException, JSONException {
         ObjectMapper mapper = new ObjectMapper();
-
         String jsonString = XML.toJSONObject(toString(xmlNode, true, true)).toString();
         ObjectNode metadataObject = mapper.readValue(jsonString, ObjectNode.class);
         return (ObjectNode) removeArrayLevel(metadataObject.get(METADATA), mapper);

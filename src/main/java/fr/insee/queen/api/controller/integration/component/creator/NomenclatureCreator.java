@@ -1,5 +1,6 @@
 package fr.insee.queen.api.controller.integration.component.creator;
 
+import fr.insee.queen.api.controller.integration.component.IntegrationResultLabel;
 import fr.insee.queen.api.controller.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
@@ -40,7 +41,7 @@ public class NomenclatureCreator {
             log.info("Nomenclature {} already exists", nomenclatureId);
             throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
                     nomenclatureId,
-                    "A nomenclature with this id already exists"));
+                    String.format(IntegrationResultLabel.NOMENCLATURE_ALREADY_EXISTS, nomenclatureId)));
         }
         log.info("Creating nomenclature {}", nomenclatureId);
         nomenclatureService.saveNomenclature(nomenclature);

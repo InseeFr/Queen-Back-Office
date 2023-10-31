@@ -2,6 +2,7 @@ package fr.insee.queen.api.controller.integration.component.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.api.controller.integration.component.IntegrationResultLabel;
 import fr.insee.queen.api.controller.integration.component.SchemaComponent;
 import fr.insee.queen.api.controller.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.api.controller.integration.component.exception.IntegrationValidationsException;
@@ -20,6 +21,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
@@ -44,7 +46,7 @@ public class QuestionnaireBuilder {
         if(questionnaireModelsXmlFile == null) {
             throw new IntegrationValidationsException(List.of(new IntegrationResultErrorUnitDto(
                     QUESTIONNAIRE_MODELS_XML,
-                    String.format("No file %s found", QUESTIONNAIRE_MODELS_XML))));
+                    String.format(IntegrationResultLabel.FILE_NOT_FOUND, QUESTIONNAIRE_MODELS_XML))));
         }
 
         try {
@@ -68,7 +70,9 @@ public class QuestionnaireBuilder {
             }
             Element qm = (Element) qmNodes.item(i);
             try {
-                questionnaires.add(buildQuestionnaireModel(campaignId, zf, qm, questionnaireModelJsonFiles));
+                ObjectNode qmValue = readQuestionnaireStream(qm, zf, questionnaireModelJsonFiles);
+                QuestionnaireModelIntegrationInputDto questionnaire = buildQuestionnaireModel(campaignId, qm, qmValue);
+                questionnaires.add(questionnaire);
             } catch (IntegrationValidationException ex) {
                 resultErrors.add(ex.resultError());
             }
@@ -80,57 +84,73 @@ public class QuestionnaireBuilder {
         return questionnaires;
     }
 
-    private QuestionnaireModelIntegrationInputDto buildQuestionnaireModel(String campaignId, ZipFile zf, Element qm,
-                                           HashMap<String, ZipEntry> questionnaireModelJsonFiles) throws IntegrationValidationException {
+    private QuestionnaireModelIntegrationInputDto buildQuestionnaireModel(String campaignId, Element qm, ObjectNode qmValue) throws IntegrationValidationException {
         String qmId = qm.getElementsByTagName(ID).item(0).getTextContent();
-        String qmLabel = qm.getElementsByTagName(LABEL).item(0).getTextContent();
-        String qmCampaignId = qm.getElementsByTagName(CAMPAIGN_ID).item(0).getTextContent();
-        String qmFilename = qm.getElementsByTagName(FILENAME).item(0).getTextContent();
-        NodeList requiredNomNodes = qm.getElementsByTagName(NOMENCLATURE);
-        List<String> requiredNomenclatureIds = IntStream.range(0, requiredNomNodes.getLength())
-                .filter(j-> requiredNomNodes.item(j).getNodeType() == Node.ELEMENT_NODE)
-                .mapToObj(j -> requiredNomNodes.item(j).getTextContent())
-                .toList();
-
-        ZipEntry qmValueEntry = questionnaireModelJsonFiles.get("questionnaireModels/" +qmFilename);
-        if(qmValueEntry == null) {
-            log.info("Questionnaire model file {} could not be found in input zip", qmFilename);
-            throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
-                    qmId,
-                    "Questionnaire model file '" + qmFilename + "' could not be found in input zip")
-            );
-        }
+        String qmCampaignId = qm.getElementsByTagName(CAMPAIGN_ID).item(0).getTextContent().toUpperCase();
 
         if(!qmCampaignId.equals(campaignId)) {
             log.info("Questionnaire model has campaign id {} while campaign in zip has id {}", qmCampaignId, campaignId);
             throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
                     qmId,
-                    String.format("Questionnaire model has campaign id %s while campaign in zip has id %s", qmCampaignId, campaignId))
+                    String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, qmCampaignId, campaignId))
             );
         }
 
-        ObjectNode qmValue;
-        try {
-            qmValue = objectMapper.readValue(zf.getInputStream(qmValueEntry), ObjectNode.class);
-            QuestionnaireModelIntegrationInputDto questionnaire = new QuestionnaireModelIntegrationInputDto(qmId, campaignId, qmLabel, qmValue, new HashSet<>(requiredNomenclatureIds));
-            Set<ConstraintViolation<QuestionnaireModelIntegrationInputDto>> violations = validator.validate(questionnaire);
-            if (violations.isEmpty()) {
-                return questionnaire;
-            }
+        String qmLabel = qm.getElementsByTagName(LABEL).item(0).getTextContent();
 
-            String violationMessage = "";
-            for(ConstraintViolation<QuestionnaireModelIntegrationInputDto> violation : violations) {
-                violationMessage += violation.getPropertyPath().toString() + ": " + violation.getMessage() + ". ";
-            }
-            throw new IntegrationValidationException(
-                    new IntegrationResultErrorUnitDto(questionnaire.idQuestionnaireModel(), violationMessage)
-            );
+        NodeList qmNomenclatures = qm.getElementsByTagName(NOMENCLATURE);
+        List<String> requiredNomenclatureIds = IntStream.range(0, qmNomenclatures.getLength())
+                .filter(j-> qmNomenclatures.item(j).getNodeType() == Node.ELEMENT_NODE)
+                .mapToObj(j -> qmNomenclatures.item(j).getTextContent())
+                .toList();
+
+        return buildQuestionnaireModel(qmCampaignId, qmId, qmLabel, requiredNomenclatureIds, qmValue);
+    }
+
+    private QuestionnaireModelIntegrationInputDto buildQuestionnaireModel(String qmCampaignId, String qmId, String qmLabel, List<String> requiredNomenclatureIds, ObjectNode qmValue) throws IntegrationValidationException {
+
+        QuestionnaireModelIntegrationInputDto questionnaire = new QuestionnaireModelIntegrationInputDto(qmId, qmCampaignId, qmLabel, qmValue, new HashSet<>(requiredNomenclatureIds));
+        Set<ConstraintViolation<QuestionnaireModelIntegrationInputDto>> violations = validator.validate(questionnaire);
+        if (violations.isEmpty()) {
+            return questionnaire;
+        }
+
+        StringBuilder violationMessage = new StringBuilder();
+        for (ConstraintViolation<QuestionnaireModelIntegrationInputDto> violation : violations) {
+            violationMessage.append(violation.getPropertyPath().toString())
+                    .append(": ")
+                    .append(violation.getMessage())
+                    .append(". ");
+        }
+        throw new IntegrationValidationException(
+                new IntegrationResultErrorUnitDto(questionnaire.idQuestionnaireModel(), violationMessage.toString())
+        );
+    }
+
+    private ObjectNode readQuestionnaireStream(Element qm, ZipFile zipFile, HashMap<String, ZipEntry> questionnaireModelJsonFiles) throws IntegrationValidationException {
+        String qmId = qm.getElementsByTagName(ID).item(0).getTextContent();
+        String qmFileName = qm.getElementsByTagName(FILENAME).item(0).getTextContent();
+        try {
+            InputStream questionnaireInputStream = getQuestionnaireInputStream(zipFile, qmId, qmFileName, questionnaireModelJsonFiles);
+            return objectMapper.readValue(questionnaireInputStream, ObjectNode.class);
         } catch (IOException e) {
-            log.info("Could not parse json in file {}", qmFilename);
+            log.info("Could not parse json in file {}", qmFileName);
             throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
                     qmId,
-                    "Could not parse json in file '" + qmFilename + "'")
+                    String.format(IntegrationResultLabel.JSON_PARSING_ERROR, qmFileName))
             );
         }
+    }
+
+    private InputStream getQuestionnaireInputStream(ZipFile zf, String qmId, String qmFileName, HashMap<String, ZipEntry> questionnaireModelJsonFiles) throws IntegrationValidationException, IOException {
+        ZipEntry qmValueEntry = questionnaireModelJsonFiles.get("questionnaireModels/" + qmFileName);
+        if(qmValueEntry == null) {
+            log.info("Questionnaire model file {} could not be found in input zip", qmFileName);
+            throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
+                    qmId,
+                    String.format(IntegrationResultLabel.QUESTIONNAIRE_FILE_NOT_FOUND, qmFileName))
+            );
+        }
+        return zf.getInputStream(qmValueEntry);
     }
 }
