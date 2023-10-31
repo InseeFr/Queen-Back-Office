@@ -9,6 +9,6 @@ public class CacheName {
     public static final String CAMPAIGN_EXIST = "is-campaign-present";
     public static final String QUESTIONNAIRE_NOMENCLATURES = "questionnaire-required-nomenclatures";
     public static final String NOMENCLATURE = "nomenclature";
-    public static final String METADATA_BY_QUESTIONNAIRE = "metadata";
+    public static final String QUESTIONNAIRE_METADATA = "metadata";
     public static final String HABILITATION = "habilitation";
 }

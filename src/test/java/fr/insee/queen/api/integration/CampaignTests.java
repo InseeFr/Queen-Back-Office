@@ -2,10 +2,12 @@ package fr.insee.queen.api.integration;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.api.JsonHelper;
+import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.dto.input.CampaignInputDto;
 import fr.insee.queen.api.dto.input.MetadataInputDto;
 import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
+import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
+import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +27,7 @@ import java.util.Set;
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,10 +43,25 @@ class CampaignTests {
     @Autowired
     private MockMvc mockMvc;
 
+    private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
+
+    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
+            AuthorityRoleEnum.ADMIN,
+            AuthorityRoleEnum.WEBCLIENT);
+
+    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
+            AuthorityRoleEnum.REVIEWER,
+            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+            AuthorityRoleEnum.INTERVIEWER);
+
+    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
+
     @Test
     @Order(1)
     void on_get_campaigns_return_json_campaigns() throws Exception {
-        mockMvc.perform(get("/api/admin/campaigns"))
+        mockMvc.perform(get("/api/admin/campaigns")
+                        .with(authentication(adminUser))
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.id == 'SIMPSONS2020X00')].questionnaireIds[*]").value(containsInAnyOrder("simpsons", "simpsonsV2")))
                 .andExpect(jsonPath("$[?(@.id == 'VQS2021X00')].questionnaireIds[*]").value(containsInAnyOrder("VQS2021X00")))
@@ -54,13 +73,15 @@ class CampaignTests {
     @Order(2)
     void on_create_campaigns_return_200() throws Exception {
         String questionnaireId = "questionnaire-for-campaign-creation";
-        ObjectNode questionnaireJson = JsonHelper.getResourceFileAsObjectNode("db/dataset/simpsons.json");
+        ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode("db/dataset/simpsons.json");
         Set<String> nomenclatures = Set.of("cities2019", "regions2019");
         QuestionnaireModelInputDto questionnaire = new QuestionnaireModelInputDto(questionnaireId, "label questionnaire", questionnaireJson, nomenclatures);
         mockMvc.perform(post("/api/questionnaire-models")
-                        .content(JsonHelper.getObjectAsJsonString(questionnaire))
+                        .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
+
                 )
                 .andExpect(status().isCreated());
 
@@ -70,14 +91,17 @@ class CampaignTests {
         MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
         CampaignInputDto campaign = new CampaignInputDto(campaignName, "label campaign", questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
-                        .content(JsonHelper.getObjectAsJsonString(campaign))
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
                 )
                 .andExpect(status().isCreated());
 
         String expressionFilter = "$[?(@.id == '" + campaignName + "')].questionnaireIds[*]";
-        mockMvc.perform(get("/api/admin/campaigns"))
+        mockMvc.perform(get("/api/admin/campaigns")
+                    .with(authentication(adminUser))
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath(expressionFilter).value(containsInAnyOrder(questionnaireIds.toArray())));
     }
@@ -89,9 +113,12 @@ class CampaignTests {
         mockMvc.perform(delete("/api/campaign/" + campaignName)
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
                 )
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/api/admin/campaigns"))
+        mockMvc.perform(get("/api/admin/campaigns")
+                        .with(authentication(adminUser))
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*]").value(not(containsInAnyOrder(campaignName))));
     }
@@ -101,9 +128,10 @@ class CampaignTests {
         MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
         CampaignInputDto campaign = new CampaignInputDto("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
-                        .content(JsonHelper.getObjectAsJsonString(campaign))
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -113,9 +141,10 @@ class CampaignTests {
         MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
         CampaignInputDto campaign = new CampaignInputDto("campaign_1234", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
-                        .content(JsonHelper.getObjectAsJsonString(campaign))
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -128,9 +157,10 @@ class CampaignTests {
         MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
         CampaignInputDto campaign = new CampaignInputDto(campaignName, "label campaign", questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
-                        .content(JsonHelper.getObjectAsJsonString(campaign))
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -140,6 +170,7 @@ class CampaignTests {
         mockMvc.perform(delete("/api/campaign/invalid_identifier")
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -149,7 +180,39 @@ class CampaignTests {
         mockMvc.perform(delete("/api/campaign/non-existing-campaign")
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
                 )
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void on_delete_campaign_when_user_not_authorized_return_403() throws Exception {
+        mockMvc.perform(delete("/api/campaign/non-existing-campaign")
+                        .param("force", "true")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void on_create_campaign_when_user_not_authorized_return_403() throws Exception {
+        MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
+        CampaignInputDto campaign = new CampaignInputDto("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
+        mockMvc.perform(post("/api/campaigns")
+                        .content(JsonTestHelper.getObjectAsJsonString(campaign))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void on_get_campaigns_when_user_not_authorized_return_403() throws Exception {
+        mockMvc.perform(get("/api/admin/campaigns")
+                        .with(authentication(anonymousUser))
+                )
+                .andExpect(status().isUnauthorized());
     }
 }

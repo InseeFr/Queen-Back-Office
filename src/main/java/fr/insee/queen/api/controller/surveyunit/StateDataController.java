@@ -1,7 +1,6 @@
 package fr.insee.queen.api.controller.surveyunit;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
@@ -9,6 +8,7 @@ import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitOkNokDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitWithStateDto;
+import fr.insee.queen.api.service.pilotage.PilotageRole;
 import fr.insee.queen.api.service.surveyunit.StateDataService;
 import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,7 +59,7 @@ public class StateDataController {
 	public StateDataDto getStateDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId,
 												  Authentication auth){
 		log.info("GET statedata for reporting unit with id {}", surveyUnitId);
-		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
 		return stateDataService.getStateData(surveyUnitId);
 	}
 	
@@ -77,7 +77,7 @@ public class StateDataController {
 								   @Valid @RequestBody StateDataInputDto stateDataInputDto,
 								   Authentication auth) {
 		log.info("PUT statedata for reporting unit with id {}", surveyUnitId);
-		habilitationComponent.checkHabilitations(auth, surveyUnitId, Constants.INTERVIEWER);
+		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
 		stateDataService.updateStateData(surveyUnitId, StateDataInputDto.toModel(stateDataInputDto));
 	}
 

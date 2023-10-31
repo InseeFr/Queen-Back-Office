@@ -9,7 +9,16 @@ application:
   pilotage:
     integration-override: true
 
-  auth: NOAUTH
+  auth: KEYCLOAK
+  security:
+    # if keycloak auth enabled
+    keycloak:
+      auth-server-host: https://auth.oauth2
+      auth-server-url: ${application.security.keycloak.auth-server-host}/auth
+      client-id: client
+      realm: my-realm
+      principal-attribute: username
+      additional-realm: additional-realm
   liquibase:
     enabled: true
     contexts: test
@@ -30,7 +39,12 @@ zonky:
         server:
           shared_buffers: 512MB
           max_connections: 100
-
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${application.security.keycloak.auth-server-url}/realms/${application.security.keycloak.realm}
 #force charset for mockmvc
 server:
   servlet:

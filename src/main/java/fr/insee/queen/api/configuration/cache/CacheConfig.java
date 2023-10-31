@@ -35,7 +35,7 @@ public class CacheConfig {
 
     @Bean
     public CaffeineCache metadataCache() {
-        return new CaffeineCache(CacheName.METADATA_BY_QUESTIONNAIRE,
+        return new CaffeineCache(CacheName.QUESTIONNAIRE_METADATA,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
                         .maximumSize(100)

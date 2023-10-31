@@ -5,7 +5,7 @@ import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.input.CampaignInputDto;
-import fr.insee.queen.api.service.PilotageApiService;
+import fr.insee.queen.api.service.pilotage.PilotageService;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import fr.insee.queen.api.service.exception.CampaignDeletionException;
 import fr.insee.queen.api.service.questionnaire.QuestionnaireModelService;
@@ -44,7 +44,7 @@ public class CampaignController {
 	*/
 	private final CampaignService campaignService;
 	private final QuestionnaireModelService questionnaireService;
-	private final PilotageApiService pilotageApiService;
+	private final PilotageService pilotageService;
 
 	/**
 	 * This method is used to get all campaigns
@@ -81,7 +81,7 @@ public class CampaignController {
 		}
 
 		String authToken = authHelper.getAuthToken(auth);
-		campaigns = pilotageApiService.getInterviewerCampaigns(authToken);
+		campaigns = pilotageService.getInterviewerCampaigns(authToken);
 		// add questionnaires ids
 		campaigns.forEach(camp -> camp.questionnaireIds(questionnaireService.findAllQuestionnaireIdDtoByCampaignId(camp.id())));
 		log.info("{} campaign(s) found for {}", campaigns.size(), userId);
@@ -128,7 +128,7 @@ public class CampaignController {
 		}
 
 		String authToken = authHelper.getAuthToken(auth);
-		if(pilotageApiService.isClosed(campaignId, authToken)) {
+		if(pilotageService.isClosed(campaignId, authToken)) {
 			campaignService.delete(campaignId);
 			log.info("Campaign with id {} deleted", campaignId);
 			return;
