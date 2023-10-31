@@ -2,16 +2,17 @@ package fr.insee.queen.api.controller.questionnaire;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.controller.validation.IdValid;
+import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitOkNokDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
-import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
 import fr.insee.queen.api.service.questionnaire.QuestionnaireModelService;
 import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,9 +100,9 @@ public class QuestionnaireModelController {
 	@PostMapping(path = "/questionnaire-models")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createQuestionnaire(@RequestBody QuestionnaireModelInputDto questionnaireModelInput) {
+	public void createQuestionnaire(@RequestBody @Valid QuestionnaireModelInputDto questionnaireModelInput) {
 		log.info("POST Questionnaire Model with id {}", questionnaireModelInput.idQuestionnaireModel());
-		questionnaireModelService.createQuestionnaire(questionnaireModelInput);
+		questionnaireModelService.createQuestionnaire(QuestionnaireModelInputDto.toModel(questionnaireModelInput));
 	}
 
 	@Operation(summary = "Get list of questionnaires for all survey-units defined in request body ")

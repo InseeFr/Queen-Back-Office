@@ -1,7 +1,7 @@
 package fr.insee.queen.api.service.dummy;
 
+import fr.insee.queen.api.domain.CampaignData;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
-import fr.insee.queen.api.dto.input.CampaignInputDto;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import lombok.Getter;
 
@@ -31,12 +31,12 @@ public class CampaignFakeService implements CampaignService {
     }
 
     @Override
-    public void createCampaign(CampaignInputDto campaign) {
-        this.created = true;
+    public void createCampaign(CampaignData campaignData) {
+
     }
 
     @Override
-    public void updateCampaign(CampaignInputDto campaign) {
-        this.updated = true;
+    public void updateCampaign(CampaignData campaignData) {
+
     }
 }

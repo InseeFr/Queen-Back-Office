@@ -3,6 +3,7 @@ package fr.insee.queen.api.controller.exception;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.insee.queen.api.controller.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.api.exception.*;
 import fr.insee.queen.api.service.exception.*;
 import jakarta.servlet.http.HttpServletResponse;
@@ -195,10 +196,10 @@ public class ExceptionControllerAdvice {
                 new ApiBaseException(e.getMessage(), ErrorCode.BAD_REQUEST));
     }
 
-    @ExceptionHandler(IntegrationServiceException.class)
+    @ExceptionHandler(IntegrationComponentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public void depositProofException(IntegrationServiceException e, HttpServletResponse response) throws IOException {
+    public void depositProofException(IntegrationComponentException e, HttpServletResponse response) throws IOException {
         log.error(e.getMessage(), e);
         writeResponse(response, HttpStatus.BAD_REQUEST,
                 new ApiBaseException(e.getMessage(), ErrorCode.BAD_REQUEST));

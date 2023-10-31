@@ -101,7 +101,7 @@ public class CampaignController {
 							   Authentication auth) {
 		String userId = authHelper.getUserId(auth);
 		log.info("User {} requests campaign {} creation", userId, campaignInputDto.id());
-		campaignService.createCampaign(campaignInputDto);
+		campaignService.createCampaign(CampaignInputDto.toModel(campaignInputDto));
 	}
 
 	/**

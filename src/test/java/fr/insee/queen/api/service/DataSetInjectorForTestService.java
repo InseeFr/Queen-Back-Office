@@ -4,7 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.api.dto.input.*;
+import fr.insee.queen.api.dto.input.NomenclatureInputDto;
+import fr.insee.queen.api.dto.input.StateDataInputDto;
+import fr.insee.queen.api.dto.input.StateDataTypeInputDto;
+import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
+import fr.insee.queen.api.domain.CampaignData;
+import fr.insee.queen.api.domain.QuestionnaireModelData;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import fr.insee.queen.api.service.dataset.DataSetInjectorService;
@@ -23,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -74,7 +80,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
         String questionnaireId = "LOG2021X11Tel";
 
         createQuestionnaire(questionnaireId, "Enquête Logement 2022 - Séquence 1 - HR", jsonQuestionnaireModelQueenLog, nomenclatureIds);
-        createCampaign(campaignId, "Enquête Logement 2022 - Séquence 1 - HR", objectMapper.createObjectNode(), List.of(questionnaireId));
+        createCampaign(campaignId, "Enquête Logement 2022 - Séquence 1 - HR", objectMapper.createObjectNode(), Set.of(questionnaireId));
         createSurveyUnitWithParadata(String.format("%s_01", campaignId), campaignId, questionnaireId);
         createSurveyUnitWithParadata(String.format("%s_02", campaignId), campaignId, questionnaireId);
         createSurveyUnitWithParadata(String.format("%s_03", campaignId), campaignId, questionnaireId);
@@ -101,7 +107,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
         String questionnaireId = "LOG2021X11Web";
 
         createQuestionnaire(questionnaireId, "Enquête Logement 2022 - Séquence 1 - HR - Web", jsonQuestionnaireModelStromaeLog, nomenclatureIds);
-        createCampaign(campaignId, "Enquête Logement 2022 - Séquence 1 - HR - Web", jsonMetadata, List.of(questionnaireId));
+        createCampaign(campaignId, "Enquête Logement 2022 - Séquence 1 - HR - Web", jsonMetadata, Set.of(questionnaireId));
         createSurveyUnitWithParadata(String.format("%s-01", campaignId), campaignId, questionnaireId);
         createSurveyUnitWithParadata(String.format("%s-02", campaignId), campaignId, questionnaireId);
         createSurveyUnitWithParadata(String.format("%s-03", campaignId), campaignId, questionnaireId);
@@ -161,7 +167,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
 
         createQuestionnaire(questionnaireId, "Questionnaire of the Everyday life and health survey 2021", jsonQuestionnaireModelVqs, List.of(nomenclatureId1, nomenclatureId2));
 
-        createCampaign(campaignId, "Everyday life and health survey 2021",  objectMapper.createObjectNode(), List.of(questionnaireId));
+        createCampaign(campaignId, "Everyday life and health survey 2021",  objectMapper.createObjectNode(), Set.of(questionnaireId));
         List<String> surveyUnitIds = List.of("20", "21", "22", "23");
         for (String surveyUnitId : surveyUnitIds) {
             createSurveyUnitWithParadata(surveyUnitId, campaignId, questionnaireId);
@@ -196,7 +202,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
         createQuestionnaire(questionnaireId1, "Questionnaire about the Simpsons tv show", jsonQuestionnaireModelSimpsons, List.of(nomenclatureId1, nomenclatureId2));
         createQuestionnaire(questionnaireId2, "Questionnaire about the Simpsons tv show version 2", jsonQuestionnaireModelSimpsons, List.of(nomenclatureId2));
 
-        createCampaign(campaignId, "Survey on the Simpsons tv show 2020", objectMapper.createObjectNode(), List.of(questionnaireId1, questionnaireId2));
+        createCampaign(campaignId, "Survey on the Simpsons tv show 2020", objectMapper.createObjectNode(), Set.of(questionnaireId1, questionnaireId2));
 
         String surveyUnitId = "11";
         createSurveyUnit(surveyUnitId, campaignId, questionnaireId1,
@@ -228,13 +234,13 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
         log.info("Simpsons dataset - end");
     }
 
-    private void createCampaign(String id, String label, ObjectNode jsonMetadata, List<String> questionnaireIds) {
+    private void createCampaign(String id, String label, ObjectNode jsonMetadata, Set<String> questionnaireIds) {
         if (campaignExistenceService.existsById(id)) {
             return;
         }
 
         log.info(String.format("Create Campaign %s", id));
-        CampaignInputDto campaign = new CampaignInputDto(id, label, new HashSet<>(questionnaireIds), new MetadataInputDto(jsonMetadata));
+        CampaignData campaign = new CampaignData(id, label, questionnaireIds, jsonMetadata.toString());
         campaignService.createCampaign(campaign);
     }
 
@@ -243,7 +249,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
             return;
         }
         log.info(String.format("Create Questionnaire %s", id));
-        QuestionnaireModelInputDto qm = new QuestionnaireModelInputDto(id, label, jsonQm, new HashSet<>(nomenclatureIds));
+        QuestionnaireModelData qm = QuestionnaireModelData.createQuestionnaireWithoutCampaign(id, label, jsonQm.toString(), new HashSet<>(nomenclatureIds));
         questionnaireModelService.createQuestionnaire(qm);
     }
 

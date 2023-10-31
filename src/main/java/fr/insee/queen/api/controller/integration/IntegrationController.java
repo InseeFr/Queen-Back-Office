@@ -1,15 +1,15 @@
-package fr.insee.queen.api.controller;
+package fr.insee.queen.api.controller.integration;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.controller.integration.component.IntegrationComponent;
 import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.dto.integration.IntegrationResultDto;
-import fr.insee.queen.api.service.IntegrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Validated
 public class IntegrationController {
 	private final AuthenticationHelper authHelper;
-	private final IntegrationService integrationService;
+	private final IntegrationComponent integrationComponent;
 	
 	/**
 	* This method is used to post a new campaign
@@ -43,12 +43,12 @@ public class IntegrationController {
 	* 
 	*/
 	@Operation(summary = "Integrates the context of a campaign")
-	@PostMapping(path = "/campaign/context")
+	@PostMapping(path = "/campaign/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-	public IntegrationResultDto integrateContext(@NotNull @RequestParam("file") MultipartFile file,
+	public IntegrationResultDto integrateContext(@RequestParam("file") MultipartFile file,
 												 Authentication auth) {
 		String userId = authHelper.getUserId(auth);
 		log.info("User {} requests campaign creation via context ", userId);
-		return integrationService.integrateContext(file);
+		return integrationComponent.integrateContext(file);
 	}
 }

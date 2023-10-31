@@ -2,8 +2,7 @@ package fr.insee.queen.api.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.dto.input.CampaignInputDto;
-import fr.insee.queen.api.dto.input.MetadataInputDto;
+import fr.insee.queen.api.domain.CampaignData;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -56,7 +55,7 @@ class CampaignCacheTests {
         boolean campaignExist = (boolean) Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId).get());
         assertThat(campaignExist).isFalse();
 
-        campaignService.createCampaign(new CampaignInputDto(campaignId, "label", new HashSet<>(), new MetadataInputDto(JsonNodeFactory.instance.objectNode())));
+        campaignService.createCampaign(new CampaignData(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode().toString()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
 
         campaignExistenceService.existsById(campaignId);

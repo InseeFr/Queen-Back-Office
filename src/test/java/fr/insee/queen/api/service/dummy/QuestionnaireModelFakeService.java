@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
+import fr.insee.queen.api.domain.QuestionnaireModelData;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
 import fr.insee.queen.api.service.questionnaire.QuestionnaireModelService;
@@ -20,17 +20,12 @@ public class QuestionnaireModelFakeService implements QuestionnaireModelService 
     }
 
     @Override
-    public void createQuestionnaire(QuestionnaireModelInputDto qm) {
+    public void createQuestionnaire(QuestionnaireModelData qm) {
 
     }
 
     @Override
-    public void createQuestionnaire(QuestionnaireModelInputDto qm, String campaignId) {
-
-    }
-
-    @Override
-    public void updateQuestionnaire(QuestionnaireModelInputDto qm, String campaignId) {
+    public void updateQuestionnaire(QuestionnaireModelData qm) {
 
     }
 
