@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,11 +37,17 @@ public class CampaignDB {
 	private String label;
 
 
-	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name="metadata", columnDefinition = "jsonb")
-	private String metadata;
+	@OneToOne( mappedBy = "campaign", cascade = CascadeType.ALL, orphanRemoval = true )
+	private MetadataDB metadata;
   
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity= QuestionnaireModelDB.class, cascade = CascadeType.ALL, mappedBy="campaign" )
 	private Set<QuestionnaireModelDB> questionnaireModels = new HashSet<>();
+
+	public CampaignDB(String id, String label, Set<QuestionnaireModelDB> questionnaireModels) {
+		super();
+		this.id = id;
+		this.label = label;
+		this.questionnaireModels = questionnaireModels;
+	}
 }

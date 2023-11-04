@@ -19,19 +19,19 @@ import java.util.Optional;
 public interface CampaignCrudRepository extends JpaRepository<CampaignDB, String> {
 	Optional<CampaignDB> findById(String id);
 
-    @Query("select c from CampaignDB c left join fetch c.questionnaireModels")
+    @Query("select c from CampaignDB c left join fetch c.metadata left join fetch c.questionnaireModels")
     List<CampaignDB> findAllWithQuestionnaireModels();
 
-    @Query("select c from CampaignDB c left join fetch c.questionnaireModels where c.id=:campaignId")
+    @Query("select c from CampaignDB c left join fetch c.metadata left join fetch c.questionnaireModels where c.id=:campaignId")
     Optional<CampaignDB> findWithQuestionnaireModels(String campaignId);
 
     @Query("""
-		select new fr.insee.queen.api.dto.metadata.MetadataDto(c.metadata)
+		select new fr.insee.queen.api.dto.metadata.MetadataDto(c.metadata.value)
 		from CampaignDB c where c.id=:campaignId""")
     Optional<MetadataDto> findMetadataByCampaignId(String campaignId);
 
     @Query("""
-		select new fr.insee.queen.api.dto.metadata.MetadataDto(c.metadata)
+		select new fr.insee.queen.api.dto.metadata.MetadataDto(c.metadata.value)
 		from CampaignDB c INNER JOIN c.questionnaireModels qm
 		where qm.id=:questionnaireId""")
     Optional<MetadataDto> findMetadataByQuestionnaireId(String questionnaireId);

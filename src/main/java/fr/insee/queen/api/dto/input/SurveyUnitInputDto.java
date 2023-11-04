@@ -17,6 +17,6 @@ public record SurveyUnitInputDto(
 		ObjectNode data,
 		@NotNull
 		ObjectNode comment,
-
 		StateDataInputDto stateData) {
+
 }

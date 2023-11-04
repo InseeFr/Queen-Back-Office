@@ -23,6 +23,7 @@ import java.util.Set;
 @Slf4j
 public class CampaignApiService implements CampaignService {
 	private final ParadataEventRepository paradataEventRepository;
+	private final StateDataRepository stateDataRepository;
 	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 	private final CampaignRepository campaignRepository;
 	private final SurveyUnitRepository surveyUnitRepository;
@@ -39,6 +40,7 @@ public class CampaignApiService implements CampaignService {
 	@Override
 	public void delete(String campaignId) {
 		paradataEventRepository.deleteParadataEvents(campaignId);
+		stateDataRepository.deleteStateDatas(campaignId);
 		surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
 		surveyUnitRepository.deleteSurveyUnits(campaignId);
 

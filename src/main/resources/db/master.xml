@@ -16,14 +16,7 @@
 	<!-- Add new table (tempzone) in db -->
 	<include file="changelog/400_add_new_temp_zone.xml" relativeToChangelogFile="true"/>
 	<!-- handle migrations of comments/datas/personalization sto surveyu_unit table -->
-	<include file="changelog/500_add_fields_surveyunit_and_paradataevent.xml" relativeToChangelogFile="true"/>
-	<include file="changelog/510_migrate_data_to_new_fields.sql" relativeToChangelogFile="true"/>
-	<include file="changelog/520_delete_comment_personal_data_tables.xml" relativeToChangelogFile="true"/>
-	<include file="changelog/530_index_state_data.xml" relativeToChangelogFile="true"/>
-	<include file="changelog/531_create_state_data_in_survey_unit.xml" relativeToChangelogFile="true"/>
-	<include file="changelog/532_migrate_state_data_to_survey_unit.sql" relativeToChangelogFile="true"/>
-	<include file="changelog/533_delete_state_data_table.xml" relativeToChangelogFile="true"/>
-	<include file="changelog/540_create_metadata_in_campaign.xml" relativeToChangelogFile="true"/>
-	<include file="changelog/541_migrate_metadata_to_new_fields.sql" relativeToChangelogFile="true"/>
-	<include file="changelog/542_delete_metadata_table.xml" relativeToChangelogFile="true"/>
+	<include file="changelog/500_add_fields_to_paradataevent.xml" relativeToChangelogFile="true"/>
+	<include file="changelog/501_migrate_data_to_new_fields.sql" relativeToChangelogFile="true"/>
+	<include file="changelog/510_indexes_survey_unit.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

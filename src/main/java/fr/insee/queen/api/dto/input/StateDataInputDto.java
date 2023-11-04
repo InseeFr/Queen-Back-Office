@@ -12,7 +12,10 @@ public record StateDataInputDto(
         @NotBlank
         String currentPage) {
 
-    public static StateDataDto toModel(@NotNull StateDataInputDto stateDataInputDto) {
+    public static StateDataDto toModel(StateDataInputDto stateDataInputDto) {
+        if(stateDataInputDto == null) {
+            return null;
+        }
         return new StateDataDto(stateDataInputDto.state().getStateDataType(), stateDataInputDto.date(), stateDataInputDto.currentPage);
     }
 }

@@ -2,15 +2,13 @@ package fr.insee.queen.api.repository;
 
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.surveyunit.*;
-import fr.insee.queen.api.entity.SurveyUnitDB;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import fr.insee.queen.api.entity.*;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
 * CommentRepository is the repository using to access to  Comment table in DB
@@ -19,139 +17,100 @@ import java.util.Optional;
 * 
 */
 @Repository
-public interface SurveyUnitRepository extends JpaRepository<SurveyUnitDB, String> {
+@AllArgsConstructor
+public class SurveyUnitRepository {
 
-	@Query("""
-		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto(
-		    s.id,
-		    s.questionnaireModel.id
-		)
-		from SurveyUnitDB s where s.id=:surveyUnitId""")
-	Optional<SurveyUnitSummaryDto> findSummaryById(String surveyUnitId);
+	private final SurveyUnitCrudRepository crudRepository;
+	private final CampaignCrudRepository campaignCrudRepository;
+	private final QuestionnaireModelCrudRepository questionnaireModelCrudRepository;
 
-	@Query("""
-		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto(
-		    s.id,
-		    s.questionnaireModel.id
-		)
-		from SurveyUnitDB s where s.campaign.id=:campaignId""")
-	List<SurveyUnitSummaryDto> findAllSummaryByCampaignId(String campaignId);
+	public Optional<SurveyUnitSummaryDto> findSummaryById(String surveyUnitId) {
+		return crudRepository.findSummaryById(surveyUnitId);
+	}
 
-	@Query("""
-		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto(
-		    s.id,
-		    s.questionnaireModel.id
-		)
-		from SurveyUnitDB s where s.id in :surveyUnitIds""")
-	List<SurveyUnitSummaryDto> findAllSummaryByIdIn(List<String> surveyUnitIds);
+	public List<SurveyUnitSummaryDto> findAllSummaryByCampaignId(String campaignId) {
+		return crudRepository.findAllSummaryByCampaignId(campaignId);
+	}
 
-	@Query("""
-		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitDto(
-		    s.id,
-		    s.questionnaireModel.id,
-		    s.personalization,
-		    s.data,
-		    s.comment,
-		    new fr.insee.queen.api.dto.statedata.StateDataDto(
-		        s.stateData.state,
-		        s.stateData.date,
-		        s.stateData.currentPage
-		    ) as stateData
-		)
-		from SurveyUnitDB s where s.id=:surveyUnitId""")
-	Optional<SurveyUnitDto> findOneById(String surveyUnitId);
+	public List<SurveyUnitSummaryDto> findAllSummaryByIdIn(List<String> surveyUnitIds) {
+		return crudRepository.findAllSummaryByIdIn(surveyUnitIds);
+	}
 
-	@Query("""
-		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitDepositProofDto(
-		    s.id,
-		    new fr.insee.queen.api.dto.campaign.CampaignDto(
-		        s.campaign.id,
-		        s.campaign.label
-		    ),
-		    new fr.insee.queen.api.dto.statedata.StateDataDto(
-		        s.stateData.state,
-		        s.stateData.date,
-		        s.stateData.currentPage
-		    )
-		)
-		from SurveyUnitDB s where s.id=:surveyUnitId""")
-	Optional<SurveyUnitDepositProofDto> findWithCampaignAndStateById(String surveyUnitId);
+	public Optional<SurveyUnitDto> findOneById(String surveyUnitId) {
+		return crudRepository.findOneById(surveyUnitId);
+	}
 
-	@Query("""
-		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto(
-		    s.id,
-		    s.campaign.id
-		)
-		from SurveyUnitDB s where s.id=:surveyUnitId""")
-	Optional<SurveyUnitHabilitationDto> findWithCampaignById(String surveyUnitId);
+	public Optional<SurveyUnitDepositProofDto> findWithCampaignAndStateById(String surveyUnitId) {
+		return crudRepository.findWithCampaignAndStateById(surveyUnitId);
+	}
 
-	@Query("select s.id from SurveyUnitDB s order by s.id asc")
-	Optional<List<String>> findAllIds();
+	public Optional<SurveyUnitHabilitationDto> findWithCampaignById(String surveyUnitId) {
+		return crudRepository.findWithCampaignById(surveyUnitId);
+	}
 
-	@Query("""
-		select new fr.insee.queen.api.dto.surveyunit.SurveyUnitWithStateDto(
-		    s.id,
-		    new fr.insee.queen.api.dto.statedata.StateDataDto(
-		        s.stateData.state,
-		        s.stateData.date,
-		        s.stateData.currentPage
-		    )
-		)
-		from SurveyUnitDB s where s.id in :surveyUnitIds""")
-	List<SurveyUnitWithStateDto> findAllWithStateByIdIn(List<String> surveyUnitIds);
+	public Optional<List<String>> findAllIds() {
+			return crudRepository.findAllIds();
+	}
 
-	@Query("""
-		select new fr.insee.queen.api.dto.statedata.StateDataDto(
-		    s.stateData.state,
-		    s.stateData.date,
-		    s.stateData.currentPage
-		)
-		from SurveyUnitDB s where s.id = :surveyUnitId""")
-	Optional<StateDataDto> findStateDataBySurveyUnitId(String surveyUnitId);
+	public List<SurveyUnitWithStateDto> findAllWithStateByIdIn(List<String> surveyUnitIds) {
+			return crudRepository.findAllWithStateByIdIn(surveyUnitIds);
+	}
 
-	@Transactional
-	@Modifying
-	@Query("""
-		UPDATE SurveyUnitDB s 
-		    SET s.stateData.currentPage=:#{#stateData.currentPage},
-		    s.stateData.date=:#{#stateData.date}, 
-		    s.stateData.state=:#{#stateData.state} 
-		    WHERE s.id=:surveyUnitId""")
-	void updateStateData(String surveyUnitId, StateDataDto stateData);
+	public void deleteSurveyUnits(String campaignId) {
+		crudRepository.deleteSurveyUnits(campaignId);
+	}
 
-	@Transactional
-    @Modifying
-	@Query("delete from SurveyUnitDB s where s.campaign.id=:campaignId")
-	void deleteSurveyUnits(String campaignId);
+	public void createSurveyUnit(String id, String campaignId, String questionnaireId, String dataValue, String commentValue, String personalizationValue, StateDataDto stateDataValue) {
+		CampaignDB campaign = campaignCrudRepository.getReferenceById(campaignId);
+		QuestionnaireModelDB questionnaire = questionnaireModelCrudRepository.getReferenceById(questionnaireId);
+		SurveyUnitDB surveyUnit = new SurveyUnitDB(id, campaign, questionnaire);
+		DataDB data = new DataDB(UUID.randomUUID(), dataValue, surveyUnit);
+		CommentDB comment = new CommentDB(UUID.randomUUID(), commentValue, surveyUnit);
+		PersonalizationDB personalization = new PersonalizationDB(UUID.randomUUID(), personalizationValue, surveyUnit);
+		StateDataDB stateData;
+		if(stateDataValue == null) {
+			stateData = new StateDataDB();
+			stateData.surveyUnit(surveyUnit);
+		} else {
+			stateData = new StateDataDB(UUID.randomUUID(), stateDataValue.state(), stateDataValue.date(), stateDataValue.currentPage(), surveyUnit);
+		}
 
-	@Transactional
-    @Modifying
-	@Query(value = """
-		INSERT INTO survey_unit (id, campaign_id, questionnaire_model_id, data, comment, personalization, state, state_date, state_current_page)
-		VALUES (:id, :campaignId, :questionnaireId, :data\\:\\:jsonb, :comment\\:\\:jsonb, :personalization\\:\\:jsonb, ?#{#stateData.state?.name() ?: NULL}, :#{#stateData.date}, :#{#stateData.currentPage} )""", nativeQuery = true)
-	void createSurveyUnit(String id, String campaignId, String questionnaireId, String data, String comment, String personalization, StateDataDto stateData);
+		surveyUnit.personalization(personalization);
+		surveyUnit.comment(comment);
+		surveyUnit.data(data);
+		surveyUnit.stateData(stateData);
+		crudRepository.save(surveyUnit);
+	}
 
-	@Transactional
-    @Modifying
-	@Query("update SurveyUnitDB s set s.personalization = :personalization where s.id = :surveyUnitId")
-	void updatePersonalization(String surveyUnitId, String personalization);
+	public void updatePersonalization(String surveyUnitId, String personalization) {
+		crudRepository.updatePersonalization(surveyUnitId, personalization);
+	}
 
-	@Transactional
-    @Modifying
-	@Query("update SurveyUnitDB s set s.comment = :comment where s.id = :surveyUnitId")
-	void updateComment(String surveyUnitId, String comment);
+	public void updateComment(String surveyUnitId, String comment) {
+		crudRepository.updateComment(surveyUnitId, comment);
+	}
 
-	@Transactional
-    @Modifying
-	@Query("update SurveyUnitDB s set s.data = :data where s.id = :surveyUnitId")
-	void updateData(String surveyUnitId, String data);
+	public void updateData(String surveyUnitId, String data) {
+		crudRepository.updateData(surveyUnitId, data);
+	}
 
-	@Query("select s.comment from SurveyUnitDB s where s.id=:surveyUnitId")
-	String getComment(String surveyUnitId);
+	public String getComment(String surveyUnitId) {
+		return crudRepository.getComment(surveyUnitId);
+	}
 
-	@Query("select s.data from SurveyUnitDB s where s.id=:surveyUnitId")
-	String getData(String surveyUnitId);
+	public String getData(String surveyUnitId) {
+		return crudRepository.getData(surveyUnitId);
+	}
 
-	@Query("select s.personalization from SurveyUnitDB s where s.id=:surveyUnitId")
-	String getPersonalization(String surveyUnitId);
+	public String getPersonalization(String surveyUnitId) {
+		return crudRepository.getPersonalization(surveyUnitId);
+	}
+
+	public void deleteById(String surveyUnitId) {
+		crudRepository.deleteById(surveyUnitId);
+	}
+
+	public boolean existsById(String surveyUnitId) {
+		return crudRepository.existsById(surveyUnitId);
+	}
 }

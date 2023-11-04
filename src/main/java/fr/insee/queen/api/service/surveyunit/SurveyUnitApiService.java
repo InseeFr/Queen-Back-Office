@@ -6,6 +6,7 @@ import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.statedata.StateDataType;
 import fr.insee.queen.api.dto.surveyunit.*;
+import fr.insee.queen.api.repository.StateDataRepository;
 import fr.insee.queen.api.repository.SurveyUnitRepository;
 import fr.insee.queen.api.repository.SurveyUnitTempZoneRepository;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
@@ -18,7 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -27,6 +31,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	private final SurveyUnitRepository surveyUnitRepository;
 	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 	private final CampaignExistenceService campaignExistenceService;
+	private final StateDataRepository stateDataRepository;
 	private final PDFDepositProofService pdfService;
 
 	@Override
@@ -65,16 +70,17 @@ public class SurveyUnitApiService implements SurveyUnitService {
 		checkExistence(surveyUnitId);
 
 		if(surveyUnit.personalization() != null) {
-			surveyUnitRepository.updatePersonalization(surveyUnitId,surveyUnit.personalization().toString());
+			surveyUnitRepository.updatePersonalization(surveyUnitId, surveyUnit.personalization().toString());
 		}
 		if(surveyUnit.comment() != null) {
-			surveyUnitRepository.updateComment(surveyUnitId,surveyUnit.comment().toString());
+			surveyUnitRepository.updateComment(surveyUnitId, surveyUnit.comment().toString());
 		}
 		if(surveyUnit.data() != null) {
-			surveyUnitRepository.updateData(surveyUnitId,surveyUnit.data().toString());
+			surveyUnitRepository.updateData(surveyUnitId, surveyUnit.data().toString());
 		}
 		if(surveyUnit.stateData() != null) {
-			surveyUnitRepository.updateStateData(surveyUnitId, StateDataInputDto.toModel(surveyUnit.stateData()));
+			StateDataDto stateData = StateDataInputDto.toModel(surveyUnit.stateData());
+			stateDataRepository.updateStateData(surveyUnitId, stateData);
 		}
 	}
 
@@ -103,17 +109,13 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	public void createSurveyUnit(String campaignId, SurveyUnitInputDto surveyUnit) {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
 
-		StateDataDto stateData = StateDataDto.createEmptyStateData();
-		if(surveyUnit.stateData() != null) {
-			stateData = StateDataInputDto.toModel(surveyUnit.stateData());
-		}
-
-		surveyUnitRepository.createSurveyUnit(surveyUnit.id(), campaignId,
+		String surveyUnitId = surveyUnit.id();
+		surveyUnitRepository.createSurveyUnit(surveyUnitId, campaignId,
 				surveyUnit.questionnaireId(),
 				surveyUnit.data().toString(),
 				surveyUnit.comment().toString(),
 				surveyUnit.personalization().toString(),
-				stateData);
+				StateDataInputDto.toModel(surveyUnit.stateData()));
 	}
 
 	@Override

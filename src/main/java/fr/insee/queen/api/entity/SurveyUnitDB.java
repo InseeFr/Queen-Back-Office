@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 /**
 * Entity SurveyUnit : represent the entity table in DB
@@ -41,20 +39,17 @@ public class SurveyUnitDB {
 	@JoinColumn( name = "questionnaire_model_id", referencedColumnName = "id")
 	private QuestionnaireModelDB questionnaireModel;
 
-	@Embedded
+	@OneToOne(mappedBy = "surveyUnit", cascade = CascadeType.ALL )
 	private StateDataDB stateData;
 
-	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name="personalization", columnDefinition = "jsonb")
-	private String personalization;
+	@OneToOne(mappedBy = "surveyUnit", cascade = CascadeType.ALL )
+	private PersonalizationDB personalization;
 
-	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name="data", columnDefinition = "jsonb")
-	private String data;
+	@OneToOne(mappedBy = "surveyUnit", cascade = CascadeType.ALL )
+	private DataDB data;
 
-	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name="comment", columnDefinition = "jsonb")
-	private String comment;
+	@OneToOne(mappedBy = "surveyUnit", cascade = CascadeType.ALL )
+	private CommentDB comment;
 
 	public SurveyUnitDB(String id, CampaignDB campaign, QuestionnaireModelDB questionnaireModel) {
 		this.id = id;
