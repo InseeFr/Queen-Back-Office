@@ -11,12 +11,15 @@ import fr.insee.queen.api.controller.integration.component.SchemaComponent;
 import fr.insee.queen.api.controller.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.api.dto.input.CampaignIntegrationInputDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
+import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
+import fr.insee.queen.api.service.integration.IntegrationService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.XML;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,6 +39,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -46,25 +50,30 @@ import java.util.zip.ZipFile;
 public class CampaignBuilder {
     private final SchemaComponent schemaComponent;
     private final Validator validator;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final IntegrationService integrationService;
+    private final ObjectMapper objectMapper;
     private static final String LABEL = "Label";
     private static final String METADATA = "Metadata";
     public static final String CAMPAIGN_XML = "campaign.xml";
 
-    public CampaignIntegrationInputDto build(ZipFile zf, ZipEntry campaignXmlFile) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, JSONException, IntegrationValidationException {
-
+    public Pair<Optional<String>, IntegrationResultUnitDto> build(ZipFile zf, ZipEntry campaignXmlFile) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, JSONException {
         if(campaignXmlFile == null) {
-            throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
+            return Pair.of(Optional.empty(), new IntegrationResultErrorUnitDto(
                     CAMPAIGN_XML,
                     String.format(IntegrationResultLabel.FILE_NOT_FOUND, CAMPAIGN_XML)));
         }
 
-        schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, campaignXmlFile, "campaign_integration_template.xsd");
+        try {
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, campaignXmlFile, "campaign_integration_template.xsd");
+        } catch (IntegrationValidationException ex) {
+            return Pair.of(Optional.empty(), ex.resultError());
+        }
+
         return buildCampaign(zf, campaignXmlFile);
     }
 
 
-    private CampaignIntegrationInputDto buildCampaign(ZipFile zf, ZipEntry campaignXmlFile) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, JSONException, IntegrationValidationException {
+    private Pair<Optional<String>, IntegrationResultUnitDto> buildCampaign(ZipFile zf, ZipEntry campaignXmlFile) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, JSONException {
 
         Document doc = schemaComponent.buildDocument(zf.getInputStream(campaignXmlFile));
 
@@ -92,35 +101,31 @@ public class CampaignBuilder {
         return buildCampaign(id, label, metadataValue);
     }
 
-    private CampaignIntegrationInputDto buildCampaign(String id, String label, ObjectNode metadata) throws IntegrationValidationException {
+    private Pair<Optional<String>, IntegrationResultUnitDto> buildCampaign(String id, String label, ObjectNode metadata) {
         CampaignIntegrationInputDto campaign = new CampaignIntegrationInputDto(id, label, metadata);
         Set<ConstraintViolation<CampaignIntegrationInputDto>> violations = validator.validate(campaign);
-        if (violations.isEmpty()) {
-            return campaign;
+        if (!violations.isEmpty()) {
+            StringBuilder violationMessage = new StringBuilder();
+            for (ConstraintViolation<CampaignIntegrationInputDto> violation : violations) {
+                violationMessage
+                        .append(violation.getPropertyPath().toString())
+                        .append(": ")
+                        .append(violation.getMessage())
+                        .append(". ");
+            }
+            return Pair.of(Optional.empty(), new IntegrationResultErrorUnitDto(campaign.id(), violationMessage.toString()));
         }
-
-        StringBuilder violationMessage = new StringBuilder();
-        for(ConstraintViolation<CampaignIntegrationInputDto> violation : violations) {
-            violationMessage
-                    .append(violation.getPropertyPath().toString())
-                    .append(": ")
-                    .append(violation.getMessage())
-                    .append(". ");
-        }
-
-        throw new IntegrationValidationException(
-                new IntegrationResultErrorUnitDto(campaign.id(), violationMessage.toString())
-        );
+        return integrationService.create(campaign);
     }
 
-    public ObjectNode convertMetadataValueToObjectNode(Node xmlNode) throws JsonProcessingException, JSONException {
+    private ObjectNode convertMetadataValueToObjectNode(Node xmlNode) throws JsonProcessingException, JSONException {
         ObjectMapper mapper = new ObjectMapper();
-        String jsonString = XML.toJSONObject(toString(xmlNode, true, true)).toString();
+        String jsonString = XML.toJSONObject(toString(xmlNode)).toString();
         ObjectNode metadataObject = mapper.readValue(jsonString, ObjectNode.class);
         return (ObjectNode) removeArrayLevel(metadataObject.get(METADATA), mapper);
     }
 
-    public JsonNode removeArrayLevel(JsonNode node, ObjectMapper mapper) {
+    private JsonNode removeArrayLevel(JsonNode node, ObjectMapper mapper) {
         if(node == null || node.isValueNode()) {
             return node;
         }
@@ -149,7 +154,7 @@ public class CampaignBuilder {
         return node;
     }
 
-    public static String toString(Node node, boolean omitXmlDeclaration, boolean prettyPrint) {
+    private String toString(Node node) {
         if (node == null) {
             throw new IllegalArgumentException("node is null.");
         }
@@ -174,14 +179,9 @@ public class CampaignBuilder {
             Transformer transformer =  tf.newTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
-            if (omitXmlDeclaration) {
-                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            }
-
-            if (prettyPrint) {
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            }
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
             // Turn the node into a string
             StringWriter writer = new StringWriter();

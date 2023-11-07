@@ -16,12 +16,12 @@ public class IntegrationResultSuccessUnitDto extends IntegrationResultUnitDto {
 		super(id, status, cause);
 	}
 
-	public static IntegrationResultSuccessUnitDto integrationResultUnitCreated(String id, String cause) {
-		return new IntegrationResultSuccessUnitDto(id, IntegrationStatus.CREATED, cause);
+	public static IntegrationResultSuccessUnitDto integrationResultUnitCreated(String id) {
+		return new IntegrationResultSuccessUnitDto(id, IntegrationStatus.CREATED, null);
 	}
 
-	public static IntegrationResultSuccessUnitDto integrationResultUnitUpdated(String id, String cause) {
-		return new IntegrationResultSuccessUnitDto(id, IntegrationStatus.UPDATED, cause);
+	public static IntegrationResultSuccessUnitDto integrationResultUnitUpdated(String id) {
+		return new IntegrationResultSuccessUnitDto(id, IntegrationStatus.UPDATED, null);
 	}
 }
 

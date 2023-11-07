@@ -31,9 +31,9 @@ import java.util.zip.ZipFile;
 @AllArgsConstructor
 @Transactional
 public class IntegrationComponent {
-    private final NomenclatureIntegrationComponent nomenclatureComponent;
-    private final CampaignIntegrationComponent campaignComponent;
-    private final QuestionnaireIntegrationComponent questionnaireComponent;
+    private final NomenclatureBuilder nomenclatureBuilder;
+    private final CampaignBuilder campaignBuilder;
+    private final QuestionnaireBuilder questionnaireBuilder;
 
     public IntegrationResultDto integrateContext(MultipartFile file) {
         try {
@@ -86,10 +86,10 @@ public class IntegrationComponent {
                 }
             }
 
-            List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureComponent.process(nomenclaturesXmlFile, nomenclatureJsonFiles, zf);
+            List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureBuilder.build(zf, nomenclaturesXmlFile, nomenclatureJsonFiles);
             result.nomenclatures(nomenclatureResults);
 
-            Pair<Optional<String>, IntegrationResultUnitDto> campaignResult = campaignComponent.process(campaignXmlFile, zf);
+            Pair<Optional<String>, IntegrationResultUnitDto> campaignResult = campaignBuilder.build(zf, campaignXmlFile);
             result.campaign(campaignResult.getSecond());
 
             Optional<String> campaignId = campaignResult.getFirst();
@@ -97,7 +97,7 @@ public class IntegrationComponent {
                 return result;
             }
 
-            List<IntegrationResultUnitDto> questionnaireResults = questionnaireComponent.process(campaignId.get(), questionnaireModelsXmlFile, questionnaireModelJsonFiles, zf);
+            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(campaignId.get(), zf, questionnaireModelsXmlFile, questionnaireModelJsonFiles);
             result.questionnaireModels(questionnaireResults);
 
             return result;

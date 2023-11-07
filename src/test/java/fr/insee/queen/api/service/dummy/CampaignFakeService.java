@@ -32,11 +32,11 @@ public class CampaignFakeService implements CampaignService {
 
     @Override
     public void createCampaign(CampaignData campaignData) {
-
+        created = true;
     }
 
     @Override
     public void updateCampaign(CampaignData campaignData) {
-
+        updated = true;
     }
 }

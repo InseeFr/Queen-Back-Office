@@ -5,9 +5,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.controller.integration.component.IntegrationResultLabel;
 import fr.insee.queen.api.controller.integration.component.SchemaComponent;
 import fr.insee.queen.api.controller.integration.component.exception.IntegrationValidationException;
-import fr.insee.queen.api.controller.integration.component.exception.IntegrationValidationsException;
 import fr.insee.queen.api.dto.input.QuestionnaireModelIntegrationInputDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
+import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
+import fr.insee.queen.api.service.integration.IntegrationService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
@@ -33,34 +34,37 @@ import java.util.zip.ZipFile;
 public class QuestionnaireBuilder {
     private final SchemaComponent schemaComponent;
     private final Validator validator;
+    private final IntegrationService integrationService;
+    private final ObjectMapper objectMapper;
     private static final String LABEL = "Label";
     private static final String ID = "Id";
     private static final String FILENAME = "FileName";
     private static final String CAMPAIGN_ID = "CampaignId";
     private static final String NOMENCLATURE = "Nomenclature";
-    private final ObjectMapper objectMapper = new ObjectMapper();
     public static final String QUESTIONNAIRE_MODELS_XML = "questionnaireModels.xml";
 
-    public List<QuestionnaireModelIntegrationInputDto> build(String campaignId, ZipFile zf, ZipEntry questionnaireModelsXmlFile,
-                                                             HashMap<String, ZipEntry> questionnaireModelsJsonFiles) throws ParserConfigurationException, IOException, SAXException, IntegrationValidationsException {
+    public List<IntegrationResultUnitDto> build(String campaignId, ZipFile zf, ZipEntry questionnaireModelsXmlFile,
+                                                             Map<String, ZipEntry> questionnaireModelsJsonFiles) throws ParserConfigurationException, IOException, SAXException {
+        List<IntegrationResultUnitDto> results = new ArrayList<>();
         if(questionnaireModelsXmlFile == null) {
-            throw new IntegrationValidationsException(List.of(new IntegrationResultErrorUnitDto(
+            results.add(new IntegrationResultErrorUnitDto(
                     QUESTIONNAIRE_MODELS_XML,
-                    String.format(IntegrationResultLabel.FILE_NOT_FOUND, QUESTIONNAIRE_MODELS_XML))));
+                    String.format(IntegrationResultLabel.FILE_NOT_FOUND, QUESTIONNAIRE_MODELS_XML)));
+            return results;
         }
 
         try {
             schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, questionnaireModelsXmlFile, "questionnaireModels_integration_template.xsd");
         } catch (IntegrationValidationException ex) {
-            throw new IntegrationValidationsException(List.of(ex.resultError()));
+            results.add(ex.resultError());
+            return results;
         }
         return buildQuestionnaireModels(campaignId, zf, questionnaireModelsXmlFile, questionnaireModelsJsonFiles);
     }
 
-    private List<QuestionnaireModelIntegrationInputDto> buildQuestionnaireModels(String campaignId, ZipFile zf, ZipEntry questionnaireModelsXmlFile,
-                                                                      HashMap<String, ZipEntry> questionnaireModelJsonFiles) throws IntegrationValidationsException, ParserConfigurationException, SAXException, IOException {
-        List<QuestionnaireModelIntegrationInputDto> questionnaires = new ArrayList<>();
-        List<IntegrationResultErrorUnitDto> resultErrors = new ArrayList<>();
+    private List<IntegrationResultUnitDto> buildQuestionnaireModels(String campaignId, ZipFile zf, ZipEntry questionnaireModelsXmlFile,
+                                                                      Map<String, ZipEntry> questionnaireModelJsonFiles) throws ParserConfigurationException, SAXException, IOException {
+        List<IntegrationResultUnitDto> results = new ArrayList<>();
 
         Document doc = schemaComponent.buildDocument(zf.getInputStream(questionnaireModelsXmlFile));
         NodeList qmNodes = doc.getElementsByTagName("QuestionnaireModels").item(0).getChildNodes();
@@ -71,29 +75,26 @@ public class QuestionnaireBuilder {
             Element qm = (Element) qmNodes.item(i);
             try {
                 ObjectNode qmValue = readQuestionnaireStream(qm, zf, questionnaireModelJsonFiles);
-                QuestionnaireModelIntegrationInputDto questionnaire = buildQuestionnaireModel(campaignId, qm, qmValue);
-                questionnaires.add(questionnaire);
+                results.addAll(buildQuestionnaireModel(campaignId, qm, qmValue));
             } catch (IntegrationValidationException ex) {
-                resultErrors.add(ex.resultError());
+                results.add(ex.resultError());
             }
         }
-
-        if(!resultErrors.isEmpty()) {
-            throw new IntegrationValidationsException(resultErrors);
-        }
-        return questionnaires;
+        return results;
     }
 
-    private QuestionnaireModelIntegrationInputDto buildQuestionnaireModel(String campaignId, Element qm, ObjectNode qmValue) throws IntegrationValidationException {
+    private List<IntegrationResultUnitDto> buildQuestionnaireModel(String campaignId, Element qm, ObjectNode qmValue) {
         String qmId = qm.getElementsByTagName(ID).item(0).getTextContent();
         String qmCampaignId = qm.getElementsByTagName(CAMPAIGN_ID).item(0).getTextContent().toUpperCase();
 
         if(!qmCampaignId.equals(campaignId)) {
             log.info("Questionnaire model has campaign id {} while campaign in zip has id {}", qmCampaignId, campaignId);
-            throw new IntegrationValidationException(new IntegrationResultErrorUnitDto(
+            List<IntegrationResultUnitDto> results = new ArrayList<>();
+            results.add(new IntegrationResultErrorUnitDto(
                     qmId,
                     String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, qmCampaignId, campaignId))
             );
+            return results;
         }
 
         String qmLabel = qm.getElementsByTagName(LABEL).item(0).getTextContent();
@@ -107,27 +108,27 @@ public class QuestionnaireBuilder {
         return buildQuestionnaireModel(qmCampaignId, qmId, qmLabel, requiredNomenclatureIds, qmValue);
     }
 
-    private QuestionnaireModelIntegrationInputDto buildQuestionnaireModel(String qmCampaignId, String qmId, String qmLabel, List<String> requiredNomenclatureIds, ObjectNode qmValue) throws IntegrationValidationException {
-
+    private List<IntegrationResultUnitDto> buildQuestionnaireModel(String qmCampaignId, String qmId, String qmLabel, List<String> requiredNomenclatureIds, ObjectNode qmValue) {
         QuestionnaireModelIntegrationInputDto questionnaire = new QuestionnaireModelIntegrationInputDto(qmId, qmCampaignId, qmLabel, qmValue, new HashSet<>(requiredNomenclatureIds));
         Set<ConstraintViolation<QuestionnaireModelIntegrationInputDto>> violations = validator.validate(questionnaire);
-        if (violations.isEmpty()) {
-            return questionnaire;
+        if (! violations.isEmpty()) {
+            StringBuilder violationMessage = new StringBuilder();
+            for (ConstraintViolation<QuestionnaireModelIntegrationInputDto> violation : violations) {
+                violationMessage.append(violation.getPropertyPath().toString())
+                        .append(": ")
+                        .append(violation.getMessage())
+                        .append(". ");
+            }
+            List<IntegrationResultUnitDto> results = new ArrayList<>();
+            results.add(
+                    new IntegrationResultErrorUnitDto(questionnaire.idQuestionnaireModel(), violationMessage.toString())
+            );
+            return results;
         }
-
-        StringBuilder violationMessage = new StringBuilder();
-        for (ConstraintViolation<QuestionnaireModelIntegrationInputDto> violation : violations) {
-            violationMessage.append(violation.getPropertyPath().toString())
-                    .append(": ")
-                    .append(violation.getMessage())
-                    .append(". ");
-        }
-        throw new IntegrationValidationException(
-                new IntegrationResultErrorUnitDto(questionnaire.idQuestionnaireModel(), violationMessage.toString())
-        );
+        return integrationService.create(questionnaire);
     }
 
-    private ObjectNode readQuestionnaireStream(Element qm, ZipFile zipFile, HashMap<String, ZipEntry> questionnaireModelJsonFiles) throws IntegrationValidationException {
+    private ObjectNode readQuestionnaireStream(Element qm, ZipFile zipFile, Map<String, ZipEntry> questionnaireModelJsonFiles) throws IntegrationValidationException {
         String qmId = qm.getElementsByTagName(ID).item(0).getTextContent();
         String qmFileName = qm.getElementsByTagName(FILENAME).item(0).getTextContent();
         try {
@@ -142,7 +143,7 @@ public class QuestionnaireBuilder {
         }
     }
 
-    private InputStream getQuestionnaireInputStream(ZipFile zf, String qmId, String qmFileName, HashMap<String, ZipEntry> questionnaireModelJsonFiles) throws IntegrationValidationException, IOException {
+    private InputStream getQuestionnaireInputStream(ZipFile zf, String qmId, String qmFileName, Map<String, ZipEntry> questionnaireModelJsonFiles) throws IntegrationValidationException, IOException {
         ZipEntry qmValueEntry = questionnaireModelJsonFiles.get("questionnaireModels/" + qmFileName);
         if(qmValueEntry == null) {
             log.info("Questionnaire model file {} could not be found in input zip", qmFileName);

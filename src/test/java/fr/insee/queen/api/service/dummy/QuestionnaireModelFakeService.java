@@ -4,11 +4,19 @@ import fr.insee.queen.api.domain.QuestionnaireModelData;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
 import fr.insee.queen.api.service.questionnaire.QuestionnaireModelService;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 public class QuestionnaireModelFakeService implements QuestionnaireModelService {
+    @Getter
+    private boolean updated = false;
+    @Getter
+    private boolean created = false;
+
     @Override
     public List<String> findAllQuestionnaireIdDtoByCampaignId(String campaignId) {
         return new ArrayList<>();
@@ -21,12 +29,12 @@ public class QuestionnaireModelFakeService implements QuestionnaireModelService 
 
     @Override
     public void createQuestionnaire(QuestionnaireModelData qm) {
-
+        created = true;
     }
 
     @Override
     public void updateQuestionnaire(QuestionnaireModelData qm) {
-
+        updated = true;
     }
 
     @Override
