@@ -2,7 +2,7 @@ package fr.insee.queen.api.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.domain.CampaignData;
+import fr.insee.queen.api.dto.campaign.CampaignData;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;

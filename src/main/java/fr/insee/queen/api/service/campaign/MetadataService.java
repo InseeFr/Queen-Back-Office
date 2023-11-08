@@ -2,7 +2,7 @@ package fr.insee.queen.api.service.campaign;
 
 import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.dto.metadata.MetadataDto;
-import fr.insee.queen.api.repository.CampaignRepository;
+import fr.insee.queen.api.service.gateway.CampaignRepository;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;

@@ -1,7 +1,6 @@
 package fr.insee.queen.api.service.pilotage;
 
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.constants.Constants;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
@@ -23,6 +22,7 @@ public class PilotageApiService implements PilotageService {
     private final SurveyUnitService surveyUnitService;
     private final CampaignExistenceService campaignExistenceService;
     private final PilotageRepository pilotageRepository;
+    public static final String CAMPAIGN = "campaign";
 
     public boolean isClosed(String campaignId, String authToken) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
@@ -58,8 +58,8 @@ public class PilotageApiService implements PilotageService {
     private String displayDetail(List<LinkedHashMap<String, String>> objects) {
         Map<String,Integer> nbSUbyCampaign = new HashMap<>();
         for(LinkedHashMap<String, String> map : objects) {
-            nbSUbyCampaign.putIfAbsent(map.get(Constants.CAMPAIGN), 0);
-            nbSUbyCampaign.put(map.get(Constants.CAMPAIGN),  nbSUbyCampaign.get(map.get(Constants.CAMPAIGN))+1);
+            nbSUbyCampaign.putIfAbsent(map.get(CAMPAIGN), 0);
+            nbSUbyCampaign.put(map.get(CAMPAIGN),  nbSUbyCampaign.get(map.get(CAMPAIGN))+1);
         }
         return "["+nbSUbyCampaign.entrySet()
                 .stream()

@@ -4,7 +4,6 @@ import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.configuration.properties.AuthEnumProperties;
 import fr.insee.queen.api.configuration.properties.KeycloakProperties;
 import fr.insee.queen.api.configuration.properties.RoleProperties;
-import fr.insee.queen.api.constants.Constants;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -63,9 +62,9 @@ public class KeycloakSecurityConfiguration {
                 ))
                 .authorizeHttpRequests(configurer -> configurer
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, Constants.API_HEALTH_CHECK).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/healthcheck").permitAll()
                         // actuator (actuator metrics are disabled by default)
-                        .requestMatchers(HttpMethod.GET, Constants.API_ACTUATOR).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                         .anyRequest()
                             .authenticated()
                 )

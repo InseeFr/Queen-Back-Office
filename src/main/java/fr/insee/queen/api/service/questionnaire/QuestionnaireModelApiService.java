@@ -1,10 +1,10 @@
 package fr.insee.queen.api.service.questionnaire;
 
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.domain.QuestionnaireModelData;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelData;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
-import fr.insee.queen.api.repository.QuestionnaireModelRepository;
+import fr.insee.queen.api.service.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.exception.QuestionnaireModelServiceException;
@@ -28,13 +28,13 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
 
 	public List<String> findAllQuestionnaireIdDtoByCampaignId(String campaignId) {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-		return questionnaireModelRepository.findAllIdByCampaignId(campaignId);
+		return questionnaireModelRepository.findAllIds(campaignId);
 	}
 
 	@Cacheable(CacheName.QUESTIONNAIRE)
 	public QuestionnaireModelValueDto getQuestionnaireModelDto(String id) {
 		return questionnaireModelRepository
-				.findQuestionnaireModelById(id)
+				.findQuestionnaireValue(id)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Questionnaire model %s was not found", id)));
 	}
 
@@ -47,7 +47,7 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
 					questionnaire.id()));
 		}
 
-		questionnaireModelRepository.createQuestionnaire(questionnaire);
+		questionnaireModelRepository.create(questionnaire);
 	}
 
 	@Caching(evict = {
@@ -64,18 +64,18 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
 			throw new QuestionnaireModelServiceException(String.format("Cannot update questionnaire model %s as some nomenclatures do not exist",
 					questionnaire.id()));
 		}
-		questionnaireModelRepository.updateQuestionnaire(questionnaire);
+		questionnaireModelRepository.update(questionnaire);
 	}
 
 	public List<QuestionnaireModelIdDto> getQuestionnaireIds(String campaignId) {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-		return questionnaireModelRepository.findAllIdByCampaignId(campaignId)
+		return questionnaireModelRepository.findAllIds(campaignId)
 				.stream().map(QuestionnaireModelIdDto::new).toList();
 	}
 
 	public List<QuestionnaireModelValueDto> getQuestionnaireValues(String campaignId) {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-		return questionnaireModelRepository.findAllValueByCampaignId(campaignId).stream()
+		return questionnaireModelRepository.findAllQuestionnaireValues(campaignId).stream()
 				.map(QuestionnaireModelValueDto::new).toList();
 	}
 }

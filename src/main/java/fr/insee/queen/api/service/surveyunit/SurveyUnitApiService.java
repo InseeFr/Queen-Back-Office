@@ -6,9 +6,8 @@ import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.statedata.StateDataType;
 import fr.insee.queen.api.dto.surveyunit.*;
-import fr.insee.queen.api.repository.StateDataRepository;
-import fr.insee.queen.api.repository.SurveyUnitRepository;
-import fr.insee.queen.api.repository.SurveyUnitTempZoneRepository;
+import fr.insee.queen.api.service.gateway.StateDataRepository;
+import fr.insee.queen.api.service.gateway.SurveyUnitRepository;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.depositproof.PDFDepositProofService;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
@@ -29,14 +28,13 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SurveyUnitApiService implements SurveyUnitService {
 	private final SurveyUnitRepository surveyUnitRepository;
-	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 	private final CampaignExistenceService campaignExistenceService;
 	private final StateDataRepository stateDataRepository;
 	private final PDFDepositProofService pdfService;
 
 	@Override
 	public boolean existsById(String surveyUnitId) {
-		return surveyUnitRepository.existsById(surveyUnitId);
+		return surveyUnitRepository.exists(surveyUnitId);
 	}
 
 	@Override
@@ -48,7 +46,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 
 	@Override
 	public SurveyUnitDto getSurveyUnit(String id) {
-		return surveyUnitRepository.findOneById(id)
+		return surveyUnitRepository.find(id)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", id)));
 	}
 
@@ -80,7 +78,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 		}
 		if(surveyUnit.stateData() != null) {
 			StateDataDto stateData = StateDataInputDto.toModel(surveyUnit.stateData());
-			stateDataRepository.updateStateData(surveyUnitId, stateData);
+			stateDataRepository.update(surveyUnitId, stateData);
 		}
 	}
 
@@ -110,7 +108,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
 
 		String surveyUnitId = surveyUnit.id();
-		surveyUnitRepository.createSurveyUnit(surveyUnitId, campaignId,
+		surveyUnitRepository.create(surveyUnitId, campaignId,
 				surveyUnit.questionnaireId(),
 				surveyUnit.data().toString(),
 				surveyUnit.comment().toString(),
@@ -136,8 +134,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	@Transactional
 	public void delete(String surveyUnitId) {
 		checkExistence(surveyUnitId);
-		surveyUnitTempZoneRepository.deleteBySurveyUnitId(surveyUnitId);
-		surveyUnitRepository.deleteById(surveyUnitId);
+		surveyUnitRepository.delete(surveyUnitId);
 	}
 
 	@Override
