@@ -6,6 +6,7 @@ import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelData;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public record QuestionnaireModelInputDto(
@@ -19,10 +20,15 @@ public record QuestionnaireModelInputDto(
 		Set<String> requiredNomenclatureIds) {
 
 	public static QuestionnaireModelData toModel(QuestionnaireModelInputDto questionnaire) {
+		Set<String> nomenclatureIds = questionnaire.requiredNomenclatureIds();
+		if( nomenclatureIds == null) {
+			nomenclatureIds = new HashSet<>();
+		}
+
 		return QuestionnaireModelData.createQuestionnaireWithoutCampaign(
 				questionnaire.idQuestionnaireModel,
 				questionnaire.label,
 				questionnaire.value.toString(),
-				questionnaire.requiredNomenclatureIds());
+				nomenclatureIds);
 	}
 }

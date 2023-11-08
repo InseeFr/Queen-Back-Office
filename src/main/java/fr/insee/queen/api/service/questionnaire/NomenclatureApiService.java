@@ -65,10 +65,6 @@ public class NomenclatureApiService implements NomenclatureService {
 	@Cacheable(CacheName.QUESTIONNAIRE_NOMENCLATURES)
 	public List<String> findRequiredNomenclatureByQuestionnaire(String questionnaireId){
 		questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(questionnaireId);
-		List<String> requiredNomenclatureIds =  nomenclatureRepository.findRequiredNomenclatureByQuestionnaireId(questionnaireId);
-		if(requiredNomenclatureIds.isEmpty()) {
-			throw new EntityNotFoundException(String.format("No required nomenclatures found for questionnaire %s", questionnaireId));
-		}
-		return requiredNomenclatureIds;
+		return nomenclatureRepository.findRequiredNomenclatureByQuestionnaireId(questionnaireId);
 	}
 }

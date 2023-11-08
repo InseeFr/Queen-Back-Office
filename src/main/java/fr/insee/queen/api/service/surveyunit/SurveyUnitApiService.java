@@ -2,15 +2,17 @@ package fr.insee.queen.api.service.surveyunit;
 
 import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
-import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
+import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
+import fr.insee.queen.api.dto.input.SurveyUnitUpdateInputDto;
 import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.statedata.StateDataType;
 import fr.insee.queen.api.dto.surveyunit.*;
-import fr.insee.queen.api.service.gateway.StateDataRepository;
-import fr.insee.queen.api.service.gateway.SurveyUnitRepository;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.depositproof.PDFDepositProofService;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
+import fr.insee.queen.api.service.gateway.StateDataRepository;
+import fr.insee.queen.api.service.gateway.SurveyUnitRepository;
+import fr.insee.queen.api.service.questionnaire.QuestionnaireModelApiExistenceService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.util.Optional;
 public class SurveyUnitApiService implements SurveyUnitService {
 	private final SurveyUnitRepository surveyUnitRepository;
 	private final CampaignExistenceService campaignExistenceService;
+	private final QuestionnaireModelApiExistenceService questionnaireModelExistenceService;
 	private final StateDataRepository stateDataRepository;
 	private final PDFDepositProofService pdfService;
 
@@ -64,7 +67,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 
 	@Transactional
 	@Override
-	public void updateSurveyUnit(String surveyUnitId, SurveyUnitInputDto surveyUnit) {
+	public void updateSurveyUnit(String surveyUnitId, SurveyUnitUpdateInputDto surveyUnit) {
 		checkExistence(surveyUnitId);
 
 		if(surveyUnit.personalization() != null) {
@@ -104,8 +107,9 @@ public class SurveyUnitApiService implements SurveyUnitService {
 
 	@Transactional
 	@Override
-	public void createSurveyUnit(String campaignId, SurveyUnitInputDto surveyUnit) {
+	public void createSurveyUnit(String campaignId, SurveyUnitCreateInputDto surveyUnit) {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
+		questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(surveyUnit.questionnaireId());
 
 		String surveyUnitId = surveyUnit.id();
 		surveyUnitRepository.create(surveyUnitId, campaignId,

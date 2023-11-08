@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.StateDataTypeInputDto;
-import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
+import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
 import fr.insee.queen.api.dto.campaign.CampaignData;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelData;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
@@ -281,7 +281,7 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
             return;
         }
         log.info("Create survey unit {}", surveyUnitId);
-        SurveyUnitInputDto surveyunit = new SurveyUnitInputDto(surveyUnitId,
+        SurveyUnitCreateInputDto surveyunit = new SurveyUnitCreateInputDto(surveyUnitId,
                 questionnaireModelId,
                 personalization,
                 data,

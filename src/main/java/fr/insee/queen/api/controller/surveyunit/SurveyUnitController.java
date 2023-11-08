@@ -5,7 +5,8 @@ import fr.insee.queen.api.controller.utils.AuthenticationHelper;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.controller.validation.IdValid;
 import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
-import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
+import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
+import fr.insee.queen.api.dto.input.SurveyUnitUpdateInputDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitDto;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
 import fr.insee.queen.api.service.exception.DepositProofException;
@@ -86,7 +87,7 @@ public class SurveyUnitController {
 	@PutMapping(path = {"/survey-unit/{id}"})
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
 	public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
-									 @RequestBody SurveyUnitInputDto surveyUnitInputDto,
+									 @Valid @RequestBody SurveyUnitUpdateInputDto surveyUnitInputDto,
 									 Authentication auth) {
 		log.info("PUT survey-unit for reporting unit with id {}", surveyUnitId);
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
@@ -155,15 +156,15 @@ public class SurveyUnitController {
 	@PostMapping(path = "/campaign/{id}/survey-unit")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
 	public ResponseEntity<Void> createUpdateSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
-													  @Valid @RequestBody SurveyUnitInputDto surveyUnitInputDto,
+													  @Valid @RequestBody SurveyUnitCreateInputDto surveyUnitCreateInputDto,
 													  Authentication auth){
-		log.info("POST survey-unit with id {}", surveyUnitInputDto.id());
-		if(surveyUnitService.existsById(surveyUnitInputDto.id())) {
-			updateSurveyUnitById(surveyUnitInputDto.id(), surveyUnitInputDto, auth);
+		log.info("POST survey-unit with id {}", surveyUnitCreateInputDto.id());
+		if(surveyUnitService.existsById(surveyUnitCreateInputDto.id())) {
+			updateSurveyUnitById(surveyUnitCreateInputDto.id(), SurveyUnitCreateInputDto.toUpdateDto(surveyUnitCreateInputDto), auth);
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
-		log.info("Create survey-unit with id {}", surveyUnitInputDto.id());
-		surveyUnitService.createSurveyUnit(campaignId, surveyUnitInputDto);
+		log.info("Create survey-unit with id {}", surveyUnitCreateInputDto.id());
+		surveyUnitService.createSurveyUnit(campaignId, surveyUnitCreateInputDto);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
