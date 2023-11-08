@@ -73,7 +73,7 @@ public class QuestionnaireBuilderTest {
         assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.id()).isEqualTo(questionnaireId);
         assertThat(errorResult.cause()).contains("idQuestionnaireModel: The identifier is invalid.");
-        assertThat(errorResult.cause()).contains("label: ne doit pas être vide.");
+        assertThat(errorResult.cause()).contains("label: must not be empty.");
     }
 
     @Test

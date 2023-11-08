@@ -71,7 +71,7 @@ public class NomenclatureBuilderTest {
         assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.id()).isEqualTo(nomenclatureId);
         assertThat(errorResult.cause()).contains("id: The identifier is invalid.");
-        assertThat(errorResult.cause()).contains("label: ne doit pas être vide.");
+        assertThat(errorResult.cause()).contains("label: must not be blank.");
     }
 
     @Test

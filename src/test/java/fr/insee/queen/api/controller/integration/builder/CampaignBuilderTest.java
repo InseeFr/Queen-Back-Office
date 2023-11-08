@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +31,7 @@ public class CampaignBuilderTest {
 
     @BeforeEach
     void init() {
+        Locale.setDefault(new Locale("en", "US"));
         objectMapper = new ObjectMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
         schemaComponent = new SchemaIntegrationComponent();
@@ -58,7 +60,7 @@ public class CampaignBuilderTest {
         assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.id()).isEqualTo(campaignId);
         assertThat(campaignResult.cause()).contains("id: The identifier is invalid.");
-        assertThat(campaignResult.cause()).contains("label: ne doit pas être vide.");
+        assertThat(campaignResult.cause()).contains("label: must not be blank.");
     }
 
     @Test
