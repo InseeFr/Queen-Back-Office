@@ -9,15 +9,14 @@ import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
 import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
 import fr.insee.queen.api.dto.integration.IntegrationStatus;
 import fr.insee.queen.api.service.dummy.*;
+import fr.insee.queen.api.service.integration.IntegrationApiService;
 import fr.insee.queen.api.service.integration.IntegrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.util.Pair;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +36,7 @@ class IntegrationServiceTest {
         questionnaireExistenceService = new QuestionnaireModelExistenceFakeService();
         questionnaireService = new QuestionnaireModelFakeService();
         nomenclatureService = new NomenclatureFakeService();
-        integrationService = new IntegrationService(campaignService, campaignExistenceService, questionnaireExistenceService,
+        integrationService = new IntegrationApiService(campaignService, campaignExistenceService, questionnaireExistenceService,
                 questionnaireService, nomenclatureService);
     }
 
@@ -72,14 +71,10 @@ class IntegrationServiceTest {
         campaignExistenceService.campaignExist(true);
 
         CampaignIntegrationInputDto campaign = new CampaignIntegrationInputDto(campaignId, "label", JsonNodeFactory.instance.objectNode());
-        Pair<Optional<String>, IntegrationResultUnitDto> pair = integrationService.create(campaign);
-        Optional<String> optionalCampaignId = pair.getFirst();
-        IntegrationResultUnitDto result = pair.getSecond();
-        assertThat(result.status()).isEqualTo(IntegrationStatus.UPDATED);
-        assertThat(result.id()).isEqualTo(campaignId);
+        IntegrationResultUnitDto campaignResult = integrationService.create(campaign);
+        assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.UPDATED);
+        assertThat(campaignResult.id()).isEqualTo(campaignId);
         assertThat(campaignService.updated()).isTrue();
-        assertThat(optionalCampaignId).isPresent();
-        assertThat(optionalCampaignId).contains(campaignId);
     }
 
     @Test
@@ -89,14 +84,11 @@ class IntegrationServiceTest {
         campaignExistenceService.campaignExist(false);
 
         CampaignIntegrationInputDto campaign = new CampaignIntegrationInputDto(campaignId, "label", JsonNodeFactory.instance.objectNode());
-        Pair<Optional<String>, IntegrationResultUnitDto> pair = integrationService.create(campaign);
-        Optional<String> optionalCampaignId = pair.getFirst();
-        IntegrationResultUnitDto result = pair.getSecond();
-        assertThat(result.status()).isEqualTo(IntegrationStatus.CREATED);
-        assertThat(result.id()).isEqualTo(campaignId);
+        IntegrationResultUnitDto campaignResult = integrationService.create(campaign);
+
+        assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.CREATED);
+        assertThat(campaignResult.id()).isEqualTo(campaignId);
         assertThat(campaignService.created()).isTrue();
-        assertThat(optionalCampaignId).isPresent();
-        assertThat(optionalCampaignId).contains(campaignId);
     }
 
     @Test
