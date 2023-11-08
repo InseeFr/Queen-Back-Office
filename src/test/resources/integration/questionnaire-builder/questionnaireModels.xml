@@ -1,0 +1,21 @@
+<QuestionnaireModels>
+  <QuestionnaireModel>
+     <Id>simpsons-v1</Id>
+     <Label>Questionnaire simpsons V1</Label>
+     <CampaignId>SIMPSONS2020X00</CampaignId>
+     <FileName>simpsons-v1.json</FileName>
+     <RequiredNomenclatures>
+    	<Nomenclature>cities2019</Nomenclature>
+    	<Nomenclature>regions2019</Nomenclature>
+     </RequiredNomenclatures>
+  </QuestionnaireModel>
+    <QuestionnaireModel>
+     <Id>simpson-v2</Id>
+     <Label>Questionnaire simpsons V2</Label>
+     <CampaignId>SIMPSONS2020X00</CampaignId>
+     <FileName>simpsons-v2.json</FileName> 
+     <RequiredNomenclatures>
+	       <Nomenclature>cities2019</Nomenclature>
+     </RequiredNomenclatures>
+  </QuestionnaireModel>
+</QuestionnaireModels>
