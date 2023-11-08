@@ -24,6 +24,7 @@ import java.io.InputStream;
 
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -92,7 +93,7 @@ class IntegrationTests {
         {
             "campaign": { "id":"SIMPSONS2023X00", "status":"CREATED" },
             "nomenclatures":[
-                { "id":"cities20199", "status":"CREATED" },
+                { "id":"cities2019", "status":"ERROR", "cause":"A nomenclature with id cities2019 already exists"},
                 { "id":"regions2019", "status":"ERROR", "cause":"Nomenclature file 'regions2019.json' could not be found in input zip" }
             ],
             "questionnaireModels":[
@@ -101,5 +102,12 @@ class IntegrationTests {
             ]
         }""";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
+
+        mockMvc.perform(delete("/api/campaign/SIMPSONS2023X00")
+                        .param("force", "true")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(adminUser))
+                )
+                .andExpect(status().isOk());
     }
 }
