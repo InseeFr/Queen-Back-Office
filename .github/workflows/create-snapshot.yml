@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - v4-develop #temp branch
-      - feat/load-test
+      - feat/optimize-db
 
 jobs:
   check-version:
