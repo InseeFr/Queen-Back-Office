@@ -15,8 +15,8 @@
 	<include file="changelog/300_update_data_model.xml" relativeToChangelogFile="true"/>
 	<!-- Add new table (tempzone) in db -->
 	<include file="changelog/400_add_new_temp_zone.xml" relativeToChangelogFile="true"/>
+	<include file="changelog/410_indexes_survey_unit.xml" relativeToChangelogFile="true"/>
 	<!-- handle migrations of comments/datas/personalization sto surveyu_unit table -->
 	<include file="changelog/500_add_fields_to_paradataevent.xml" relativeToChangelogFile="true"/>
 	<include file="changelog/501_migrate_data_to_new_fields.sql" relativeToChangelogFile="true"/>
-	<include file="changelog/510_indexes_survey_unit.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
