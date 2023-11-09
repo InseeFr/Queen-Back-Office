@@ -160,8 +160,19 @@ public class SurveyUnitServiceImpl extends AbstractService<SurveyUnit, String> i
 			if(surveyUnit.get("data") != null) {
 				simpleApiRepository.updateSurveyUnitData(id,surveyUnit.get("data"));
 			}
-			if(surveyUnit.get("stateData") != null) {
-				simpleApiRepository.updateSurveyUnitStateDate(id, surveyUnit.get("stateData"));
+			JsonNode newStateData=surveyUnit.get("stateData");
+			if (newStateData != null) {
+				Optional<Long> previousStateDataDate = simpleApiRepository.findStateDataDateBySurveyUnitId(id);
+				// update only if incoming state-data is closer
+				if (!previousStateDataDate.isPresent()) {
+					simpleApiRepository.updateSurveyUnitStateDate(id, newStateData);
+				} else {
+					Long previousDate = previousStateDataDate.get();
+					long newDate = Long.valueOf(newStateData.get("date").asLong());
+					if (Long.compare(newDate, previousDate) > 0) {
+						simpleApiRepository.updateSurveyUnitStateDate(id, newStateData);
+					}
+				}
 			}
 		} else {
 			LOGGER.info("Method with hibernate");
