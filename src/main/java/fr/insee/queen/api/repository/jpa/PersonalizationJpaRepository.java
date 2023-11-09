@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -30,10 +31,10 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
 	@Transactional
 	@Modifying
 	@Query("update PersonalizationDB p set p.value = :personalization where p.surveyUnit.id = :surveyUnitId")
-	void updatePersonalization(String surveyUnitId, String personalization);
+	int updatePersonalization(String surveyUnitId, String personalization);
 
 	@Query("select s.personalization.value from SurveyUnitDB s where s.id=:surveyUnitId")
-	String getPersonalization(String surveyUnitId);
+	Optional<String> findPersonalization(String surveyUnitId);
 
 	void deleteBySurveyUnitId(String id);
 }

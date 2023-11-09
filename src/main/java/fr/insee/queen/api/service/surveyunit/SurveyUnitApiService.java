@@ -5,7 +5,6 @@ import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
 import fr.insee.queen.api.dto.input.SurveyUnitUpdateInputDto;
-import fr.insee.queen.api.dto.statedata.StateDataDto;
 import fr.insee.queen.api.dto.statedata.StateDataType;
 import fr.insee.queen.api.dto.surveyunit.*;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
@@ -18,6 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,20 +78,14 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	@Override
 	public void updateSurveyUnit(String surveyUnitId, SurveyUnitUpdateInputDto surveyUnit) {
 		throwExceptionIfSurveyUnitNotExist(surveyUnitId);
-
-		if(surveyUnit.personalization() != null) {
-			surveyUnitRepository.updatePersonalization(surveyUnitId, surveyUnit.personalization().toString());
-		}
-		if(surveyUnit.comment() != null) {
-			surveyUnitRepository.updateComment(surveyUnitId, surveyUnit.comment().toString());
-		}
-		if(surveyUnit.data() != null) {
-			surveyUnitRepository.updateData(surveyUnitId, surveyUnit.data().toString());
-		}
-		if(surveyUnit.stateData() != null) {
-			StateDataDto stateData = StateDataInputDto.toModel(surveyUnit.stateData());
-			stateDataRepository.update(surveyUnitId, stateData);
-		}
+		String personalization = surveyUnit.personalization() == null ? null : surveyUnit.personalization().toString();
+		String comment = surveyUnit.comment() == null ? null : surveyUnit.comment().toString();
+		String data = surveyUnit.data() == null ? null : surveyUnit.data().toString();
+		surveyUnitRepository.update(surveyUnitId,
+				personalization,
+				comment,
+				data,
+				StateDataInputDto.toModel(surveyUnit.stateData()));
 	}
 
 	@Override
@@ -145,7 +140,10 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	}
 
 	@Transactional
-	@CacheEvict(CacheName.SURVEY_UNIT_EXIST)
+	@Caching(evict = {
+			@CacheEvict(CacheName.SURVEY_UNIT_EXIST),
+			@CacheEvict(CacheName.SURVEY_UNIT_CAMPAIGN)
+	})
 	public void delete(String surveyUnitId) {
 		throwExceptionIfSurveyUnitNotExist(surveyUnitId);
 		surveyUnitRepository.delete(surveyUnitId);
@@ -159,6 +157,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	}
 
 	@Override
+	@Cacheable(CacheName.SURVEY_UNIT_CAMPAIGN)
 	public SurveyUnitHabilitationDto getSurveyUnitWithCampaignById(String surveyUnitId) {
 		return surveyUnitRepository.findWithCampaignById(surveyUnitId)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId)));

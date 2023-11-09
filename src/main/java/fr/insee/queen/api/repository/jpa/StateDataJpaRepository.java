@@ -41,7 +41,7 @@ public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID>
     @Transactional
     @Modifying
     @Query("UPDATE StateDataDB s SET s.currentPage=:currentPage, s.date=:date, s.state=:state WHERE s.surveyUnit.id=:surveyUnitId")
-    void updateStateData(String surveyUnitId, Long date, String currentPage, StateDataType state);
+    int updateStateData(String surveyUnitId, Long date, String currentPage, StateDataType state);
 
     @Transactional
     @Modifying

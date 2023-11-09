@@ -26,7 +26,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
 	private final CommentJpaRepository commentRepository;
 	private final PersonalizationJpaRepository personalizationRepository;
 	private final DataJpaRepository dataRepository;
-	private final StateDataJpaRepository stateDataRepository;
+	private final StateDataDao stateDataDao;
 	private final CampaignJpaRepository campaignRepository;
 	private final QuestionnaireModelJpaRepository questionnaireModelRepository;
 	private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
@@ -65,7 +65,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
 
 	public void deleteSurveyUnits(String campaignId) {
 		dataRepository.deleteDatas(campaignId);
-		stateDataRepository.deleteStateDatas(campaignId);
+		stateDataDao.deleteStateDatas(campaignId);
 		commentRepository.deleteComments(campaignId);
 		personalizationRepository.deletePersonalizations(campaignId);
 		surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
@@ -74,7 +74,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
 
 	public void delete(String surveyUnitId) {
 		dataRepository.deleteBySurveyUnitId(surveyUnitId);
-		stateDataRepository.deleteBySurveyUnitId(surveyUnitId);
+		stateDataDao.deleteBySurveyUnitId(surveyUnitId);
 		commentRepository.deleteBySurveyUnitId(surveyUnitId);
 		personalizationRepository.deleteBySurveyUnitId(surveyUnitId);
 		surveyUnitTempZoneRepository.deleteBySurveyUnitId(surveyUnitId);
@@ -104,29 +104,64 @@ public class SurveyUnitDao implements SurveyUnitRepository {
 	}
 
 	public void updatePersonalization(String surveyUnitId, String personalization) {
-		personalizationRepository.updatePersonalization(surveyUnitId, personalization);
+		if(personalization == null) {
+			return;
+		}
+
+		int countUpdated = personalizationRepository.updatePersonalization(surveyUnitId, personalization);
+		if(countUpdated == 0) {
+			SurveyUnitDB surveyUnit = crudRepository.getReferenceById(surveyUnitId);
+			PersonalizationDB personalizationDB = new PersonalizationDB(UUID.randomUUID(), personalization, surveyUnit);
+			personalizationRepository.save(personalizationDB);
+		}
 	}
 
 	public void updateComment(String surveyUnitId, String comment) {
-		commentRepository.updateComment(surveyUnitId, comment);
+		if(comment == null) {
+			return;
+		}
+
+		int countUpdated = commentRepository.updateComment(surveyUnitId, comment);
+		if(countUpdated == 0) {
+			SurveyUnitDB surveyUnit = crudRepository.getReferenceById(surveyUnitId);
+			CommentDB commentDB = new CommentDB(UUID.randomUUID(), comment, surveyUnit);
+			commentRepository.save(commentDB);
+		}
 	}
 
 	public void updateData(String surveyUnitId, String data) {
-		dataRepository.updateData(surveyUnitId, data);
+		if(data == null) {
+			return;
+		}
+
+		int countUpdated = dataRepository.updateData(surveyUnitId, data);
+		if(countUpdated == 0) {
+			SurveyUnitDB surveyUnit = crudRepository.getReferenceById(surveyUnitId);
+			DataDB dataDB = new DataDB(UUID.randomUUID(), data, surveyUnit);
+			dataRepository.save(dataDB);
+		}
 	}
 
-	public String getComment(String surveyUnitId) {
-		return commentRepository.getComment(surveyUnitId);
+	public Optional<String> findComment(String surveyUnitId) {
+		return commentRepository.findComment(surveyUnitId);
 	}
 
-	public String getData(String surveyUnitId) {
-		return dataRepository.getData(surveyUnitId);
+	public Optional<String> findData(String surveyUnitId) {
+		return dataRepository.findData(surveyUnitId);
 	}
 
-	public String getPersonalization(String surveyUnitId) {
-		return personalizationRepository.getPersonalization(surveyUnitId);
+	public Optional<String> findPersonalization(String surveyUnitId) {
+		return personalizationRepository.findPersonalization(surveyUnitId);
 	}
 	public boolean exists(String surveyUnitId) {
 		return crudRepository.existsById(surveyUnitId);
+	}
+
+	@Override
+	public void update(String surveyUnitId, String personalization, String comment, String data, StateDataDto stateData) {
+		updatePersonalization(surveyUnitId, personalization);
+		updateComment(surveyUnitId, comment);
+		updateData(surveyUnitId, data);
+		stateDataDao.update(surveyUnitId, stateData);
 	}
 }

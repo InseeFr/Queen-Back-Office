@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -30,10 +31,10 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
     @Transactional
     @Modifying
     @Query("update DataDB d set d.value = :data where d.surveyUnit.id = :surveyUnitId")
-    void updateData(String surveyUnitId, String data);
+    int updateData(String surveyUnitId, String data);
 
     @Query("select s.data.value from SurveyUnitDB s where s.id=:surveyUnitId")
-    String getData(String surveyUnitId);
+    Optional<String> findData(String surveyUnitId);
 
     void deleteBySurveyUnitId(String id);
 }

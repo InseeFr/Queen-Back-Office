@@ -2,6 +2,7 @@ package fr.insee.queen.api.repository;
 
 import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
 import fr.insee.queen.api.repository.entity.NomenclatureDB;
+import fr.insee.queen.api.repository.jpa.NomenclatureJpaRepository;
 import fr.insee.queen.api.service.gateway.NomenclatureRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class NomenclatureDao implements NomenclatureRepository {
 
-    private final fr.insee.queen.api.repository.jpa.NomenclatureJpaRepository jpaRepository;
+    private final NomenclatureJpaRepository jpaRepository;
 
     @Override
     public Optional<NomenclatureDto> find(String nomenclatureId) {

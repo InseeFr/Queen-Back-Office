@@ -22,24 +22,39 @@ import java.util.UUID;
 @AllArgsConstructor
 public class StateDataDao implements StateDataRepository {
 
-    private final StateDataJpaRepository crudRepository;
+    private final StateDataJpaRepository jpaRepository;
     private final SurveyUnitJpaRepository surveyUnitJpaRepository;
 
     public Optional<StateDataDto> find(String surveyUnitId) {
-        return crudRepository.findBySurveyUnitId(surveyUnitId);
+        return jpaRepository.findBySurveyUnitId(surveyUnitId);
     }
 
     public void update(String surveyUnitId, StateDataDto stateData) {
-        crudRepository.updateStateData(surveyUnitId, stateData.date(), stateData.currentPage(), stateData.state());
+        if(stateData == null) {
+            return;
+        }
+
+        int countUpdated = jpaRepository.updateStateData(surveyUnitId, stateData.date(), stateData.currentPage(), stateData.state());
+        if(countUpdated == 0) {
+            create(surveyUnitId, stateData);
+        }
     }
 
     public void create(String surveyUnitId, StateDataDto stateData) {
         SurveyUnitDB surveyUnit = surveyUnitJpaRepository.getReferenceById(surveyUnitId);
         StateDataDB stateDataDB = new StateDataDB(UUID.randomUUID(), stateData.state(), stateData.date(), stateData.currentPage(), surveyUnit);
-        crudRepository.save(stateDataDB);
+        jpaRepository.save(stateDataDB);
     }
 
     public boolean exists(String surveyUnitId) {
-        return crudRepository.existsBySurveyUnitId(surveyUnitId);
+        return jpaRepository.existsBySurveyUnitId(surveyUnitId);
+    }
+
+    public void deleteBySurveyUnitId(String surveyUnitId) {
+        jpaRepository.deleteBySurveyUnitId(surveyUnitId);
+    }
+
+    public void deleteStateDatas(String campaignId) {
+        jpaRepository.deleteStateDatas(campaignId);
     }
 }

@@ -57,7 +57,7 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
 		        s.stateData.currentPage
 		    ) as stateData
 		)
-		from SurveyUnitDB s where s.id=:surveyUnitId""")
+		from SurveyUnitDB s left join s.personalization left join s.data left join s.comment left join s.stateData where s.id=:surveyUnitId""")
 	Optional<SurveyUnitDto> findOneById(String surveyUnitId);
 
 	@Query("""

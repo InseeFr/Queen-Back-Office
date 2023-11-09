@@ -21,30 +21,30 @@ import java.util.Set;
 @Repository
 @AllArgsConstructor
 public class QuestionnaireModelDao implements QuestionnaireModelRepository {
-    private final QuestionnaireModelJpaRepository crudRepository;
+    private final QuestionnaireModelJpaRepository jpaRepository;
 
     private final CampaignJpaRepository campaignJpaRepository;
 
     private final NomenclatureJpaRepository nomenclatureRepository;
 
     public List<String> findAllIds(String campaignId) {
-        return crudRepository.findAllIdByCampaignId(campaignId);
+        return jpaRepository.findAllIdByCampaignId(campaignId);
     }
 
     public Optional<QuestionnaireModelValueDto> findQuestionnaireValue(String questionnaireId) {
-        return crudRepository.findQuestionnaireModelById(questionnaireId);
+        return jpaRepository.findQuestionnaireModelById(questionnaireId);
     }
 
     public List<QuestionnaireModelDB> findByCampaignId(String questionnaireId) {
-        return crudRepository.findByCampaignId(questionnaireId);
+        return jpaRepository.findByCampaignId(questionnaireId);
     }
 
     public Optional<QuestionnaireModelCampaignDto> findQuestionnaireModelWithCampaignById(String questionnaireId) {
-        return crudRepository.findQuestionnaireModelWithCampaignById(questionnaireId);
+        return jpaRepository.findQuestionnaireModelWithCampaignById(questionnaireId);
     }
 
     public boolean exists(String questionnaireId) {
-        return crudRepository.existsById(questionnaireId);
+        return jpaRepository.existsById(questionnaireId);
     }
 
     @Transactional
@@ -55,11 +55,11 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
             CampaignDB campaign = campaignJpaRepository.getReferenceById(questionnaireData.campaignId());
             questionnaire.campaign(campaign);
         }
-        crudRepository.save(questionnaire);
+        jpaRepository.save(questionnaire);
     }
 
     public void update(QuestionnaireModelData questionnaireData) {
-        QuestionnaireModelDB questionnaire = crudRepository.getReferenceById(questionnaireData.id());
+        QuestionnaireModelDB questionnaire = jpaRepository.getReferenceById(questionnaireData.id());
         Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.requiredNomenclatureIds());
         questionnaire.label(questionnaireData.label());
         questionnaire.value(questionnaireData.value());
@@ -67,18 +67,18 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
         CampaignDB campaign = campaignJpaRepository.getReferenceById(questionnaireData.campaignId());
         questionnaire.campaign(campaign);
 
-        crudRepository.save(questionnaire);
+        jpaRepository.save(questionnaire);
     }
 
     public Long countValidQuestionnaires(String campaignId, Set<String> questionnaireIds) {
-        return crudRepository.countValidQuestionnairesByIds(campaignId, questionnaireIds);
+        return jpaRepository.countValidQuestionnairesByIds(campaignId, questionnaireIds);
     }
 
     public void deleteAllFromCampaign(String campaignId) {
-        crudRepository.deleteAllByCampaignId(campaignId);
+        jpaRepository.deleteAllByCampaignId(campaignId);
     }
 
     public List<String> findAllQuestionnaireValues(String campaignId) {
-        return crudRepository.findAllValueByCampaignId(campaignId);
+        return jpaRepository.findAllValueByCampaignId(campaignId);
     }
 }

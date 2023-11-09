@@ -27,8 +27,9 @@ public interface SurveyUnitRepository {
 	void updatePersonalization(String surveyUnitId, String personalization);
 	void updateComment(String surveyUnitId, String comment);
 	void updateData(String surveyUnitId, String data);
-	String getComment(String surveyUnitId);
-	String getData(String surveyUnitId);
-	String getPersonalization(String surveyUnitId);
+	Optional<String> findComment(String surveyUnitId);
+	Optional<String> findData(String surveyUnitId);
+	Optional<String> findPersonalization(String surveyUnitId);
 	boolean exists(String surveyUnitId);
+	void update(String surveyUnitId, String personalization, String comment, String data, StateDataDto stateData);
 }

@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CampaignDao implements CampaignRepository {
 
-    private final CampaignJpaRepository campaignJpaRepository;
+    private final CampaignJpaRepository jpaRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelJpaRepository;
 
     @Transactional
@@ -38,15 +38,15 @@ public class CampaignDao implements CampaignRepository {
             MetadataDB m = new MetadataDB(UUID.randomUUID(), metadataValue, campaign);
             campaign.metadata(m);
         }
-        campaignJpaRepository.save(campaign);
+        jpaRepository.save(campaign);
     }
 
     public Boolean exists(String campaignId) {
-        return campaignJpaRepository.existsById(campaignId);
+        return jpaRepository.existsById(campaignId);
     }
 
     public List<CampaignSummaryDto> getAllWithQuestionnaireIds() {
-        return campaignJpaRepository.findAllWithQuestionnaireModels().stream()
+        return jpaRepository.findAllWithQuestionnaireModels().stream()
                 .map(campaign -> new CampaignSummaryDto(
                         campaign.id(),
                         campaign.questionnaireModels().stream().map(QuestionnaireModelDB::id).toList())
@@ -55,11 +55,11 @@ public class CampaignDao implements CampaignRepository {
     }
 
     public void delete(String campaignId) {
-        campaignJpaRepository.deleteById(campaignId);
+        jpaRepository.deleteById(campaignId);
     }
 
     public Optional<CampaignSummaryDto> findWithQuestionnaireIds(String campaignId) {
-        Optional<CampaignDB> campaignOpt = campaignJpaRepository.findWithQuestionnaireModels(campaignId);
+        Optional<CampaignDB> campaignOpt = jpaRepository.findWithQuestionnaireModels(campaignId);
         if(campaignOpt.isEmpty()) {
             return Optional.empty();
         }
@@ -71,7 +71,7 @@ public class CampaignDao implements CampaignRepository {
     }
 
     public void update(CampaignData campaignData) {
-        CampaignDB campaign = campaignJpaRepository.findById(campaignData.id())
+        CampaignDB campaign = jpaRepository.findById(campaignData.id())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaignData.id())));
         campaign.label(campaignData.label());
 
@@ -86,14 +86,14 @@ public class CampaignDao implements CampaignRepository {
         campaign.questionnaireModels().clear();
         Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaignData.questionnaireIds());
         campaign.questionnaireModels(questionnaireModels);
-        campaignJpaRepository.save(campaign);
+        jpaRepository.save(campaign);
     }
 
     public Optional<MetadataDto> findMetadataByCampaignId(String campaignId) {
-        return campaignJpaRepository.findMetadataByCampaignId(campaignId);
+        return jpaRepository.findMetadataByCampaignId(campaignId);
     }
 
     public Optional<MetadataDto> findMetadataByQuestionnaireId(String questionnaireId) {
-        return campaignJpaRepository.findMetadataByQuestionnaireId(questionnaireId);
+        return jpaRepository.findMetadataByQuestionnaireId(questionnaireId);
     }
 }

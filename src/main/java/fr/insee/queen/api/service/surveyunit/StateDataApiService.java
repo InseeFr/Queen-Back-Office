@@ -20,10 +20,6 @@ public class StateDataApiService implements StateDataService {
 	}
 
 	public void updateStateData(String surveyUnitId, StateDataDto stateData) {
-		if(stateDataRepository.exists(surveyUnitId)) {
-			stateDataRepository.update(surveyUnitId, stateData);
-			return;
-		}
-		stateDataRepository.create(surveyUnitId, stateData);
+		stateDataRepository.update(surveyUnitId, stateData);
 	}
 }

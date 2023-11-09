@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -30,10 +31,10 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
 	@Transactional
 	@Modifying
 	@Query("update CommentDB c set c.value = :comment where c.surveyUnit.id = :surveyUnitId")
-	void updateComment(String surveyUnitId, String comment);
+	int updateComment(String surveyUnitId, String comment);
 
 	@Query("select s.comment.value from SurveyUnitDB s where s.id=:surveyUnitId")
-	String getComment(String surveyUnitId);
+	Optional<String> findComment(String surveyUnitId);
 
 	void deleteBySurveyUnitId(String id);
 }

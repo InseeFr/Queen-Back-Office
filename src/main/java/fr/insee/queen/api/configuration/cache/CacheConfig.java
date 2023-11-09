@@ -82,4 +82,14 @@ public class CacheConfig {
                         .expireAfterAccess(10, TimeUnit.MINUTES)
                         .build());
     }
+
+    @Bean
+    public CaffeineCache surveyUnitCampaignCache() {
+        return new CaffeineCache(CacheName.SURVEY_UNIT_CAMPAIGN,
+                Caffeine.newBuilder()
+                        .initialCapacity(2000)
+                        .maximumSize(20000)
+                        .expireAfterAccess(10, TimeUnit.MINUTES)
+                        .build());
+    }
 }
