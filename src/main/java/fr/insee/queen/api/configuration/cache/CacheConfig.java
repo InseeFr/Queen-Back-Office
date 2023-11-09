@@ -18,8 +18,8 @@ public class CacheConfig {
         return new CaffeineCache(CacheName.HABILITATION,
                 Caffeine.newBuilder()
                         .initialCapacity(2000)
-                        .maximumSize(10000)
-                        .expireAfterAccess(5, TimeUnit.MINUTES)
+                        .maximumSize(20000)
+                        .expireAfterAccess(10, TimeUnit.MINUTES)
                         .build());
     }
 
@@ -70,6 +70,16 @@ public class CacheConfig {
                         .initialCapacity(10)
                         .maximumSize(100)
                         .expireAfterWrite(8, TimeUnit.HOURS)
+                        .build());
+    }
+
+    @Bean
+    public CaffeineCache surveyUnitExistenceCache() {
+        return new CaffeineCache(CacheName.SURVEY_UNIT_EXIST,
+                Caffeine.newBuilder()
+                        .initialCapacity(2000)
+                        .maximumSize(20000)
+                        .expireAfterAccess(10, TimeUnit.MINUTES)
                         .build());
     }
 }

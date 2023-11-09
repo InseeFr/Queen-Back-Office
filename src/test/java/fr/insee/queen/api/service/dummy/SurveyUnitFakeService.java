@@ -21,7 +21,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public void checkExistence(String surveyUnitId) {
+    public void throwExceptionIfSurveyUnitNotExist(String surveyUnitId) {
 
     }
 

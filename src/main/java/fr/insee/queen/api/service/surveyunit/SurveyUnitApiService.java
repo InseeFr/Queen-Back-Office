@@ -1,5 +1,6 @@
 package fr.insee.queen.api.service.surveyunit;
 
+import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
@@ -15,15 +16,14 @@ import fr.insee.queen.api.service.gateway.SurveyUnitRepository;
 import fr.insee.queen.api.service.questionnaire.QuestionnaireModelApiExistenceService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -34,14 +34,22 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	private final QuestionnaireModelApiExistenceService questionnaireModelExistenceService;
 	private final StateDataRepository stateDataRepository;
 	private final PDFDepositProofService pdfService;
+	private final CacheManager cacheManager;
 
 	@Override
 	public boolean existsById(String surveyUnitId) {
-		return surveyUnitRepository.exists(surveyUnitId);
+		// not using @Cacheable annotation here, to avoid problems with proxy class generation
+		Boolean isSurveyUnitPresent = Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST)).get(surveyUnitId, Boolean.class);
+		if(isSurveyUnitPresent != null) {
+			return isSurveyUnitPresent;
+		}
+		isSurveyUnitPresent = surveyUnitRepository.exists(surveyUnitId);
+		Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST)).putIfAbsent(surveyUnitId, isSurveyUnitPresent);
+
+		return isSurveyUnitPresent;
 	}
 
-	@Override
-	public void checkExistence(String surveyUnitId) {
+	public void throwExceptionIfSurveyUnitNotExist(String surveyUnitId) {
 		if(!existsById(surveyUnitId)) {
 			throw new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId));
 		}
@@ -68,7 +76,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	@Transactional
 	@Override
 	public void updateSurveyUnit(String surveyUnitId, SurveyUnitUpdateInputDto surveyUnit) {
-		checkExistence(surveyUnitId);
+		throwExceptionIfSurveyUnitNotExist(surveyUnitId);
 
 		if(surveyUnit.personalization() != null) {
 			surveyUnitRepository.updatePersonalization(surveyUnitId, surveyUnit.personalization().toString());
@@ -107,6 +115,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
 
 	@Transactional
 	@Override
+	@CacheEvict(value = CacheName.SURVEY_UNIT_EXIST, key = "#surveyUnit.id")
 	public void createSurveyUnit(String campaignId, SurveyUnitCreateInputDto surveyUnit) {
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
 		questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(surveyUnit.questionnaireId());
@@ -136,8 +145,9 @@ public class SurveyUnitApiService implements SurveyUnitService {
 	}
 
 	@Transactional
+	@CacheEvict(CacheName.SURVEY_UNIT_EXIST)
 	public void delete(String surveyUnitId) {
-		checkExistence(surveyUnitId);
+		throwExceptionIfSurveyUnitNotExist(surveyUnitId);
 		surveyUnitRepository.delete(surveyUnitId);
 	}
 

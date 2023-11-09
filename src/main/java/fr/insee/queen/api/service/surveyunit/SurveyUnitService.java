@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface SurveyUnitService {
 	boolean existsById(String surveyUnitId);
 
-	void checkExistence(String surveyUnitId);
+	void throwExceptionIfSurveyUnitNotExist(String surveyUnitId);
 	SurveyUnitDto getSurveyUnit(String id);
 	List<SurveyUnitSummaryDto> findByCampaignId(String campaignId);
 	List<String> findAllSurveyUnitIds();
