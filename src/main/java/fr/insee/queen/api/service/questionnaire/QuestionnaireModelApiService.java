@@ -1,7 +1,7 @@
 package fr.insee.queen.api.service.questionnaire;
 
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
+import fr.insee.queen.api.domain.QuestionnaireModelData;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
 import fr.insee.queen.api.repository.QuestionnaireModelRepository;
@@ -9,7 +9,6 @@ import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.exception.QuestionnaireModelServiceException;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -40,36 +39,32 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
 	}
 
 	@Transactional
-	public void createQuestionnaire(QuestionnaireModelInputDto qm) {
-		createQuestionnaire(qm, null);
-	}
+	public void createQuestionnaire(QuestionnaireModelData questionnaire) {
+		questionnaireModelExistenceService.throwExceptionIfQuestionnaireAlreadyExist(questionnaire.id());
 
-	@Transactional
-	public void createQuestionnaire(QuestionnaireModelInputDto qm, String campaignId) {
-		questionnaireModelExistenceService.throwExceptionIfQuestionnaireAlreadyExist(qm.idQuestionnaireModel());
-
-		if (!nomenclatureService.areNomenclaturesValid(qm.requiredNomenclatureIds())) {
+		if (!nomenclatureService.areNomenclaturesValid(questionnaire.requiredNomenclatureIds())) {
 			throw new QuestionnaireModelServiceException(String.format("Cannot create questionnaire model %s as some nomenclatures do not exist",
-					qm.idQuestionnaireModel()));
+					questionnaire.id()));
 		}
-		questionnaireModelRepository.createQuestionnaire(qm.idQuestionnaireModel(), qm.label(), qm.value().toString(), qm.requiredNomenclatureIds(), campaignId);
+
+		questionnaireModelRepository.createQuestionnaire(questionnaire);
 	}
 
 	@Caching(evict = {
-			@CacheEvict(value = CacheName.QUESTIONNAIRE_NOMENCLATURES, key = "#qm.idQuestionnaireModel"),
-			@CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, key = "#qm.idQuestionnaireModel"),
-			@CacheEvict(value = CacheName.QUESTIONNAIRE, key = "#qm.idQuestionnaireModel"),
+			@CacheEvict(value = CacheName.QUESTIONNAIRE_NOMENCLATURES, key = "#questionnaire.id"),
+			@CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, key = "#questionnaire.id"),
+			@CacheEvict(value = CacheName.QUESTIONNAIRE, key = "#questionnaire.id"),
 	})
 	@Transactional
-	public void updateQuestionnaire(QuestionnaireModelInputDto qm, @NonNull String campaignId) {
-		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-		questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(qm.idQuestionnaireModel());
+	public void updateQuestionnaire(QuestionnaireModelData questionnaire) {
+		campaignExistenceService.throwExceptionIfCampaignNotExist(questionnaire.campaignId());
+		questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(questionnaire.id());
 
-		if (!nomenclatureService.areNomenclaturesValid(qm.requiredNomenclatureIds())) {
+		if (!nomenclatureService.areNomenclaturesValid(questionnaire.requiredNomenclatureIds())) {
 			throw new QuestionnaireModelServiceException(String.format("Cannot update questionnaire model %s as some nomenclatures do not exist",
-					qm.idQuestionnaireModel()));
+					questionnaire.id()));
 		}
-		questionnaireModelRepository.updateQuestionnaire(qm.idQuestionnaireModel(), qm.label(), qm.value().toString(), qm.requiredNomenclatureIds(), campaignId);
+		questionnaireModelRepository.updateQuestionnaire(questionnaire);
 	}
 
 	public List<QuestionnaireModelIdDto> getQuestionnaireIds(String campaignId) {

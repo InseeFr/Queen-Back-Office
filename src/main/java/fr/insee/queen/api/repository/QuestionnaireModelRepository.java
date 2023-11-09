@@ -1,6 +1,7 @@
 package fr.insee.queen.api.repository;
 
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelCampaignDto;
+import fr.insee.queen.api.domain.QuestionnaireModelData;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
 import fr.insee.queen.api.entity.CampaignDB;
 import fr.insee.queen.api.entity.NomenclatureDB;
@@ -43,29 +44,29 @@ public class QuestionnaireModelRepository {
     }
 
     @Transactional
-    public void createQuestionnaire(String questionnaireId, String label, String value, Set<String> nomenclatureIds, String campaignId) {
-        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(nomenclatureIds);
-        QuestionnaireModelDB questionnaire = new QuestionnaireModelDB(questionnaireId, label, value, requiredNomenclatures);
-        if(campaignId != null) {
-            CampaignDB campaign = campaignCrudRepository.getReferenceById(campaignId);
+    public void createQuestionnaire(QuestionnaireModelData questionnaireData) {
+        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.requiredNomenclatureIds());
+        QuestionnaireModelDB questionnaire = new QuestionnaireModelDB(questionnaireData.id(), questionnaireData.label(), questionnaireData.value(), requiredNomenclatures);
+        if(questionnaireData.campaignId() != null) {
+            CampaignDB campaign = campaignCrudRepository.getReferenceById(questionnaireData.campaignId());
             questionnaire.campaign(campaign);
         }
         crudRepository.save(questionnaire);
     }
 
-    public void updateQuestionnaire(String questionnaireId, String label, String value, Set<String> nomenclatureIds, String campaignId) {
-        QuestionnaireModelDB questionnaire = crudRepository.getReferenceById(questionnaireId);
-        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(nomenclatureIds);
-        questionnaire.label(label);
-        questionnaire.value(value);
+    public void updateQuestionnaire(QuestionnaireModelData questionnaireData) {
+        QuestionnaireModelDB questionnaire = crudRepository.getReferenceById(questionnaireData.id());
+        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.requiredNomenclatureIds());
+        questionnaire.label(questionnaireData.label());
+        questionnaire.value(questionnaireData.value());
         questionnaire.nomenclatures(requiredNomenclatures);
-        CampaignDB campaign = campaignCrudRepository.getReferenceById(campaignId);
+        CampaignDB campaign = campaignCrudRepository.getReferenceById(questionnaireData.campaignId());
         questionnaire.campaign(campaign);
 
         crudRepository.save(questionnaire);
     }
 
-    public Long countValidQuestionnaires(String campaignId, List<String> questionnaireIds) {
+    public Long countValidQuestionnaires(String campaignId, Set<String> questionnaireIds) {
         return crudRepository.countValidQuestionnairesByIds(campaignId, questionnaireIds);
     }
 

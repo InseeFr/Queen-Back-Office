@@ -1,8 +1,8 @@
 package fr.insee.queen.api.service.campaign;
 
 import fr.insee.queen.api.configuration.cache.CacheName;
+import fr.insee.queen.api.domain.CampaignData;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
-import fr.insee.queen.api.dto.input.CampaignInputDto;
 import fr.insee.queen.api.repository.*;
 import fr.insee.queen.api.service.exception.CampaignServiceException;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -65,40 +66,25 @@ public class CampaignApiService implements CampaignService {
 			@CacheEvict(value = CacheName.CAMPAIGN_EXIST, key = "#campaign.id")
 	})
 	@Override
-	public void createCampaign(CampaignInputDto campaign) {
+	public void createCampaign(CampaignData campaign) {
 		String campaignId = campaign.id();
-
-		List<String> questionnaireIds = campaign.questionnaireIds().stream().toList();
 		campaignExistenceService.throwExceptionIfCampaignAlreadyExist(campaignId);
-		throwExceptionIfInvalidQuestionnairesBeforeSave(campaignId, questionnaireIds);
-
-		String metadataValue = null;
-		if(campaign.metadata() != null) {
-			metadataValue = campaign.metadata().value().toString();
-		}
-
-		campaignRepository.createCampaign(campaignId, campaign.label(), questionnaireIds, metadataValue);
+		throwExceptionIfInvalidQuestionnairesBeforeSave(campaign.id(), campaign.questionnaireIds());
+		campaignRepository.createCampaign(campaign);
 	}
 
 	@Caching(evict = {
 			@CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, allEntries = true),
 	})
 	@Override
-	public void updateCampaign(CampaignInputDto campaign) {
+	public void updateCampaign(CampaignData campaign) {
 		String campaignId = campaign.id();
-		List<String> questionnaireIds = campaign.questionnaireIds().stream().toList();
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-		throwExceptionIfInvalidQuestionnairesBeforeSave(campaignId, questionnaireIds);
-
-		String metadataValue = null;
-		if(campaign.metadata() != null) {
-			metadataValue = campaign.metadata().value().toString();
-		}
-
-		campaignRepository.updateCampaign(campaign.id(), campaign.label(), questionnaireIds, metadataValue);
+		throwExceptionIfInvalidQuestionnairesBeforeSave(campaignId, campaign.questionnaireIds());
+		campaignRepository.updateCampaign(campaign);
 	}
 
-	private void throwExceptionIfInvalidQuestionnairesBeforeSave(String campaignId, List<String> questionnaireIds) {
+	private void throwExceptionIfInvalidQuestionnairesBeforeSave(String campaignId, Set<String> questionnaireIds) {
 		Long nbValidQuestionnaires = questionnaireModelRepository.countValidQuestionnaires(campaignId, questionnaireIds);
 		if(questionnaireIds.size() != nbValidQuestionnaires) {
 			throw new CampaignServiceException(

@@ -1,6 +1,5 @@
 package fr.insee.queen.api.service.surveyunit;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.SurveyUnitInputDto;

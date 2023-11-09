@@ -43,7 +43,7 @@ public interface QuestionnaireModelCrudRepository extends JpaRepository<Question
 	List<QuestionnaireModelDB> findByCampaignId(String questionnaireId);
 
 	@Query(value = "select count(*) from questionnaire_model qm where qm.id in :questionnaireIds and (qm.campaign_id is NULL or qm.campaign_id=:campaignId)", nativeQuery = true)
-	Long countValidQuestionnairesByIds(String campaignId, List<String> questionnaireIds);
+	Long countValidQuestionnairesByIds(String campaignId, Set<String> questionnaireIds);
 
 	@Query("""
 		select new fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelCampaignDto(
@@ -55,7 +55,7 @@ public interface QuestionnaireModelCrudRepository extends JpaRepository<Question
 		) from QuestionnaireModelDB qm where qm.id=:questionnaireId""")
 	Optional<QuestionnaireModelCampaignDto> findQuestionnaireModelWithCampaignById(String questionnaireId);
 
-	Set<QuestionnaireModelDB> findByIdIn(List<String> questionnaireIds);
+	Set<QuestionnaireModelDB> findByIdIn(Set<String> questionnaireIds);
 
 	void deleteAllByCampaignId(String campaignId);
 }
