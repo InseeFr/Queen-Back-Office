@@ -31,30 +31,45 @@ public class IntegrationComponent {
     private final CampaignBuilder campaignBuilder;
     private final QuestionnaireBuilder questionnaireBuilder;
 
-    public IntegrationResultDto integrateContext(MultipartFile file) {
+    /**
+     * Try to do the full integration of a campaign.
+     * @param integrationFile integration file
+     * @return {@link IntegrationResultDto} integration results
+     */
+    public IntegrationResultDto integrateContext(MultipartFile integrationFile) {
         try {
             File zip = File.createTempFile(UUID.randomUUID().toString(), "temp");
-            return integrateContext(zip, file);
+            return integrateContext(zip, integrationFile);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new IntegrationComponentException(e.getMessage());
         }
     }
 
-    private IntegrationResultDto integrateContext(File zip, MultipartFile file) throws IOException {
-        try (FileOutputStream o = new FileOutputStream(zip)) {
+    /**
+     * Try to do the full integration of a campaign.
+     * @param integrationFile integration file
+     * @return {@link IntegrationResultDto} integration results
+     */
+    private IntegrationResultDto integrateContext(File integrationFile, MultipartFile file) throws IOException {
+        try (FileOutputStream o = new FileOutputStream(integrationFile)) {
             IOUtils.copy(file.getInputStream(), o);
-            return doIntegration(zip);
+            return doIntegration(integrationFile);
         } catch (JSONException e) {
             log.error(e.getMessage(), e);
             throw new IntegrationComponentException(e.getMessage());
         }
     }
 
-    private IntegrationResultDto doIntegration(File zip) throws JSONException {
+    /**
+     * Try to do the full integration of a campaign.
+     * @param integrationFile integration file
+     * @return {@link IntegrationResultDto} integration results
+     */
+    private IntegrationResultDto doIntegration(File integrationFile) throws JSONException {
         IntegrationResultDto result = new IntegrationResultDto();
 
-        try(ZipFile zf = new ZipFile(zip)){
+        try(ZipFile zf = new ZipFile(integrationFile)){
             List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureBuilder.build(zf);
             result.nomenclatures(nomenclatureResults);
 

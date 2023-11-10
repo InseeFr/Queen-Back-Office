@@ -34,9 +34,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 /**
-* SurveyUnitController is the Controller using to manage survey units
-* 
-* @author Claudel Benjamin
+* Handle survey units
 * 
 */
 @RestController
@@ -48,16 +46,14 @@ import java.util.List;
 public class SurveyUnitController {
 	@Value("${application.pilotage.integration-override}")
 	private final String integrationOverride;
-	/**
-	* The survey unit repository using to access to table 'survey_unit' in DB 
-	*/
 	private final SurveyUnitService surveyUnitService;
 	private final PilotageService pilotageService;
 	private final HabilitationComponent habilitationComponent;
 	private final AuthenticationHelper authHelper;
 
 	/**
-	 * This method is used to get all surveyUnits Ids
+	 * Retrieve all survey units id
+	 * @return all ids of survey units
 	 */
 	@Operation(summary = "Get all survey-units ids")
 	@GetMapping(path = "/survey-units")
@@ -68,8 +64,12 @@ public class SurveyUnitController {
 	}
 
 	/**
-	* This method is used to get a survey-unit by id
-	*/
+	 * Retrieve the survey unit
+	 *
+	 * @param surveyUnitId survey unit id
+	 * @param auth authentication object
+	 * @return {@link SurveyUnitDto} the survey unit
+	 */
 	@Operation(summary = "Get survey-unit")
 	@GetMapping(path = "/survey-unit/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
@@ -79,10 +79,13 @@ public class SurveyUnitController {
 		habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
 		return surveyUnitService.getSurveyUnit(surveyUnitId);
 	}
-	
+
 	/**
-	* This method is used to update a survey-unit by id
-	*/
+	 * Update a survey unit
+	 * @param surveyUnitId survey unit id
+	 * @param surveyUnitInputDto survey unit form data
+	 * @param auth authentication object
+	 */
 	@Operation(summary = "Update survey-unit")
 	@PutMapping(path = {"/survey-unit/{id}"})
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
@@ -95,9 +98,10 @@ public class SurveyUnitController {
 	}
 	
 	/**
-	* This method is using to get all survey units associated to a specific campaign 
+	* Retrieve all the survey units of a campaign
 	* 
 	* @param campaignId the id of campaign
+	* @param auth authentication object
 	* @return List of {@link SurveyUnitSummaryDto}
 	*/
 	@Operation(summary = "Get list of survey units for a specific campaign")
@@ -112,6 +116,7 @@ public class SurveyUnitController {
 			surveyUnits = surveyUnitService.findByCampaignId(campaignId);
 		} else {
 			String authToken = authHelper.getAuthToken(auth);
+			// get survey units of a campaign from the pilotage api
 			surveyUnits = pilotageService.getSurveyUnitsByCampaign(campaignId, authToken);
 		}
 
@@ -121,7 +126,14 @@ public class SurveyUnitController {
 
 		return surveyUnits;
 	}
-	
+
+	/**
+	 * Get PDF deposit proof for a survey unit
+	 *
+	 * @param surveyUnitId survey unit id
+	 * @param auth authentication object
+	 * @param response HttpServletResponse object
+	 */
 	@Operation(summary = "Get deposit proof for a survey unit")
 	@GetMapping(value = "/survey-unit/{id}/deposit-proof")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
@@ -146,12 +158,13 @@ public class SurveyUnitController {
 			throw new DepositProofException();
 		}
 	}
-	
+
 	/**
-	* This method is using to create a survey-unit
-	* 
-	* @param campaignId the id of campaign
-	*/
+	 * Create or update a survey unit
+	 * @param campaignId campaign id
+	 * @param surveyUnitCreateInputDto survey unit data for creation
+	 * @param auth authentication object
+	 */
 	@Operation(summary = "Create/Update a survey unit")
 	@PostMapping(path = "/campaign/{id}/survey-unit")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
@@ -168,11 +181,11 @@ public class SurveyUnitController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
+
 	/**
-	* This method is using to delete a survey-unit
-	* 
-	* @param surveyUnitId the id of survey-unit
-	*/
+	 * Delete a survey unit
+	 * @param surveyUnitId survey unit id
+	 */
 	@Operation(summary = "Delete a survey unit")
 	@DeleteMapping(path = "/survey-unit/{id}")
 	@PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)

@@ -25,9 +25,9 @@ import java.util.zip.ZipFile;
 public class SchemaIntegrationComponent implements SchemaComponent {
 
     @Override
-    public void throwExceptionIfXmlDataFileNotValid(ZipFile zf, String xmlFileName, String xsdSchemaFileName) throws IntegrationValidationException {
+    public void throwExceptionIfXmlDataFileNotValid(ZipFile zipFile, String xmlFileName, String xsdSchemaFileName) throws IntegrationValidationException {
 
-        ZipEntry zipXmlFile = zf.getEntry(xmlFileName);
+        ZipEntry zipXmlFile = zipFile.getEntry(xmlFileName);
         if(zipXmlFile == null) {
             IntegrationResultErrorUnitDto resultError = new IntegrationResultErrorUnitDto(
                     null,
@@ -43,7 +43,7 @@ public class SchemaIntegrationComponent implements SchemaComponent {
             Source schemaSource = new StreamSource(templateStream);
             Schema schema = facto.newSchema(schemaSource);
             Validator validator = schema.newValidator();
-            validator.validate(new StreamSource(zf.getInputStream(zipXmlFile)));
+            validator.validate(new StreamSource(zipFile.getInputStream(zipXmlFile)));
         }
         catch(Exception ex) {
             IntegrationResultErrorUnitDto resultError = new IntegrationResultErrorUnitDto(null,

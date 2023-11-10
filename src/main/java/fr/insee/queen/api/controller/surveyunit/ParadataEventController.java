@@ -19,11 +19,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * ParadataEnventController is the Controller using to manage paradata events
- * entity
- * 
- * @author Corcaud Samuel
- * 
+ * Handle creation of paradata events for a survey unit. Paradatas are data not linked with a questionnaire,
+ * and give additional informations about how the user is filling the questionnaire
  */
 @RestController
 @Tag(name = "07. Paradata events", description = "Endpoints for paradata events")
@@ -32,15 +29,14 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @Validated
 public class ParadataEventController {
-	
 	private final ParadataEventService paradataEventService;
-
 	private final HabilitationComponent habilitationComponent;
 
 	/**
-	 * This method is used to save a pardata event
-	 * 
+	 * Create a paradata event for a survey unit
+	 *
 	 * @param paradataValue paradata value
+	 * @param auth authentication object
 	 */
 	@Operation(summary = "Create paradata event for a survey unit")
 	@PostMapping(path = "/paradata")

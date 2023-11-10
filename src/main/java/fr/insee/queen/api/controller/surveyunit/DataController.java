@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.controller.validation.IdValid;
-import fr.insee.queen.api.dto.data.DataDto;
 import fr.insee.queen.api.service.pilotage.PilotageRole;
 import fr.insee.queen.api.service.surveyunit.DataService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,11 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
-* DataController is the Controller using to manage survey unit data
-* 
-* @author Claudel Benjamin
-* 
-*/
+ * These endpoints handle the questionnaire form data of a survey unit
+ */
 @RestController
 @Tag(name = "06. Survey units")
 @RequestMapping(path = "/api")
@@ -30,20 +26,15 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @Validated
 public class DataController {
-	/**
-	* The data repository using to access to table 'data' in DB 
-	*/
 	private final DataService dataService;
-	/**
-	* The reporting unit repository using to access to table 'reporting_unit' in DB 
-	*/
 	private final HabilitationComponent habilitationComponent;
 	
 	/**
-	* This method is using to get the data associated to a specific reporting unit 
+	* Retrieve the questionnaire form data of a survey unit
 	* 
 	* @param surveyUnitId the id of reporting unit
-	* @return {@link DataDto} the data associated to the reporting unit
+	* @param auth authentication object
+	* @return {@link String} the questionnaire form data of a survey unit
 	*/
 	@Operation(summary = "Get data for a survey unit")
 	@GetMapping(path = "/survey-unit/{id}/data")
@@ -57,11 +48,11 @@ public class DataController {
 
 	
 	/**
-	* This method is using to update the data associated to a specific reporting unit 
+	* Update the questionnaire form data of a survey unit
 	* 
-	* @param dataValue	the value to update
-	* @param surveyUnitId	the id of reporting unit
-	*
+	* @param dataValue the questionnaire form data to update
+	* @param surveyUnitId the id of the survey unit
+	* @param auth authentication object
 	*/
 	@Operation(summary = "Update data for a survey unit")
 	@PutMapping(path = "/survey-unit/{id}/data")

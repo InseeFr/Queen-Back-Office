@@ -17,10 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
-* PersonalizationController is the Controller using to manage personalization
-* 
-* @author Claudel Benjamin
-* 
+* Handle personalization data for a survey unit
 */
 @RestController
 @Tag(name = "06. Survey units")
@@ -29,21 +26,15 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @Validated
 public class PersonalizationController {
-	
-	/**
-	* The personalization repository using to access to table 'personalization' in DB 
-	*/
 	private final PersonalizationService personalizationService;
-	/**
-	* The reporting unit repository using to access to table 'reporting_unit' in DB 
-	*/
 	private final HabilitationComponent habilitationComponent;
 	
 	/**
-	* This method is using to get the personalization associated to a specific reporting unit 
+	* Retrieve the personalization data of a survey unit
 	* 
-	* @param surveyUnitId the id of reporting unit
-	* @return {@link String} the personalization associated to the reporting unit
+	* @param surveyUnitId the id of the survey unit
+	* @param auth authentication object
+	* @return {@link String} the personalization associated to the survey unit
 	*/
 	@Operation(summary = "Get personalization for a survey unit")
 	@GetMapping(path = "/survey-unit/{id}/personalization")
@@ -56,11 +47,11 @@ public class PersonalizationController {
 	}
 	
 	/**
-	* This method is using to update the personalization associated to a specific reporting unit 
+	* Update the personalization data associated to the survey unit
 	* 
 	* @param personalizationValues the value to update
-	* @param surveyUnitId	the id of reporting unit
-	*
+	* @param surveyUnitId the id of the survey unit
+	* @param auth authentication object
 	*/
 	@Operation(summary = "Update personalization for a survey unit")
 	@PutMapping(path = "/survey-unit/{id}/personalization")

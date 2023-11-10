@@ -31,6 +31,9 @@ import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * Handle the integration of questionnaires
+ */
 @Component
 @Slf4j
 @AllArgsConstructor
@@ -46,13 +49,13 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
     private static final String NOMENCLATURE = "Nomenclature";
     public static final String QUESTIONNAIRE_MODELS_XML = "questionnaireModels.xml";
 
-    public List<IntegrationResultUnitDto> build(String campaignId, ZipFile zf) {
+    public List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile) {
         try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, QUESTIONNAIRE_MODELS_XML, "questionnaireModels_integration_template.xsd");
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, QUESTIONNAIRE_MODELS_XML, "questionnaireModels_integration_template.xsd");
         } catch (IntegrationValidationException ex) {
             return List.of(ex.resultError());
         }
-        return buildQuestionnaireModels(campaignId, zf);
+        return buildQuestionnaireModels(campaignId, integrationZipFile);
     }
 
     private List<IntegrationResultUnitDto> buildQuestionnaireModels(String campaignId, ZipFile zf) {

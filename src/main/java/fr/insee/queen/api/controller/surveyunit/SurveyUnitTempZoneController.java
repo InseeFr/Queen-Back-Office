@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * SurveyUnitController is the Controller using to manage survey units
- *
- * @author Claudel Benjamin
- *
+ * Handle temp zone for survey units. The temp zone is used when interviewers synchronized orphan survey units
  */
 @RestController
 @Tag(name = "08. Survey units in temp Zone", description = "Endpoints for survey units in temporary zone")
@@ -32,14 +29,14 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class SurveyUnitTempZoneController {
-    /**
-     * The survey unit repository using to access to table 'survey_unit' in DB
-     */
     private final SurveyUnitTempZoneService surveyUnitTempZoneService;
     private final AuthenticationHelper authHelper;
 
     /**
-     * This method is used to post a survey-unit by id to a temp-zone
+     * Create a survey unit to the temp zone area
+     * @param surveyUnitId survey unit id
+     * @param surveyUnit survey unit json
+     * @param auth authentication object
      */
     @Operation(summary = "Create survey-unit to temp-zone")
     @PostMapping(path = "/survey-unit/{id}/temp-zone")
@@ -54,7 +51,9 @@ public class SurveyUnitTempZoneController {
     }
 
     /**
-     * This method is used to retrieve survey-units in temp-zone
+     * Retrieve all survey units in temp zone
+     *
+     * @return List of {@link SurveyUnitTempZoneDto} survey units
      */
     @Operation(summary = "GET all survey-units in temp-zone")
     @GetMapping(path = "/survey-units/temp-zone")

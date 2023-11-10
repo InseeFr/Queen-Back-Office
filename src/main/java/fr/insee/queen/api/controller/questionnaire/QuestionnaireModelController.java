@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * QuestionnaireModelController is the Controller using to manage questionnaire models
- * 
- * @author Claudel Benjamin
- * 
+ * Handle questionnaire models. A questionnaire model is the definition of a questionnaire with its data internal structure
  */
 @RestController
 @Tag(name = "03. Questionnaires", description = "Endpoints for questionnaires")
@@ -37,20 +34,14 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class QuestionnaireModelController {
-
 	private final SurveyUnitService surveyUnitService;
-	/**
-	 * The questionnaire model repository using to access to table
-	 * 'questionnaire_model' in DB
-	 */
 	private final QuestionnaireModelService questionnaireModelService;
 
 	/**
-	 * This method is using to get the questionnaireModel associated to a specific
-	 * campaign
+	 * Retrieve the data structure of all questionnaires associated to a campaign
 	 * 
 	 * @param campaignId the id of campaign
-	 * @return the {@link QuestionnaireModelValueDto} associated to the campaign
+	 * @return List of {@link QuestionnaireModelValueDto} associated to the campaign
 	 */
 	@Operation(summary = "Get questionnaire list for a specific campaign ")
 	@GetMapping(path = "/campaign/{id}/questionnaires")
@@ -62,7 +53,7 @@ public class QuestionnaireModelController {
 	}
 
 	/**
-	 * This method is used to retrieve a questionnaireModel by Id
+	 * Retrieve the data structure of a questionnaire
 	 * 
 	 * @param questionnaireModelId the id of questionnaire
 	 * @return the {@link QuestionnaireModelValueDto} associated to the id
@@ -76,10 +67,10 @@ public class QuestionnaireModelController {
 	}
 
 	/**
-	 * This method is used to retrieve  questionnaireModel list by a campaign id
+	 * Retrieve all the questionnaire ids for a campaign
 	 * 
-	 * @param campaignId the id of questionnaire
-	 * @return the {@link QuestionnaireModelIdDto} list associated to the campaign id
+	 * @param campaignId the campaign id
+	 * @return List of {@link QuestionnaireModelIdDto} list associated to the campaign id
 	 */
 	@Operation(summary = "Get list of questionnaire id for a specific campaign")
 	@GetMapping(path = "/campaign/{id}/questionnaire-id")
@@ -91,10 +82,9 @@ public class QuestionnaireModelController {
 	}
 
 	/**
-	 * This method is using to post a new Questionnaire Model
-	 * 
-	 * @param questionnaireModelInput to create
-	 * 
+	 * Create a questionnaire model
+	 *
+	 * @param questionnaireModelInput questionnaire data used to create a questionnaire
 	 */
 	@Operation(summary = "Create a Questionnaire Model")
 	@PostMapping(path = "/questionnaire-models")
@@ -105,7 +95,12 @@ public class QuestionnaireModelController {
 		questionnaireModelService.createQuestionnaire(QuestionnaireModelInputDto.toModel(questionnaireModelInput));
 	}
 
-	@Operation(summary = "Get list of questionnaires for all survey-units defined in request body ")
+	/**
+	 * Search questionnaire ids associated to survey units
+	 * @param surveyUnitIdsToSearch survey unit ids where we want to retrive the questionnaire ids
+	 * @return {@link SurveyUnitOkNokDto} list of survey units with their questionnaire ids, and list of survey units where no questionnaire found
+	 */
+	@Operation(summary = "Search questionnaire ids associated to survey units")
 	@PostMapping(path = "/survey-units/questionnaire-model-id")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
 	public ResponseEntity<SurveyUnitOkNokDto> getQuestionnaireModelIdBySurveyUnits(

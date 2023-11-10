@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.controller.utils.HabilitationComponent;
 import fr.insee.queen.api.controller.validation.IdValid;
-import fr.insee.queen.api.dto.comment.CommentDto;
 import fr.insee.queen.api.service.pilotage.PilotageRole;
 import fr.insee.queen.api.service.surveyunit.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,10 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
-* CommentController is the Controller using to manage survey unit comments
-* 
-* @author Claudel Benjamin
-* 
+* These endpoints handle the comment filled by a survey unit at the nd of the questionnaire*
 */
 @RestController
 @Tag(name = "06. Survey units")
@@ -30,21 +26,16 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @Validated
 public class CommentController {
-	
-	/**
-	* The comment repository using to access to table 'comment' in DB 
-	*/
+
 	private final CommentService commentService;
-	/**
-	* The reporting unit repository using to access to table 'reporting_unit' in DB 
-	*/
 	private final HabilitationComponent habilitationComponent;
 	
 	/**
-	* This method is using to get the comment associated to a specific reporting unit 
+	* Retrieve the comment associated to the survey unit
 	* 
-	* @param surveyUnitId the id of reporting unit
-	* @return {@link CommentDto} the comment associated to the reporting unit
+	* @param surveyUnitId the id of survey unit
+	* @param auth authentication object
+	* @return {@link String} the comment associated to the survey unit
 	*/
 	@Operation(summary = "Get comment for a survey unit")
 	@GetMapping(path = "/survey-unit/{id}/comment")
@@ -57,10 +48,11 @@ public class CommentController {
 	}
 	
 	/**
-	* This method is using to update the comment associated to a specific reporting unit 
+	* Update the comment associated to the survey unit
 	* 
 	* @param commentValue the value to update
-	* @param surveyUnitId	the id of reporting unit
+	* @param surveyUnitId the id of the survey unit
+	* @param auth authentication object
 	*
 	*/
 	@Operation(summary = "Update comment for a survey unit")

@@ -41,6 +41,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipFile;
 
+/**
+ * Handle the integration of a campaign
+ */
 @Component
 @Slf4j
 @AllArgsConstructor
@@ -53,15 +56,15 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
     private static final String METADATA = "Metadata";
     public static final String CAMPAIGN_XML = "campaign.xml";
 
-    public IntegrationResultUnitDto build(ZipFile zf) {
+    @Override
+    public IntegrationResultUnitDto build(ZipFile integrationZipFile) {
         try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, CAMPAIGN_XML, "campaign_integration_template.xsd");
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, CAMPAIGN_XML, "campaign_integration_template.xsd");
         } catch (IntegrationValidationException ex) {
             return ex.resultError();
         }
-        return buildCampaign(zf);
+        return buildCampaign(integrationZipFile);
     }
-
 
     private IntegrationResultUnitDto buildCampaign(ZipFile zf) {
         Document doc;

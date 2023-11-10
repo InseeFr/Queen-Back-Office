@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 
 public class SchemaFakeComponent implements SchemaComponent {
     @Override
-    public void throwExceptionIfXmlDataFileNotValid(ZipFile zf, String xmlFileName, String xsdSchemaFileName) {
+    public void throwExceptionIfXmlDataFileNotValid(ZipFile zipFile, String xmlFileName, String xsdSchemaFileName) {
 
     }
 
