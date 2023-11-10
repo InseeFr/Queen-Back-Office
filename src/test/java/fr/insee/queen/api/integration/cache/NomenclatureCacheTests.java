@@ -44,7 +44,7 @@ class NomenclatureCacheTests {
 
     @Test
     @DisplayName("When saving nomenclature, evict the associated nomenclature in nomenclature cache")
-    void check_nomenclature_cache() throws Exception {
+    void check_nomenclature_cache() {
         String nomenclatureId = "nomenclature-cache-id";
 
         // create nomenclature

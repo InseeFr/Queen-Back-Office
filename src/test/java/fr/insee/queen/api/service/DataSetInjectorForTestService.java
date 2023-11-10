@@ -145,9 +145,9 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
 
     private void createVqsDataSet() {
         log.info("VQS dataset - start");
-        ArrayNode jsonArrayNomenclatureCities2019 = objectMapper.createArrayNode();
-        ArrayNode jsonArrayRegions2019 = objectMapper.createArrayNode();
-        ObjectNode jsonQuestionnaireModelVqs = objectMapper.createObjectNode();
+        ArrayNode jsonArrayNomenclatureCities2019;
+        ArrayNode jsonArrayRegions2019;
+        ObjectNode jsonQuestionnaireModelVqs;
         try {
             jsonArrayNomenclatureCities2019 = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(BASE_RESOURCE_DIRECTORY + "nomenclature/public_communes-2019.json"), ArrayNode.class);
             jsonArrayRegions2019 = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(BASE_RESOURCE_DIRECTORY + "nomenclature/public_regions-2019.json"), ArrayNode.class);

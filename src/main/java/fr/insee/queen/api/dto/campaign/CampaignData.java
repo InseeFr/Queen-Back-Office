@@ -8,10 +8,10 @@ import java.util.Set;
 
 @Getter
 public class CampaignData {
-    private String id;
-    private String label;
-    private Set<String> questionnaireIds;
-    private String metadata;
+    private final String id;
+    private final String label;
+    private final Set<String> questionnaireIds;
+    private final String metadata;
 
     public CampaignData(String id, String label, @NonNull Set<String> questionnaireIds, String metadata) {
         this.id = id;

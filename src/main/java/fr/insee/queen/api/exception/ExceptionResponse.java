@@ -6,10 +6,6 @@ import java.util.Map;
 
 public class ExceptionResponse implements Serializable {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 5976819193104348L;
 	private final int code;
     private final String message;
 

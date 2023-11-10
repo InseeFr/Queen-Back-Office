@@ -4,7 +4,6 @@ import java.util.Map;
 
 public class ApiRuntimeBaseException extends RuntimeException implements BaseException {
 
-    static final long serialVersionUID = 10001L;
     protected final ErrorCode code;
     private final ExceptionResponse response;
 

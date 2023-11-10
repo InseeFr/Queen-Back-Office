@@ -138,9 +138,9 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
 
     private void createVqsDataSet() {
         log.info("VQS dataset - start");
-        ArrayNode jsonArrayNomenclatureCities2019 = objectMapper.createArrayNode();
-        ArrayNode jsonArrayRegions2019 = objectMapper.createArrayNode();
-        ObjectNode jsonQuestionnaireModelVqs = objectMapper.createObjectNode();
+        ArrayNode jsonArrayNomenclatureCities2019;
+        ArrayNode jsonArrayRegions2019;
+        ObjectNode jsonQuestionnaireModelVqs;
         try {
             jsonArrayNomenclatureCities2019 = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(BASE_RESOURCE_DIRECTORY + "nomenclature/public_communes-2019.json"), ArrayNode.class);
             jsonArrayRegions2019 = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(BASE_RESOURCE_DIRECTORY + "nomenclature/public_regions-2019.json"), ArrayNode.class);
@@ -170,9 +170,9 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
 
     private void createSimpsonsDataSet() {
         log.info("Simpsons dataset - start");
-        ArrayNode jsonArrayNomenclatureCities2019 = objectMapper.createArrayNode();
-        ArrayNode jsonArrayRegions2019 = objectMapper.createArrayNode();
-        ObjectNode jsonQuestionnaireModelSimpsons = objectMapper.createObjectNode();
+        ArrayNode jsonArrayNomenclatureCities2019;
+        ArrayNode jsonArrayRegions2019;
+        ObjectNode jsonQuestionnaireModelSimpsons;
         try {
             jsonArrayNomenclatureCities2019 = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(BASE_RESOURCE_DIRECTORY + "nomenclature/public_communes-2019.json"), ArrayNode.class);
             jsonArrayRegions2019 = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(BASE_RESOURCE_DIRECTORY + "nomenclature/public_regions-2019.json"), ArrayNode.class);

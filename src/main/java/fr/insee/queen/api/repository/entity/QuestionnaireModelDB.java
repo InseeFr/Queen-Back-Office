@@ -32,7 +32,7 @@ public class QuestionnaireModelDB {
 	/**
 	* The label of questionnaire 
 	*/
-	@Column(length=255, nullable = false)
+	@Column(nullable = false)
 	private String label;
 	
 	/**

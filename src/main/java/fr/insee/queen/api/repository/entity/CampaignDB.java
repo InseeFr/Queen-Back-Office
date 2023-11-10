@@ -33,7 +33,7 @@ public class CampaignDB {
 	/**
 	* The label of campaign 
 	*/
-	@Column(length=255, nullable = false)
+	@Column(nullable = false)
 	private String label;
 
 

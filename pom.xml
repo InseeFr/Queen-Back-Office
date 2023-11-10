@@ -238,6 +238,11 @@
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<version>0.8.7</version>
+						<configuration>
+							<excludes>
+								<exclude>fr/insee/queen/api/service/dataset/*.class</exclude>
+							</excludes>
+						</configuration>
 						<executions>
 							<execution>
 								<id>prepare-agent</id>
@@ -336,7 +341,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
-						<argLine>-Dfile.encoding=UTF-8</argLine>
+						<!--
+							{argLine} to not disturb jacoco coverage generation
+							encoding to force windows components to test with proper encoding
+						-->
+						<argLine>${argLine} -Dfile.encoding=UTF-8</argLine>
 					</configuration>
 				</plugin>
 			</plugins>

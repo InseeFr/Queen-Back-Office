@@ -32,7 +32,7 @@ public class NomenclatureDB {
 	/**
 	* The label of nomenclature 
 	*/
-	@Column(length=255, nullable = false)
+	@Column(nullable = false)
 	private String label;
 	
 	/**

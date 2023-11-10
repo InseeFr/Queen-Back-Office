@@ -37,7 +37,7 @@ public class NomenclatureApiService implements NomenclatureService {
 		if(nomenclatureIds.isEmpty()) {
 			return true;
 		}
-		return nomenclatureIds.stream().anyMatch(nomenclatureRepository::exists);
+		return nomenclatureIds.stream().allMatch(nomenclatureRepository::exists);
 	}
 
 	@CacheEvict(value = CacheName.NOMENCLATURE, key = "#nomenclature.id")

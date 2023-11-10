@@ -9,7 +9,7 @@ public enum StateDataTypeInputDto {
 	TOEXTRACT(StateDataType.TOEXTRACT),
 	EXTRACTED(StateDataType.EXTRACTED);
 
-	private StateDataType stateDataType;
+	private final StateDataType stateDataType;
 
 	StateDataTypeInputDto(StateDataType stateDataType) {
 		this.stateDataType = stateDataType;

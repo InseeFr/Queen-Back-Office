@@ -24,13 +24,12 @@ class SurveyUnitControllerTest {
     private PilotageFakeService pilotageService;
     private SurveyUnitFakeService surveyUnitService;
     private HabilitationFakeComponent habilitationComponent;
-    private AuthenticatedUserTestHelper authenticatedUserTestHelper;
     private AuthenticationFakeHelper authenticationHelper;
     private Authentication authenticatedUser;
 
     @BeforeEach
     public void init() {
-        authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
+        AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
         authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
         authenticationHelper = new AuthenticationFakeHelper();
         habilitationComponent = new HabilitationFakeComponent();

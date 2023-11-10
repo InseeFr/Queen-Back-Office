@@ -34,10 +34,6 @@ class ParadataTests {
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-
     private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
             AuthorityRoleEnum.REVIEWER,
             AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
@@ -49,7 +45,7 @@ class ParadataTests {
     void on_create_paradata_return_created() throws Exception {
         String paradataInput = """
         {
-            "idSU": "11", 
+            "idSU": "11",
             "events": [
                 {
                     "page": "83",
@@ -108,7 +104,7 @@ class ParadataTests {
     void on_create_paradata_when_anonymous_user_return_401() throws Exception {
         String paradataInput = """
         {
-            "idSU": "11", 
+            "idSU": "11",
             "events": [
                 {}
             ]
@@ -126,7 +122,7 @@ class ParadataTests {
     void on_create_paradata_when_reviewer_user_return_403() throws Exception {
         String paradataInput = """
         {
-            "idSU": "11", 
+            "idSU": "11",
             "events": [
                 {}
             ]

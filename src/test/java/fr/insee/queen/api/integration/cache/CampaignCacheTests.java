@@ -48,7 +48,7 @@ class CampaignCacheTests {
 
     @Test
     @DisplayName("When handling campaigns, handle correctly cache for campaign existence")
-    void check_campaign_existence_cache() throws Exception {
+    void check_campaign_existence_cache() {
         String campaignId = "campaign-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
         campaignExistenceService.existsById(campaignId);

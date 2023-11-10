@@ -45,7 +45,7 @@ class SurveyUnitCacheTests {
 
     @Test
     @DisplayName("When handling surveyUnits, handle correctly cache for surveyUnit existence")
-    void check_surveyUnit_existence_cache() throws Exception {
+    void check_surveyUnit_existence_cache() {
         String surveyUnitId = "surveyU-unit-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST)).get(surveyUnitId)).isNull();
         surveyUnitService.existsById(surveyUnitId);
@@ -74,7 +74,7 @@ class SurveyUnitCacheTests {
 
     @Test
     @DisplayName("When handling surveyUnits, handle correctly cache for survey units with campaign")
-    void check_surveyUnit_campaign_cache() throws Exception {
+    void check_surveyUnit_campaign_cache() {
         String surveyUnitId = "survey-unit-campaign-cache-id";
 
         // check cache is null at beginning

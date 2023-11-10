@@ -12,16 +12,16 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 public class IntegrationResultSuccessUnitDto extends IntegrationResultUnitDto {
 
-	private IntegrationResultSuccessUnitDto(String id, IntegrationStatus status, String cause) {
-		super(id, status, cause);
+	private IntegrationResultSuccessUnitDto(String id, IntegrationStatus status) {
+		super(id, status, null);
 	}
 
 	public static IntegrationResultSuccessUnitDto integrationResultUnitCreated(String id) {
-		return new IntegrationResultSuccessUnitDto(id, IntegrationStatus.CREATED, null);
+		return new IntegrationResultSuccessUnitDto(id, IntegrationStatus.CREATED);
 	}
 
 	public static IntegrationResultSuccessUnitDto integrationResultUnitUpdated(String id) {
-		return new IntegrationResultSuccessUnitDto(id, IntegrationStatus.UPDATED, null);
+		return new IntegrationResultSuccessUnitDto(id, IntegrationStatus.UPDATED);
 	}
 }
 
