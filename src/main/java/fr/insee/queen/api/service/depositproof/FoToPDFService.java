@@ -21,7 +21,7 @@ import java.nio.file.Path;
 @Slf4j
 public class FoToPDFService {
     public File transformFoToPdf(File foFile) throws IOException {
-        log.info("foFile = " + foFile.getPath());
+        log.info("foFile = {}", foFile.getPath());
         OutputStream out = null;
         File outFilePDF = File.createTempFile("pdf-file", ".pdf");
         try {

@@ -21,13 +21,13 @@ public class SpringDocConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "application.auth", havingValue = "NOAUTH")
-    OpenAPI noAuthOpenAPI(BuildProperties buildProperties) {
+    protected OpenAPI noAuthOpenAPI(BuildProperties buildProperties) {
         return generateOpenAPI(buildProperties);
     }
 
     @Bean
     @ConditionalOnProperty(name = "application.auth", havingValue = "KEYCLOAK")
-    OpenAPI keycloakOpenAPI(ApplicationProperties applicationProperties, KeycloakProperties keycloakProperties, BuildProperties buildProperties) {
+    protected OpenAPI keycloakOpenAPI(ApplicationProperties applicationProperties, KeycloakProperties keycloakProperties, BuildProperties buildProperties) {
         String authUrl = keycloakProperties.authServerUrl() + "/realms/" + keycloakProperties.realm() + "/protocol/openid-connect";
         String securitySchemeName = "oauth2";
 

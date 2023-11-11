@@ -29,7 +29,7 @@ public class PropertiesLogger implements ApplicationListener<ApplicationEnvironm
                 .map(ps -> ((EnumerablePropertySource<?>) ps).getPropertyNames()).flatMap(Arrays::stream).distinct()
                 .filter(Objects::nonNull)
                 .filter(ps -> ps.startsWith("fr.insee") || ps.startsWith("spring")).forEach(key -> log
-                        .info(key + " = " + hideProperties(key, environment)));
+                        .info("{} = {}", key, hideProperties(key, environment)));
         log.info("===============================================================================================");
 
     }

@@ -45,7 +45,7 @@ public class KeycloakSecurityConfiguration {
      */
     @Bean
     @Order(2)
-    SecurityFilterChain filterChain(HttpSecurity http,
+    protected SecurityFilterChain filterChain(HttpSecurity http,
                                     KeycloakProperties keycloakProperties, RoleProperties roleProperties) throws Exception {
         return http
                 .securityMatcher("/**")
@@ -75,7 +75,7 @@ public class KeycloakSecurityConfiguration {
 
     @Bean
     @Order(1)
-    SecurityFilterChain filterPublicUrlsChain(HttpSecurity http, ApplicationProperties applicationProperties,
+    protected SecurityFilterChain filterPublicUrlsChain(HttpSecurity http, ApplicationProperties applicationProperties,
                                     KeycloakProperties keycloakProperties) throws Exception {
         String authorizedConnectionHost = applicationProperties.auth().equals(AuthEnumProperties.KEYCLOAK) ?
                 " " + keycloakProperties.authServerHost() : "";
@@ -83,7 +83,7 @@ public class KeycloakSecurityConfiguration {
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter(KeycloakProperties keycloakProperties, RoleProperties roleProperties) {
+    protected JwtAuthenticationConverter jwtAuthenticationConverter(KeycloakProperties keycloakProperties, RoleProperties roleProperties) {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setPrincipalClaimName("name");
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter(keycloakProperties, roleProperties));

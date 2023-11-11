@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CorsConfig {
     @Bean
-    CorsConfigurationSource corsConfigurationSource(ApplicationProperties applicationProperties) {
+    protected CorsConfigurationSource corsConfigurationSource(ApplicationProperties applicationProperties) {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(applicationProperties.corsOrigins());
         configuration.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS"));

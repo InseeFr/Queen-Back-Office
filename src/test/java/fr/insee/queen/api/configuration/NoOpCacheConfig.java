@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Primary;
 public class NoOpCacheConfig {
     @Bean
     @Primary
-    public CacheManager cacheManager() {
+    protected CacheManager cacheManager() {
         return new NoOpCacheManager();
     }
 }

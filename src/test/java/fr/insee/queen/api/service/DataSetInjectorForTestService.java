@@ -239,7 +239,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
             return;
         }
 
-        log.info(String.format("Create Campaign %s", id));
+        log.info("Create Campaign {}", id);
         CampaignData campaign = new CampaignData(id, label, questionnaireIds, jsonMetadata.toString());
         campaignService.createCampaign(campaign);
     }
@@ -248,7 +248,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
         if (questionnaireModelExistenceService.existsById(id)) {
             return;
         }
-        log.info(String.format("Create Questionnaire %s", id));
+        log.info("Create Questionnaire {}", id);
         QuestionnaireModelData qm = QuestionnaireModelData.createQuestionnaireWithoutCampaign(id, label, jsonQm.toString(), new HashSet<>(nomenclatureIds));
         questionnaireModelService.createQuestionnaire(qm);
     }

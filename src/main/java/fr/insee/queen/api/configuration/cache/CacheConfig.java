@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CacheConfig {
     @Bean
-    public CaffeineCache habilitationCache() {
+    protected CaffeineCache habilitationCache() {
         return new CaffeineCache(CacheName.HABILITATION,
                 Caffeine.newBuilder()
                         .initialCapacity(2000)
@@ -24,7 +24,7 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache nomenclaturesCache() {
+    protected CaffeineCache nomenclaturesCache() {
         return new CaffeineCache(CacheName.NOMENCLATURE,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
@@ -34,7 +34,7 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache metadataCache() {
+    protected CaffeineCache metadataCache() {
         return new CaffeineCache(CacheName.QUESTIONNAIRE_METADATA,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
@@ -44,7 +44,7 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache questionnairesCache() {
+    protected CaffeineCache questionnairesCache() {
         return new CaffeineCache(CacheName.QUESTIONNAIRE,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
@@ -54,7 +54,7 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache requiredNomenclaturesByQuestionnaireCache() {
+    protected CaffeineCache requiredNomenclaturesByQuestionnaireCache() {
         return new CaffeineCache(CacheName.QUESTIONNAIRE_NOMENCLATURES,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
@@ -64,7 +64,7 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache campaignsExistenceCache() {
+    protected CaffeineCache campaignsExistenceCache() {
         return new CaffeineCache(CacheName.CAMPAIGN_EXIST,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
@@ -74,7 +74,7 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache surveyUnitExistenceCache() {
+    protected CaffeineCache surveyUnitExistenceCache() {
         return new CaffeineCache(CacheName.SURVEY_UNIT_EXIST,
                 Caffeine.newBuilder()
                         .initialCapacity(2000)
@@ -84,7 +84,7 @@ public class CacheConfig {
     }
 
     @Bean
-    public CaffeineCache surveyUnitCampaignCache() {
+    protected CaffeineCache surveyUnitCampaignCache() {
         return new CaffeineCache(CacheName.SURVEY_UNIT_CAMPAIGN,
                 Caffeine.newBuilder()
                         .initialCapacity(2000)

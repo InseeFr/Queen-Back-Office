@@ -43,12 +43,12 @@ public class NomenclatureApiService implements NomenclatureService {
 	@CacheEvict(value = CacheName.NOMENCLATURE, key = "#nomenclature.id")
 	public void saveNomenclature(NomenclatureInputDto nomenclature) {
 		if(nomenclatureRepository.exists(nomenclature.id())) {
-			log.info("Update nomenclature: " + nomenclature.id());
+			log.info("Update nomenclature: {}", nomenclature.id());
 			nomenclatureRepository.update(nomenclature.id(), nomenclature.label(), nomenclature.value().toString());
 			return;
 		}
 
-		log.info("Create new nomenclature: " + nomenclature.id());
+		log.info("Create new nomenclature: {}", nomenclature.id());
 		nomenclatureRepository.create(nomenclature.id(), nomenclature.label(), nomenclature.value().toString());
 	}
 
