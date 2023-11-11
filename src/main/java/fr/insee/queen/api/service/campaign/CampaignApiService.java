@@ -1,9 +1,11 @@
 package fr.insee.queen.api.service.campaign;
 
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.domain.CampaignData;
+import fr.insee.queen.api.dto.campaign.CampaignData;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
-import fr.insee.queen.api.repository.*;
+import fr.insee.queen.api.service.gateway.CampaignRepository;
+import fr.insee.queen.api.service.gateway.QuestionnaireModelRepository;
+import fr.insee.queen.api.service.gateway.SurveyUnitRepository;
 import fr.insee.queen.api.service.exception.CampaignServiceException;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -22,8 +24,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Slf4j
 public class CampaignApiService implements CampaignService {
-	private final ParadataEventRepository paradataEventRepository;
-	private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 	private final CampaignRepository campaignRepository;
 	private final SurveyUnitRepository surveyUnitRepository;
     private final QuestionnaireModelRepository questionnaireModelRepository;
@@ -31,15 +31,13 @@ public class CampaignApiService implements CampaignService {
 	private final CacheManager cacheManager;
 
 	public List<CampaignSummaryDto> getAllCampaigns() {
-		return campaignRepository.findAllWithQuestionnaireIds();
+		return campaignRepository.getAllWithQuestionnaireIds();
 	}
 
 	@Transactional
 	@CacheEvict(CacheName.CAMPAIGN_EXIST)
 	@Override
 	public void delete(String campaignId) {
-		paradataEventRepository.deleteParadataEvents(campaignId);
-		surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
 		surveyUnitRepository.deleteSurveyUnits(campaignId);
 
 		CampaignSummaryDto campaignSummaryDto = campaignRepository.findWithQuestionnaireIds(campaignId)
@@ -58,7 +56,7 @@ public class CampaignApiService implements CampaignService {
 			});
 			questionnaireModelRepository.deleteAllFromCampaign(campaignId);
 		}
-		campaignRepository.deleteById(campaignId);
+		campaignRepository.delete(campaignId);
 	}
 
 	@Transactional
@@ -70,7 +68,7 @@ public class CampaignApiService implements CampaignService {
 		String campaignId = campaign.id();
 		campaignExistenceService.throwExceptionIfCampaignAlreadyExist(campaignId);
 		throwExceptionIfInvalidQuestionnairesBeforeSave(campaign.id(), campaign.questionnaireIds());
-		campaignRepository.createCampaign(campaign);
+		campaignRepository.create(campaign);
 	}
 
 	@Caching(evict = {
@@ -81,7 +79,7 @@ public class CampaignApiService implements CampaignService {
 		String campaignId = campaign.id();
 		campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
 		throwExceptionIfInvalidQuestionnairesBeforeSave(campaignId, campaign.questionnaireIds());
-		campaignRepository.updateCampaign(campaign);
+		campaignRepository.update(campaign);
 	}
 
 	private void throwExceptionIfInvalidQuestionnairesBeforeSave(String campaignId, Set<String> questionnaireIds) {

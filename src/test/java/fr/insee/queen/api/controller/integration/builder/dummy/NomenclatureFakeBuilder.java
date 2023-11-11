@@ -16,7 +16,7 @@ public class NomenclatureFakeBuilder implements NomenclatureBuilder {
             IntegrationResultSuccessUnitDto.integrationResultUnitCreated("id-nomenclature2")
             );
     @Override
-    public List<IntegrationResultUnitDto> build(ZipFile zf) {
+    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile) {
         return results;
     }
 }

@@ -1,7 +1,7 @@
 package fr.insee.queen.api.service.campaign;
 
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.repository.CampaignRepository;
+import fr.insee.queen.api.service.gateway.CampaignRepository;
 import fr.insee.queen.api.service.exception.CampaignServiceException;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -37,7 +37,7 @@ public class CampaignExistenceApiService implements CampaignExistenceService {
         if(isCampaignPresent != null) {
             return isCampaignPresent;
         }
-        isCampaignPresent = campaignRepository.existsById(campaignId);
+        isCampaignPresent = campaignRepository.exists(campaignId);
         Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).putIfAbsent(campaignId, isCampaignPresent);
 
         return isCampaignPresent;

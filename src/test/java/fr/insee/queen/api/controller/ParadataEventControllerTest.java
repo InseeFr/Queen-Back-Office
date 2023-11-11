@@ -23,7 +23,7 @@ class ParadataEventControllerTest {
 
     private ParadataEventController controller;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     public void init() {

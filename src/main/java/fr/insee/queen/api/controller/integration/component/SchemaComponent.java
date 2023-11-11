@@ -11,6 +11,6 @@ import java.util.zip.ZipFile;
 
 
 public interface SchemaComponent {
-    void throwExceptionIfXmlDataFileNotValid(ZipFile zf, String xmlFileName, String xsdSchemaFileName) throws IntegrationValidationException;
+    void throwExceptionIfXmlDataFileNotValid(ZipFile zipFile, String xmlFileName, String xsdSchemaFileName) throws IntegrationValidationException;
     Document buildDocument(InputStream xmlFileStream) throws ParserConfigurationException, IOException, SAXException;
 }

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class GrantedAuthorityConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
     private static final String REALM_ACCESS_ROLE = "roles";
     private static final String REALM_ACCESS = "realm_access";
-    private static final String ROLE_PREFIX = "ROLE_";
     private final KeycloakProperties keycloakProperties;
     private final RoleProperties roleProperties;
 
@@ -36,19 +35,19 @@ public class GrantedAuthorityConverter implements Converter<Jwt, Collection<Gran
         return roles.stream()
                 .map(role -> {
                     if(role.equals(roleProperties.reviewer())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.REVIEWER);
+                        return new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.REVIEWER);
                     }
                     if(role.equals(roleProperties.reviewerAlternative())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.REVIEWER_ALTERNATIVE);
+                        return new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.REVIEWER_ALTERNATIVE);
                     }
                     if(role.equals(roleProperties.interviewer())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.INTERVIEWER);
+                        return new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.INTERVIEWER);
                     }
                     if(role.equals(roleProperties.admin())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.ADMIN);
+                        return new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.ADMIN);
                     }
                     if(role.equals(roleProperties.webclient())) {
-                        return new SimpleGrantedAuthority(ROLE_PREFIX + AuthorityRoleEnum.WEBCLIENT);
+                        return new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.WEBCLIENT);
                     }
                     return null;
                 })

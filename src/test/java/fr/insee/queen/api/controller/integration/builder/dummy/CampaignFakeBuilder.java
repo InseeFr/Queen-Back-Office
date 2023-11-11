@@ -20,7 +20,7 @@ public class CampaignFakeBuilder implements CampaignBuilder {
     private final IntegrationResultUnitDto resultError = new IntegrationResultErrorUnitDto("id-campaign", "error");
 
     @Override
-    public IntegrationResultUnitDto build(ZipFile zf) {
+    public IntegrationResultUnitDto build(ZipFile integrationZipFile) {
         return resultIsInErrorState ? resultError : resultSuccess;
     }
 }

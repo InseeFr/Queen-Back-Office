@@ -7,5 +7,10 @@ import java.util.zip.ZipFile;
 
 
 public interface QuestionnaireBuilder {
-    List<IntegrationResultUnitDto> build(String campaignId, ZipFile zf);
+    /**
+     * Try to create the questionnaires
+     * @param integrationZipFile integration zip file
+     * @return List of {@link IntegrationResultUnitDto} integration results for the questionnaires
+     */
+    List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile);
 }

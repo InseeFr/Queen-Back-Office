@@ -23,11 +23,11 @@ public class NoAuthSecurityConfiguration {
      * Configure spring security filter chain when no authentication
      * @param http Http Security Object
      * @return the spring security filter
-     * @throws Exception
+     * @throws Exception exception
      */
     @Bean
     @Order(2)
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/**")
                 .csrf(csrfConfig -> csrfConfig.disable())
@@ -48,7 +48,7 @@ public class NoAuthSecurityConfiguration {
     }
     @Bean
     @Order(1)
-    SecurityFilterChain filterPublicUrlsChain(HttpSecurity http, ApplicationProperties applicationProperties) throws Exception {
+    protected SecurityFilterChain filterPublicUrlsChain(HttpSecurity http, ApplicationProperties applicationProperties) throws Exception {
         return publicSecurityFilterChainConfiguration.buildSecurityPublicFilterChain(http, applicationProperties.publicUrls());
     }
 

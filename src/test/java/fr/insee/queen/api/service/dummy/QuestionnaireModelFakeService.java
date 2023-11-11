@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.domain.QuestionnaireModelData;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelData;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelIdDto;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
 import fr.insee.queen.api.service.questionnaire.QuestionnaireModelService;

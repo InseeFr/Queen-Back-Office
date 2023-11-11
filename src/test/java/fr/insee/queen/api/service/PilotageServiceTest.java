@@ -23,11 +23,10 @@ class PilotageServiceTest {
     private PilotageService pilotageService;
     private CampaignExistenceFakeService campaignExistenceService;
     private PilotageFakeRepository pilotageRepository;
-    private SurveyUnitFakeService surveyUnitService;
 
     @BeforeEach
     public void init() {
-        surveyUnitService = new SurveyUnitFakeService();
+        SurveyUnitFakeService surveyUnitService = new SurveyUnitFakeService();
         pilotageRepository = new PilotageFakeRepository();
         campaignExistenceService = new CampaignExistenceFakeService();
         pilotageService = new PilotageApiService(surveyUnitService, campaignExistenceService, pilotageRepository);

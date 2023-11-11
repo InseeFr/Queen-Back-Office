@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - v4-develop #temp branch
+      - feat/optimize-db
 
 jobs:
   check-version:

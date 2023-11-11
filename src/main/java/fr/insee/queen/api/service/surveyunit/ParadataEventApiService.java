@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.surveyunit;
 
-import fr.insee.queen.api.repository.ParadataEventRepository;
+import fr.insee.queen.api.service.gateway.ParadataEventRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

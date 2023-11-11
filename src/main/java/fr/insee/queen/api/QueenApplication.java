@@ -30,19 +30,19 @@ public class QueenApplication {
 	}
 
 	@Bean
-	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+	protected JdbcTemplate jdbcTemplate(DataSource dataSource) {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		jdbcTemplate.setResultsMapCaseInsensitive(true);
 		return jdbcTemplate;
 	}
 
 	@Bean
-	public RestTemplate restTemplate() {
+	protected RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
 
 	@Bean
-	public ModelMapper modelMapper() {
+	protected ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
 

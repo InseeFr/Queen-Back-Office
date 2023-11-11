@@ -2,9 +2,9 @@ package fr.insee.queen.api.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.domain.CampaignData;
+import fr.insee.queen.api.dto.campaign.CampaignData;
 import fr.insee.queen.api.dto.metadata.MetadataDto;
-import fr.insee.queen.api.domain.QuestionnaireModelData;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelData;
 import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelValueDto;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import fr.insee.queen.api.service.campaign.MetadataService;
@@ -62,7 +62,7 @@ class QuestionnaireCacheTests {
     @Test
     @Order(0)
     @DisplayName("When creating questionnaire, handle correctly cache")
-    void check_questionnaire_cache01() throws Exception {
+    void check_questionnaire_cache01() {
         String questionnaireId = "questionnaire-cache-id";
         check_questionnaire_cache_on_creation(QuestionnaireModelData.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode().toString(), Set.of("cities2019", "regions2019")));
     }
@@ -70,7 +70,7 @@ class QuestionnaireCacheTests {
     @Test
     @Order(1)
     @DisplayName("When updating questionnaire, handle correctly cache")
-    void check_questionnaire_cache02() throws Exception {
+    void check_questionnaire_cache02() {
         String questionnaireId = "questionnaire-cache-id";
         String campaignId = "campaign-cache-id";
 
@@ -89,6 +89,7 @@ class QuestionnaireCacheTests {
 
         // when retrieving questionnaire, cache does contain the updated questionnaire
         QuestionnaireModelValueDto questionnaireCache = (QuestionnaireModelValueDto) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId).get());
+        @SuppressWarnings("unchecked")
         List<String> requiredNomenclaturesCache = (List<String>) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES).get(questionnaireId).get());
         MetadataDto metadataCache = (MetadataDto) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA).get(questionnaireId).get());
 
@@ -101,7 +102,7 @@ class QuestionnaireCacheTests {
     @Test
     @Order(2)
     @DisplayName("When deleting campaigns, handle cache eviction on associated questionnaires")
-    void check_questionnaire_cache03() throws Exception {
+    void check_questionnaire_cache03() {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
 
@@ -125,7 +126,7 @@ class QuestionnaireCacheTests {
     @Test
     @Order(3)
     @DisplayName("When updating campaign, handle cache eviction on all questionnaire metadatas")
-    void check_questionnaire_cache04() throws Exception {
+    void check_questionnaire_cache04() {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
         String questionnaireId3 = "questionnaire-cache-id3";
@@ -151,7 +152,7 @@ class QuestionnaireCacheTests {
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId4)).isNull();
     }
 
-    void check_questionnaire_cache_on_creation(QuestionnaireModelData questionnaireData) throws Exception {
+    void check_questionnaire_cache_on_creation(QuestionnaireModelData questionnaireData) {
         String questionnaireId = questionnaireData.id();
 
         // before creating questionnaire, cache does not contain the questionnaire
@@ -165,6 +166,7 @@ class QuestionnaireCacheTests {
 
         // when retrieving questionnaire, cache does contain the questionnaire now
         QuestionnaireModelValueDto questionnaireCache = (QuestionnaireModelValueDto) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId).get());
+        @SuppressWarnings("unchecked")
         List<String> requiredNomenclaturesCache = (List<String>) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES).get(questionnaireId).get());
 
         assertThat(questionnaire).isEqualTo(questionnaireCache);

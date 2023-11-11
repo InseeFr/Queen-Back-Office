@@ -29,6 +29,9 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * Handle the integration of nomenclatures
+ */
 @Component
 @Slf4j
 @AllArgsConstructor
@@ -42,13 +45,13 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     private static final String FILENAME = "FileName";
     public static final String NOMENCLATURES_XML = "nomenclatures.xml";
 
-    public List<IntegrationResultUnitDto> build(ZipFile zf) {
+    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile) {
         try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
         } catch (IntegrationValidationException ex) {
             return List.of(ex.resultError());
         }
-        return buildNomenclatures(zf);
+        return buildNomenclatures(integrationZipFile);
     }
 
     private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {

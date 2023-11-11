@@ -44,7 +44,7 @@ public class PilotageHttpRepository implements PilotageRepository {
 
         try {
             ResponseEntity<LinkedHashMap<String, Boolean>> response =
-                    exchange(uriPilotageFilter, authToken, HttpMethod.GET,
+                    exchange(uriPilotageFilter, authToken,
                             new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>(){});
             LinkedHashMap<String, Boolean> responseBody = response.getBody();
             if(responseBody == null) {
@@ -68,7 +68,7 @@ public class PilotageHttpRepository implements PilotageRepository {
     public List<LinkedHashMap<String, String>> getCurrentSurveyUnit(String authToken, String campaignId){
         final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + API_PEARLJAM_SURVEYUNITS;
         ResponseEntity<List<LinkedHashMap<String,String>>> response =
-                exchange(uriPilotageFilter, authToken, HttpMethod.GET, new ParameterizedTypeReference<List<LinkedHashMap<String, String>>>() {});
+                exchange(uriPilotageFilter, authToken, new ParameterizedTypeReference<List<LinkedHashMap<String, String>>>() {});
         log.info("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
         if(response.getStatusCode()!=HttpStatus.OK) {
             log.error("""
@@ -88,7 +88,7 @@ public class PilotageHttpRepository implements PilotageRepository {
         final String uriPilotageInterviewerCampaigns = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + API_PEARLJAM_INTERVIEWER_CAMPAIGNS;
 
         ResponseEntity<List<CampaignSummaryDto>> response =
-                exchange(uriPilotageInterviewerCampaigns, authToken, HttpMethod.GET, new ParameterizedTypeReference<List<CampaignSummaryDto>>() {});
+                exchange(uriPilotageInterviewerCampaigns, authToken, new ParameterizedTypeReference<List<CampaignSummaryDto>>() {});
         log.info("Pilotage API call returned {}", response.getStatusCode().value());
         if (!response.getStatusCode().is2xxSuccessful()) {
             log.info("Got a {} status code, 0 campaigns returned", response.getStatusCode().value());
@@ -114,7 +114,7 @@ public class PilotageHttpRepository implements PilotageRepository {
 
         try {
             ResponseEntity<LinkedHashMap<String, Boolean>> response =
-                    exchange(uriPilotageFilter, authToken, HttpMethod.GET, new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>() {});
+                    exchange(uriPilotageFilter, authToken, new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>() {});
 
             if (!response.getStatusCode().is2xxSuccessful()) {
                 log.info(
@@ -156,11 +156,7 @@ public class PilotageHttpRepository implements PilotageRepository {
         return new HttpEntity<>(headers);
     }
 
-    private <T> ResponseEntity<T> exchange(String url, String authToken, HttpMethod method, ParameterizedTypeReference<T> responseType) {
-        return restTemplate.exchange(url, method, getHttpHeaders(authToken), responseType);
-    }
-
-    private <T> ResponseEntity<T> exchange(String url, String authToken, HttpMethod method, Class<T> responseType) {
-        return restTemplate.exchange(url, method, getHttpHeaders(authToken), responseType);
+    private <T> ResponseEntity<T> exchange(String url, String authToken, ParameterizedTypeReference<T> responseType) {
+        return restTemplate.exchange(url, HttpMethod.GET, getHttpHeaders(authToken), responseType);
     }
 }

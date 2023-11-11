@@ -228,6 +228,46 @@
 		</dependency>
 	</dependencies>
 
+
+	<profiles>
+		<profile>
+			<id>coverage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.8.7</version>
+						<configuration>
+							<excludes>
+								<exclude>fr/insee/queen/api/service/dataset/*.class</exclude>
+							</excludes>
+						</configuration>
+						<executions>
+							<execution>
+								<id>prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<goals>
+									<goal>report</goal>
+								</goals>
+								<configuration>
+									<formats>
+										<format>XML</format>
+									</formats>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -295,6 +335,17 @@
 						<referenceDefaultSchemaName>public</referenceDefaultSchemaName>
 						<verbose>true</verbose>
 						<logging>debug</logging>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<!--
+							{argLine} to not disturb jacoco coverage generation
+							encoding to force windows components to test with proper encoding
+						-->
+						<argLine>${argLine} -Dfile.encoding=UTF-8</argLine>
 					</configuration>
 				</plugin>
 			</plugins>

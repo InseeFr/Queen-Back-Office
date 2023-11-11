@@ -24,21 +24,17 @@ import java.util.zip.ZipFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-public class NomenclatureBuilderTest {
-    private SchemaIntegrationComponent schemaComponent;
-    private Validator validator;
-    private IntegrationFakeService integrationService;
-    private ObjectMapper objectMapper;
+class NomenclatureBuilderTest {
     private IntegrationNomenclatureBuilder nomenclatureBuilder;
-    private ZipUtils zipUtils = new ZipUtils();
+    private final ZipUtils zipUtils = new ZipUtils();
 
     @BeforeEach
     void init() {
         Locale.setDefault(new Locale("en", "US"));
-        objectMapper = new ObjectMapper();
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-        schemaComponent = new SchemaIntegrationComponent();
-        integrationService = new IntegrationFakeService();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent();
+        IntegrationFakeService integrationService = new IntegrationFakeService();
         nomenclatureBuilder = new IntegrationNomenclatureBuilder(schemaComponent, validator, objectMapper, integrationService);
     }
 
@@ -51,9 +47,10 @@ public class NomenclatureBuilderTest {
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
         IntegrationResultUnitDto result1 = IntegrationResultSuccessUnitDto.integrationResultUnitCreated(nomenclatureId1);
         IntegrationResultUnitDto result2 = IntegrationResultSuccessUnitDto.integrationResultUnitCreated(nomenclatureId2);
-        assertThat(results).hasSize(2);
-        assertThat(results).contains(result1);
-        assertThat(results).contains(result2);
+        assertThat(results)
+                .hasSize(2)
+                .contains(result1)
+                .contains(result2);
     }
 
     @Test

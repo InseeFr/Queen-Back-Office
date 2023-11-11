@@ -1,7 +1,8 @@
 package fr.insee.queen.api.service.dummy;
 
 import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
-import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
+import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
+import fr.insee.queen.api.dto.input.SurveyUnitUpdateInputDto;
 import fr.insee.queen.api.dto.surveyunit.*;
 import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public void checkExistence(String surveyUnitId) {
+    public void throwExceptionIfSurveyUnitNotExist(String surveyUnitId) {
 
     }
 
@@ -44,7 +45,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public void updateSurveyUnit(String surveyUnitId, SurveyUnitInputDto surveyUnit) {
+    public void updateSurveyUnit(String surveyUnitId, SurveyUnitUpdateInputDto surveyUnit) {
 
     }
 
@@ -54,7 +55,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public void createSurveyUnit(String campaignId, SurveyUnitInputDto surveyUnit) {
+    public void createSurveyUnit(String campaignId, SurveyUnitCreateInputDto surveyUnit) {
 
     }
 

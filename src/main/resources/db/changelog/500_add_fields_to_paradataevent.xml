@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+   <changeSet author="davdarras (generated)" id="500-1">
+      <addColumn tableName="paradata_event">
+         <column name="survey_unit_id" type="varchar(255)"/>
+      </addColumn>
+   </changeSet>
+   <changeSet author="davdarras (generated)" id="500-2">
+      <addForeignKeyConstraint baseColumnNames="survey_unit_id"
+                                baseTableName="paradata_event"
+                                constraintName="FK506gklsgdfiner7hb3vbo77ku"
+                                deferrable="false"
+                                initiallyDeferred="false"
+                                referencedColumnNames="id"
+                                referencedTableName="survey_unit"
+                                validate="true"/>
+   </changeSet>
+</databaseChangeLog>

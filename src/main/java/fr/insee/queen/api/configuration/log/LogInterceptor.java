@@ -1,8 +1,8 @@
 package fr.insee.queen.api.configuration.log;
 
+import fr.insee.queen.api.configuration.auth.AuthConstants;
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.configuration.properties.AuthEnumProperties;
-import fr.insee.queen.api.constants.Constants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 @Component
@@ -27,18 +28,17 @@ public class LogInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) {
         String fishTag = UUID.randomUUID().toString();
         String method = request.getMethod();
         String operationPath = request.getRequestURI();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String userId = Constants.GUEST;
-        if(applicationProperties.auth().equals(AuthEnumProperties.KEYCLOAK)) {
-            if(authentication.getCredentials() instanceof Jwt jwt) {
+        String userId = AuthConstants.GUEST;
+        if(applicationProperties.auth().equals(AuthEnumProperties.KEYCLOAK)
+            && authentication.getCredentials() instanceof Jwt jwt) {
                 userId = jwt.getClaims().get("preferred_username").toString();
-            }
         }
 
         MDC.put("id", fishTag);
@@ -46,18 +46,18 @@ public class LogInterceptor implements HandlerInterceptor {
         MDC.put("method", method);
         MDC.put("user", userId);
 
-        log.info("["+userId+"] - ["+method+"] - ["+operationPath+"]");
+        log.info("[{}] - [{}] - [{}]", userId, method, operationPath);
         return true;
     }
 
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView mv) {
+    public void postHandle(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler, ModelAndView mv) {
         // no need to posthandle things for this interceptor
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
+    public void afterCompletion(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler,
                                 Exception exception) {
         MDC.clear();
     }

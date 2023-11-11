@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.domain.CampaignData;
+import fr.insee.queen.api.dto.campaign.CampaignData;
 import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import lombok.Getter;

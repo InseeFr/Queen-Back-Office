@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import fr.insee.queen.api.dto.input.StateDataInputDto;
 import fr.insee.queen.api.dto.input.StateDataTypeInputDto;
-import fr.insee.queen.api.dto.input.SurveyUnitInputDto;
-import fr.insee.queen.api.domain.CampaignData;
-import fr.insee.queen.api.domain.QuestionnaireModelData;
+import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
+import fr.insee.queen.api.dto.campaign.CampaignData;
+import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelData;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import fr.insee.queen.api.service.dataset.DataSetInjectorService;
@@ -145,9 +145,9 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
 
     private void createVqsDataSet() {
         log.info("VQS dataset - start");
-        ArrayNode jsonArrayNomenclatureCities2019 = objectMapper.createArrayNode();
-        ArrayNode jsonArrayRegions2019 = objectMapper.createArrayNode();
-        ObjectNode jsonQuestionnaireModelVqs = objectMapper.createObjectNode();
+        ArrayNode jsonArrayNomenclatureCities2019;
+        ArrayNode jsonArrayRegions2019;
+        ObjectNode jsonQuestionnaireModelVqs;
         try {
             jsonArrayNomenclatureCities2019 = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(BASE_RESOURCE_DIRECTORY + "nomenclature/public_communes-2019.json"), ArrayNode.class);
             jsonArrayRegions2019 = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(BASE_RESOURCE_DIRECTORY + "nomenclature/public_regions-2019.json"), ArrayNode.class);
@@ -239,7 +239,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
             return;
         }
 
-        log.info(String.format("Create Campaign %s", id));
+        log.info("Create Campaign {}", id);
         CampaignData campaign = new CampaignData(id, label, questionnaireIds, jsonMetadata.toString());
         campaignService.createCampaign(campaign);
     }
@@ -248,7 +248,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
         if (questionnaireModelExistenceService.existsById(id)) {
             return;
         }
-        log.info(String.format("Create Questionnaire %s", id));
+        log.info("Create Questionnaire {}", id);
         QuestionnaireModelData qm = QuestionnaireModelData.createQuestionnaireWithoutCampaign(id, label, jsonQm.toString(), new HashSet<>(nomenclatureIds));
         questionnaireModelService.createQuestionnaire(qm);
     }
@@ -288,7 +288,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
             return;
         }
         log.info("Create survey unit {}", surveyUnitId);
-        SurveyUnitInputDto surveyunit = new SurveyUnitInputDto(surveyUnitId,
+        SurveyUnitCreateInputDto surveyunit = new SurveyUnitCreateInputDto(surveyUnitId,
                 questionnaireModelId,
                 personalization,
                 data,

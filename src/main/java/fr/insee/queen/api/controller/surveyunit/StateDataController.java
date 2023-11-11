@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
-* DataController is the Controller using to manage datas
-* 
-* @author Claudel Benjamin
-* 
+* Handle the data state of a survey unit.
 */
 @RestController
 @Tag(name = "06. Survey units")
@@ -37,21 +34,16 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class StateDataController {
-	/**
-	* The data repository using to access to table 'data' in DB 
-	*/
 	private final StateDataService stateDataService;
-	/**
-	* The reporting unit repository using to access to table 'reporting_unit' in DB 
-	*/
 	private final SurveyUnitService surveyUnitService;
 	private final HabilitationComponent habilitationComponent;
 	
 	/**
-	* This method is using to get the data associated to a specific reporting unit 
+	* Retrieve the data associated of a survey unit
 	* 
-	* @param surveyUnitId the id of reporting unit
-	* @return {@link StateDataDto} the data associated to the reporting unit
+	* @param surveyUnitId the id of the survey unit
+	* @param auth authentication object
+	* @return {@link StateDataDto} the data associated to the survey unit
 	*/
 	@Operation(summary = "Get state-data for a survey unit")
 	@GetMapping(path = "/survey-unit/{id}/state-data")
@@ -64,11 +56,11 @@ public class StateDataController {
 	}
 	
 	/**
-	* This method is using to update the state-data associated to a specific reporting unit
+	* Update the state-data associated to the survey unit
 	* 
 	* @param stateDataInputDto	the value to update
 	* @param surveyUnitId	the id of reporting unit
-	*
+	* @param auth authentication object
 	*/
 	@Operation(summary = "Update state-data for a survey unit")
 	@PutMapping(path = "/survey-unit/{id}/state-data")
@@ -81,6 +73,12 @@ public class StateDataController {
 		stateDataService.updateStateData(surveyUnitId, StateDataInputDto.toModel(stateDataInputDto));
 	}
 
+	/**
+	 * Retrieve the state-data list of searched survey units
+	 *
+	 * @param surveyUnitIdsToSearch the ids to search
+	 * @return {@link SurveyUnitOkNokDto} the state-data associated for found survey units, and the list of non found survey units
+	 */
 	@Operation(summary = "Get state-data for all survey-units defined in request body ")
 	@PostMapping(path = "survey-units/state-data")
 	@PreAuthorize(AuthorityRole.HAS_ANY_ROLE)

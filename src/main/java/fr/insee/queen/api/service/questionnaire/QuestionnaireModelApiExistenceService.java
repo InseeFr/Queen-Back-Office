@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.questionnaire;
 
-import fr.insee.queen.api.repository.QuestionnaireModelRepository;
+import fr.insee.queen.api.service.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.api.service.exception.EntityNotFoundException;
 import fr.insee.queen.api.service.exception.QuestionnaireModelServiceException;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ public class QuestionnaireModelApiExistenceService implements QuestionnaireModel
     private final QuestionnaireModelRepository questionnaireModelRepository;
 
     public boolean existsById(String questionnaireId) {
-        return questionnaireModelRepository.existsById(questionnaireId);
+        return questionnaireModelRepository.exists(questionnaireId);
     }
 
     public void throwExceptionIfQuestionnaireNotExist(String questionnaireId) {

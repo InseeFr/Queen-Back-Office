@@ -10,12 +10,11 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 @ConditionalOnProperty(
         value="application.config.test.enable-cache",
-        matchIfMissing = false,
         havingValue = "false")
 public class NoOpCacheConfig {
     @Bean
     @Primary
-    public CacheManager cacheManager() {
+    protected CacheManager cacheManager() {
         return new NoOpCacheManager();
     }
 }

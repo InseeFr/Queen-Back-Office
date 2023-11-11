@@ -1,7 +1,7 @@
 package fr.insee.queen.api.controller.utils;
 
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
-import fr.insee.queen.api.constants.Constants;
+import fr.insee.queen.api.configuration.auth.AuthConstants;
 import fr.insee.queen.api.exception.AuthenticationTokenException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class AuthenticationUserHelper implements AuthenticationHelper {
     public String getUserId(Authentication authentication) {
         switch(applicationProperties.auth()) {
             case NOAUTH -> {
-                return Constants.GUEST;
+                return AuthConstants.GUEST;
             }
             case KEYCLOAK -> {
                 if(authentication.getCredentials() instanceof Jwt jwt) {

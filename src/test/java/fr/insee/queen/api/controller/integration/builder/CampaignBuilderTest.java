@@ -21,21 +21,17 @@ import java.util.zip.ZipFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-public class CampaignBuilderTest {
-    private SchemaIntegrationComponent schemaComponent;
-    private Validator validator;
-    private IntegrationFakeService integrationService;
-    private ObjectMapper objectMapper;
-    private ZipUtils zipUtils = new ZipUtils();
+class CampaignBuilderTest {
+    private final ZipUtils zipUtils = new ZipUtils();
     private IntegrationCampaignBuilder campaignBuilder;
 
     @BeforeEach
     void init() {
         Locale.setDefault(new Locale("en", "US"));
-        objectMapper = new ObjectMapper();
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-        schemaComponent = new SchemaIntegrationComponent();
-        integrationService = new IntegrationFakeService();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent();
+        IntegrationFakeService integrationService = new IntegrationFakeService();
         campaignBuilder = new IntegrationCampaignBuilder(schemaComponent, validator, integrationService, objectMapper);
     }
 

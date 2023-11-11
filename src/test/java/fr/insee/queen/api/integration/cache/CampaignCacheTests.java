@@ -2,7 +2,7 @@ package fr.insee.queen.api.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.domain.CampaignData;
+import fr.insee.queen.api.dto.campaign.CampaignData;
 import fr.insee.queen.api.service.campaign.CampaignExistenceService;
 import fr.insee.queen.api.service.campaign.CampaignService;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -48,7 +48,7 @@ class CampaignCacheTests {
 
     @Test
     @DisplayName("When handling campaigns, handle correctly cache for campaign existence")
-    void check_campaign_existence_cache() throws Exception {
+    void check_campaign_existence_cache() {
         String campaignId = "campaign-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
         campaignExistenceService.existsById(campaignId);
