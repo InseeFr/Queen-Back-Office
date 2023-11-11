@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterators;
 import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaComponent;
 import fr.insee.queen.api.integration.controller.component.exception.IntegrationValidationException;
-import fr.insee.queen.api.integration.controller.dto.input.CampaignIntegrationInputDto;
+import fr.insee.queen.api.integration.controller.dto.input.CampaignIntegrationData;
 import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.api.integration.service.IntegrationService;
 import fr.insee.queen.api.integration.service.model.IntegrationResult;
@@ -109,11 +109,11 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
     }
 
     private IntegrationResultUnitDto buildCampaign(String id, String label, ObjectNode metadata) {
-        CampaignIntegrationInputDto campaign = new CampaignIntegrationInputDto(id, label, metadata);
-        Set<ConstraintViolation<CampaignIntegrationInputDto>> violations = validator.validate(campaign);
+        CampaignIntegrationData campaign = new CampaignIntegrationData(id, label, metadata);
+        Set<ConstraintViolation<CampaignIntegrationData>> violations = validator.validate(campaign);
         if (!violations.isEmpty()) {
             StringBuilder violationMessage = new StringBuilder();
-            for (ConstraintViolation<CampaignIntegrationInputDto> violation : violations) {
+            for (ConstraintViolation<CampaignIntegrationData> violation : violations) {
                 violationMessage
                         .append(violation.getPropertyPath().toString())
                         .append(": ")
@@ -122,7 +122,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             }
             return IntegrationResultUnitDto.integrationResultUnitError(campaign.id(), violationMessage.toString());
         }
-        IntegrationResult result = integrationService.create(CampaignIntegrationInputDto.toModel(campaign));
+        IntegrationResult result = integrationService.create(CampaignIntegrationData.toModel(campaign));
         return IntegrationResultUnitDto.fromModel(result);
     }
 

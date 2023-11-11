@@ -45,7 +45,7 @@ public class PilotageApiService implements PilotageService {
         log.info("Number of SU read in Pearl Jam API : {}", objects.size());
         log.info("Detail : {}", displayDetail(objects));
         for (LinkedHashMap<String, String> map : objects) {
-            if (map.get("campaign").equals(campaignId)) {
+            if (map.get(CAMPAIGN).equals(campaignId)) {
                 log.info("ID : {}", map.get("id"));
                 surveyUnitService.findSummaryById(map.get("id")).ifPresent(surveyUnitSummary ->
                         surveyUnitMap.putIfAbsent(surveyUnitSummary.id(), surveyUnitSummary)

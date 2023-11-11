@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaComponent;
 import fr.insee.queen.api.integration.controller.component.exception.IntegrationValidationException;
-import fr.insee.queen.api.integration.controller.dto.input.NomenclatureIntegrationDto;
+import fr.insee.queen.api.integration.controller.dto.input.NomenclatureIntegrationData;
 import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.api.integration.service.IntegrationService;
 import fr.insee.queen.api.integration.service.model.IntegrationResult;
@@ -86,11 +86,11 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     }
 
     private IntegrationResultUnitDto buildNomenclature(String nomenclatureId, String nomenclatureLabel, ArrayNode nomenclatureValue) {
-        NomenclatureIntegrationDto nomenclature = new NomenclatureIntegrationDto(nomenclatureId, nomenclatureLabel, nomenclatureValue);
-        Set<ConstraintViolation<NomenclatureIntegrationDto>> violations = validator.validate(nomenclature);
+        NomenclatureIntegrationData nomenclature = new NomenclatureIntegrationData(nomenclatureId, nomenclatureLabel, nomenclatureValue);
+        Set<ConstraintViolation<NomenclatureIntegrationData>> violations = validator.validate(nomenclature);
         if (!violations.isEmpty()) {
             StringBuilder violationMessage = new StringBuilder();
-            for (ConstraintViolation<NomenclatureIntegrationDto> violation : violations) {
+            for (ConstraintViolation<NomenclatureIntegrationData> violation : violations) {
                 violationMessage
                         .append(violation.getPropertyPath().toString())
                         .append(": ")
@@ -99,7 +99,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
             }
             return IntegrationResultUnitDto.integrationResultUnitError(nomenclatureId, violationMessage.toString());
         }
-        IntegrationResult result = integrationService.create(NomenclatureIntegrationDto.toModel(nomenclature));
+        IntegrationResult result = integrationService.create(NomenclatureIntegrationData.toModel(nomenclature));
         return IntegrationResultUnitDto.fromModel(result);
     }
 

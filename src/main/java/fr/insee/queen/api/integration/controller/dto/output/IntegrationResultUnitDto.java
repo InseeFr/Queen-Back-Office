@@ -5,23 +5,25 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.insee.queen.api.integration.service.model.IntegrationResult;
 import fr.insee.queen.api.integration.service.model.IntegrationStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode
-public class IntegrationResultUnitDto {
+@Getter
+public class IntegrationResultUnitDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1905122041950251207L;
+
     @JsonProperty
-    private String id;
+    private final String id;
     @JsonProperty
-    private IntegrationStatus status;
+    private final IntegrationStatus status;
     @JsonProperty
-    private String cause;
+    private final String cause;
 
     public static IntegrationResultUnitDto fromModel(IntegrationResult result) {
         return new IntegrationResultUnitDto(result.id(), result.status(), result.cause());

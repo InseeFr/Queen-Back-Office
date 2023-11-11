@@ -155,7 +155,7 @@ public class PilotageHttpRepository implements PilotageRepository {
         }
     }
 
-    private HttpEntity getHttpHeaders(String authToken) {
+    private HttpEntity<String> getHttpHeaders(String authToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(authToken);

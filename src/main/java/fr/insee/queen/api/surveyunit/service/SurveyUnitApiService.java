@@ -9,7 +9,7 @@ import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitState;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,12 +23,14 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SurveyUnitApiService implements SurveyUnitService {
     private final SurveyUnitRepository surveyUnitRepository;
     private final CampaignExistenceService campaignExistenceService;
     private final QuestionnaireModelApiExistenceService questionnaireModelExistenceService;
     private final CacheManager cacheManager;
+
+    public static final String SURVEY_UNIT_NOT_FOUND_LABEL = "Survey unit %s was not found";
 
     @Override
     public boolean existsById(String surveyUnitId) {
@@ -45,14 +47,14 @@ public class SurveyUnitApiService implements SurveyUnitService {
 
     public void throwExceptionIfSurveyUnitNotExist(String surveyUnitId) {
         if (!existsById(surveyUnitId)) {
-            throw new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId));
+            throw new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, surveyUnitId));
         }
     }
 
     @Override
     public SurveyUnit getSurveyUnit(String id) {
         return surveyUnitRepository.find(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", id)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, id)));
     }
 
     @Override
@@ -123,12 +125,12 @@ public class SurveyUnitApiService implements SurveyUnitService {
     public SurveyUnitDepositProof getSurveyUnitDepositProof(String surveyUnitId) {
         return surveyUnitRepository
                 .findWithCampaignAndStateById(surveyUnitId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, surveyUnitId)));
     }
 
     @Override
     public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
         return findSummaryById(surveyUnitId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Survey unit %s was not found", surveyUnitId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, surveyUnitId)));
     }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaComponent;
 import fr.insee.queen.api.integration.controller.component.exception.IntegrationValidationException;
-import fr.insee.queen.api.integration.controller.dto.input.QuestionnaireModelIntegrationInputDto;
+import fr.insee.queen.api.integration.controller.dto.input.QuestionnaireModelIntegrationData;
 import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.api.integration.service.IntegrationService;
 import fr.insee.queen.api.integration.service.model.IntegrationResult;
@@ -110,11 +110,11 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
     }
 
     private List<IntegrationResultUnitDto> buildQuestionnaireModel(String qmCampaignId, String qmId, String qmLabel, List<String> requiredNomenclatureIds, ObjectNode qmValue) {
-        QuestionnaireModelIntegrationInputDto questionnaire = new QuestionnaireModelIntegrationInputDto(qmId, qmCampaignId, qmLabel, qmValue, new HashSet<>(requiredNomenclatureIds));
-        Set<ConstraintViolation<QuestionnaireModelIntegrationInputDto>> violations = validator.validate(questionnaire);
+        QuestionnaireModelIntegrationData questionnaire = new QuestionnaireModelIntegrationData(qmId, qmCampaignId, qmLabel, qmValue, new HashSet<>(requiredNomenclatureIds));
+        Set<ConstraintViolation<QuestionnaireModelIntegrationData>> violations = validator.validate(questionnaire);
         if (!violations.isEmpty()) {
             StringBuilder violationMessage = new StringBuilder();
-            for (ConstraintViolation<QuestionnaireModelIntegrationInputDto> violation : violations) {
+            for (ConstraintViolation<QuestionnaireModelIntegrationData> violation : violations) {
                 violationMessage.append(violation.getPropertyPath().toString())
                         .append(": ")
                         .append(violation.getMessage())
@@ -126,7 +126,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
             );
             return results;
         }
-        List<IntegrationResult> results = integrationService.create(QuestionnaireModelIntegrationInputDto.toModel(questionnaire));
+        List<IntegrationResult> results = integrationService.create(QuestionnaireModelIntegrationData.toModel(questionnaire));
         return results.stream().map(IntegrationResultUnitDto::fromModel).toList();
     }
 

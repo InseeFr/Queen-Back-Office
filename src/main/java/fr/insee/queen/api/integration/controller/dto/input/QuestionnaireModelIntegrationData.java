@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public record QuestionnaireModelIntegrationInputDto(
+public record QuestionnaireModelIntegrationData(
         @IdValid
         String idQuestionnaireModel,
         @IdValid
@@ -20,7 +20,7 @@ public record QuestionnaireModelIntegrationInputDto(
         ObjectNode value,
         Set<String> requiredNomenclatureIds) {
 
-    public static QuestionnaireModel toModel(QuestionnaireModelIntegrationInputDto questionnaire) {
+    public static QuestionnaireModel toModel(QuestionnaireModelIntegrationData questionnaire) {
         Set<String> nomenclatureIds = questionnaire.requiredNomenclatureIds();
         if (nomenclatureIds == null) {
             nomenclatureIds = new HashSet<>();
