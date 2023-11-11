@@ -9,6 +9,7 @@ import fr.insee.queen.api.utils.dummy.AuthenticationFakeHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -60,7 +61,8 @@ class CampaignControllerTest {
     void testDeletionException() {
         pilotageService.isCampaignClosed(false);
         campaignController = new CampaignController(authenticationHelper, "false", campaignService, pilotageService);
-        assertThatThrownBy(() -> campaignController.deleteCampaignById(false, "11", authenticatedUserTestHelper.getAuthenticatedUser()))
+        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
+        assertThatThrownBy(() -> campaignController.deleteCampaignById(false, "11", authenticatedUser))
                 .isInstanceOf(CampaignDeletionException.class);
     }
 
