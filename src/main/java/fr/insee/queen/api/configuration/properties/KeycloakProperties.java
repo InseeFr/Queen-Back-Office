@@ -10,4 +10,5 @@ public record KeycloakProperties(
         String realm,
         String principalAttribute,
         String additionalRealm,
-        String clientId) {}
+        String clientId) {
+}

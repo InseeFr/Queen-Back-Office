@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.service.surveyunit.ParadataEventService;
+import fr.insee.queen.api.paradata.service.ParadataEventService;
 import lombok.Getter;
 
 public class ParadataEventFakeService implements ParadataEventService {

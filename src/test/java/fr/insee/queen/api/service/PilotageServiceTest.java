@@ -1,15 +1,15 @@
 package fr.insee.queen.api.service;
 
-import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
+import fr.insee.queen.api.pilotage.exception.PilotageApiException;
+import fr.insee.queen.api.pilotage.service.PilotageApiService;
+import fr.insee.queen.api.pilotage.service.PilotageRole;
+import fr.insee.queen.api.pilotage.service.PilotageService;
+import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
 import fr.insee.queen.api.repository.PilotageFakeRepository;
 import fr.insee.queen.api.service.dummy.CampaignExistenceFakeService;
+import fr.insee.queen.api.service.dummy.QuestionnaireModelFakeService;
 import fr.insee.queen.api.service.dummy.SurveyUnitFakeService;
-import fr.insee.queen.api.service.exception.PilotageApiException;
-import fr.insee.queen.api.service.pilotage.PilotageApiService;
-import fr.insee.queen.api.service.pilotage.PilotageRole;
-import fr.insee.queen.api.service.pilotage.PilotageService;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,8 @@ class PilotageServiceTest {
         SurveyUnitFakeService surveyUnitService = new SurveyUnitFakeService();
         pilotageRepository = new PilotageFakeRepository();
         campaignExistenceService = new CampaignExistenceFakeService();
-        pilotageService = new PilotageApiService(surveyUnitService, campaignExistenceService, pilotageRepository);
+        QuestionnaireModelFakeService questionnaireModelFakeService = new QuestionnaireModelFakeService();
+        pilotageService = new PilotageApiService(surveyUnitService, campaignExistenceService, pilotageRepository, questionnaireModelFakeService);
     }
 
     @Test
@@ -51,7 +52,7 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On retrieving interviewer campaigns return campaigns")
     void testGetInterviewerCampaigns02() {
-        List<CampaignSummaryDto> campaigns = pilotageService.getInterviewerCampaigns("auth-token");
+        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns("auth-token");
         assertThat(campaigns).hasSize(2);
         assertThat(campaigns.get(0).id()).isEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
     }
@@ -59,16 +60,16 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On check habilitation, when role == INTERVIEWER return true")
     void testHasHabilitation_01() {
-        SurveyUnitHabilitationDto su = new SurveyUnitHabilitationDto("su-id", "campaign-id");
-        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.INTERVIEWER, "idep", "auth-token") ;
+        SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", "campaign-id");
+        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.INTERVIEWER, "idep", "auth-token");
         assertThat(hasHabilitation).isTrue();
     }
 
     @Test
     @DisplayName("On check habilitation, when role == REVIEWER return true")
     void testHasHabilitation_02() {
-        SurveyUnitHabilitationDto su = new SurveyUnitHabilitationDto("su-id", "campaign-id");
-        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.REVIEWER, "idep", "auth-token") ;
+        SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", "campaign-id");
+        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.REVIEWER, "idep", "auth-token");
         assertThat(hasHabilitation).isTrue();
     }
 
@@ -76,7 +77,7 @@ class PilotageServiceTest {
     @DisplayName("On retrieving survey units by campaign, when current survey unit is null return empty collection")
     void testGetSurveyUnitsByCampaign_01() {
         pilotageRepository.nullCurrentSurveyUnit(true);
-        List<SurveyUnitSummaryDto> surveyUnits = pilotageService.getSurveyUnitsByCampaign("campaign-id", "auth-token");
+        List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign("campaign-id", "auth-token");
         assertThat(surveyUnits).isEmpty();
     }
 
@@ -91,7 +92,7 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On retrieving survey units by campaign, when current survey unit return current user survey units for a campaign")
     void testGetSurveyUnitsByCampaign_03() {
-        List<SurveyUnitSummaryDto> surveyUnits = pilotageService.getSurveyUnitsByCampaign(PilotageFakeRepository.CURRENT_SU_CAMPAIGN1_ID, "auth-token");
+        List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign(PilotageFakeRepository.CURRENT_SU_CAMPAIGN1_ID, "auth-token");
         assertThat(surveyUnits).hasSize(2);
         assertThat(surveyUnits.get(0).id()).isEqualTo("survey-unit1");
         assertThat(surveyUnits.get(1).id()).isEqualTo("survey-unit3");

@@ -23,7 +23,7 @@ public class AuthenticatedUserTestHelper {
 
     public Authentication getAuthenticatedUser(AuthorityRoleEnum... roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for(AuthorityRoleEnum role : roles) {
+        for (AuthorityRoleEnum role : roles) {
             authorities.add(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + role.name()));
         }
 

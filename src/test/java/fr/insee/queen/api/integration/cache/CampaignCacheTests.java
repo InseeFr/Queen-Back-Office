@@ -1,10 +1,10 @@
 package fr.insee.queen.api.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import fr.insee.queen.api.campaign.service.CampaignExistenceService;
+import fr.insee.queen.api.campaign.service.CampaignService;
+import fr.insee.queen.api.campaign.service.model.Campaign;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.dto.campaign.CampaignData;
-import fr.insee.queen.api.service.campaign.CampaignExistenceService;
-import fr.insee.queen.api.service.campaign.CampaignService;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,14 +52,14 @@ class CampaignCacheTests {
         String campaignId = "campaign-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
         campaignExistenceService.existsById(campaignId);
-        boolean campaignExist = (boolean) Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId).get());
+        Boolean campaignExist = Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId, Boolean.class));
         assertThat(campaignExist).isFalse();
 
-        campaignService.createCampaign(new CampaignData(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode().toString()));
+        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode().toString()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
 
         campaignExistenceService.existsById(campaignId);
-        campaignExist = (boolean) Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId).get());
+        campaignExist =Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId, Boolean.class));
         assertThat(campaignExist).isTrue();
 
         campaignService.delete(campaignId);

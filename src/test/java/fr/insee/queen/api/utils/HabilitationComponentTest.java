@@ -3,12 +3,12 @@ package fr.insee.queen.api.utils;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.configuration.properties.AuthEnumProperties;
-import fr.insee.queen.api.controller.utils.HabilitationApiComponent;
-import fr.insee.queen.api.controller.utils.HabilitationComponent;
+import fr.insee.queen.api.pilotage.controller.HabilitationApiComponent;
+import fr.insee.queen.api.pilotage.controller.HabilitationComponent;
+import fr.insee.queen.api.pilotage.exception.HabilitationException;
+import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.service.dummy.PilotageFakeService;
 import fr.insee.queen.api.service.dummy.SurveyUnitFakeService;
-import fr.insee.queen.api.service.exception.HabilitationException;
-import fr.insee.queen.api.service.pilotage.PilotageRole;
 import fr.insee.queen.api.utils.dummy.AuthenticationFakeHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,8 +38,6 @@ class HabilitationComponentTest {
     @Test
     @DisplayName("On check habilitations when integration is true do not check pilotage api")
     void testCheckHabilitations01() {
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(
-                AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE, AuthorityRoleEnum.REVIEWER);
         habilitationComponent = new HabilitationApiComponent(pilotageService, applicationProperties, authHelper, surveyUnitService, "true");
         habilitationComponent.checkHabilitations(authenticatedUserTestHelper.getAuthenticatedUser(), "11", PilotageRole.INTERVIEWER);
         assertThat(pilotageService.wentThroughHasHabilitation()).isZero();

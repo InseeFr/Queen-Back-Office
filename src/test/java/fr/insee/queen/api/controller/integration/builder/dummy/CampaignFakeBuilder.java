@@ -1,9 +1,7 @@
 package fr.insee.queen.api.controller.integration.builder.dummy;
 
-import fr.insee.queen.api.controller.integration.component.builder.CampaignBuilder;
-import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultSuccessUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
+import fr.insee.queen.api.integration.controller.component.builder.CampaignBuilder;
+import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,10 +12,10 @@ public class CampaignFakeBuilder implements CampaignBuilder {
     private boolean resultIsInErrorState = false;
 
     @Getter
-    private final IntegrationResultUnitDto resultSuccess = IntegrationResultSuccessUnitDto.integrationResultUnitCreated("id-campaign");
+    private final IntegrationResultUnitDto resultSuccess = IntegrationResultUnitDto.integrationResultUnitCreated("id-campaign");
 
     @Getter
-    private final IntegrationResultUnitDto resultError = new IntegrationResultErrorUnitDto("id-campaign", "error");
+    private final IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError("id-campaign", "error");
 
     @Override
     public IntegrationResultUnitDto build(ZipFile integrationZipFile) {

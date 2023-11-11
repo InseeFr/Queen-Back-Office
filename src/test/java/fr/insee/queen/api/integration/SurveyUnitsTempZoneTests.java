@@ -3,7 +3,10 @@ package fr.insee.queen.api.integration;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -21,8 +24,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,7 +54,7 @@ public class SurveyUnitsTempZoneTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @ParameterizedTest
-    @ValueSource(strings = {"11","12"})
+    @ValueSource(strings = {"11", "12"})
     @Order(1)
     void on_create_survey_unit_then_return_201(String surveyUnitId) throws Exception {
         // no control on questionnaire id ...
@@ -93,38 +96,38 @@ public class SurveyUnitsTempZoneTests {
         String content = result.getResponse().getContentAsString();
 
         String expectedResult = """
-        [
-            {
-              "surveyUnitId": "11",
-              "userId": "dupont-identifier",
-              "surveyUnit": {
-                  "data": {
-                    "EXTERNAL": {
-                      "ADR": "Rue des Plantes",
-                      "NUMTH": "1"
+                [
+                    {
+                      "surveyUnitId": "11",
+                      "userId": "dupont-identifier",
+                      "surveyUnit": {
+                          "data": {
+                            "EXTERNAL": {
+                              "ADR": "Rue des Plantes",
+                              "NUMTH": "1"
+                            }
+                          },
+                          "comment": {},
+                          "personalization": [],
+                          "questionnaireId": "questionnaire-11"
+                      }
+                    },
+                    {
+                      "surveyUnitId": "12",
+                      "userId":"dupont-identifier",
+                      "surveyUnit": {
+                          "data": {
+                            "EXTERNAL": {
+                              "ADR": "Rue des Plantes",
+                              "NUMTH": "1"
+                            }
+                          },
+                          "comment": {},
+                          "personalization": [],
+                          "questionnaireId": "questionnaire-12"
+                      }
                     }
-                  },
-                  "comment": {},
-                  "personalization": [],
-                  "questionnaireId": "questionnaire-11"
-              }
-            },
-            {
-              "surveyUnitId": "12",
-              "userId":"dupont-identifier",
-              "surveyUnit": {
-                  "data": {
-                    "EXTERNAL": {
-                      "ADR": "Rue des Plantes",
-                      "NUMTH": "1"
-                    }
-                  },
-                  "comment": {},
-                  "personalization": [],
-                  "questionnaireId": "questionnaire-12"
-              }
-            }
-        ]""";
+                ]""";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.LENIENT);
     }
 

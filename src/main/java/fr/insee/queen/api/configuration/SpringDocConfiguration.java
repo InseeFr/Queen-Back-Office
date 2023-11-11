@@ -54,6 +54,7 @@ public class SpringDocConfiguration {
                         .version(buildProperties.getVersion())
         );
     }
+
     private OAuthFlows getFlows(String authUrl) {
         OAuthFlows flows = new OAuthFlows();
         OAuthFlow flow = new OAuthFlow();

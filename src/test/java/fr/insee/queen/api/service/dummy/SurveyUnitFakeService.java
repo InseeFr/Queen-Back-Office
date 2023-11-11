@@ -1,10 +1,10 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.dto.depositproof.PdfDepositProof;
-import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
-import fr.insee.queen.api.dto.input.SurveyUnitUpdateInputDto;
-import fr.insee.queen.api.dto.surveyunit.*;
-import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
+import fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof;
+import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnitState;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -26,16 +26,16 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public SurveyUnitDto getSurveyUnit(String id) {
+    public SurveyUnit getSurveyUnit(String id) {
         return null;
     }
 
     @Override
-    public List<SurveyUnitSummaryDto> findByCampaignId(String campaignId) {
+    public List<SurveyUnitSummary> findByCampaignId(String campaignId) {
         return List.of(
-                new SurveyUnitSummaryDto(SURVEY_UNIT1_ID, "questionnaire-id"),
-                new SurveyUnitSummaryDto("survey-unit2", "questionnaire-id"),
-                new SurveyUnitSummaryDto("survey-unit3", "questionnaire-id")
+                new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
+                new SurveyUnitSummary("survey-unit2", "questionnaire-id", "campaign-id"),
+                new SurveyUnitSummary("survey-unit3", "questionnaire-id", "campaign-id")
         );
     }
 
@@ -45,33 +45,28 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public void updateSurveyUnit(String surveyUnitId, SurveyUnitUpdateInputDto surveyUnit) {
+    public void updateSurveyUnit(SurveyUnit surveyUnit) {
 
     }
 
     @Override
-    public PdfDepositProof generateDepositProof(String userId, String surveyUnitId) {
+    public void createSurveyUnit(SurveyUnit surveyUnit) {
+
+    }
+
+    @Override
+    public List<SurveyUnitSummary> findSummaryByIds(List<String> surveyUnits) {
         return null;
     }
 
     @Override
-    public void createSurveyUnit(String campaignId, SurveyUnitCreateInputDto surveyUnit) {
-
-    }
-
-    @Override
-    public List<SurveyUnitSummaryDto> findSummaryByIds(List<String> surveyUnits) {
-        return null;
-    }
-
-    @Override
-    public Optional<SurveyUnitSummaryDto> findSummaryById(String surveyUnitId) {
-        SurveyUnitSummaryDto surveyUnit = new SurveyUnitSummaryDto(surveyUnitId, "questionnaire-id");
+    public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(surveyUnitId, "questionnaire-id", "campaign-id");
         return Optional.of(surveyUnit);
     }
 
     @Override
-    public List<SurveyUnitWithStateDto> findWithStateByIds(List<String> surveyUnits) {
+    public List<SurveyUnitState> findWithStateByIds(List<String> surveyUnits) {
         return null;
     }
 
@@ -81,12 +76,12 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public SurveyUnitDepositProofDto getSurveyUnitDepositProof(String surveyUnitId) {
+    public SurveyUnitDepositProof getSurveyUnitDepositProof(String surveyUnitId) {
         return null;
     }
 
     @Override
-    public SurveyUnitHabilitationDto getSurveyUnitWithCampaignById(String surveyUnitId) {
-        return new SurveyUnitHabilitationDto("survey-unit1", "campaign-id");
+    public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
+        return new SurveyUnitSummary("survey-unit1", "questionnaire-id", "campaign-id");
     }
 }

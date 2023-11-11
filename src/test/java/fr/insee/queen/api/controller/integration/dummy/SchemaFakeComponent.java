@@ -1,6 +1,6 @@
 package fr.insee.queen.api.controller.integration.dummy;
 
-import fr.insee.queen.api.controller.integration.component.SchemaComponent;
+import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaComponent;
 import org.w3c.dom.Document;
 
 import java.io.InputStream;

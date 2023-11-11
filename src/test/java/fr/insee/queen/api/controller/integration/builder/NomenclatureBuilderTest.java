@@ -1,13 +1,11 @@
 package fr.insee.queen.api.controller.integration.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.insee.queen.api.controller.integration.component.IntegrationResultLabel;
-import fr.insee.queen.api.controller.integration.component.SchemaIntegrationComponent;
-import fr.insee.queen.api.controller.integration.component.builder.IntegrationNomenclatureBuilder;
-import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultSuccessUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationStatus;
+import fr.insee.queen.api.integration.controller.component.builder.IntegrationNomenclatureBuilder;
+import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaIntegrationComponent;
+import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.api.integration.service.model.IntegrationResultLabel;
+import fr.insee.queen.api.integration.service.model.IntegrationStatus;
 import fr.insee.queen.api.service.dummy.IntegrationFakeService;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -45,8 +43,8 @@ class NomenclatureBuilderTest {
         String nomenclatureId2 = "cities2023";
         ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/valid-nomenclatures.zip");
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
-        IntegrationResultUnitDto result1 = IntegrationResultSuccessUnitDto.integrationResultUnitCreated(nomenclatureId1);
-        IntegrationResultUnitDto result2 = IntegrationResultSuccessUnitDto.integrationResultUnitCreated(nomenclatureId2);
+        IntegrationResultUnitDto result1 = new IntegrationResultUnitDto(nomenclatureId1, IntegrationStatus.CREATED, null);
+        IntegrationResultUnitDto result2 = new IntegrationResultUnitDto(nomenclatureId2, IntegrationStatus.CREATED, null);
         assertThat(results)
                 .hasSize(2)
                 .contains(result1)
@@ -61,12 +59,11 @@ class NomenclatureBuilderTest {
 
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
         assertThat(results).hasSize(2);
-        List<IntegrationResultErrorUnitDto> resultErrors = results.stream()
-                .filter(IntegrationResultErrorUnitDto.class::isInstance)
-                .map(IntegrationResultErrorUnitDto.class::cast)
+        List<IntegrationResultUnitDto> resultErrors = results.stream()
+                .filter(result -> result.status().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
-        IntegrationResultErrorUnitDto errorResult = resultErrors.get(0);
+        IntegrationResultUnitDto errorResult = resultErrors.get(0);
         assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.id()).isEqualTo(nomenclatureId);
         assertThat(errorResult.cause()).contains("id: The identifier is invalid.");
@@ -80,13 +77,12 @@ class NomenclatureBuilderTest {
 
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
         assertThat(results).hasSize(2);
-        List<IntegrationResultErrorUnitDto> resultErrors = results.stream()
-                .filter(IntegrationResultErrorUnitDto.class::isInstance)
-                .map(IntegrationResultErrorUnitDto.class::cast)
+        List<IntegrationResultUnitDto> resultErrors = results.stream()
+                .filter(result -> result.status().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
         log.error(resultErrors.toString());
-        IntegrationResultErrorUnitDto errorResult = resultErrors.get(0);
+        IntegrationResultUnitDto errorResult = resultErrors.get(0);
         assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.id()).isEqualTo("cities2023");
         assertThat(errorResult.cause()).contains(String.format(IntegrationResultLabel.NOMENCLATURE_FILE_NOT_FOUND, "cities2023.json"));

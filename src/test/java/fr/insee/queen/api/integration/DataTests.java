@@ -43,6 +43,7 @@ class DataTests {
             AuthorityRoleEnum.INTERVIEWER);
 
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
+
     @Test
     void on_get_data_return_data() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/survey-unit/11/data")

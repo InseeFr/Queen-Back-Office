@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.controller.dummy.HabilitationFakeComponent;
-import fr.insee.queen.api.controller.surveyunit.ParadataEventController;
+import fr.insee.queen.api.paradata.controller.ParadataEventController;
 import fr.insee.queen.api.service.dummy.ParadataEventFakeService;
-import fr.insee.queen.api.service.exception.EntityNotFoundException;
+import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,8 +36,8 @@ class ParadataEventControllerTest {
     @DisplayName("On creating paradata when paradata ok save call is triggered")
     void addParadata01() throws JsonProcessingException {
         ObjectNode paradata = mapper.readValue("""
-        {"idSU": "11", "object": {}}
-        """, ObjectNode.class);
+                {"idSU": "11", "object": {}}
+                """, ObjectNode.class);
         controller.addParadata(paradata, null);
         assertThat(habilitationComponent.checked()).isTrue();
         assertThat(paradataEventService.created()).isTrue();
@@ -47,8 +47,8 @@ class ParadataEventControllerTest {
     @DisplayName("On creating paradata when paradata has no su id then throw exception")
     void addParadata02() throws JsonProcessingException {
         ObjectNode paradata = mapper.readValue("""
-        {"idU": "11", "object": {}}
-        """, ObjectNode.class);
+                {"idU": "11", "object": {}}
+                """, ObjectNode.class);
         assertThatThrownBy(() -> controller.addParadata(paradata, null)).isInstanceOf(EntityNotFoundException.class);
     }
 
@@ -56,8 +56,8 @@ class ParadataEventControllerTest {
     @DisplayName("On creating paradata when paradata su id is not a text value then throw exception")
     void addParadata03() throws JsonProcessingException {
         ObjectNode paradata = mapper.readValue("""
-        {"idSU": {}, "object": {}}
-        """, ObjectNode.class);
+                {"idSU": {}, "object": {}}
+                """, ObjectNode.class);
         assertThatThrownBy(() -> controller.addParadata(paradata, null)).isInstanceOf(EntityNotFoundException.class);
     }
 }

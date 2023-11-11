@@ -1,27 +1,27 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.dto.input.CampaignIntegrationInputDto;
-import fr.insee.queen.api.dto.input.NomenclatureInputDto;
-import fr.insee.queen.api.dto.input.QuestionnaireModelIntegrationInputDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultSuccessUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
-import fr.insee.queen.api.service.integration.IntegrationService;
+import fr.insee.queen.api.campaign.service.model.Campaign;
+import fr.insee.queen.api.campaign.service.model.Nomenclature;
+import fr.insee.queen.api.campaign.service.model.QuestionnaireModel;
+import fr.insee.queen.api.integration.service.IntegrationService;
+import fr.insee.queen.api.integration.service.model.IntegrationResult;
+import fr.insee.queen.api.integration.service.model.IntegrationStatus;
 
 import java.util.List;
 
 public class IntegrationFakeService implements IntegrationService {
     @Override
-    public IntegrationResultUnitDto create(CampaignIntegrationInputDto campaign) {
-        return IntegrationResultSuccessUnitDto.integrationResultUnitCreated(campaign.id());
+    public IntegrationResult create(Campaign campaign) {
+        return new IntegrationResult(campaign.id(), IntegrationStatus.CREATED, null);
     }
 
     @Override
-    public IntegrationResultUnitDto create(NomenclatureInputDto nomenclature) {
-        return IntegrationResultSuccessUnitDto.integrationResultUnitCreated(nomenclature.id());
+    public IntegrationResult create(Nomenclature nomenclature) {
+        return new IntegrationResult(nomenclature.id(), IntegrationStatus.CREATED, null);
     }
 
     @Override
-    public List<IntegrationResultUnitDto> create(QuestionnaireModelIntegrationInputDto questionnaire) {
-        return List.of(IntegrationResultSuccessUnitDto.integrationResultUnitCreated(questionnaire.idQuestionnaireModel()));
+    public List<IntegrationResult> create(QuestionnaireModel questionnaire) {
+        return List.of(new IntegrationResult(questionnaire.id(), IntegrationStatus.CREATED, null));
     }
 }

@@ -1,11 +1,12 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.dto.campaign.CampaignData;
-import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
-import fr.insee.queen.api.service.campaign.CampaignService;
+import fr.insee.queen.api.campaign.service.CampaignService;
+import fr.insee.queen.api.campaign.service.model.Campaign;
+import fr.insee.queen.api.campaign.service.model.CampaignSummary;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 public class CampaignFakeService implements CampaignService {
@@ -17,11 +18,11 @@ public class CampaignFakeService implements CampaignService {
     public static final String CAMPAIGN1_ID = "allCampaigns1";
 
     @Override
-    public List<CampaignSummaryDto> getAllCampaigns() {
+    public List<CampaignSummary> getAllCampaigns() {
         allCampaignsRetrieved = true;
         return List.of(
-                new CampaignSummaryDto(CAMPAIGN1_ID, List.of("questionnaireId1", "questionnaireId2")),
-                new CampaignSummaryDto("allCampaigns2", List.of("questionnaireId1", "questionnaireId2"))
+                new CampaignSummary(CAMPAIGN1_ID, "label", Set.of("questionnaireId1", "questionnaireId2")),
+                new CampaignSummary("allCampaigns2", "label", Set.of("questionnaireId1", "questionnaireId2"))
         );
     }
 
@@ -31,12 +32,12 @@ public class CampaignFakeService implements CampaignService {
     }
 
     @Override
-    public void createCampaign(CampaignData campaignData) {
+    public void createCampaign(Campaign campaignData) {
         created = true;
     }
 
     @Override
-    public void updateCampaign(CampaignData campaignData) {
+    public void updateCampaign(Campaign campaignData) {
         updated = true;
     }
 }

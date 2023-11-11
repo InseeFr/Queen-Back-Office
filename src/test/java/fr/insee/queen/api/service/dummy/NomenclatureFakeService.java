@@ -1,8 +1,7 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.dto.input.NomenclatureInputDto;
-import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
-import fr.insee.queen.api.service.questionnaire.NomenclatureService;
+import fr.insee.queen.api.campaign.service.NomenclatureService;
+import fr.insee.queen.api.campaign.service.model.Nomenclature;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,7 @@ public class NomenclatureFakeService implements NomenclatureService {
     private boolean saved = false;
 
     @Override
-    public NomenclatureDto getNomenclature(String id) {
+    public Nomenclature getNomenclature(String id) {
         return null;
     }
 
@@ -35,7 +34,7 @@ public class NomenclatureFakeService implements NomenclatureService {
     }
 
     @Override
-    public void saveNomenclature(NomenclatureInputDto nomenclature) {
+    public void saveNomenclature(Nomenclature nomenclature) {
         saved = true;
     }
 

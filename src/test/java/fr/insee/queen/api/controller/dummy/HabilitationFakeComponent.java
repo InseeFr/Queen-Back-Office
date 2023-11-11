@@ -1,7 +1,7 @@
 package fr.insee.queen.api.controller.dummy;
 
-import fr.insee.queen.api.controller.utils.HabilitationComponent;
-import fr.insee.queen.api.service.pilotage.PilotageRole;
+import fr.insee.queen.api.pilotage.controller.HabilitationComponent;
+import fr.insee.queen.api.pilotage.service.PilotageRole;
 import lombok.Getter;
 import org.springframework.security.core.Authentication;
 

@@ -39,6 +39,7 @@ class MetadataTests {
             AuthorityRoleEnum.INTERVIEWER);
 
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
+
     @Test
     void when_empty_or_no_metadata_by_questionnaire_return_empty_json_metadata() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/questionnaire/simpsonsV2/metadata")

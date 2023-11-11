@@ -1,11 +1,11 @@
 package fr.insee.queen.api.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import fr.insee.queen.api.campaign.service.NomenclatureService;
+import fr.insee.queen.api.campaign.service.model.Nomenclature;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.dto.input.NomenclatureInputDto;
-import fr.insee.queen.api.dto.nomenclature.NomenclatureDto;
-import fr.insee.queen.api.service.questionnaire.NomenclatureService;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,7 +37,7 @@ class NomenclatureCacheTests {
 
     @AfterEach
     public void clearCaches() {
-        for(String cacheName : cacheManager.getCacheNames()) {
+        for (String cacheName : cacheManager.getCacheNames()) {
             Objects.requireNonNull(cacheManager.getCache(cacheName)).clear();
         }
     }
@@ -48,21 +48,21 @@ class NomenclatureCacheTests {
         String nomenclatureId = "nomenclature-cache-id";
 
         // create nomenclature
-        nomenclatureService.saveNomenclature(new NomenclatureInputDto(nomenclatureId, "label", JsonNodeFactory.instance.arrayNode()));
+        nomenclatureService.saveNomenclature(new Nomenclature(nomenclatureId, "label", JsonNodeFactory.instance.arrayNode().toString()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.NOMENCLATURE)).get(nomenclatureId)).isNull();
 
         // when retrieving nomenclature, cache is created
-        NomenclatureDto nomenclature = nomenclatureService.getNomenclature(nomenclatureId);
-        NomenclatureDto nomenclatureCache = (NomenclatureDto) Objects.requireNonNull(cacheManager.getCache(CacheName.NOMENCLATURE)).get(nomenclatureId).get();
+        Nomenclature nomenclature = nomenclatureService.getNomenclature(nomenclatureId);
+        Nomenclature nomenclatureCache = Objects.requireNonNull(cacheManager.getCache(CacheName.NOMENCLATURE)).get(nomenclatureId, Nomenclature.class);
         assertThat(nomenclature).isEqualTo(nomenclatureCache);
 
         // when updating nomenclature, cache is evicted
-        nomenclatureService.saveNomenclature(new NomenclatureInputDto(nomenclatureId, "label2", JsonNodeFactory.instance.arrayNode()));
+        nomenclatureService.saveNomenclature(new Nomenclature(nomenclatureId, "label2", JsonNodeFactory.instance.arrayNode().toString()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.NOMENCLATURE)).get(nomenclatureId)).isNull();
 
         // when retrieving nomenclature, cache is created
         nomenclature = nomenclatureService.getNomenclature(nomenclatureId);
-        nomenclatureCache = (NomenclatureDto) Objects.requireNonNull(cacheManager.getCache(CacheName.NOMENCLATURE)).get(nomenclatureId).get();
+        nomenclatureCache = Objects.requireNonNull(cacheManager.getCache(CacheName.NOMENCLATURE)).get(nomenclatureId, Nomenclature.class);
         assertThat(nomenclature).isEqualTo(nomenclatureCache);
     }
 }

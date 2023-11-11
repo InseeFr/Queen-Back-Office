@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.service.campaign.CampaignExistenceService;
+import fr.insee.queen.api.campaign.service.CampaignExistenceService;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -2,10 +2,10 @@ package fr.insee.queen.api.integration;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.api.campaign.controller.dto.input.QuestionnaireModelCreationData;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
-import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -96,10 +96,10 @@ class QuestionnaireTests {
                 .andReturn();
         String content = result.getResponse().getContentAsString();
         String expectedResult = """
-            [
-                {"questionnaireId": "simpsons"},
-                {"questionnaireId": "simpsonsV2"}
-            ]""";
+                [
+                    {"questionnaireId": "simpsons"},
+                    {"questionnaireId": "simpsonsV2"}
+                ]""";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
@@ -159,7 +159,7 @@ class QuestionnaireTests {
     void on_create_questionnaire_check_questionnaire_created(String questionnaireId, String questionnaireFile) throws Exception {
         ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode(questionnaireFile);
         Set<String> nomenclatures = Set.of("cities2019", "regions2019");
-        QuestionnaireModelInputDto questionnaire = new QuestionnaireModelInputDto(questionnaireId, "label questionnaire", questionnaireJson, nomenclatures);
+        QuestionnaireModelCreationData questionnaire = new QuestionnaireModelCreationData(questionnaireId, "label questionnaire", questionnaireJson, nomenclatures);
         mockMvc.perform(post("/api/questionnaire-models")
                         .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -201,18 +201,18 @@ class QuestionnaireTests {
                 .andReturn();
         String content = result.getResponse().getContentAsString();
         String expectedResult = """
-        {
-          "surveyUnitOK": [
-            {"id": "11", "questionnaireId": "simpsons"},
-            {"id": "12", "questionnaireId": "simpsons"},
-            {"id": "20", "questionnaireId": "VQS2021X00"}
-          ],
-          "surveyUnitNOK": [
-            {"id": "456789"},
-            {"id": "123456"}
-          ]
-        }
-        """;
+                {
+                  "surveyUnitOK": [
+                    {"id": "11", "questionnaireId": "simpsons"},
+                    {"id": "12", "questionnaireId": "simpsons"},
+                    {"id": "20", "questionnaireId": "VQS2021X00"}
+                  ],
+                  "surveyUnitNOK": [
+                    {"id": "456789"},
+                    {"id": "123456"}
+                  ]
+                }
+                """;
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
@@ -243,7 +243,7 @@ class QuestionnaireTests {
 
     @Test
     void on_create_questionnaires_when_anonymous_return_401() throws Exception {
-        QuestionnaireModelInputDto questionnaire = new QuestionnaireModelInputDto("1", "label questionnaire", JsonNodeFactory.instance.objectNode(), Set.of("cities2019"));
+        QuestionnaireModelCreationData questionnaire = new QuestionnaireModelCreationData("1", "label questionnaire", JsonNodeFactory.instance.objectNode(), Set.of("cities2019"));
         mockMvc.perform(post("/api/questionnaire-models")
                         .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -255,7 +255,7 @@ class QuestionnaireTests {
 
     @Test
     void on_create_questionnaires_when_non_admin_return_403() throws Exception {
-        QuestionnaireModelInputDto questionnaire = new QuestionnaireModelInputDto("1", "label questionnaire", JsonNodeFactory.instance.objectNode(), Set.of("cities2019"));
+        QuestionnaireModelCreationData questionnaire = new QuestionnaireModelCreationData("1", "label questionnaire", JsonNodeFactory.instance.objectNode(), Set.of("cities2019"));
         mockMvc.perform(post("/api/questionnaire-models")
                         .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)

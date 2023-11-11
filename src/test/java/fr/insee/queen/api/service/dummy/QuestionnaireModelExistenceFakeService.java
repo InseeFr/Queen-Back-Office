@@ -1,6 +1,6 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.service.questionnaire.QuestionnaireModelExistenceService;
+import fr.insee.queen.api.campaign.service.QuestionnaireModelExistenceService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -39,6 +39,7 @@ public class KeycloakSecurityConfiguration {
 
     /**
      * Configure spring security filter chain to handle keycloak authentication
+     *
      * @param http Http Security Object
      * @return the spring security filter
      * @throws Exception exception
@@ -46,7 +47,7 @@ public class KeycloakSecurityConfiguration {
     @Bean
     @Order(2)
     protected SecurityFilterChain filterChain(HttpSecurity http,
-                                    KeycloakProperties keycloakProperties, RoleProperties roleProperties) throws Exception {
+                                              KeycloakProperties keycloakProperties, RoleProperties roleProperties) throws Exception {
         return http
                 .securityMatcher("/**")
                 .csrf(AbstractHttpConfigurer::disable)
@@ -57,16 +58,16 @@ public class KeycloakSecurityConfiguration {
                                 .policyDirectives("default-src 'none'")
                         )
                         .referrerPolicy(referrerPolicy ->
-                            referrerPolicy
-                                    .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN)
-                ))
+                                referrerPolicy
+                                        .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN)
+                        ))
                 .authorizeHttpRequests(configurer -> configurer
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/healthcheck").permitAll()
                         // actuator (actuator metrics are disabled by default)
                         .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                         .anyRequest()
-                            .authenticated()
+                        .authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter(keycloakProperties, roleProperties))))
@@ -76,7 +77,7 @@ public class KeycloakSecurityConfiguration {
     @Bean
     @Order(1)
     protected SecurityFilterChain filterPublicUrlsChain(HttpSecurity http, ApplicationProperties applicationProperties,
-                                    KeycloakProperties keycloakProperties) throws Exception {
+                                                        KeycloakProperties keycloakProperties) throws Exception {
         String authorizedConnectionHost = applicationProperties.auth().equals(AuthEnumProperties.KEYCLOAK) ?
                 " " + keycloakProperties.authServerHost() : "";
         return publicSecurityFilterChainConfiguration.buildSecurityPublicFilterChain(http, applicationProperties.publicUrls(), authorizedConnectionHost);

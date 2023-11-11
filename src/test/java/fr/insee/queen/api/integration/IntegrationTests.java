@@ -91,17 +91,17 @@ class IntegrationTests {
 
         String content = result.getResponse().getContentAsString();
         String expectedResult = """
-        {
-            "campaign": { "id":"SIMPSONS2023X00", "status":"CREATED" },
-            "nomenclatures":[
-                { "id":"cities2019", "status":"ERROR", "cause":"A nomenclature with id cities2019 already exists"},
-                { "id":"regions2019", "status":"ERROR", "cause":"Nomenclature file 'regions2019.json' could not be found in input zip" }
-            ],
-            "questionnaireModels":[
-                { "id":"simpsons-2023-v1","status":"ERROR","cause":"Questionnaire model has campaign id SIMPSONS2020X00 while campaign in zip has id SIMPSONS2023X00"},
-                { "id":"simpsons-2023-v2", "status":"ERROR", "cause":"Questionnaire model file 'simpsons-v2' could not be found in input zip" }
-            ]
-        }""";
+                {
+                    "campaign": { "id":"SIMPSONS2023X00", "status":"CREATED" },
+                    "nomenclatures":[
+                        { "id":"cities2019", "status":"ERROR", "cause":"A nomenclature with id cities2019 already exists"},
+                        { "id":"regions2019", "status":"ERROR", "cause":"Nomenclature file 'regions2019.json' could not be found in input zip" }
+                    ],
+                    "questionnaireModels":[
+                        { "id":"simpsons-2023-v1","status":"ERROR","cause":"Questionnaire model has campaign id SIMPSONS2020X00 while campaign in zip has id SIMPSONS2023X00"},
+                        { "id":"simpsons-2023-v2", "status":"ERROR", "cause":"Questionnaire model file 'simpsons-v2' could not be found in input zip" }
+                    ]
+                }""";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 }

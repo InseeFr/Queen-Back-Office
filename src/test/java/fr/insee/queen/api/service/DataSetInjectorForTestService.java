@@ -4,21 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.api.dto.input.NomenclatureInputDto;
-import fr.insee.queen.api.dto.input.StateDataInputDto;
-import fr.insee.queen.api.dto.input.StateDataTypeInputDto;
-import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
-import fr.insee.queen.api.dto.campaign.CampaignData;
-import fr.insee.queen.api.dto.questionnairemodel.QuestionnaireModelData;
-import fr.insee.queen.api.service.campaign.CampaignExistenceService;
-import fr.insee.queen.api.service.campaign.CampaignService;
-import fr.insee.queen.api.service.dataset.DataSetInjectorService;
-import fr.insee.queen.api.service.exception.DataSetException;
-import fr.insee.queen.api.service.questionnaire.NomenclatureService;
-import fr.insee.queen.api.service.questionnaire.QuestionnaireModelExistenceService;
-import fr.insee.queen.api.service.questionnaire.QuestionnaireModelService;
-import fr.insee.queen.api.service.surveyunit.ParadataEventService;
-import fr.insee.queen.api.service.surveyunit.SurveyUnitService;
+import fr.insee.queen.api.campaign.service.*;
+import fr.insee.queen.api.campaign.service.model.Campaign;
+import fr.insee.queen.api.campaign.service.model.Nomenclature;
+import fr.insee.queen.api.campaign.service.model.QuestionnaireModel;
+import fr.insee.queen.api.dataset.exception.DataSetException;
+import fr.insee.queen.api.dataset.service.DataSetInjectorService;
+import fr.insee.queen.api.depositproof.service.model.StateDataType;
+import fr.insee.queen.api.paradata.service.ParadataEventService;
+import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
+import fr.insee.queen.api.surveyunit.service.model.StateData;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -167,7 +163,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
 
         createQuestionnaire(questionnaireId, "Questionnaire of the Everyday life and health survey 2021", jsonQuestionnaireModelVqs, List.of(nomenclatureId1, nomenclatureId2));
 
-        createCampaign(campaignId, "Everyday life and health survey 2021",  objectMapper.createObjectNode(), Set.of(questionnaireId));
+        createCampaign(campaignId, "Everyday life and health survey 2021", objectMapper.createObjectNode(), Set.of(questionnaireId));
         List<String> surveyUnitIds = List.of("20", "21", "22", "23");
         for (String surveyUnitId : surveyUnitIds) {
             createSurveyUnitWithParadata(surveyUnitId, campaignId, questionnaireId);
@@ -209,28 +205,28 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
                 getPersonalizationValue(),
                 getDataValue(),
                 getCommentValue(),
-                StateDataTypeInputDto.EXTRACTED);
+                StateDataType.EXTRACTED);
 
         surveyUnitId = "12";
         createSurveyUnit(surveyUnitId, campaignId, questionnaireId1,
                 objectMapper.createArrayNode(),
                 objectMapper.createObjectNode(),
                 objectMapper.createObjectNode(),
-                StateDataTypeInputDto.INIT);
+                StateDataType.INIT);
 
         surveyUnitId = "13";
         createSurveyUnit(surveyUnitId, campaignId, questionnaireId2,
                 objectMapper.createArrayNode(),
                 getDataValue(),
                 objectMapper.createObjectNode(),
-                StateDataTypeInputDto.INIT);
+                StateDataType.INIT);
 
         surveyUnitId = "14";
         createSurveyUnit(surveyUnitId, campaignId, questionnaireId2,
                 objectMapper.createArrayNode(),
                 getDataValue(),
                 objectMapper.createObjectNode(),
-                StateDataTypeInputDto.INIT);
+                StateDataType.INIT);
         log.info("Simpsons dataset - end");
     }
 
@@ -240,7 +236,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
         }
 
         log.info("Create Campaign {}", id);
-        CampaignData campaign = new CampaignData(id, label, questionnaireIds, jsonMetadata.toString());
+        Campaign campaign = new Campaign(id, label, questionnaireIds, jsonMetadata.toString());
         campaignService.createCampaign(campaign);
     }
 
@@ -249,7 +245,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
             return;
         }
         log.info("Create Questionnaire {}", id);
-        QuestionnaireModelData qm = QuestionnaireModelData.createQuestionnaireWithoutCampaign(id, label, jsonQm.toString(), new HashSet<>(nomenclatureIds));
+        QuestionnaireModel qm = QuestionnaireModel.createQuestionnaireWithoutCampaign(id, label, jsonQm.toString(), new HashSet<>(nomenclatureIds));
         questionnaireModelService.createQuestionnaire(qm);
     }
 
@@ -258,7 +254,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
             return;
         }
         log.info("Create nomenclature {}", id);
-        NomenclatureInputDto nomenclature = new NomenclatureInputDto(id, label, jsonNomenclature);
+        Nomenclature nomenclature = new Nomenclature(id, label, jsonNomenclature.toString());
         nomenclatureService.saveNomenclature(nomenclature);
     }
 
@@ -269,32 +265,33 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
                 objectMapper.createArrayNode(),
                 objectMapper.createObjectNode(),
                 objectMapper.createObjectNode(),
-                new StateDataInputDto(StateDataTypeInputDto.INIT, 900000000L, "1"));
+                new StateData(StateDataType.INIT, 900000000L, "1"));
         createParadataEvents(surveyUnitId);
     }
 
     private void createSurveyUnit(String surveyUnitId, String campaignId, String questionnaireModelId,
-                                  ArrayNode personalization, ObjectNode data, ObjectNode comment, StateDataTypeInputDto state) {
-        StateDataInputDto stateData = null;
-        if(state != null) {
-            stateData = new StateDataInputDto(state, 1111111111L, CURRENT_PAGE);
+                                  ArrayNode personalization, ObjectNode data, ObjectNode comment, StateDataType state) {
+        StateData stateData = null;
+        if (state != null) {
+            stateData = new StateData(state, 1111111111L, CURRENT_PAGE);
         }
         createSurveyUnit(surveyUnitId, campaignId, questionnaireModelId, personalization, data, comment, stateData);
     }
 
     private void createSurveyUnit(String surveyUnitId, String campaignId, String questionnaireModelId,
-                                  ArrayNode personalization, ObjectNode data, ObjectNode comment, StateDataInputDto stateData) {
-        if(surveyUnitService.existsById(surveyUnitId)) {
+                                  ArrayNode personalization, ObjectNode data, ObjectNode comment, StateData stateData) {
+        if (surveyUnitService.existsById(surveyUnitId)) {
             return;
         }
         log.info("Create survey unit {}", surveyUnitId);
-        SurveyUnitCreateInputDto surveyunit = new SurveyUnitCreateInputDto(surveyUnitId,
+        SurveyUnit surveyunit = new SurveyUnit(surveyUnitId,
+                campaignId,
                 questionnaireModelId,
-                personalization,
-                data,
-                comment,
+                personalization.toString(),
+                data.toString(),
+                comment.toString(),
                 stateData);
-        surveyUnitService.createSurveyUnit(campaignId, surveyunit);
+        surveyUnitService.createSurveyUnit(surveyunit);
     }
 
     private void createParadataEvents(String surveyUnitId) {

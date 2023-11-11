@@ -1,7 +1,7 @@
 package fr.insee.queen.api.utils.dummy;
 
 import fr.insee.queen.api.configuration.auth.AuthConstants;
-import fr.insee.queen.api.controller.utils.AuthenticationHelper;
+import fr.insee.queen.api.web.authentication.AuthenticationHelper;
 import org.springframework.security.core.Authentication;
 
 public class AuthenticationFakeHelper implements AuthenticationHelper {
@@ -12,7 +12,7 @@ public class AuthenticationFakeHelper implements AuthenticationHelper {
 
     @Override
     public String getUserId(Authentication authentication) {
-        if(authentication == null) {
+        if (authentication == null) {
             return AuthConstants.GUEST;
         }
         return authentication.getName();

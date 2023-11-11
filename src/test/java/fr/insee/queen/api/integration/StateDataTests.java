@@ -36,16 +36,13 @@ class StateDataTests {
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-
     private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
             AuthorityRoleEnum.REVIEWER,
             AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
             AuthorityRoleEnum.INTERVIEWER);
 
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
+
     @Test
     void on_get_state_data_return_state_data() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/survey-unit/11/state-data")

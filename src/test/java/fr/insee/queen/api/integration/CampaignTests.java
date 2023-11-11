@@ -2,10 +2,10 @@ package fr.insee.queen.api.integration;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.api.campaign.controller.dto.input.CampaignCreationData;
+import fr.insee.queen.api.campaign.controller.dto.input.MetadataCreationData;
+import fr.insee.queen.api.campaign.controller.dto.input.QuestionnaireModelCreationData;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
-import fr.insee.queen.api.dto.input.CampaignInputDto;
-import fr.insee.queen.api.dto.input.MetadataInputDto;
-import fr.insee.queen.api.dto.input.QuestionnaireModelInputDto;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -75,7 +75,7 @@ class CampaignTests {
         String questionnaireId = "questionnaire-for-campaign-creation";
         ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode("db/dataset/simpsons.json");
         Set<String> nomenclatures = Set.of("cities2019", "regions2019");
-        QuestionnaireModelInputDto questionnaire = new QuestionnaireModelInputDto(questionnaireId, "label questionnaire", questionnaireJson, nomenclatures);
+        QuestionnaireModelCreationData questionnaire = new QuestionnaireModelCreationData(questionnaireId, "label questionnaire", questionnaireJson, nomenclatures);
         mockMvc.perform(post("/api/questionnaire-models")
                         .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,8 +88,8 @@ class CampaignTests {
         String campaignName = "CAMPAIGN-12345";
         Set<String> questionnaireIds = Set.of(questionnaireId);
 
-        MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
-        CampaignInputDto campaign = new CampaignInputDto(campaignName, "label campaign", questionnaireIds, metadata);
+        MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
+        CampaignCreationData campaign = new CampaignCreationData(campaignName, "label campaign", questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -100,7 +100,7 @@ class CampaignTests {
 
         String expressionFilter = "$[?(@.id == '" + campaignName + "')].questionnaireIds[*]";
         mockMvc.perform(get("/api/admin/campaigns")
-                    .with(authentication(adminUser))
+                        .with(authentication(adminUser))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath(expressionFilter).value(containsInAnyOrder(questionnaireIds.toArray())));
@@ -125,8 +125,8 @@ class CampaignTests {
 
     @Test
     void on_create_campaign_when_campaign_already_exist_return_400() throws Exception {
-        MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
-        CampaignInputDto campaign = new CampaignInputDto("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
+        MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
+        CampaignCreationData campaign = new CampaignCreationData("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -138,8 +138,8 @@ class CampaignTests {
 
     @Test
     void on_create_campaign_when_campaign_invalid_identifier_return_400() throws Exception {
-        MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
-        CampaignInputDto campaign = new CampaignInputDto("campaign_1234", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
+        MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
+        CampaignCreationData campaign = new CampaignCreationData("campaign_1234", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -154,8 +154,8 @@ class CampaignTests {
         String campaignName = "CAMPAIGN-TEST";
         Set<String> questionnaireIds = Set.of("Hello", "Plip");
 
-        MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
-        CampaignInputDto campaign = new CampaignInputDto(campaignName, "label campaign", questionnaireIds, metadata);
+        MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
+        CampaignCreationData campaign = new CampaignCreationData(campaignName, "label campaign", questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -197,8 +197,8 @@ class CampaignTests {
 
     @Test
     void on_create_campaign_when_user_not_authorized_return_403() throws Exception {
-        MetadataInputDto metadata = new MetadataInputDto(JsonNodeFactory.instance.objectNode());
-        CampaignInputDto campaign = new CampaignInputDto("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
+        MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
+        CampaignCreationData campaign = new CampaignCreationData("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)

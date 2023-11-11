@@ -1,9 +1,9 @@
 package fr.insee.queen.api.repository;
 
-import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
-import fr.insee.queen.api.service.pilotage.PilotageRepository;
-import fr.insee.queen.api.service.pilotage.PilotageRole;
+import fr.insee.queen.api.pilotage.service.PilotageRole;
+import fr.insee.queen.api.pilotage.service.gateway.PilotageRepository;
+import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +32,7 @@ public class PilotageFakeRepository implements PilotageRepository {
 
     @Override
     public List<LinkedHashMap<String, String>> getCurrentSurveyUnit(String authToken, String campaignId) {
-        if(nullCurrentSurveyUnit) {
+        if (nullCurrentSurveyUnit) {
             return null;
         }
         LinkedHashMap<String, String> map1 = new LinkedHashMap<>();
@@ -48,18 +48,18 @@ public class PilotageFakeRepository implements PilotageRepository {
     }
 
     @Override
-    public List<CampaignSummaryDto> getInterviewerCampaigns(String authToken) {
-        if(nullInterviewerCampaigns) {
+    public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
+        if (nullInterviewerCampaigns) {
             return null;
         }
         return List.of(
-                new CampaignSummaryDto(INTERVIEWER_CAMPAIGN1_ID, List.of("questionnaire-id")),
-                new CampaignSummaryDto("interviewer-campaign2", List.of("questionnaire-id"))
+                new PilotageCampaign(INTERVIEWER_CAMPAIGN1_ID, List.of("questionnaire-id")),
+                new PilotageCampaign("interviewer-campaign2", List.of("questionnaire-id"))
         );
     }
 
     @Override
-    public boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, PilotageRole role, String idep, String authToken) {
+    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken) {
         this.wentThroughHasHabilitation = true;
         return true;
     }

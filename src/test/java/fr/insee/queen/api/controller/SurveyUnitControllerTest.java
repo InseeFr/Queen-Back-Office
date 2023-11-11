@@ -1,13 +1,13 @@
 package fr.insee.queen.api.controller;
 
 import fr.insee.queen.api.controller.dummy.HabilitationFakeComponent;
-import fr.insee.queen.api.controller.surveyunit.SurveyUnitController;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
 import fr.insee.queen.api.service.dummy.PilotageFakeService;
 import fr.insee.queen.api.service.dummy.SurveyUnitFakeService;
-import fr.insee.queen.api.service.exception.EntityNotFoundException;
+import fr.insee.queen.api.surveyunit.controller.SurveyUnitController;
+import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitByCampaignDto;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.dummy.AuthenticationFakeHelper;
+import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class SurveyUnitControllerTest {
     @DisplayName("On retrieving survey units for a campaign, when integration override is true then return all survey units for this campaign")
     void testGetSurveyUnitsCampaign() {
         surveyUnitController = new SurveyUnitController("true", surveyUnitService, pilotageService, habilitationComponent, authenticationHelper);
-        List<SurveyUnitSummaryDto> surveyUnits =  surveyUnitController.getListSurveyUnitByCampaign("campaign-id", authenticatedUser);
+        List<SurveyUnitByCampaignDto> surveyUnits = surveyUnitController.getListSurveyUnitByCampaign("campaign-id", authenticatedUser);
         assertThat(surveyUnits).hasSize(3);
         assertThat(surveyUnits.get(0).id()).isEqualTo(SurveyUnitFakeService.SURVEY_UNIT1_ID);
     }
@@ -50,7 +50,7 @@ class SurveyUnitControllerTest {
     @DisplayName("On retrieving survey units for a campaign, when integration override is false then return survey units from pilotage api")
     void testGetSurveyUnitsCampaign01() {
         surveyUnitController = new SurveyUnitController("false", surveyUnitService, pilotageService, habilitationComponent, authenticationHelper);
-        List<SurveyUnitSummaryDto> surveyUnits =  surveyUnitController.getListSurveyUnitByCampaign("campaign-id", authenticatedUser);
+        List<SurveyUnitByCampaignDto> surveyUnits = surveyUnitController.getListSurveyUnitByCampaign("campaign-id", authenticatedUser);
         assertThat(surveyUnits).hasSize(2);
         assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeService.SURVEY_UNIT1_ID);
     }

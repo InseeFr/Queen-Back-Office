@@ -2,10 +2,10 @@ package fr.insee.queen.api.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.dto.input.SurveyUnitCreateInputDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
-import fr.insee.queen.api.service.exception.EntityNotFoundException;
-import fr.insee.queen.api.service.surveyunit.SurveyUnitApiService;
+import fr.insee.queen.api.surveyunit.service.SurveyUnitApiService;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
+import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,15 +49,17 @@ class SurveyUnitCacheTests {
         String surveyUnitId = "surveyU-unit-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST)).get(surveyUnitId)).isNull();
         surveyUnitService.existsById(surveyUnitId);
-        boolean surveyUnitExist = (boolean) Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST).get(surveyUnitId).get());
+        Boolean surveyUnitExist =  Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST).get(surveyUnitId, Boolean.class));
         assertThat(surveyUnitExist).isFalse();
 
-        SurveyUnitCreateInputDto surveyUnitInput = new SurveyUnitCreateInputDto(surveyUnitId, "LOG2021X11Tel",
-                JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
+        SurveyUnit surveyUnit = new SurveyUnit(surveyUnitId,
+                "LOG2021X11Tel",
+                "LOG2021X11Tel",
+                JsonNodeFactory.instance.arrayNode().toString(),
+                JsonNodeFactory.instance.objectNode().toString(),
+                JsonNodeFactory.instance.objectNode().toString(),
                 null);
-        surveyUnitService.createSurveyUnit("LOG2021X11Tel", surveyUnitInput);
+        surveyUnitService.createSurveyUnit(surveyUnit);
 
         // not retrieving yet so no survey unit in cache
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST)).get(surveyUnitId)).isNull();
@@ -65,7 +67,7 @@ class SurveyUnitCacheTests {
         surveyUnitService.existsById(surveyUnitId);
 
         // now survey unit existence is in cache
-        surveyUnitExist = (boolean) Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST).get(surveyUnitId).get());
+        surveyUnitExist = Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST).get(surveyUnitId, Boolean.class));
         assertThat(surveyUnitExist).isTrue();
 
         surveyUnitService.delete(surveyUnitId);
@@ -79,27 +81,29 @@ class SurveyUnitCacheTests {
 
         // check cache is null at beginning
         assertThatThrownBy(() -> surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId)).isInstanceOf(EntityNotFoundException.class);
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_CAMPAIGN)).get(surveyUnitId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY)).get(surveyUnitId)).isNull();
 
-        SurveyUnitCreateInputDto surveyUnitInput = new SurveyUnitCreateInputDto(surveyUnitId, "LOG2021X11Tel",
-                JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
+        SurveyUnit surveyUnit = new SurveyUnit(surveyUnitId,
+                "LOG2021X11Tel",
+                "LOG2021X11Tel",
+                JsonNodeFactory.instance.arrayNode().toString(),
+                JsonNodeFactory.instance.objectNode().toString(),
+                JsonNodeFactory.instance.objectNode().toString(),
                 null);
-        surveyUnitService.createSurveyUnit("LOG2021X11Tel", surveyUnitInput);
+        surveyUnitService.createSurveyUnit(surveyUnit);
 
         // not retrieving yet so no survey unit in cache
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_CAMPAIGN)).get(surveyUnitId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY)).get(surveyUnitId)).isNull();
 
-        SurveyUnitHabilitationDto expectedSurveyUnit = surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
+        SurveyUnitSummary expectedSurveyUnitSummary = surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
 
         // now survey unit is in cache
-        SurveyUnitHabilitationDto surveyUnit = (SurveyUnitHabilitationDto) Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_CAMPAIGN).get(surveyUnitId).get());
-        assertThat(surveyUnit).isEqualTo(expectedSurveyUnit);
+        SurveyUnitSummary surveyUnitSummary = Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY).get(surveyUnitId, SurveyUnitSummary.class));
+        assertThat(surveyUnitSummary).isEqualTo(expectedSurveyUnitSummary);
 
         surveyUnitService.delete(surveyUnitId);
 
         // after deletion, no survey unit anymore in cache
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_CAMPAIGN)).get(surveyUnitId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY)).get(surveyUnitId)).isNull();
     }
 }

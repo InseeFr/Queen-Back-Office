@@ -54,13 +54,13 @@ class SurveyUnitTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     private final String surveyUnitData = """
-                {
-                    "id":"test-surveyunit",
-                    "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
-                    "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
-                    "questionnaireId":"VQS2021X00"
-                }""";
+            {
+                "id":"test-surveyunit",
+                "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
+                "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
+                "questionnaireId":"VQS2021X00"
+            }""";
 
     // tests on list before tests on create/update
     @Test
@@ -94,6 +94,7 @@ class SurveyUnitTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(14)));
     }
+
     @Test
     @Order(3)
     void on_create_survey_unit_then_survey_unit_is_saved() throws Exception {
@@ -112,13 +113,13 @@ class SurveyUnitTests {
     @Order(4)
     void on_update_survey_unit_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataUpdated = """
-        {
-            "id":"test-surveyunit",
-            "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-            "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED"},
-            "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
-            "questionnaireId":"VQS2021X00"
-        }""";
+                {
+                    "id":"test-surveyunit",
+                    "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED"},
+                    "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
+                    "questionnaireId":"VQS2021X00"
+                }""";
         mockMvc.perform(post("/api/campaign/VQS2021X00/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -134,13 +135,13 @@ class SurveyUnitTests {
     @Order(4)
     void on_update_with_put__survey_unit_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataUpdated = """
-        {
-            "id":"test-surveyunit",
-            "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-            "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED 2"},
-            "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
-            "questionnaireId":"VQS2021X00"
-        }""";
+                {
+                    "id":"test-surveyunit",
+                    "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED 2"},
+                    "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
+                    "questionnaireId":"VQS2021X00"
+                }""";
         mockMvc.perform(put("/api/survey-unit/test-surveyunit")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -342,7 +343,7 @@ class SurveyUnitTests {
                 "/api/survey-unit/11",
                 "/api/survey-unit/11/deposit-proof",
                 "/api/campaign/VQS2021X00/survey-units");
-        for(String getEndPoint : getEdnPoints) {
+        for (String getEndPoint : getEdnPoints) {
             mockMvc.perform(get(getEndPoint)
                             .accept(MediaType.APPLICATION_JSON)
                             .with(authentication(anonymousUser))

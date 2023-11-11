@@ -1,10 +1,9 @@
 package fr.insee.queen.api.service.dummy;
 
-import fr.insee.queen.api.dto.campaign.CampaignSummaryDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitHabilitationDto;
-import fr.insee.queen.api.dto.surveyunit.SurveyUnitSummaryDto;
-import fr.insee.queen.api.service.pilotage.PilotageRole;
-import fr.insee.queen.api.service.pilotage.PilotageService;
+import fr.insee.queen.api.pilotage.service.PilotageRole;
+import fr.insee.queen.api.pilotage.service.PilotageService;
+import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,27 +34,27 @@ public class PilotageFakeService implements PilotageService {
     }
 
     @Override
-    public List<SurveyUnitSummaryDto> getSurveyUnitsByCampaign(String campaignId, String authToken) {
-        if(this.hasEmptySurveyUnits) {
+    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId, String authToken) {
+        if (this.hasEmptySurveyUnits) {
             return new ArrayList<>();
         }
         return List.of(
-                new SurveyUnitSummaryDto(SURVEY_UNIT1_ID, "questionnaire-id"),
-                new SurveyUnitSummaryDto("s2", "questionnaire-id")
+                new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
+                new SurveyUnitSummary("s2", "questionnaire-id", "campaign-id")
         );
     }
 
     @Override
-    public List<CampaignSummaryDto> getInterviewerCampaigns(String authToken) {
+    public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
         wentThroughInterviewerCampaigns = true;
         return List.of(
-                new CampaignSummaryDto(CAMPAIGN1_ID, new ArrayList<>()),
-                new CampaignSummaryDto("interviewerCampaign2", new ArrayList<>())
+                new PilotageCampaign(CAMPAIGN1_ID, new ArrayList<>()),
+                new PilotageCampaign("interviewerCampaign2", new ArrayList<>())
         );
     }
 
     @Override
-    public boolean hasHabilitation(SurveyUnitHabilitationDto surveyUnit, PilotageRole role, String idep, String authToken) {
+    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken) {
         wentThroughHasHabilitation++;
         return this.hasHabilitation;
     }

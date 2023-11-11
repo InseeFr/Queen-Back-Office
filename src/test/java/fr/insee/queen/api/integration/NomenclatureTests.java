@@ -2,10 +2,10 @@ package fr.insee.queen.api.integration;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import fr.insee.queen.api.campaign.controller.dto.input.NomenclatureCreationData;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
-import fr.insee.queen.api.dto.input.NomenclatureInputDto;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -57,6 +57,7 @@ class NomenclatureTests {
             AuthorityRoleEnum.INTERVIEWER);
 
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
+
     @Test
     @Order(1)
     void on_post_nomenclature_json_nomenclature_created() throws Exception {
@@ -64,7 +65,7 @@ class NomenclatureTests {
         String nomenclatureJsonFile = "db/dataset/nomenclature/public_regions-2019.json";
         on_get_nomenclature_when_nomenclature_not_exists_return_404(nomenclatureName);
         ArrayNode jsonNomenclature = JsonTestHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
-        NomenclatureInputDto nomenclature = new NomenclatureInputDto(nomenclatureName, "label", jsonNomenclature);
+        NomenclatureCreationData nomenclature = new NomenclatureCreationData(nomenclatureName, "label", jsonNomenclature);
         mockMvc.perform(post("/api/nomenclature")
                         .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +80,7 @@ class NomenclatureTests {
     @CsvSource(value = {"plop,db/dataset/nomenclature/public_regions-2019.json"})
     @Order(2)
     void on_get_nomenclature_return_json_nomenclature(String nomenclatureName, String nomenclatureJsonFile) throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/nomenclature/"+ nomenclatureName)
+        MvcResult result = mockMvc.perform(get("/api/nomenclature/" + nomenclatureName)
                         .with(authentication(nonAdminUser)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -95,7 +96,7 @@ class NomenclatureTests {
         String nomenclatureJsonFile = "db/dataset/nomenclature/cities_2019_nomenclature.json";
         on_get_nomenclature_return_json_nomenclature(nomenclatureName, "db/dataset/nomenclature/public_regions-2019.json");
         ArrayNode jsonNomenclature = JsonTestHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
-        NomenclatureInputDto nomenclature = new NomenclatureInputDto(nomenclatureName, "label", jsonNomenclature);
+        NomenclatureCreationData nomenclature = new NomenclatureCreationData(nomenclatureName, "label", jsonNomenclature);
         mockMvc.perform(post("/api/nomenclature")
                         .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -120,7 +121,7 @@ class NomenclatureTests {
     @ValueSource(strings = {"sqqghk"})
     void on_get_nomenclature_when_nomenclature_not_exists_return_404(String nomenclatureName) throws Exception {
         mockMvc.perform(get("/api/nomenclature/" + nomenclatureName)
-                .with(authentication(nonAdminUser)))
+                        .with(authentication(nonAdminUser)))
                 .andExpect(status().isNotFound())
                 .andReturn();
     }
@@ -166,7 +167,7 @@ class NomenclatureTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "/api/campaign/1/required-nomenclatures",
+    @ValueSource(strings = {"/api/campaign/1/required-nomenclatures",
             "/api/questionnaire/simpsons/required-nomenclatures",
             "/api/nomenclature/1",
             "/api/nomenclatures"
@@ -180,7 +181,7 @@ class NomenclatureTests {
 
     @Test
     void on_post_nomenclature_when_anonymous_return_401() throws Exception {
-        NomenclatureInputDto nomenclature = new NomenclatureInputDto("nomenclature", "label", JsonNodeFactory.instance.arrayNode());
+        NomenclatureCreationData nomenclature = new NomenclatureCreationData("nomenclature", "label", JsonNodeFactory.instance.arrayNode());
         mockMvc.perform(post("/api/nomenclature")
                         .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -192,7 +193,7 @@ class NomenclatureTests {
 
     @Test
     void on_post_nomenclature_when_non_admin_return_403() throws Exception {
-        NomenclatureInputDto nomenclature = new NomenclatureInputDto("nomenclature", "label", JsonNodeFactory.instance.arrayNode());
+        NomenclatureCreationData nomenclature = new NomenclatureCreationData("nomenclature", "label", JsonNodeFactory.instance.arrayNode());
         mockMvc.perform(post("/api/nomenclature")
                         .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)

@@ -44,23 +44,23 @@ class ParadataTests {
     @Test
     void on_create_paradata_return_created() throws Exception {
         String paradataInput = """
-        {
-            "idSU": "11",
-            "events": [
                 {
-                    "page": "83",
-                        "type": "click",
-                        "idSession": "80c78148-bbja-4909-bc10-j9154dc1198f",
-                        "timestamp": 1694009481932,
-                        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0",
-                        "idSurveyUnit": "CDVO00008",
-                        "idOrchestrator": "orchestrator-collect",
-                        "idQuestionnaire": "simpsons",
-                        "idParadataObject": "next-button-orchestrator-collect",
-                        "typeParadataObject": "orchestrator"
-                }
-            ]
-        }""";
+                    "idSU": "11",
+                    "events": [
+                        {
+                            "page": "83",
+                                "type": "click",
+                                "idSession": "80c78148-bbja-4909-bc10-j9154dc1198f",
+                                "timestamp": 1694009481932,
+                                "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0",
+                                "idSurveyUnit": "CDVO00008",
+                                "idOrchestrator": "orchestrator-collect",
+                                "idQuestionnaire": "simpsons",
+                                "idParadataObject": "next-button-orchestrator-collect",
+                                "typeParadataObject": "orchestrator"
+                        }
+                    ]
+                }""";
         mockMvc.perform(post("/api/paradata")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -74,23 +74,23 @@ class ParadataTests {
     @ValueSource(strings = {"\"idSU\": \"invalid-unit\",", "", "\"idSU\": {},"})
     void on_create_paradata_when_survey_unit_invalid_return_404(String surveyUnitJson) throws Exception {
         String paradataInput = """
-        {
-        """ + surveyUnitJson + """  
-            "events": [
                 {
-                    "page": "83",
-                        "type": "click",
-                        "idSession": "80c78148-bbja-4909-bc10-j9154dc1198f",
-                        "timestamp": 1694009481932,
-                        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0",
-                        "idSurveyUnit": "CDVO00008",
-                        "idOrchestrator": "orchestrator-collect",
-                        "idQuestionnaire": "simpsons",
-                        "idParadataObject": "next-button-orchestrator-collect",
-                        "typeParadataObject": "orchestrator"
-                }
-            ]
-        }""";
+                """ + surveyUnitJson + """  
+                    "events": [
+                        {
+                            "page": "83",
+                                "type": "click",
+                                "idSession": "80c78148-bbja-4909-bc10-j9154dc1198f",
+                                "timestamp": 1694009481932,
+                                "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0",
+                                "idSurveyUnit": "CDVO00008",
+                                "idOrchestrator": "orchestrator-collect",
+                                "idQuestionnaire": "simpsons",
+                                "idParadataObject": "next-button-orchestrator-collect",
+                                "typeParadataObject": "orchestrator"
+                        }
+                    ]
+                }""";
         mockMvc.perform(post("/api/paradata")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,12 +103,12 @@ class ParadataTests {
     @Test
     void on_create_paradata_when_anonymous_user_return_401() throws Exception {
         String paradataInput = """
-        {
-            "idSU": "11",
-            "events": [
-                {}
-            ]
-        }""";
+                {
+                    "idSU": "11",
+                    "events": [
+                        {}
+                    ]
+                }""";
         mockMvc.perform(post("/api/paradata")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,12 +121,12 @@ class ParadataTests {
     @Test
     void on_create_paradata_when_reviewer_user_return_403() throws Exception {
         String paradataInput = """
-        {
-            "idSU": "11",
-            "events": [
-                {}
-            ]
-        }""";
+                {
+                    "idSU": "11",
+                    "events": [
+                        {}
+                    ]
+                }""";
         mockMvc.perform(post("/api/paradata")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,13 +1,11 @@
 package fr.insee.queen.api.controller.integration.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.insee.queen.api.controller.integration.component.IntegrationResultLabel;
-import fr.insee.queen.api.controller.integration.component.SchemaIntegrationComponent;
-import fr.insee.queen.api.controller.integration.component.builder.IntegrationQuestionnaireBuilder;
-import fr.insee.queen.api.dto.integration.IntegrationResultErrorUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultSuccessUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationStatus;
+import fr.insee.queen.api.integration.controller.component.builder.IntegrationQuestionnaireBuilder;
+import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaIntegrationComponent;
+import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.api.integration.service.model.IntegrationResultLabel;
+import fr.insee.queen.api.integration.service.model.IntegrationStatus;
 import fr.insee.queen.api.service.dummy.IntegrationFakeService;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -46,8 +44,8 @@ class QuestionnaireBuilderTest {
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/valid-questionnaires.zip");
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
-        IntegrationResultUnitDto result1 = IntegrationResultSuccessUnitDto.integrationResultUnitCreated(questionnaireId1);
-        IntegrationResultUnitDto result2 = IntegrationResultSuccessUnitDto.integrationResultUnitCreated(questionnaireId2);
+        IntegrationResultUnitDto result1 = IntegrationResultUnitDto.integrationResultUnitCreated(questionnaireId1);
+        IntegrationResultUnitDto result2 = IntegrationResultUnitDto.integrationResultUnitCreated(questionnaireId2);
         assertThat(results)
                 .hasSize(2)
                 .contains(result1)
@@ -63,12 +61,11 @@ class QuestionnaireBuilderTest {
 
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(2);
-        List<IntegrationResultErrorUnitDto> resultErrors = results.stream()
-                .filter(IntegrationResultErrorUnitDto.class::isInstance)
-                .map(IntegrationResultErrorUnitDto.class::cast)
+        List<IntegrationResultUnitDto> resultErrors = results.stream()
+                .filter(result -> result.status().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
-        IntegrationResultErrorUnitDto errorResult = resultErrors.get(0);
+        IntegrationResultUnitDto errorResult = resultErrors.get(0);
         assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.id()).isEqualTo(questionnaireId);
         assertThat(errorResult.cause()).contains("idQuestionnaireModel: The identifier is invalid.");
@@ -83,13 +80,12 @@ class QuestionnaireBuilderTest {
 
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(2);
-        List<IntegrationResultErrorUnitDto> resultErrors = results.stream()
-                .filter(IntegrationResultErrorUnitDto.class::isInstance)
-                .map(IntegrationResultErrorUnitDto.class::cast)
+        List<IntegrationResultUnitDto> resultErrors = results.stream()
+                .filter(result -> result.status().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
         log.error(resultErrors.toString());
-        IntegrationResultErrorUnitDto errorResult = resultErrors.get(0);
+        IntegrationResultUnitDto errorResult = resultErrors.get(0);
         assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.id()).isEqualTo("simpson-v2");
         assertThat(errorResult.cause()).contains(String.format(IntegrationResultLabel.QUESTIONNAIRE_FILE_NOT_FOUND, "simpsons-v2.json"));
@@ -106,7 +102,8 @@ class QuestionnaireBuilderTest {
         IntegrationResultUnitDto questionnaireResult = results.get(0);
         assertThat(questionnaireResult.status()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(questionnaireResult.id()).isNull();
-        assertThat(questionnaireResult.cause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML));    }
+        assertThat(questionnaireResult.cause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML));
+    }
 
     @Test
     @DisplayName("on building questionnaires, when malformed xml questionnaire return integration error")
@@ -132,8 +129,8 @@ class QuestionnaireBuilderTest {
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/invalid-input-questionnaires.zip");
 
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
-        IntegrationResultUnitDto expectedResult1 = new IntegrationResultErrorUnitDto(questionnaireId1, String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, "SIMPSONS2020X00", campaignId));
-        IntegrationResultUnitDto expectedResult2 = new IntegrationResultErrorUnitDto(questionnaireId2, String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, "SIMPSONS2020X00", campaignId));
+        IntegrationResultUnitDto expectedResult1 = IntegrationResultUnitDto.integrationResultUnitError(questionnaireId1, String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, "SIMPSONS2020X00", campaignId));
+        IntegrationResultUnitDto expectedResult2 = IntegrationResultUnitDto.integrationResultUnitError(questionnaireId2, String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, "SIMPSONS2020X00", campaignId));
 
         assertThat(results).hasSize(2);
         assertThat(results).contains(expectedResult1);

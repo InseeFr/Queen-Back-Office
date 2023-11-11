@@ -19,8 +19,10 @@ import org.springframework.security.web.header.writers.XXssProtectionHeaderWrite
 @AllArgsConstructor
 public class NoAuthSecurityConfiguration {
     private final PublicSecurityFilterChain publicSecurityFilterChainConfiguration;
+
     /**
      * Configure spring security filter chain when no authentication
+     *
      * @param http Http Security Object
      * @return the spring security filter
      * @throws Exception exception
@@ -46,6 +48,7 @@ public class NoAuthSecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .build();
     }
+
     @Bean
     @Order(1)
     protected SecurityFilterChain filterPublicUrlsChain(HttpSecurity http, ApplicationProperties applicationProperties) throws Exception {

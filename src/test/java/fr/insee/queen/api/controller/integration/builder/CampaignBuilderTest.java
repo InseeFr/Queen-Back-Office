@@ -1,11 +1,11 @@
 package fr.insee.queen.api.controller.integration.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.insee.queen.api.controller.integration.component.IntegrationResultLabel;
-import fr.insee.queen.api.controller.integration.component.SchemaIntegrationComponent;
-import fr.insee.queen.api.controller.integration.component.builder.IntegrationCampaignBuilder;
-import fr.insee.queen.api.dto.integration.IntegrationResultUnitDto;
-import fr.insee.queen.api.dto.integration.IntegrationStatus;
+import fr.insee.queen.api.integration.controller.component.builder.IntegrationCampaignBuilder;
+import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaIntegrationComponent;
+import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.api.integration.service.model.IntegrationResultLabel;
+import fr.insee.queen.api.integration.service.model.IntegrationStatus;
 import fr.insee.queen.api.service.dummy.IntegrationFakeService;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
