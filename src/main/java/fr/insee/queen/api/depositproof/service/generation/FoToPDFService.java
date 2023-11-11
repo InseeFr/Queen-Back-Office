@@ -15,6 +15,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.UUID;
 
 import static org.apache.xmlgraphics.util.MimeConstants.MIME_PDF;
 
@@ -23,7 +24,7 @@ import static org.apache.xmlgraphics.util.MimeConstants.MIME_PDF;
 public class FoToPDFService {
     public File transformFoToPdf(File foFile) throws IOException {
         log.info("foFile = {}", foFile.getPath());
-        File outFilePDF = File.createTempFile("pdf-file", ".pdf");
+        File outFilePDF = File.createTempFile(UUID.randomUUID().toString(), ".pdf");
         try(FileOutputStream fileOuputStream = new FileOutputStream(outFilePDF);
                 OutputStream out = new BufferedOutputStream(fileOuputStream)) {
             InputStream isXconf = getClass().getResourceAsStream("/pdf/fop.xconf");
