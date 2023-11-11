@@ -11,6 +11,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.UUID;
 
 @Service
@@ -21,7 +22,7 @@ public class GenerateFoService {
     public static final String DATE = "date";
 
     public File generateFo(String date, String campaignLabel, String userId) throws IOException {
-        File outputFile = File.createTempFile(UUID.randomUUID().toString(), ".fo");
+        File outputFile = Files.createTempFile(UUID.randomUUID().toString(), ".fo").toFile();
         log.info(outputFile.getAbsolutePath());
         try (InputStream inputStream = getInputStreamFromPath("/xsl/empty.xml");
              OutputStream outputStream = new FileOutputStream(outputFile);

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipFile;
@@ -39,7 +40,7 @@ public class IntegrationComponent {
      */
     public IntegrationResultsDto integrateContext(MultipartFile integrationFile) {
         try {
-            File zip = File.createTempFile(UUID.randomUUID().toString(), "temp");
+            File zip = Files.createTempFile(UUID.randomUUID().toString(), "temp").toFile();
             return integrateContext(zip, integrationFile);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
