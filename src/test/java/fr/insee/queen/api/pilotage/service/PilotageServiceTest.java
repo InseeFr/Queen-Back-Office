@@ -1,6 +1,6 @@
 package fr.insee.queen.api.pilotage.service;
 
-import fr.insee.queen.api.pilotage.exception.PilotageApiException;
+import fr.insee.queen.api.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
 import fr.insee.queen.api.pilotage.repository.dummy.PilotageFakeRepository;
 import fr.insee.queen.api.campaign.service.dummy.CampaignExistenceFakeService;

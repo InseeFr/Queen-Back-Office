@@ -3,7 +3,7 @@ package fr.insee.queen.api.pilotage.service;
 import fr.insee.queen.api.campaign.service.CampaignExistenceService;
 import fr.insee.queen.api.campaign.service.QuestionnaireModelService;
 import fr.insee.queen.api.configuration.cache.CacheName;
-import fr.insee.queen.api.pilotage.exception.PilotageApiException;
+import fr.insee.queen.api.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.api.pilotage.service.gateway.PilotageRepository;
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;

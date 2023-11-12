@@ -2,7 +2,7 @@ package fr.insee.queen.api.pilotage.controller;
 
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.configuration.properties.AuthEnumProperties;
-import fr.insee.queen.api.pilotage.exception.HabilitationException;
+import fr.insee.queen.api.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.pilotage.service.PilotageService;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;

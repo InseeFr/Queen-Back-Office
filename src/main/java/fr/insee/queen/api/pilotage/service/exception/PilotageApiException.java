@@ -1,4 +1,4 @@
-package fr.insee.queen.api.pilotage.exception;
+package fr.insee.queen.api.pilotage.service.exception;
 
 public class PilotageApiException extends RuntimeException {
     public PilotageApiException() {

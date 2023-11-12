@@ -5,7 +5,7 @@ import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.configuration.properties.AuthEnumProperties;
 import fr.insee.queen.api.pilotage.controller.HabilitationApiComponent;
 import fr.insee.queen.api.pilotage.controller.HabilitationComponent;
-import fr.insee.queen.api.pilotage.exception.HabilitationException;
+import fr.insee.queen.api.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.pilotage.service.dummy.PilotageFakeService;
 import fr.insee.queen.api.surveyunit.service.dummy.SurveyUnitFakeService;

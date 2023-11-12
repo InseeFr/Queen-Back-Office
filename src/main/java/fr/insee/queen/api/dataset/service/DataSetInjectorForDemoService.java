@@ -8,7 +8,7 @@ import fr.insee.queen.api.campaign.service.*;
 import fr.insee.queen.api.campaign.service.model.Campaign;
 import fr.insee.queen.api.campaign.service.model.Nomenclature;
 import fr.insee.queen.api.campaign.service.model.QuestionnaireModel;
-import fr.insee.queen.api.dataset.exception.DataSetException;
+import fr.insee.queen.api.dataset.service.exception.DataSetException;
 import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.paradata.service.ParadataEventService;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;

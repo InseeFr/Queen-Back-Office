@@ -1,4 +1,4 @@
-package fr.insee.queen.api.pilotage.exception;
+package fr.insee.queen.api.pilotage.service.exception;
 
 import java.io.Serial;
 
