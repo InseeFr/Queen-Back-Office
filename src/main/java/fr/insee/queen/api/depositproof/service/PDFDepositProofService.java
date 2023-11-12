@@ -8,26 +8,28 @@ import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.TimeZone;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class PDFDepositProofService implements DepositProofService {
 
     private final GenerateFoService generateFoService;
     private final FoToPDFService foToPDFService;
     private final SurveyUnitService surveyUnitService;
+    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
 
     @Override
     public PdfDepositProof generateDepositProof(String userId, String surveyUnitId) {
@@ -41,8 +43,10 @@ public class PDFDepositProofService implements DepositProofService {
         }
 
         if (Arrays.asList(StateDataType.EXTRACTED, StateDataType.VALIDATED).contains(surveyUnit.stateData().state())) {
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy à HH:mm");
-            date = dateFormat.format(new Date(surveyUnit.stateData().date()));
+            LocalDateTime stateDate =
+                    LocalDateTime.ofInstant(Instant.ofEpochMilli(surveyUnit.stateData().date()),
+                            TimeZone.getDefault().toZoneId());
+            date = dateFormat.format(stateDate);
         }
         String filename = String.format("%s_%s.pdf", campaignId, userId);
 
