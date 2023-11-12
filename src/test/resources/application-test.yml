@@ -54,3 +54,4 @@ server:
 feature:
   enableSwagger: false
   disableCache: true
+  enableDataset: true
