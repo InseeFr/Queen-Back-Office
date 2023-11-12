@@ -11,12 +11,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.util.Arrays;
 
 @Configuration
-@Profile("!test")
+@ConditionalOnProperty(value="feature.enableSwagger", havingValue = "true")
 public class SpringDocConfiguration {
 
     @Bean

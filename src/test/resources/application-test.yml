@@ -51,3 +51,6 @@ server:
     encoding:
       charset: UTF-8
       force: true
+feature:
+  enableSwagger: false
+  disableCache: true

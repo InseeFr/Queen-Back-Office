@@ -115,4 +115,6 @@ logging:
   logback:
     rollingpolicy:
       max-history: 90
-  
+
+feature:
+  enableSwagger: true
