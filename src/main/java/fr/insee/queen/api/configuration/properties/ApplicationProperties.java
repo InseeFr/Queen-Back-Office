@@ -18,6 +18,8 @@ public record ApplicationProperties(
         String[] publicUrls,
         @NotEmpty(message = "cors origins must be specified")
         List<String> corsOrigins,
+        @NotEmpty(message = "Folder where temp files will be created cannot be empty.")
+        String tempFolder,
         @NotNull(message = "application.auth must be specified (KEYCLOAK or NOAUTH)")
         AuthEnumProperties auth) {
 

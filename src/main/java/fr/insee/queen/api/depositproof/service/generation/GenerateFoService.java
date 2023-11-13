@@ -1,6 +1,8 @@
 package fr.insee.queen.api.depositproof.service.generation;
 
+import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.depositproof.service.exception.DepositProofException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.springframework.stereotype.Service;
@@ -12,17 +14,21 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class GenerateFoService {
     public static final String UNITE = "unite";
     public static final String TITRE = "campaignLabel";
     public static final String DATE = "date";
+    private final ApplicationProperties applicationProperties;
 
     public File generateFo(String date, String campaignLabel, String userId) throws IOException {
-        File outputFile = Files.createTempFile(UUID.randomUUID().toString(), ".fo").toFile();
+        Path tempDirectoryPath = Path.of(applicationProperties.tempFolder());
+        File outputFile = Files.createTempFile(tempDirectoryPath, UUID.randomUUID().toString(), ".fo").toFile();
         log.info(outputFile.getAbsolutePath());
         try (InputStream inputStream = getInputStreamFromPath("/xsl/empty.xml");
              OutputStream outputStream = new FileOutputStream(outputFile);

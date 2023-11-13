@@ -32,7 +32,7 @@ class HabilitationComponentTest {
         pilotageService = new PilotageFakeService();
         authHelper = new AuthenticationFakeHelper();
         surveyUnitService = new SurveyUnitFakeService();
-        applicationProperties = new ApplicationProperties(null, null, null, null, null, AuthEnumProperties.KEYCLOAK);
+        applicationProperties = new ApplicationProperties(null, null, null, null, null, null, AuthEnumProperties.KEYCLOAK);
     }
 
     @Test
@@ -47,7 +47,7 @@ class HabilitationComponentTest {
     @DisplayName("On check habilitations when NOAUTH mode do not check pilotage api")
     void testCheckHabilitations02() {
         Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
-        applicationProperties = new ApplicationProperties(null, null, null, null, null, AuthEnumProperties.NOAUTH);
+        applicationProperties = new ApplicationProperties(null, null, null, null, null, null, AuthEnumProperties.NOAUTH);
         habilitationComponent = new HabilitationApiComponent(pilotageService, applicationProperties, authHelper, surveyUnitService, "false");
         habilitationComponent.checkHabilitations(authenticatedUser, "11", PilotageRole.INTERVIEWER);
         assertThat(pilotageService.wentThroughHasHabilitation()).isZero();

@@ -1,5 +1,7 @@
 package fr.insee.queen.api.integration.controller;
 
+import fr.insee.queen.api.configuration.properties.ApplicationProperties;
+import fr.insee.queen.api.configuration.properties.AuthEnumProperties;
 import fr.insee.queen.api.integration.controller.builder.dummy.CampaignFakeBuilder;
 import fr.insee.queen.api.integration.controller.builder.dummy.NomenclatureFakeBuilder;
 import fr.insee.queen.api.integration.controller.builder.dummy.QuestionnaireFakeBuilder;
@@ -33,7 +35,8 @@ class IntegrationComponentTest {
         questionnaireBuilder = new QuestionnaireFakeBuilder();
         nomenclatureBuilder = new NomenclatureFakeBuilder();
         campaignBuilder = new CampaignFakeBuilder();
-        integrationComponent = new IntegrationComponent(nomenclatureBuilder, campaignBuilder, questionnaireBuilder);
+        ApplicationProperties applicationProperties = new ApplicationProperties(null, null, null, null, null, "/temp", AuthEnumProperties.NOAUTH);
+        integrationComponent = new IntegrationComponent(nomenclatureBuilder, campaignBuilder, questionnaireBuilder, applicationProperties);
     }
 
     @Test

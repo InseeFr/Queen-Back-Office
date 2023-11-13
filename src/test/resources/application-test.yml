@@ -24,6 +24,7 @@ application:
     contexts: test
     defaultSchema: public
     change-log: classpath:db/master.xml
+  temp-folder: ${java.io.tmpdir}
 logging:
   level:
     root: INFO

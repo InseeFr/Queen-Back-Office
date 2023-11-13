@@ -1,6 +1,8 @@
 package fr.insee.queen.api.depositproof.service.generation;
 
+import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.depositproof.service.exception.DepositProofException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -21,11 +23,15 @@ import java.util.UUID;
 import static org.apache.xmlgraphics.util.MimeConstants.MIME_PDF;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class FoToPDFService {
+    private final ApplicationProperties applicationProperties;
+
     public File transformFoToPdf(File foFile) throws IOException {
         log.info("foFile = {}", foFile.getPath());
-        File outFilePDF = Files.createTempFile(UUID.randomUUID().toString(), ".pdf").toFile();
+        Path tempDirectoryPath = Path.of(applicationProperties.tempFolder());
+        File outFilePDF = Files.createTempFile(tempDirectoryPath, UUID.randomUUID().toString(), ".pdf").toFile();
         try(FileOutputStream fileOuputStream = new FileOutputStream(outFilePDF);
                 OutputStream out = new BufferedOutputStream(fileOuputStream)) {
             InputStream isXconf = getClass().getResourceAsStream("/pdf/fop.xconf");
