@@ -24,6 +24,7 @@ application:
     contexts: test
     defaultSchema: public
     change-log: classpath:db/master.xml
+  temp-folder: ${java.io.tmpdir}
 logging:
   level:
     root: INFO
@@ -51,3 +52,7 @@ server:
     encoding:
       charset: UTF-8
       force: true
+feature:
+  enableSwagger: false
+  disableCache: true
+  enableDataset: true

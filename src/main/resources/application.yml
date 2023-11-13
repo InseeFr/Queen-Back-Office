@@ -28,7 +28,10 @@ application:
   #    # other claim to read roles from in token
   #    additional-realm:
   corsOrigins:
-
+  # Folder where to store temp files.
+  # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
+  # Use a folder with permissions for the app only
+  temp-folder:
   # Pearljam-bo url
   pilotage:
     service:
@@ -115,4 +118,6 @@ logging:
   logback:
     rollingpolicy:
       max-history: 90
-  
+
+feature:
+  enableSwagger: true

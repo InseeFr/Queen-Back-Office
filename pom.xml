@@ -345,7 +345,7 @@
 							{argLine} to not disturb jacoco coverage generation
 							encoding to force windows components to test with proper encoding
 						-->
-						<argLine>${argLine} -Dfile.encoding=UTF-8</argLine>
+						<argLine>-Dfile.encoding=UTF-8</argLine>
 					</configuration>
 				</plugin>
 			</plugins>

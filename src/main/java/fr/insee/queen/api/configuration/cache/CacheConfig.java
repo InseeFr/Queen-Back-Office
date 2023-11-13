@@ -85,7 +85,7 @@ public class CacheConfig {
 
     @Bean
     protected CaffeineCache surveyUnitCampaignCache() {
-        return new CaffeineCache(CacheName.SURVEY_UNIT_CAMPAIGN,
+        return new CaffeineCache(CacheName.SURVEY_UNIT_SUMMARY,
                 Caffeine.newBuilder()
                         .initialCapacity(2000)
                         .maximumSize(20000)

@@ -15,6 +15,7 @@ public class PublicSecurityFilterChain {
     SecurityFilterChain buildSecurityPublicFilterChain(HttpSecurity http, String[] publicUrls) throws Exception {
         return buildSecurityPublicFilterChain(http, publicUrls, "");
     }
+
     SecurityFilterChain buildSecurityPublicFilterChain(HttpSecurity http, String[] publicUrls, String authorizedConnectionHost) throws Exception {
         return http
                 .securityMatcher(publicUrls)

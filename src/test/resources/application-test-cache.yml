@@ -1,4 +1,2 @@
-application:
-  config:
-    test:
-      enable-cache: true
+feature:
+  disableCache: false

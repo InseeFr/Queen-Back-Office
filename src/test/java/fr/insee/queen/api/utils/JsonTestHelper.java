@@ -15,6 +15,7 @@ public class JsonTestHelper {
     public JsonTestHelper() {
         throw new IllegalArgumentException("Utility class");
     }
+
     /**
      * Reads given resource file as a string.
      *

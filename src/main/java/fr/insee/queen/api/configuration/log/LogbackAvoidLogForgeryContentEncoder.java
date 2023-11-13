@@ -10,7 +10,7 @@ public class LogbackAvoidLogForgeryContentEncoder extends MessageConverter {
         String content = super.convert(event);
         return StringEscapeUtils.escapeHtml4(
                 content
-                    .replace('\n', '_')
-                    .replace('\r', '_'));
+                        .replace('\n', '_')
+                        .replace('\r', '_'));
     }
 }
