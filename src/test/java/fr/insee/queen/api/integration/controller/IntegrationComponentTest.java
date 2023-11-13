@@ -35,7 +35,7 @@ class IntegrationComponentTest {
         questionnaireBuilder = new QuestionnaireFakeBuilder();
         nomenclatureBuilder = new NomenclatureFakeBuilder();
         campaignBuilder = new CampaignFakeBuilder();
-        ApplicationProperties applicationProperties = new ApplicationProperties(null, null, null, null, null, "/temp", AuthEnumProperties.NOAUTH);
+        ApplicationProperties applicationProperties = new ApplicationProperties(null, null, null, null, null, System.getProperty("java.io.tmpdir"), AuthEnumProperties.NOAUTH);
         integrationComponent = new IntegrationComponent(nomenclatureBuilder, campaignBuilder, questionnaireBuilder, applicationProperties);
     }
 
