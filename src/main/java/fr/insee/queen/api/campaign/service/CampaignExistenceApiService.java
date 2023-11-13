@@ -1,8 +1,8 @@
 package fr.insee.queen.api.campaign.service;
 
-import fr.insee.queen.api.campaign.service.exception.CampaignServiceException;
 import fr.insee.queen.api.campaign.service.gateway.CampaignRepository;
 import fr.insee.queen.api.configuration.cache.CacheName;
+import fr.insee.queen.api.web.exception.EntityAlreadyExistException;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.CacheManager;
@@ -26,7 +26,7 @@ public class CampaignExistenceApiService implements CampaignExistenceService {
     @Override
     public void throwExceptionIfCampaignAlreadyExist(String campaignId) {
         if (existsById(campaignId)) {
-            throw new CampaignServiceException(String.format("Campaign %s already exist", campaignId));
+            throw new EntityAlreadyExistException(String.format("Campaign %s already exist", campaignId));
         }
     }
 

@@ -1,7 +1,7 @@
 package fr.insee.queen.api.campaign.service;
 
-import fr.insee.queen.api.campaign.service.exception.QuestionnaireModelServiceException;
 import fr.insee.queen.api.campaign.service.gateway.QuestionnaireModelRepository;
+import fr.insee.queen.api.web.exception.EntityAlreadyExistException;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class QuestionnaireModelApiExistenceService implements QuestionnaireModel
 
     public void throwExceptionIfQuestionnaireAlreadyExist(String questionnaireId) {
         if (existsById(questionnaireId)) {
-            throw new QuestionnaireModelServiceException(String.format("Questionnaire model %s already exist", questionnaireId));
+            throw new EntityAlreadyExistException(String.format("Questionnaire model %s already exist", questionnaireId));
         }
     }
 }

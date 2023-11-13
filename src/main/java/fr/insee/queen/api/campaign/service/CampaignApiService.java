@@ -1,6 +1,6 @@
 package fr.insee.queen.api.campaign.service;
 
-import fr.insee.queen.api.campaign.service.exception.CampaignServiceException;
+import fr.insee.queen.api.campaign.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.api.campaign.service.gateway.CampaignRepository;
 import fr.insee.queen.api.campaign.service.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.api.campaign.service.model.Campaign;
@@ -85,7 +85,7 @@ public class CampaignApiService implements CampaignService {
     private void throwExceptionIfInvalidQuestionnairesBeforeSave(String campaignId, Set<String> questionnaireIds) {
         Long nbValidQuestionnaires = questionnaireModelRepository.countValidQuestionnaires(campaignId, questionnaireIds);
         if (questionnaireIds.size() != nbValidQuestionnaires) {
-            throw new CampaignServiceException(
+            throw new QuestionnaireInvalidException(
                     String.format("One or more questionnaires do not exist for campaign %s or are already associated with another campaign. Creation aborted.", campaignId));
         }
     }

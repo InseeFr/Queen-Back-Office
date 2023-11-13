@@ -1,6 +1,6 @@
 package fr.insee.queen.api.campaign.service;
 
-import fr.insee.queen.api.campaign.service.exception.QuestionnaireModelServiceException;
+import fr.insee.queen.api.campaign.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.api.campaign.service.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.api.campaign.service.model.QuestionnaireModel;
 import fr.insee.queen.api.configuration.cache.CacheName;
@@ -40,7 +40,7 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
         questionnaireModelExistenceService.throwExceptionIfQuestionnaireAlreadyExist(questionnaire.id());
 
         if (!nomenclatureService.areNomenclaturesValid(questionnaire.requiredNomenclatureIds())) {
-            throw new QuestionnaireModelServiceException(String.format("Cannot create questionnaire model %s as some nomenclatures do not exist",
+            throw new QuestionnaireInvalidException(String.format("Cannot create questionnaire model %s as some nomenclatures do not exist",
                     questionnaire.id()));
         }
 
@@ -58,7 +58,7 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
         questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(questionnaire.id());
 
         if (!nomenclatureService.areNomenclaturesValid(questionnaire.requiredNomenclatureIds())) {
-            throw new QuestionnaireModelServiceException(String.format("Cannot update questionnaire model %s as some nomenclatures do not exist",
+            throw new QuestionnaireInvalidException(String.format("Cannot update questionnaire model %s as some nomenclatures do not exist",
                     questionnaire.id()));
         }
         questionnaireModelRepository.update(questionnaire);

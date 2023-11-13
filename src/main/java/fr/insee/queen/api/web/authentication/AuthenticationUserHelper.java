@@ -2,7 +2,6 @@ package fr.insee.queen.api.web.authentication;
 
 import fr.insee.queen.api.configuration.auth.AuthConstants;
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
-import fr.insee.queen.api.web.exception.AuthenticationTokenException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
