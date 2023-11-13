@@ -20,6 +20,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -68,6 +69,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public void noHandlerFoundException(NoHandlerFoundException e, WebRequest request) {
         log.error(e.getMessage(), e);
@@ -75,12 +77,14 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public void accessDeniedException(AccessDeniedException e, WebRequest request) {
         log.error(e.getMessage(), e);
         processException(e, HttpStatus.FORBIDDEN, request);
     }
 
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public void handleMethodArgumentNotValid(
@@ -90,6 +94,7 @@ public class ExceptionControllerAdvice {
         processException(e, HttpStatus.BAD_REQUEST, request, "Invalid parameters");
     }
 
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
     public void handleConstraintViolation(
@@ -100,6 +105,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
     public void handleHttpMessageNotReadableException(
             HttpMessageNotReadableException e, WebRequest request) {
@@ -120,6 +126,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public void noEntityFoundException(EntityNotFoundException e, WebRequest request) {
         log.error(e.getMessage(), e);
@@ -127,6 +134,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(AuthenticationTokenException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public void authenticationTokenExceptionException(AuthenticationTokenException e, WebRequest request) {
         log.error(e.getMessage(), e);
@@ -134,6 +142,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(HabilitationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public void habilitationException(HabilitationException e, WebRequest request) {
         log.error(e.getMessage(), e);
@@ -141,6 +150,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(QuestionnaireInvalidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public void questionnaireInvalidException(QuestionnaireInvalidException e, WebRequest request) {
         log.error(e.getMessage(), e);
@@ -148,6 +158,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(CampaignDeletionException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ResponseBody
     public void campaignDeletionException(CampaignDeletionException e, WebRequest request) {
         log.error(e.getMessage(), e);
@@ -155,6 +166,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(EntityAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public void entityAlreadyExistException(EntityAlreadyExistException e, WebRequest request) {
         log.error(e.getMessage(), e);
@@ -162,6 +174,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(IntegrationComponentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public void integrationComponentException(IntegrationComponentException e, WebRequest request) {
         log.error(e.getMessage(), e);
@@ -169,12 +182,14 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(PilotageApiException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public void pilotageApiException(PilotageApiException e, WebRequest request) {
         processException(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(DepositProofException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public void depositProofException(DepositProofException e, WebRequest request) {
         processException(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
@@ -188,6 +203,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public void exceptions(Exception e, WebRequest request) {
         log.error(e.getMessage(), e);
