@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service;
 public class DataApiService implements DataService {
     private final SurveyUnitRepository surveyUnitRepository;
 
+    @Override
     public String getData(String surveyUnitId) {
         return surveyUnitRepository
                 .findData(surveyUnitId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Data not found for survey unit %s", surveyUnitId)));
     }
 
+    @Override
     public void updateData(String surveyUnitId, JsonNode dataValue) {
         surveyUnitRepository.updateData(surveyUnitId, dataValue.toString());
     }

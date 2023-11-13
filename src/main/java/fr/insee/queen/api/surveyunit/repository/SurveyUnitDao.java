@@ -41,34 +41,42 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
 
+    @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
         return crudRepository.findSummaryById(surveyUnitId);
     }
 
+    @Override
     public List<SurveyUnitSummary> findAllSummaryByCampaignId(String campaignId) {
         return crudRepository.findAllSummaryByCampaignId(campaignId);
     }
 
+    @Override
     public List<SurveyUnitSummary> findAllSummaryByIdIn(List<String> surveyUnitIds) {
         return crudRepository.findAllSummaryByIdIn(surveyUnitIds);
     }
 
+    @Override
     public Optional<SurveyUnit> find(String surveyUnitId) {
         return crudRepository.findOneById(surveyUnitId);
     }
 
+    @Override
     public Optional<SurveyUnitDepositProof> findWithCampaignAndStateById(String surveyUnitId) {
         return crudRepository.findWithCampaignAndStateById(surveyUnitId);
     }
 
+    @Override
     public Optional<List<String>> findAllIds() {
         return crudRepository.findAllIds();
     }
 
+    @Override
     public List<SurveyUnitState> findAllWithStateByIdIn(List<String> surveyUnitIds) {
         return crudRepository.findAllWithStateByIdIn(surveyUnitIds);
     }
 
+    @Override
     public void deleteSurveyUnits(String campaignId) {
         dataRepository.deleteDatas(campaignId);
         stateDataDao.deleteStateDatas(campaignId);
@@ -78,6 +86,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         crudRepository.deleteSurveyUnits(campaignId);
     }
 
+    @Override
     public void delete(String surveyUnitId) {
         dataRepository.deleteBySurveyUnitId(surveyUnitId);
         stateDataDao.deleteBySurveyUnitId(surveyUnitId);
@@ -87,6 +96,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         crudRepository.deleteById(surveyUnitId);
     }
 
+    @Override
     public void create(SurveyUnit surveyUnit) {
         CampaignDB campaign = campaignRepository.getReferenceById(surveyUnit.campaignId());
         QuestionnaireModelDB questionnaire = questionnaireModelRepository.getReferenceById(surveyUnit.questionnaireId());
@@ -110,6 +120,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         crudRepository.save(surveyUnitDB);
     }
 
+    @Override
     public void updatePersonalization(String surveyUnitId, String personalization) {
         if (personalization == null) {
             return;
@@ -123,6 +134,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         }
     }
 
+    @Override
     public void updateComment(String surveyUnitId, String comment) {
         if (comment == null) {
             return;
@@ -136,6 +148,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         }
     }
 
+    @Override
     public void updateData(String surveyUnitId, String data) {
         if (data == null) {
             return;
@@ -149,18 +162,22 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         }
     }
 
+    @Override
     public Optional<String> findComment(String surveyUnitId) {
         return commentRepository.findComment(surveyUnitId);
     }
 
+    @Override
     public Optional<String> findData(String surveyUnitId) {
         return dataRepository.findData(surveyUnitId);
     }
 
+    @Override
     public Optional<String> findPersonalization(String surveyUnitId) {
         return personalizationRepository.findPersonalization(surveyUnitId);
     }
 
+    @Override
     public boolean exists(String surveyUnitId) {
         return crudRepository.existsById(surveyUnitId);
     }

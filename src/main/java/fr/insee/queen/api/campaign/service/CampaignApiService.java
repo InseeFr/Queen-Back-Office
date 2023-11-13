@@ -40,7 +40,8 @@ public class CampaignApiService implements CampaignService {
     public void delete(String campaignId) {
         surveyUnitRepository.deleteSurveyUnits(campaignId);
 
-        CampaignSummary campaignSummary = campaignRepository.findWithQuestionnaireIds(campaignId)
+        CampaignSummary campaignSummary = campaignRepository.
+                findWithQuestionnaireIds(campaignId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaignId)));
 
         Set<String> questionnaireIds = campaignSummary.questionnaireIds();

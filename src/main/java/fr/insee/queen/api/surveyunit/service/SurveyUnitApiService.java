@@ -45,6 +45,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
         return isSurveyUnitPresent;
     }
 
+    @Override
     public void throwExceptionIfSurveyUnitNotExist(String surveyUnitId) {
         if (!existsById(surveyUnitId)) {
             throw new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, surveyUnitId));
@@ -111,6 +112,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
         return surveyUnitRepository.findAllWithStateByIdIn(surveyUnits);
     }
 
+    @Override
     @Transactional
     @Caching(evict = {
             @CacheEvict(CacheName.SURVEY_UNIT_EXIST),

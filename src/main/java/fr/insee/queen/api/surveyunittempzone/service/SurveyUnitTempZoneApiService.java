@@ -17,12 +17,14 @@ import java.util.UUID;
 public class SurveyUnitTempZoneApiService implements SurveyUnitTempZoneService {
     private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 
+    @Override
     public void saveSurveyUnitToTempZone(String surveyUnitId, String userId, JsonNode surveyUnit) {
         Long date = new Date().getTime();
         UUID id = UUID.randomUUID();
         surveyUnitTempZoneRepository.save(id, surveyUnitId, userId, date, surveyUnit.toString());
     }
 
+    @Override
     public List<SurveyUnitTempZone> getAllSurveyUnitTempZone() {
         return surveyUnitTempZoneRepository.getAllSurveyUnits();
     }

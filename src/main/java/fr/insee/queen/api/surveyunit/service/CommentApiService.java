@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 public class CommentApiService implements CommentService {
     private final SurveyUnitRepository surveyUnitRepository;
 
+    @Override
     public String getComment(String surveyUnitId) {
         return surveyUnitRepository
                 .findComment(surveyUnitId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Comment not found for survey unit %s", surveyUnitId)));
     }
 
+    @Override
     public void updateComment(String surveyUnitId, JsonNode commentValue) {
         surveyUnitRepository.updateComment(surveyUnitId, commentValue.toString());
     }

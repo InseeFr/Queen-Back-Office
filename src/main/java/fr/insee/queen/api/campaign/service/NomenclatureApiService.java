@@ -21,16 +21,19 @@ public class NomenclatureApiService implements NomenclatureService {
     private final CampaignExistenceService campaignExistenceService;
     private final QuestionnaireModelExistenceService questionnaireModelExistenceService;
 
+    @Override
     @Cacheable(CacheName.NOMENCLATURE)
     public Nomenclature getNomenclature(String id) {
         return nomenclatureRepository.find(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Nomenclature %s was not found", id)));
     }
 
+    @Override
     public boolean existsById(String id) {
         return nomenclatureRepository.exists(id);
     }
 
+    @Override
     public boolean areNomenclaturesValid(Set<String> nomenclatureIds) {
         if (nomenclatureIds.isEmpty()) {
             return true;
@@ -38,6 +41,7 @@ public class NomenclatureApiService implements NomenclatureService {
         return nomenclatureIds.stream().allMatch(nomenclatureRepository::exists);
     }
 
+    @Override
     @CacheEvict(value = CacheName.NOMENCLATURE, key = "#nomenclature.id")
     public void saveNomenclature(Nomenclature nomenclature) {
         if (nomenclatureRepository.exists(nomenclature.id())) {
@@ -50,16 +54,19 @@ public class NomenclatureApiService implements NomenclatureService {
         nomenclatureRepository.create(nomenclature);
     }
 
+    @Override
     public List<String> getAllNomenclatureIds() {
         return nomenclatureRepository.findAllIds()
                 .orElseThrow(() -> new EntityNotFoundException("No nomenclatures found"));
     }
 
+    @Override
     public List<String> findRequiredNomenclatureByCampaign(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         return nomenclatureRepository.findRequiredNomenclatureByCampaignId(campaignId);
     }
 
+    @Override
     @Cacheable(CacheName.QUESTIONNAIRE_NOMENCLATURES)
     public List<String> findRequiredNomenclatureByQuestionnaire(String questionnaireId) {
         questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(questionnaireId);

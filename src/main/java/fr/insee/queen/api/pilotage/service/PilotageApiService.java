@@ -26,11 +26,13 @@ public class PilotageApiService implements PilotageService {
     private final QuestionnaireModelService questionnaireModelService;
     public static final String CAMPAIGN = "campaign";
 
+    @Override
     public boolean isClosed(String campaignId, String authToken) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         return pilotageRepository.isClosed(campaignId, authToken);
     }
 
+    @Override
     public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId, String authToken) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         Map<String, SurveyUnitSummary> surveyUnitMap = new HashMap<>();
@@ -70,6 +72,7 @@ public class PilotageApiService implements PilotageService {
 
     }
 
+    @Override
     public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
         List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns(authToken);
         if (campaigns == null) {
@@ -81,6 +84,7 @@ public class PilotageApiService implements PilotageService {
         return campaigns;
     }
 
+    @Override
     @Cacheable(value = CacheName.HABILITATION, key = "{#surveyUnit.id, #surveyUnit.campaignId, #role, #idep}")
     public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken) {
         return pilotageRepository.hasHabilitation(surveyUnit, role, idep, authToken);

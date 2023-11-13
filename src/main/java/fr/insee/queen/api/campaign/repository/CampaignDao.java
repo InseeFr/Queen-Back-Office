@@ -26,6 +26,7 @@ public class CampaignDao implements CampaignRepository {
     private final CampaignJpaRepository jpaRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelJpaRepository;
 
+    @Override
     @Transactional
     public void create(Campaign campaign) {
         Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.questionnaireIds());
@@ -41,10 +42,12 @@ public class CampaignDao implements CampaignRepository {
         jpaRepository.save(campaignDB);
     }
 
+    @Override
     public boolean exists(String campaignId) {
         return jpaRepository.existsById(campaignId);
     }
 
+    @Override
     public List<CampaignSummary> getAllWithQuestionnaireIds() {
         return jpaRepository.findAllWithQuestionnaireModels().stream()
                 .map(campaign -> new CampaignSummary(
@@ -58,10 +61,12 @@ public class CampaignDao implements CampaignRepository {
                 .toList();
     }
 
+    @Override
     public void delete(String campaignId) {
         jpaRepository.deleteById(campaignId);
     }
 
+    @Override
     public Optional<CampaignSummary> findWithQuestionnaireIds(String campaignId) {
         Optional<CampaignDB> campaignOpt = jpaRepository.findWithQuestionnaireModels(campaignId);
         if (campaignOpt.isEmpty()) {
@@ -78,6 +83,7 @@ public class CampaignDao implements CampaignRepository {
         );
     }
 
+    @Override
     public void update(Campaign campaign) {
         CampaignDB campaignDB = jpaRepository.findById(campaign.id())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaign.id())));
@@ -97,10 +103,12 @@ public class CampaignDao implements CampaignRepository {
         jpaRepository.save(campaignDB);
     }
 
+    @Override
     public Optional<String> findMetadataByCampaignId(String campaignId) {
         return jpaRepository.findMetadataByCampaignId(campaignId);
     }
 
+    @Override
     public Optional<String> findMetadataByQuestionnaireId(String questionnaireId) {
         return jpaRepository.findMetadataByQuestionnaireId(questionnaireId);
     }

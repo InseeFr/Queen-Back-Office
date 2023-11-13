@@ -13,11 +13,13 @@ public class MetadataApiService implements MetadataService {
 
     private final CampaignRepository campaignRepository;
 
+    @Override
     public String getMetadata(String campaignId) {
         return campaignRepository.findMetadataByCampaignId(campaignId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for campaign %s was not found", campaignId)));
     }
 
+    @Override
     @Cacheable(CacheName.QUESTIONNAIRE_METADATA)
     public String getMetadataByQuestionnaireId(String questionnaireId) {
         return campaignRepository.findMetadataByQuestionnaireId(questionnaireId)

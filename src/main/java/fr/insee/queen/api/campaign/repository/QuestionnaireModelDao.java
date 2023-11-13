@@ -20,23 +20,25 @@ import java.util.Set;
 @AllArgsConstructor
 public class QuestionnaireModelDao implements QuestionnaireModelRepository {
     private final QuestionnaireModelJpaRepository jpaRepository;
-
     private final CampaignJpaRepository campaignJpaRepository;
-
     private final NomenclatureJpaRepository nomenclatureRepository;
 
+    @Override
     public List<String> findAllIds(String campaignId) {
         return jpaRepository.findAllIdByCampaignId(campaignId);
     }
 
+    @Override
     public Optional<String> findQuestionnaireData(String questionnaireId) {
         return jpaRepository.findQuestionnaireValue(questionnaireId);
     }
 
+    @Override
     public boolean exists(String questionnaireId) {
         return jpaRepository.existsById(questionnaireId);
     }
 
+    @Override
     @Transactional
     public void create(QuestionnaireModel questionnaireData) {
         Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.requiredNomenclatureIds());
@@ -48,6 +50,7 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
         jpaRepository.save(questionnaire);
     }
 
+    @Override
     public void update(QuestionnaireModel questionnaireData) {
         QuestionnaireModelDB questionnaire = jpaRepository.getReferenceById(questionnaireData.id());
         Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.requiredNomenclatureIds());
@@ -60,14 +63,17 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
         jpaRepository.save(questionnaire);
     }
 
+    @Override
     public Long countValidQuestionnaires(String campaignId, Set<String> questionnaireIds) {
         return jpaRepository.countValidQuestionnairesByIds(campaignId, questionnaireIds);
     }
 
+    @Override
     public void deleteAllFromCampaign(String campaignId) {
         jpaRepository.deleteAllByCampaignId(campaignId);
     }
 
+    @Override
     public List<String> findAllQuestionnaireValues(String campaignId) {
         return jpaRepository.findAllValueByCampaignId(campaignId);
     }

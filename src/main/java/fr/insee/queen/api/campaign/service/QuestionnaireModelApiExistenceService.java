@@ -15,12 +15,14 @@ public class QuestionnaireModelApiExistenceService implements QuestionnaireModel
         return questionnaireModelRepository.exists(questionnaireId);
     }
 
+    @Override
     public void throwExceptionIfQuestionnaireNotExist(String questionnaireId) {
         if (!existsById(questionnaireId)) {
             throw new EntityNotFoundException(String.format("Questionnaire model %s was not found", questionnaireId));
         }
     }
 
+    @Override
     public void throwExceptionIfQuestionnaireAlreadyExist(String questionnaireId) {
         if (existsById(questionnaireId)) {
             throw new EntityAlreadyExistException(String.format("Questionnaire model %s already exist", questionnaireId));

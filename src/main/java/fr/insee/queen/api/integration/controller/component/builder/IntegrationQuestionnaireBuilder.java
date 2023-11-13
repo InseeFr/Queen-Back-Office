@@ -49,6 +49,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
     private static final String NOMENCLATURE = "Nomenclature";
     public static final String QUESTIONNAIRE_MODELS_XML = "questionnaireModels.xml";
 
+    @Override
     public List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile) {
         try {
             schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, QUESTIONNAIRE_MODELS_XML, "questionnaireModels_integration_template.xsd");

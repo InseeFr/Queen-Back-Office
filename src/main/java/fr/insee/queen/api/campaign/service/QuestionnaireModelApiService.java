@@ -23,11 +23,13 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
     private final QuestionnaireModelRepository questionnaireModelRepository;
     private final NomenclatureService nomenclatureService;
 
+    @Override
     public List<String> getQuestionnaireIds(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         return questionnaireModelRepository.findAllIds(campaignId);
     }
 
+    @Override
     @Cacheable(CacheName.QUESTIONNAIRE)
     public String getQuestionnaireData(String id) {
         return questionnaireModelRepository
@@ -35,6 +37,7 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Questionnaire data %s was not found", id)));
     }
 
+    @Override
     @Transactional
     public void createQuestionnaire(QuestionnaireModel questionnaire) {
         questionnaireModelExistenceService.throwExceptionIfQuestionnaireAlreadyExist(questionnaire.id());
@@ -47,6 +50,7 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
         questionnaireModelRepository.create(questionnaire);
     }
 
+    @Override
     @Caching(evict = {
             @CacheEvict(value = CacheName.QUESTIONNAIRE_NOMENCLATURES, key = "#questionnaire.id"),
             @CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, key = "#questionnaire.id"),
@@ -64,6 +68,7 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
         questionnaireModelRepository.update(questionnaire);
     }
 
+    @Override
     public List<String> getQuestionnaireDatas(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         return questionnaireModelRepository.findAllQuestionnaireValues(campaignId).stream()

@@ -28,6 +28,7 @@ public class StateDataDao implements StateDataRepository {
         return jpaRepository.findBySurveyUnitId(surveyUnitId);
     }
 
+    @Override
     public void update(String surveyUnitId, StateData stateData) {
         if (stateData == null) {
             return;
@@ -39,12 +40,14 @@ public class StateDataDao implements StateDataRepository {
         }
     }
 
+    @Override
     public void create(String surveyUnitId, StateData stateData) {
         SurveyUnitDB surveyUnit = surveyUnitJpaRepository.getReferenceById(surveyUnitId);
         StateDataDB stateDataDB = new StateDataDB(UUID.randomUUID(), stateData.state(), stateData.date(), stateData.currentPage(), surveyUnit);
         jpaRepository.save(stateDataDB);
     }
 
+    @Override
     public boolean exists(String surveyUnitId) {
         return jpaRepository.existsBySurveyUnitId(surveyUnitId);
     }

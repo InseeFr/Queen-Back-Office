@@ -39,6 +39,7 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
     private static final String SEPARATOR = "----------------------";
     private static final String BASE_RESOURCE_DIRECTORY = "db/dataset/";
 
+    @Override
     @Transactional
     public void createDataSet() {
         log.info("Dataset for demo - creation start");
@@ -52,7 +53,7 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
         log.info("Dataset for demo - creation end");
     }
 
-    public void createQueenLogementDataSet() {
+    private void createQueenLogementDataSet() {
         log.info("Queen Logement dataset - start");
 
         ObjectNode jsonQuestionnaireModelQueenLog;
@@ -77,7 +78,7 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
         log.info("Queen Logement Dataset - end");
     }
 
-    public void createStromaeLogementDataSet() {
+    private void createStromaeLogementDataSet() {
         log.info("Stromae Logement dataset - start");
 
         ObjectNode jsonQuestionnaireModelStromaeLog;

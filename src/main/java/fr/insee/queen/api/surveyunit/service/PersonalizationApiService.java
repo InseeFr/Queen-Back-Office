@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 public class PersonalizationApiService implements PersonalizationService {
     private final SurveyUnitRepository surveyUnitRepository;
 
+    @Override
     public String getPersonalization(String surveyUnitId) {
         return surveyUnitRepository
                 .findPersonalization(surveyUnitId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Personalization not found for survey unit %s", surveyUnitId)));
     }
 
+    @Override
     public void updatePersonalization(String surveyUnitId, JsonNode personalizationValue) {
         surveyUnitRepository.updatePersonalization(surveyUnitId, personalizationValue.toString());
     }

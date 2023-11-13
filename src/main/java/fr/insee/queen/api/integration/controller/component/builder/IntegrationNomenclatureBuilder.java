@@ -45,6 +45,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     private static final String FILENAME = "FileName";
     public static final String NOMENCLATURES_XML = "nomenclatures.xml";
 
+    @Override
     public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile) {
         try {
             schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");

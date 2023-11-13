@@ -14,11 +14,13 @@ public class StateDataApiService implements StateDataService {
 
     private final StateDataRepository stateDataRepository;
 
+    @Override
     public StateData getStateData(String surveyUnitId) {
         return stateDataRepository.find(surveyUnitId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("State data not found for survey unit %s", surveyUnitId)));
     }
 
+    @Override
     public void updateStateData(String surveyUnitId, StateData stateData) {
         stateDataRepository.update(surveyUnitId, stateData);
     }
