@@ -36,10 +36,13 @@ public interface ParadataEventJpaRepository extends JpaRepository<ParadataEventD
     @Transactional
     @Modifying
     @Query(value = """
-            delete from paradata_event p where id in (
-                select p.id from survey_unit s
-                    where text(s.id) = p.value->>'idSU'
-                    and s.campaign_id = :campaignId
+            delete from paradata_event where survey_unit_id in (
+                select id from survey_unit
+                    where campaign_id = :campaignId
             )""", nativeQuery = true)
-    void deleteParadataEvents(String campaignId);
+    void deleteBySurveyUnitCampaignId(String campaignId);
+
+    @Transactional
+    @Modifying
+    void deleteBySurveyUnitId(String surveyUnitId);
 }

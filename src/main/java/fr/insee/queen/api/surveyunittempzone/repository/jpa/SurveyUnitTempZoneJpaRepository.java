@@ -26,10 +26,9 @@ public interface SurveyUnitTempZoneJpaRepository extends JpaRepository<SurveyUni
     @Transactional
     @Modifying
     @Query(value = """
-            delete from survey_unit_temp_zone st where id in (
-                select st.id from survey_unit s
-                    where s.id = st.survey_unit_id
-                    and s.campaign_id = :campaignId
+            delete from survey_unit_temp_zone where survey_unit_id in (
+                select id from survey_unit
+                    where campaign_id = :campaignId
             )""", nativeQuery = true)
     void deleteSurveyUnits(String campaignId);
 

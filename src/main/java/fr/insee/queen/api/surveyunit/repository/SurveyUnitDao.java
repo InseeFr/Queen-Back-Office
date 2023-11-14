@@ -5,6 +5,7 @@ import fr.insee.queen.api.campaign.repository.entity.QuestionnaireModelDB;
 import fr.insee.queen.api.campaign.repository.jpa.CampaignJpaRepository;
 import fr.insee.queen.api.campaign.repository.jpa.QuestionnaireModelJpaRepository;
 import fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof;
+import fr.insee.queen.api.paradata.repository.jpa.ParadataEventJpaRepository;
 import fr.insee.queen.api.surveyunit.repository.entity.*;
 import fr.insee.queen.api.surveyunit.repository.jpa.CommentJpaRepository;
 import fr.insee.queen.api.surveyunit.repository.jpa.DataJpaRepository;
@@ -38,6 +39,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     private final CampaignJpaRepository campaignRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
+    private final ParadataEventJpaRepository paradataEventRepository;
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
@@ -81,6 +83,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         commentRepository.deleteComments(campaignId);
         personalizationRepository.deletePersonalizations(campaignId);
         surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
+        paradataEventRepository.deleteBySurveyUnitCampaignId(campaignId);
         crudRepository.deleteSurveyUnits(campaignId);
     }
 
@@ -91,6 +94,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         commentRepository.deleteBySurveyUnitId(surveyUnitId);
         personalizationRepository.deleteBySurveyUnitId(surveyUnitId);
         surveyUnitTempZoneRepository.deleteBySurveyUnitId(surveyUnitId);
+        paradataEventRepository.deleteBySurveyUnitId(surveyUnitId);
         crudRepository.deleteById(surveyUnitId);
     }
 

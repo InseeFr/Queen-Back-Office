@@ -34,4 +34,9 @@ public class ParadataEventDB {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SurveyUnitDB surveyUnit;
+
+    public ParadataEventDB() {
+        super();
+        this.id = UUID.randomUUID();
+    }
 }

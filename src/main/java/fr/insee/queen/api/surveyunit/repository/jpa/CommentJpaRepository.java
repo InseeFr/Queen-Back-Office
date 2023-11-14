@@ -23,10 +23,9 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-            delete from comment c where id in (
-                select c.id from survey_unit s
-                    where s.id = c.survey_unit_id
-                    and s.campaign_id = :campaignId
+            delete from comment where survey_unit_id in (
+                select id from survey_unit
+                where campaign_id = :campaignId
             )""", nativeQuery = true)
     void deleteComments(String campaignId);
 
@@ -55,5 +54,7 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
      * Delete comment of a survey unit
      * @param surveyUnitId survey unit id
      */
+    @Transactional
+    @Modifying
     void deleteBySurveyUnitId(String surveyUnitId);
 }
