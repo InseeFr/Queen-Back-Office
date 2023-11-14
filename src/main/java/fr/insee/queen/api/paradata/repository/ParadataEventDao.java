@@ -16,9 +16,4 @@ public class ParadataEventDao implements ParadataEventRepository {
     public void createParadataEvent(UUID id, String paradataValue, String surveyUnitId) {
         jpaRepository.createParadataEvent(id, paradataValue, surveyUnitId);
     }
-
-    @Override
-    public void deleteParadataEvents(String campaignId) {
-        jpaRepository.deleteParadataEvents(campaignId);
-    }
 }

@@ -24,9 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * CommentRepository is the repository using to access to  Comment table in DB
- *
- * @author Claudel Benjamin
+ * DAO to handle survey units in DB
  */
 @Repository
 @AllArgsConstructor
@@ -121,7 +119,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     }
 
     @Override
-    public void updatePersonalization(String surveyUnitId, String personalization) {
+    public void savePersonalization(String surveyUnitId, String personalization) {
         if (personalization == null) {
             return;
         }
@@ -135,7 +133,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     }
 
     @Override
-    public void updateComment(String surveyUnitId, String comment) {
+    public void saveComment(String surveyUnitId, String comment) {
         if (comment == null) {
             return;
         }
@@ -149,7 +147,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     }
 
     @Override
-    public void updateData(String surveyUnitId, String data) {
+    public void saveData(String surveyUnitId, String data) {
         if (data == null) {
             return;
         }
@@ -185,9 +183,9 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     @Override
     public void updateInfos(SurveyUnit surveyUnit) {
         String surveyUnitId = surveyUnit.id();
-        updatePersonalization(surveyUnitId, surveyUnit.personalization());
-        updateComment(surveyUnitId, surveyUnit.comment());
-        updateData(surveyUnitId, surveyUnit.data());
-        stateDataDao.update(surveyUnitId, surveyUnit.stateData());
+        savePersonalization(surveyUnitId, surveyUnit.personalization());
+        saveComment(surveyUnitId, surveyUnit.comment());
+        saveData(surveyUnitId, surveyUnit.data());
+        stateDataDao.save(surveyUnitId, surveyUnit.stateData());
     }
 }

@@ -11,6 +11,14 @@ import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Set;
 
+/**
+ * Data used for campaign creation
+ *
+ * @param id campaign id
+ * @param label campaign labe
+ * @param questionnaireIds list of questionnaire ids linked to the campaign
+ * @param metadata campaign metadata
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CampaignCreationData(
         @IdValid

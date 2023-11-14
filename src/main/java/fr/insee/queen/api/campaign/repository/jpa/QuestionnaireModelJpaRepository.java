@@ -10,38 +10,62 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * CampaignRepository is the repository using to access to Campaign table in DB
- *
- * @author Claudel Benjamin
+ * JPA repositiory to handle questionnaires
  */
 @Repository
 public interface QuestionnaireModelJpaRepository extends JpaRepository<QuestionnaireModelDB, String> {
 
     /**
-     * This method retrieve all questionnaires Id for a specific campaign
+     * Find ids for all questionnaire linked to a campaign
      *
-     * @param campaignId id of the campaign
-     * @return all questionnaire ids for a specific campaign
+     * @param campaignId campaign id
+     * @return all questionnaire ids for a campaign
      */
     @Query(value = "select qm.id from QuestionnaireModelDB qm where qm.campaign.id=:campaignId")
     List<String> findAllIdByCampaignId(String campaignId);
 
+    /**
+     * Find data structure for all questionnaire linked to a campaign
+     *
+     * @param campaignId campaign id
+     * @return all questionnaire values for a campaign
+     */
     @Query(value = "select qm.value from QuestionnaireModelDB qm where qm.campaign.id=:campaignId")
     List<String> findAllValueByCampaignId(String campaignId);
 
     /**
-     * This method retrieve questionnaire model for a specific id
+     * Find data structure for a questionnaire
      *
-     * @param questionnaireId id of the questionnaire
-     * @return {@link String}
+     * @param questionnaireId questionnaire id
+     * @return questionnaire data for a campaign
      */
     @Query(value = "select qm.value from QuestionnaireModelDB qm where qm.id=:questionnaireId")
-    Optional<String> findQuestionnaireValue(String questionnaireId);
+    Optional<String> findQuestionnaireData(String questionnaireId);
 
+    /**
+     * Count valid questionnaires for a campaign
+     * This is typically used to check if questionnaires can be associated on a campaign.
+     * A valid questionnaire is a questionnaire already linked to the campaign or a questionnaire with no campaign linked
+     *
+     * @param campaignId campaign id
+     * @param questionnaireIds questionnaire ids we want to check for the campaign
+     * @return number of valid questionnaires
+     */
     @Query(value = "select count(*) from questionnaire_model qm where qm.id in :questionnaireIds and (qm.campaign_id is NULL or qm.campaign_id=:campaignId)", nativeQuery = true)
     Long countValidQuestionnairesByIds(String campaignId, Set<String> questionnaireIds);
 
+    /**
+     * Find questionnaires by ids
+     *
+     * @param questionnaireIds questionnaire ids
+     * @return {@link QuestionnaireModelDB}
+     */
     Set<QuestionnaireModelDB> findByIdIn(Set<String> questionnaireIds);
 
+    /**
+     * Delete all questionnaire by campaign id
+     *
+     * @param campaignId campaign id
+     */
     void deleteAllByCampaignId(String campaignId);
 }

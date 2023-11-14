@@ -31,11 +31,11 @@ public class CommentController {
     private final HabilitationComponent habilitationComponent;
 
     /**
-     * Retrieve the comment associated to the survey unit
+     * Retrieve the comment linked to the survey unit
      *
      * @param surveyUnitId the id of survey unit
-     * @param auth         authentication object
-     * @return {@link String} the comment associated to the survey unit
+     * @param auth         authenticated user
+     * @return {@link String} the comment linked to the survey unit
      */
     @Operation(summary = "Get comment for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/comment")
@@ -48,11 +48,11 @@ public class CommentController {
     }
 
     /**
-     * Update the comment associated to the survey unit
+     * Update the comment linked to the survey unit
      *
      * @param commentValue the value to update
      * @param surveyUnitId the id of the survey unit
-     * @param auth         authentication object
+     * @param auth         authenticated user
      */
     @Operation(summary = "Update comment for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/comment")

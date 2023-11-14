@@ -71,7 +71,7 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
     @Override
     public List<String> getQuestionnaireDatas(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-        return questionnaireModelRepository.findAllQuestionnaireValues(campaignId).stream()
+        return questionnaireModelRepository.findAllQuestionnaireDatas(campaignId).stream()
                 .map(String::new).toList();
     }
 }

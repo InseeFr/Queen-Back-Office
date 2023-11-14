@@ -87,7 +87,7 @@ public class CampaignApiService implements CampaignService {
         Long nbValidQuestionnaires = questionnaireModelRepository.countValidQuestionnaires(campaignId, questionnaireIds);
         if (questionnaireIds.size() != nbValidQuestionnaires) {
             throw new QuestionnaireInvalidException(
-                    String.format("One or more questionnaires do not exist for campaign %s or are already associated with another campaign. Creation aborted.", campaignId));
+                    String.format("One or more questionnaires do not exist for campaign %s or are already linked with another campaign. Creation aborted.", campaignId));
         }
     }
 }

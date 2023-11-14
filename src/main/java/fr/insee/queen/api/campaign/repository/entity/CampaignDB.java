@@ -10,9 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Entity Campaign : represent the entity table in DB
+ * Campaign Entity
  *
- * @author Claudel Benjamin
  */
 @Entity
 @Table(name = "campaign")
@@ -22,7 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class CampaignDB {
     /**
-     * The id of campaign
+     * The campaign id
      */
     @Id
     @org.springframework.data.annotation.Id
@@ -30,7 +29,7 @@ public class CampaignDB {
     private String id;
 
     /**
-     * The label of campaign
+     * The campaign label
      */
     @Column(nullable = false)
     private String label;

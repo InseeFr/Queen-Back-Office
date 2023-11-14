@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * MetadataController is the Controller using to manage metadatas
- * entity
- *
- * @author Corcaud Samuel
+ * Handle the campaign metadata
  */
 @RestController
 @Tag(name = "05. Metadata", description = "Endpoints for retrieving metadata")
@@ -31,12 +28,12 @@ public class MetadataController {
     private final MetadataService metadataService;
 
     /**
-     * This method is using to get the metadata associated to a specific campaign
+     * Retrieve metadata linked to a campaign
      *
      * @param campaignId the id of the campaign
-     * @return the metadata associated to the reporting unit
+     * @return the metadata linked to the campaign
      */
-    @Operation(summary = "Get metadata for a specific campaign ")
+    @Operation(summary = "Get metadata for a campaign ")
     @GetMapping(path = "/campaign/{id}/metadata")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId) {
@@ -45,12 +42,12 @@ public class MetadataController {
     }
 
     /**
-     * This method is using to get the metadata associated to a specific questionnaire
+     * Retrieve the campaign metadata by the questionnaire id
      *
-     * @param questionnaireId the id of the campaign
-     * @return the metadata associated to the reporting unit
+     * @param questionnaireId the id of the questionnaire
+     * @return the cmapaign metadata
      */
-    @Operation(summary = "Get metadata for a specific questionnaire ")
+    @Operation(summary = "Get metadata for a questionnaire ")
     @GetMapping(path = "/questionnaire/{id}/metadata")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {

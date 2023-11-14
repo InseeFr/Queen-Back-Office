@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 
 public interface QuestionnaireBuilder {
     /**
-     * Try to create the questionnaires
+     * Create questionnaires
      *
      * @param integrationZipFile integration zip file
      * @return List of {@link IntegrationResultUnitDto} integration results for the questionnaires

@@ -43,7 +43,7 @@ public class StateDataDB {
     private String currentPage;
 
     /**
-     * The SurveyUnit associated to the StateData
+     * The SurveyUnit linked to the StateData
      */
     @OneToOne
     @JoinColumn(name = "survey_unit_id", referencedColumnName = "id")

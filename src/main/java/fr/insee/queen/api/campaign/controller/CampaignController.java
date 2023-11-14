@@ -25,9 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * CampaignController is the Controller used to manage campaigns
- *
- * @author Claudel Benjamin
+ * Handle campaigns
  */
 @RestController
 @Tag(name = "02. Campaigns", description = "Endpoints for campaigns")
@@ -44,8 +42,9 @@ public class CampaignController {
     private final PilotageService pilotageService;
 
     /**
-     * This method is used to get all campaigns
+     * Retrieve all campaigns
      *
+     * @param auth authenticated user
      * @return List of all {@link CampaignSummaryDto}
      */
     @Operation(summary = "Get list of all campaigns")
@@ -60,11 +59,11 @@ public class CampaignController {
     }
 
     /**
-     * This method return all user related campaigns
+     * Retrieve the campaigns the current user has access to (or all campaigns if admin)
      *
-     * @return List of  {@link CampaignSummaryDto}
+     * @param auth authenticated user
+     * @return List of {@link CampaignSummaryDto}
      */
-
     @Operation(summary = "Get campaign list for the current user")
     @GetMapping(path = "/campaigns")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
@@ -90,8 +89,9 @@ public class CampaignController {
     }
 
     /**
-     * This method is used to post a new campaign
+     * Create a new campaign
      *
+     * @param auth authenticated user
      * @param campaignInputDto the value to create
      */
     @Operation(summary = "Create a campaign")
@@ -106,10 +106,13 @@ public class CampaignController {
     }
 
     /**
-     * This method is used to delete a campaign
+     * Delete a campaign. The deletion is processed in two cases:
+     * - the campaign is closed (check on pilotage api)
+     * - pilotage api is disabled or force option is set to true
      *
-     * @param force      force the full delettion of campaign
+     * @param force      force the full deletion of the campaign (without checking if campaign is closed in pilotage api)
      * @param campaignId campaign id
+     * @param auth authenticated user
      */
     @Operation(summary = "Delete a campaign")
     @DeleteMapping(path = "/campaign/{id}")

@@ -38,12 +38,12 @@ public class QuestionnaireModelController {
     private final QuestionnaireModelService questionnaireModelService;
 
     /**
-     * Retrieve the data structure of all questionnaires associated to a campaign
+     * Retrieve the data structure of all questionnaires linked to a campaign
      *
      * @param campaignId the id of campaign
-     * @return List of {@link QuestionnaireModelValueDto} associated to the campaign
+     * @return List of {@link QuestionnaireModelValueDto} linked to the campaign
      */
-    @Operation(summary = "Get questionnaire list for a specific campaign ")
+    @Operation(summary = "Get questionnaire list for a campaign ")
     @GetMapping(path = "/campaign/{id}/questionnaires")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<QuestionnaireModelValueDto> getQuestionnaireDatasByCampaignId(
@@ -59,7 +59,7 @@ public class QuestionnaireModelController {
      * Retrieve the data structure of a questionnaire
      *
      * @param questionnaireModelId the id of questionnaire
-     * @return the {@link QuestionnaireModelValueDto} associated to the id
+     * @return the {@link QuestionnaireModelValueDto} linked to the id
      */
     @Operation(summary = "Get questionnnaire")
     @GetMapping(path = "/questionnaire/{id}")
@@ -73,9 +73,9 @@ public class QuestionnaireModelController {
      * Retrieve all the questionnaire ids for a campaign
      *
      * @param campaignId the campaign id
-     * @return List of {@link QuestionnaireModelIdDto} list associated to the campaign id
+     * @return List of {@link QuestionnaireModelIdDto} list linked to the campaign id
      */
-    @Operation(summary = "Get list of questionnaire ids for a specific campaign")
+    @Operation(summary = "Get list of questionnaire ids for a campaign")
     @GetMapping(path = "/campaign/{id}/questionnaire-id")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<QuestionnaireModelIdDto> getQuestionnaireIdsByCampaignId(
@@ -91,24 +91,24 @@ public class QuestionnaireModelController {
     /**
      * Create a questionnaire model
      *
-     * @param questionnaireModelInput questionnaire data used to create a questionnaire
+     * @param questionnaireModelData questionnaire data used to create a questionnaire
      */
     @Operation(summary = "Create a Questionnaire Model")
     @PostMapping(path = "/questionnaire-models")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createQuestionnaire(@RequestBody @Valid QuestionnaireModelCreationData questionnaireModelInput) {
-        log.info("POST Questionnaire Model with id {}", questionnaireModelInput.idQuestionnaireModel());
-        questionnaireModelService.createQuestionnaire(QuestionnaireModelCreationData.toModel(questionnaireModelInput));
+    public void createQuestionnaire(@RequestBody @Valid QuestionnaireModelCreationData questionnaireModelData) {
+        log.info("POST Questionnaire Model with id {}", questionnaireModelData.idQuestionnaireModel());
+        questionnaireModelService.createQuestionnaire(QuestionnaireModelCreationData.toModel(questionnaireModelData));
     }
 
     /**
-     * Search questionnaire ids associated to survey units
+     * Search questionnaire ids linked to survey units
      *
      * @param surveyUnitIdsToSearch survey unit ids where we want to retrive the questionnaire ids
      * @return {@link SurveyUnitOkNokDto} list of survey units with their questionnaire ids, and list of survey units where no questionnaire found
      */
-    @Operation(summary = "Search questionnaire ids associated to survey units")
+    @Operation(summary = "Search questionnaire ids linked to survey units")
     @PostMapping(path = "/survey-units/questionnaire-model-id")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public ResponseEntity<SurveyUnitOkNokDto> getQuestionnaireModelIdBySurveyUnits(

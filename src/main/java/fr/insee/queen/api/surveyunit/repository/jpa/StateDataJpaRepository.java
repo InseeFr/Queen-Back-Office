@@ -13,25 +13,36 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * StateDataRepository is the repository using to access to  StateData table in DB
- *
- * @author Claudel Benjamin
+ * JPA repository to handle survey unit's state data
  */
 @Repository
 public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID> {
     /**
-     * This method retrieve the StateData for a specific reporting_unit
+     * Find state data for a survey unit
      *
-     * @param surveyUnitId the id of reporting unit
-     * @return {@link StateData}
+     * @param surveyUnitId survey unit id
+     * @return {@link Optional<StateData>} state data of the survey unit
      */
     Optional<StateData> findBySurveyUnitId(String surveyUnitId);
 
+    /**
+     * Update state data of a survey unit
+     * @param surveyUnitId survey unit to update
+     * @param date state date
+     * @param currentPage state current page
+     * @param state state type
+     * @return number of rows updated
+     */
     @Transactional
     @Modifying
     @Query("UPDATE StateDataDB s SET s.currentPage=:currentPage, s.date=:date, s.state=:state WHERE s.surveyUnit.id=:surveyUnitId")
     int updateStateData(String surveyUnitId, Long date, String currentPage, StateDataType state);
 
+    /**
+     * Delete all survey units state data linked to a campaign
+     *
+     * @param campaignId campaign id
+     */
     @Transactional
     @Modifying
     @Query(value = """
@@ -42,7 +53,16 @@ public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID>
             )""", nativeQuery = true)
     void deleteStateDatas(String campaignId);
 
+    /**
+     * Check if a state data exists for a survey unit
+     * @param surveyUnitId survey unit to check
+     * @return true if state data exists, false otherwise
+     */
     boolean existsBySurveyUnitId(String surveyUnitId);
 
-    void deleteBySurveyUnitId(String id);
+    /**
+     * Delete state data by survey unit
+     * @param surveyUnitId survey unit id
+     */
+    void deleteBySurveyUnitId(String surveyUnitId);
 }

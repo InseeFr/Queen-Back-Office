@@ -15,13 +15,17 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CommentRepository is the repository using to access to  Comment table in DB
- *
- * @author Claudel Benjamin
+ * JPA repository to handle survey units in DB
  */
 @Repository
 public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, String> {
 
+    /**
+     * Find summary of survey unit by id
+     *
+     * @param surveyUnitId survey unit id
+     * @return {@link SurveyUnitSummary} survey unit summary
+     */
     @Query("""
             select new fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary(
                 s.id,
@@ -31,6 +35,12 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             from SurveyUnitDB s where s.id=:surveyUnitId""")
     Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId);
 
+    /**
+     * Find all survey unit summary by campaign
+     *
+     * @param campaignId campaign id
+     * @return List of {@link SurveyUnitSummary} survey unit summary
+     */
     @Query("""
             select new fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary(
                 s.id,
@@ -40,6 +50,12 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             from SurveyUnitDB s where s.campaign.id=:campaignId""")
     List<SurveyUnitSummary> findAllSummaryByCampaignId(String campaignId);
 
+    /**
+     * Find all survey unit summary by survey unit ids
+     *
+     * @param surveyUnitIds survey units we want to retrieve
+     * @return List of {@link SurveyUnitSummary} survey unit summary
+     */
     @Query("""
             select new fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary(
                 s.id,
@@ -49,6 +65,12 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             from SurveyUnitDB s where s.id in :surveyUnitIds""")
     List<SurveyUnitSummary> findAllSummaryByIdIn(List<String> surveyUnitIds);
 
+    /**
+     * Retrieve a survey unit with all details
+     *
+     * @param surveyUnitId survey unit id
+     * @return {@link SurveyUnit} survey unit
+     */
     @Query("""
             select new fr.insee.queen.api.surveyunit.service.model.SurveyUnit(
                 s.id,
@@ -66,6 +88,12 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             from SurveyUnitDB s left join s.personalization left join s.data left join s.comment left join s.stateData where s.id=:surveyUnitId""")
     Optional<SurveyUnit> findOneById(String surveyUnitId);
 
+    /**
+     * Retrieve a survey unit with campaign and state data linked (used for deposit proof)
+     *
+     * @param surveyUnitId survey unit id
+     * @return {@link SurveyUnitDepositProof} survey unit
+     */
     @Query("""
             select new fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof(
                 s.id,
@@ -82,9 +110,20 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             from SurveyUnitDB s where s.id=:surveyUnitId""")
     Optional<SurveyUnitDepositProof> findWithCampaignAndStateById(String surveyUnitId);
 
+    /**
+     * Find all survey unit ids
+     *
+     * @return List of survey unit ids
+     */
     @Query("select s.id from SurveyUnitDB s order by s.id asc")
     Optional<List<String>> findAllIds();
 
+    /**
+     * Find survey units with state linked by ids
+     *
+     * @param surveyUnitIds survey unit ids
+     * @return List of {@link SurveyUnitState} survey units
+     */
     @Query("""
             select new fr.insee.queen.api.surveyunit.service.model.SurveyUnitState(
                 s.id,
@@ -99,6 +138,11 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             from SurveyUnitDB s left join s.stateData where s.id in :surveyUnitIds""")
     List<SurveyUnitState> findAllWithStateByIdIn(List<String> surveyUnitIds);
 
+    /**
+     * Delete survey units linked to a campaign
+     *
+     * @param campaignId campaign id
+     */
     @Transactional
     @Modifying
     @Query("delete from SurveyUnitDB s where s.campaign.id=:campaignId")

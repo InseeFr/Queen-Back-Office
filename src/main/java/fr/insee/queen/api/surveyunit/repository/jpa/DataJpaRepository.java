@@ -11,12 +11,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * StateDataRepository is the repository using to access to  StateData table in DB
- *
- * @author Claudel Benjamin
+ * JPA repository to handle survey unit's data response for a questionnaire
  */
 @Repository
 public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
+    /**
+     * Delete all survey units data for a campaign
+     *
+     * @param campaignId campaign id
+     */
     @Transactional
     @Modifying
     @Query(value = """
@@ -27,13 +30,30 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
             )""", nativeQuery = true)
     void deleteDatas(String campaignId);
 
+    /**
+     * Update data for a survey unit
+     *
+     * @param surveyUnitId survey unit id
+     * @param data json data to set
+     * @return number of updated rows
+     */
     @Transactional
     @Modifying
     @Query("update DataDB d set d.value = :data where d.surveyUnit.id = :surveyUnitId")
     int updateData(String surveyUnitId, String data);
 
+    /**
+     * Find the data of a survey unit
+     *
+     * @param surveyUnitId survey unit id
+     * @return an optional of the data (json format)
+     */
     @Query("select s.data.value from SurveyUnitDB s where s.id=:surveyUnitId")
     Optional<String> findData(String surveyUnitId);
 
-    void deleteBySurveyUnitId(String id);
+    /**
+     * Delete data of a survey unit
+     * @param surveyUnitId survey unit id
+     */
+    void deleteBySurveyUnitId(String surveyUnitId);
 }

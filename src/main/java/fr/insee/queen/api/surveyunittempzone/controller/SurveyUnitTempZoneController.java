@@ -37,7 +37,7 @@ public class SurveyUnitTempZoneController {
      *
      * @param surveyUnitId survey unit id
      * @param surveyUnit   survey unit json
-     * @param auth         authentication object
+     * @param auth         authenticated user
      */
     @Operation(summary = "Create survey-unit to temp-zone")
     @PostMapping(path = "/survey-unit/{id}/temp-zone")

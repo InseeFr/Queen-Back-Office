@@ -13,9 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * StateDataRepository is the repository using to access to  StateData table in DB
- *
- * @author Claudel Benjamin
+ * DAO to handle state data
  */
 @Repository
 @AllArgsConstructor
@@ -24,12 +22,13 @@ public class StateDataDao implements StateDataRepository {
     private final StateDataJpaRepository jpaRepository;
     private final SurveyUnitJpaRepository surveyUnitJpaRepository;
 
+    @Override
     public Optional<StateData> find(String surveyUnitId) {
         return jpaRepository.findBySurveyUnitId(surveyUnitId);
     }
 
     @Override
-    public void update(String surveyUnitId, StateData stateData) {
+    public void save(String surveyUnitId, StateData stateData) {
         if (stateData == null) {
             return;
         }
@@ -52,10 +51,18 @@ public class StateDataDao implements StateDataRepository {
         return jpaRepository.existsBySurveyUnitId(surveyUnitId);
     }
 
+    /**
+     * Delete state data for a survey unit
+     * @param surveyUnitId survey unit id
+     */
     public void deleteBySurveyUnitId(String surveyUnitId) {
         jpaRepository.deleteBySurveyUnitId(surveyUnitId);
     }
 
+    /**
+     * Delete all survey units state data for a campaign
+     * @param campaignId campaign id
+     */
     public void deleteStateDatas(String campaignId) {
         jpaRepository.deleteStateDatas(campaignId);
     }

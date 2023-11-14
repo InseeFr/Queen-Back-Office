@@ -31,7 +31,7 @@ public class MetadataDB {
     private String value;
 
     /**
-     * The campaign associated to the Metadata
+     * The campaign linked to the Metadata
      */
     @OneToOne
     private CampaignDB campaign;

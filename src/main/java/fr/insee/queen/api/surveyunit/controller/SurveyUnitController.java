@@ -63,7 +63,7 @@ public class SurveyUnitController {
      * Retrieve the survey unit
      *
      * @param surveyUnitId survey unit id
-     * @param auth         authentication object
+     * @param auth         authenticated user
      * @return {@link SurveyUnitDto} the survey unit
      */
     @Operation(summary = "Get survey-unit")
@@ -81,7 +81,7 @@ public class SurveyUnitController {
      *
      * @param surveyUnitId         survey unit id
      * @param surveyUnitUpdateData survey unit form data
-     * @param auth                 authentication object
+     * @param auth                 authenticated user
      */
     @Operation(summary = "Update survey-unit")
     @PutMapping(path = {"/survey-unit/{id}"})
@@ -99,10 +99,10 @@ public class SurveyUnitController {
      * Retrieve all the survey units of a campaign
      *
      * @param campaignId the id of campaign
-     * @param auth       authentication object
+     * @param auth       authenticated user
      * @return List of {@link SurveyUnitByCampaignDto}
      */
-    @Operation(summary = "Get list of survey units for a specific campaign")
+    @Operation(summary = "Get list of survey units for a campaign")
     @GetMapping(path = "/campaign/{id}/survey-units")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<SurveyUnitByCampaignDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId,

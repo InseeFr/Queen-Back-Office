@@ -13,9 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * NomenclatureRepository is the repository using to access to Nomenclature table in DB
- *
- * @author Claudel Benjamin
+ * Jpa repository to handle nomenclatures
  */
 @Repository
 public interface NomenclatureJpaRepository extends JpaRepository<NomenclatureDB, String> {

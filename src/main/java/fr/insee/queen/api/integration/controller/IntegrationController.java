@@ -32,11 +32,13 @@ public class IntegrationController {
     private final IntegrationComponent integrationComponent;
 
     /**
-     * Integrate a full campaign
+     * Integrate a full campaign (campaign/nomenclatures/questionnaires
+     * The results of the integration indicate the successful/failed integrations
+     * (the campaign integration can be successful nut not the questionnaire integration for example)
      *
      * @param file the integration zip file containing all infos about campaign/questionnaire/nomenclatures
-     * @param auth authentication object
-     * @return {@link IntegrationResultsDto} the result of the integration
+     * @param auth authenticated user
+     * @return {@link IntegrationResultsDto} the results of the integration
      */
     @Operation(summary = "Integrates the context of a campaign")
     @PostMapping(path = "/campaign/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

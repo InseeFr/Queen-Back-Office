@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Entity SurveyUnit : represent the entity table in DB
- *
- * @author Claudel Benjamin
+ * Survey unit entity
  */
 @Entity
 @Table(name = "survey_unit")
@@ -21,20 +19,20 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SurveyUnitDB {
     /**
-     * The id of surveyUnit
+     * survey unit id
      */
     @Id
     @org.springframework.data.annotation.Id
     private String id;
 
     /**
-     * The campaign associated to the reporting unit
+     * campaign of the survey unit
      */
     @ManyToOne
     private CampaignDB campaign;
 
     /**
-     * The questionnaire model associated to the reporting unit
+     * questionnaire model of the survey unit
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "questionnaire_model_id", referencedColumnName = "id")
