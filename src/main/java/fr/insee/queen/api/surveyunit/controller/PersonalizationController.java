@@ -33,8 +33,8 @@ public class PersonalizationController {
      * Retrieve the personalization data of a survey unit
      *
      * @param surveyUnitId the id of the survey unit
-     * @param auth         authentication object
-     * @return {@link String} the personalization associated to the survey unit
+     * @param auth         authenticated user
+     * @return {@link String} the personalization linked to the survey unit
      */
     @Operation(summary = "Get personalization for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/personalization")
@@ -47,11 +47,11 @@ public class PersonalizationController {
     }
 
     /**
-     * Update the personalization data associated to the survey unit
+     * Update the personalization data linked to the survey unit
      *
      * @param personalizationValues the value to update
      * @param surveyUnitId          the id of the survey unit
-     * @param auth                  authentication object
+     * @param auth                  authenticated user
      */
     @Operation(summary = "Update personalization for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/personalization")

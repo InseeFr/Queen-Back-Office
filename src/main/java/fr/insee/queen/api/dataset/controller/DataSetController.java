@@ -27,7 +27,7 @@ public class DataSetController {
     private final DataSetInjectorService injector;
 
     /**
-     * Create the demo dataset
+     * Create dataset for demo environments
      */
     @Operation(summary = "Create dataset")
     @PostMapping(path = "/create-dataset")

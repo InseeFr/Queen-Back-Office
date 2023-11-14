@@ -72,12 +72,12 @@ public class NomenclatureController {
     }
 
     /**
-     * Retrieve all required nomenclatures associated to a campaign
+     * Retrieve all required nomenclatures linked to a campaign
      *
      * @param campaignId the id of campaign
      * @return List of {@link String} nomenclature ids
      */
-    @Operation(summary = "Get list of required nomenclatures for a specific campaign")
+    @Operation(summary = "Get list of required nomenclatures for a campaign")
     @GetMapping(path = "/campaign/{id}/required-nomenclatures")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<String> getListRequiredNomenclature(@IdValid @PathVariable(value = "id") String campaignId) {
@@ -86,12 +86,12 @@ public class NomenclatureController {
     }
 
     /**
-     * Retrieve required nomenclatures associated to a questionnaire
+     * Retrieve required nomenclatures linked to a questionnaire
      *
      * @param questionnaireId the id of questionnaire
      * @return List of {@link String} nomenclature ids
      */
-    @Operation(summary = "Get list of required nomenclature for a specific questionnaire")
+    @Operation(summary = "Get list of required nomenclature for a questionnaire")
     @GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<String> getListRequiredNomenclatureByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {

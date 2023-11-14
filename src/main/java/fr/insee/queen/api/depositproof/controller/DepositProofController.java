@@ -40,10 +40,10 @@ public class DepositProofController {
     private final AuthenticationHelper authHelper;
 
     /**
-     * Get PDF deposit proof for a survey unit
+     * Generate and retrieve a deposit proof (pdf file) for a survey unit
      *
      * @param surveyUnitId survey unit id
-     * @param auth         authentication object
+     * @param auth         authenticated user
      * @param response     HttpServletResponse object
      */
     @Operation(summary = "Get deposit proof for a survey unit")

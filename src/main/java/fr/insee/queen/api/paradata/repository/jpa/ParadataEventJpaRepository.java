@@ -10,13 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 /**
- * ParadataEventRepository is the repository using to access to ParadataEvent table in DB
- *
- * @author Corcaud Samuel
+ * JPA repository to handle paradata in DB
  */
 @Repository
 public interface ParadataEventJpaRepository extends JpaRepository<ParadataEventDB, UUID> {
 
+    /**
+     * Create paradata for a survey unit
+     *
+     * @param id paradata id
+     * @param paradataValue paradata value (json format)
+     * @param surveyUnitId survey unit id
+     */
     @Transactional
     @Modifying
     @Query(value = """
@@ -24,6 +29,10 @@ public interface ParadataEventJpaRepository extends JpaRepository<ParadataEventD
             VALUES (:id, :paradataValue\\:\\:jsonb, :surveyUnitId)""", nativeQuery = true)
     void createParadataEvent(UUID id, String paradataValue, String surveyUnitId);
 
+    /**
+     * Delete all survey unit's paradatas for a campaign
+     * @param campaignId campaign id
+     */
     @Transactional
     @Modifying
     @Query(value = """

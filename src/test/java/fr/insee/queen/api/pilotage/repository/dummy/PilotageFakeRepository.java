@@ -31,7 +31,7 @@ public class PilotageFakeRepository implements PilotageRepository {
     }
 
     @Override
-    public List<LinkedHashMap<String, String>> getCurrentSurveyUnit(String authToken, String campaignId) {
+    public List<LinkedHashMap<String, String>> getSurveyUnits(String authToken, String campaignId) {
         if (nullCurrentSurveyUnit) {
             return null;
         }

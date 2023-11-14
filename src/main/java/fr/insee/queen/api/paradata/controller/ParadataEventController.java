@@ -19,8 +19,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Handle creation of paradata events for a survey unit. Paradatas are data not linked with a questionnaire,
- * and give additional informations about how the user is filling the questionnaire
+ * Handle creation of paradata events for a survey unit. Paradatas are data
+ * giving additional information about how the user is filling the questionnaire
  */
 @RestController
 @Tag(name = "07. Paradata events", description = "Endpoints for paradata events")
@@ -36,7 +36,7 @@ public class ParadataEventController {
      * Create a paradata event for a survey unit
      *
      * @param paradataValue paradata value
-     * @param auth          authentication object
+     * @param auth          authenticated user
      */
     @Operation(summary = "Create paradata event for a survey unit")
     @PostMapping(path = "/paradata")

@@ -30,7 +30,7 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
 
     @Override
     public Optional<String> findQuestionnaireData(String questionnaireId) {
-        return jpaRepository.findQuestionnaireValue(questionnaireId);
+        return jpaRepository.findQuestionnaireData(questionnaireId);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
     }
 
     @Override
-    public List<String> findAllQuestionnaireValues(String campaignId) {
+    public List<String> findAllQuestionnaireDatas(String campaignId) {
         return jpaRepository.findAllValueByCampaignId(campaignId);
     }
 }

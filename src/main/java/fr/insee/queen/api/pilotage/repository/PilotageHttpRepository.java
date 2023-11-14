@@ -68,7 +68,7 @@ public class PilotageHttpRepository implements PilotageRepository {
      * @return String of UserId
      */
     @Override
-    public List<LinkedHashMap<String, String>> getCurrentSurveyUnit(String authToken, String campaignId) {
+    public List<LinkedHashMap<String, String>> getSurveyUnits(String authToken, String campaignId) {
         final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + API_PEARLJAM_SURVEYUNITS;
         ResponseEntity<List<LinkedHashMap<String, String>>> response =
                 exchange(uriPilotageFilter, authToken, new ParameterizedTypeReference<List<LinkedHashMap<String, String>>>() {

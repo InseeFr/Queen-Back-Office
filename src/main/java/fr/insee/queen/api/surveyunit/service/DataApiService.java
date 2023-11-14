@@ -22,6 +22,6 @@ public class DataApiService implements DataService {
 
     @Override
     public void updateData(String surveyUnitId, JsonNode dataValue) {
-        surveyUnitRepository.updateData(surveyUnitId, dataValue.toString());
+        surveyUnitRepository.saveData(surveyUnitId, dataValue.toString());
     }
 }

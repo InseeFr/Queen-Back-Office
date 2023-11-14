@@ -37,7 +37,7 @@ public class PilotageApiService implements PilotageService {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         Map<String, SurveyUnitSummary> surveyUnitMap = new HashMap<>();
 
-        List<LinkedHashMap<String, String>> objects = pilotageRepository.getCurrentSurveyUnit(authToken, campaignId);
+        List<LinkedHashMap<String, String>> objects = pilotageRepository.getSurveyUnits(authToken, campaignId);
 
         if (objects == null || objects.isEmpty()) {
             log.info("GET survey-units for campaign with id {} resulting in 404", campaignId);

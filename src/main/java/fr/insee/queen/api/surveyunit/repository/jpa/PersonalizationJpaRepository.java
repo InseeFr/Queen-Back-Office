@@ -11,12 +11,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * StateDataRepository is the repository using to access to  StateData table in DB
- *
- * @author Claudel Benjamin
+ * JPA repository to handle survey units personalization data
  */
 @Repository
 public interface PersonalizationJpaRepository extends JpaRepository<PersonalizationDB, UUID> {
+    /**
+     * Delete all survey units personalization for a campaign
+     *
+     * @param campaignId campaign id
+     */
     @Transactional
     @Modifying
     @Query(value = """
@@ -27,13 +30,30 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
             )""", nativeQuery = true)
     void deletePersonalizations(String campaignId);
 
+    /**
+     * Update personalization for a survey unit
+     *
+     * @param surveyUnitId survey unit id
+     * @param personalization json personalization to set
+     * @return number of updated rows
+     */
     @Transactional
     @Modifying
     @Query("update PersonalizationDB p set p.value = :personalization where p.surveyUnit.id = :surveyUnitId")
     int updatePersonalization(String surveyUnitId, String personalization);
 
+    /**
+     * Find the personalization of a survey unit
+     *
+     * @param surveyUnitId survey unit id
+     * @return an optional of the personalization (json format)
+     */
     @Query("select s.personalization.value from SurveyUnitDB s where s.id=:surveyUnitId")
     Optional<String> findPersonalization(String surveyUnitId);
 
-    void deleteBySurveyUnitId(String id);
+    /**
+     * Delete personalization of a survey unit
+     * @param surveyUnitId survey unit id
+     */
+    void deleteBySurveyUnitId(String surveyUnitId);
 }

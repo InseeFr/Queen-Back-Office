@@ -37,6 +37,7 @@ public class IntegrationComponent {
 
     /**
      * Try to do the full integration of a campaign.
+     * Return results about the integration of each component (campaign/questionnaires/nomenclatures)
      *
      * @param integrationFile integration file
      * @return {@link IntegrationResultsDto} integration results

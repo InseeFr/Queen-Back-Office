@@ -12,9 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Entity QuestionnaireModel : represent the entity table in DB
- *
- * @author Claudel Benjamin
+ * Questionnaire entity
  */
 @Entity
 @Table(name = "questionnaire_model")
@@ -24,7 +22,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class QuestionnaireModelDB {
     /**
-     * The id of questionnaire
+     * questionnaire id
      */
     @Id
     @org.springframework.data.annotation.Id
@@ -32,13 +30,13 @@ public class QuestionnaireModelDB {
     private String id;
 
     /**
-     * The label of questionnaire
+     * questionnaire label
      */
     @Column(nullable = false)
     private String label;
 
     /**
-     * The model of questionnaire (jsonb format)
+     * the data structure of the questionnaire (json format)
      */
 
     @JdbcTypeCode(SqlTypes.JSON)
@@ -46,7 +44,7 @@ public class QuestionnaireModelDB {
     private String value;
 
     /**
-     * The list of required of required nomenclature
+     * required nomenclatures for the questionnaire
      */
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.LAZY)
     @JoinTable(name = "required_nomenclature",
@@ -54,7 +52,7 @@ public class QuestionnaireModelDB {
     private Set<NomenclatureDB> nomenclatures = new HashSet<>();
 
     /**
-     * The campaign associated to the questionnaireModel
+     * The campaign linked to the questionnaire
      */
     @ManyToOne
     private CampaignDB campaign;

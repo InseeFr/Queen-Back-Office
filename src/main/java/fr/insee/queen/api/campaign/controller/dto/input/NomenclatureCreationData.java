@@ -7,6 +7,9 @@ import fr.insee.queen.api.web.validation.IdValid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * nomenclature data used to create nomenclature
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record NomenclatureCreationData(
         @IdValid

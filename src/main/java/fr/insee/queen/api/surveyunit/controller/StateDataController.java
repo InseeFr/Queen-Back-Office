@@ -39,11 +39,11 @@ public class StateDataController {
     private final HabilitationComponent habilitationComponent;
 
     /**
-     * Retrieve the data associated of a survey unit
+     * Retrieve the data linked of a survey unit
      *
      * @param surveyUnitId the id of the survey unit
-     * @param auth         authentication object
-     * @return {@link StateDataDto} the data associated to the survey unit
+     * @param auth         authenticated user
+     * @return {@link StateDataDto} the data linked to the survey unit
      */
     @Operation(summary = "Get state-data for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/state-data")
@@ -56,11 +56,11 @@ public class StateDataController {
     }
 
     /**
-     * Update the state-data associated to the survey unit
+     * Update the state-data linked to the survey unit
      *
      * @param stateDataInputDto the value to update
      * @param surveyUnitId      the id of reporting unit
-     * @param auth              authentication object
+     * @param auth              authenticated user
      */
     @Operation(summary = "Update state-data for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/state-data")
@@ -77,7 +77,7 @@ public class StateDataController {
      * Retrieve the state-data list of searched survey units
      *
      * @param surveyUnitIdsToSearch the ids to search
-     * @return {@link SurveyUnitOkNokDto} the state-data associated for found survey units, and the list of non found survey units
+     * @return {@link SurveyUnitOkNokDto} the state-data linked for found survey units, and the list of non found survey units
      */
     @Operation(summary = "Get state-data for all survey-units defined in request body ")
     @PostMapping(path = "survey-units/state-data")

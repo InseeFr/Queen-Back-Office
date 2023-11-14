@@ -33,7 +33,7 @@ public class DataController {
      * Retrieve the questionnaire form data of a survey unit
      *
      * @param surveyUnitId the id of reporting unit
-     * @param auth         authentication object
+     * @param auth         authenticated user
      * @return {@link String} the questionnaire form data of a survey unit
      */
     @Operation(summary = "Get data for a survey unit")
@@ -52,7 +52,7 @@ public class DataController {
      *
      * @param dataValue    the questionnaire form data to update
      * @param surveyUnitId the id of the survey unit
-     * @param auth         authentication object
+     * @param auth         authenticated user
      */
     @Operation(summary = "Update data for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/data")

@@ -22,6 +22,6 @@ public class StateDataApiService implements StateDataService {
 
     @Override
     public void updateStateData(String surveyUnitId, StateData stateData) {
-        stateDataRepository.update(surveyUnitId, stateData);
+        stateDataRepository.save(surveyUnitId, stateData);
     }
 }

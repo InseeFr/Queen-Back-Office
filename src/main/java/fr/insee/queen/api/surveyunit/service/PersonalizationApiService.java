@@ -20,6 +20,6 @@ public class PersonalizationApiService implements PersonalizationService {
 
     @Override
     public void updatePersonalization(String surveyUnitId, JsonNode personalizationValue) {
-        surveyUnitRepository.updatePersonalization(surveyUnitId, personalizationValue.toString());
+        surveyUnitRepository.savePersonalization(surveyUnitId, personalizationValue.toString());
     }
 }

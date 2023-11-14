@@ -20,6 +20,6 @@ public class CommentApiService implements CommentService {
 
     @Override
     public void updateComment(String surveyUnitId, JsonNode commentValue) {
-        surveyUnitRepository.updateComment(surveyUnitId, commentValue.toString());
+        surveyUnitRepository.saveComment(surveyUnitId, commentValue.toString());
     }
 }

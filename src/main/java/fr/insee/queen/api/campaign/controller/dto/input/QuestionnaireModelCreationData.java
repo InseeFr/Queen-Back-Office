@@ -9,6 +9,13 @@ import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Questionnaire data used to create questionnaire
+ * @param idQuestionnaireModel questionnaire id
+ * @param label questionnaire label
+ * @param value json data structure of the questionnaire
+ * @param requiredNomenclatureIds nomenclature ids linked to the questionnaire
+ */
 public record QuestionnaireModelCreationData(
 
         @IdValid

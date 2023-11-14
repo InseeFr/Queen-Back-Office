@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 
 public interface HabilitationComponent {
     /**
-     * Check if the current user has defined roles for a surey unit
+     * Check if the current user has defined roles for a survey unit
      *
      * @param auth         current user
      * @param surveyUnitId the survey unit the user want to access

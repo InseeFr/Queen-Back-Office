@@ -11,9 +11,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 /**
- * Entity Nomenclature : represent the entity table in DB
- *
- * @author Claudel Benjamin
+ * Nomenclature entity
  */
 @Entity
 @Table(name = "nomenclature")
@@ -22,20 +20,20 @@ import org.hibernate.type.SqlTypes;
 @AllArgsConstructor
 public class NomenclatureDB {
     /**
-     * The id of nomenclature
+     * nomenclature id
      */
     @Id
     @org.springframework.data.annotation.Id
     @Column(length = 50)
     private String id;
     /**
-     * The label of nomenclature
+     * nomenclature label
      */
     @Column(nullable = false)
     private String label;
 
     /**
-     * The value of nomenclature (jsonb format)
+     * nomenclature value (json)
      */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")

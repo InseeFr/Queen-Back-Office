@@ -44,7 +44,7 @@ public class ExceptionControllerAdvice {
      * @param ex      Exception catched
      * @param status  status linked with this exception
      * @param request request initiating the exception
-     * @return the apierror object with associated status code
+     * @return the apierror object with linked status code
      */
     private ResponseEntity<ApiError> processException(Exception ex, HttpStatus status, WebRequest request) {
         return processException(ex, status, request, null);
@@ -57,7 +57,7 @@ public class ExceptionControllerAdvice {
      * @param status               status linked with this exception
      * @param request              request initiating the exception
      * @param overrideErrorMessage message overriding default error message from exception
-     * @return the apierror object with associated status code
+     * @return the apierror object with linked status code
      */
     private ResponseEntity<ApiError> processException(Exception ex, HttpStatus status, WebRequest request, String overrideErrorMessage) {
         String errorMessage = ex.getMessage();
