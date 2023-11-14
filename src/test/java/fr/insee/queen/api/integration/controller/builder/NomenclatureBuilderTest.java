@@ -28,7 +28,7 @@ class NomenclatureBuilderTest {
 
     @BeforeEach
     void init() {
-        Locale.setDefault(new Locale("en", "US"));
+        Locale.setDefault(Locale.of("en", "US"));
         ObjectMapper objectMapper = new ObjectMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent();
