@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -36,7 +35,7 @@ public class CampaignDao implements CampaignRepository {
 
         String metadataValue = campaign.metadata();
         if (metadataValue != null) {
-            MetadataDB m = new MetadataDB(UUID.randomUUID(), metadataValue, campaignDB);
+            MetadataDB m = new MetadataDB(metadataValue, campaignDB);
             campaignDB.metadata(m);
         }
         jpaRepository.save(campaignDB);
@@ -92,7 +91,7 @@ public class CampaignDao implements CampaignRepository {
         String metadataValue = campaign.metadata();
         MetadataDB metadata = campaignDB.metadata();
         if (metadata == null) {
-            metadata = new MetadataDB(UUID.randomUUID(), metadataValue, campaignDB);
+            metadata = new MetadataDB(metadataValue, campaignDB);
             campaignDB.metadata(metadata);
         } else {
             metadata.value(metadataValue);

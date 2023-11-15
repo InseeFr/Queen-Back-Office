@@ -1,8 +1,8 @@
 package fr.insee.queen.api.surveyunit.repository.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -13,14 +13,14 @@ import java.util.UUID;
 @Table(name = "comment")
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 public class CommentDB {
 
     /**
      * The id
      */
     @Id
-    @org.springframework.data.annotation.Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     /**
@@ -37,9 +37,8 @@ public class CommentDB {
     @JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
     private SurveyUnitDB surveyUnit;
 
-
-    public CommentDB() {
-        super();
-        this.id = UUID.randomUUID();
+    public CommentDB(String value, SurveyUnitDB surveyUnit) {
+        this.value = value;
+        this.surveyUnit = surveyUnit;
     }
 }

@@ -25,7 +25,6 @@ public class QuestionnaireModelDB {
      * questionnaire id
      */
     @Id
-    @org.springframework.data.annotation.Id
     @Column(length = 50)
     private String id;
 

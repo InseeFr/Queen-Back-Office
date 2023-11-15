@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * DAO to handle state data
@@ -42,7 +41,7 @@ public class StateDataDao implements StateDataRepository {
     @Override
     public void create(String surveyUnitId, StateData stateData) {
         SurveyUnitDB surveyUnit = surveyUnitJpaRepository.getReferenceById(surveyUnitId);
-        StateDataDB stateDataDB = new StateDataDB(UUID.randomUUID(), stateData.state(), stateData.date(), stateData.currentPage(), surveyUnit);
+        StateDataDB stateDataDB = new StateDataDB(stateData.state(), stateData.date(), stateData.currentPage(), surveyUnit);
         jpaRepository.save(stateDataDB);
     }
 

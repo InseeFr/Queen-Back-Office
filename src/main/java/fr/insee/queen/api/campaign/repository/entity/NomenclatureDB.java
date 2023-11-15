@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -17,13 +18,13 @@ import org.hibernate.type.SqlTypes;
 @Table(name = "nomenclature")
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class NomenclatureDB {
     /**
      * nomenclature id
      */
     @Id
-    @org.springframework.data.annotation.Id
     @Column(length = 50)
     private String id;
     /**
@@ -38,8 +39,4 @@ public class NomenclatureDB {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private String value;
-
-    public NomenclatureDB() {
-        super();
-    }
 }
