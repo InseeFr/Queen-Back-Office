@@ -4,14 +4,14 @@ import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.depositproof.service.DepositProofService;
 import fr.insee.queen.api.depositproof.service.exception.DepositProofException;
 import fr.insee.queen.api.depositproof.service.model.PdfDepositProof;
-import fr.insee.queen.api.pilotage.controller.HabilitationComponent;
+import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.web.authentication.AuthenticationHelper;
 import fr.insee.queen.api.web.validation.IdValid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -31,11 +31,11 @@ import java.nio.file.Files;
 @Tag(name = "06. Survey units", description = "Endpoints for survey units")
 @RequestMapping(path = "/api")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class DepositProofController {
     private final DepositProofService depositProofService;
-    private final HabilitationComponent habilitationComponent;
+    private final PilotageComponent pilotageComponent;
     private final AuthenticationHelper authHelper;
 
     /**
@@ -50,7 +50,7 @@ public class DepositProofController {
     public void generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      HttpServletResponse response) {
         log.info("GET deposit-proof with survey unit id {}", surveyUnitId);
-        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
 
         String username = authHelper.getUserId();
         PdfDepositProof depositProof = depositProofService.generateDepositProof(username, surveyUnitId);

@@ -1,7 +1,7 @@
 package fr.insee.queen.api.surveyunit.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.pilotage.controller.HabilitationComponent;
+import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.surveyunit.controller.dto.input.StateDataInputData;
 import fr.insee.queen.api.surveyunit.controller.dto.output.StateDataDto;
@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -30,12 +30,12 @@ import java.util.List;
 @Tag(name = "06. Survey units")
 @RequestMapping(path = "/api")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class StateDataController {
     private final StateDataService stateDataService;
     private final SurveyUnitService surveyUnitService;
-    private final HabilitationComponent habilitationComponent;
+    private final PilotageComponent pilotageComponent;
 
     /**
      * Retrieve the data linked of a survey unit
@@ -48,7 +48,7 @@ public class StateDataController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public StateDataDto getStateDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("GET statedata for reporting unit with id {}", surveyUnitId);
-        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return StateDataDto.fromModel(stateDataService.getStateData(surveyUnitId));
     }
 
@@ -64,7 +64,7 @@ public class StateDataController {
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
                              @Valid @RequestBody StateDataInputData stateDataInputDto) {
         log.info("PUT statedata for reporting unit with id {}", surveyUnitId);
-        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         stateDataService.updateStateData(surveyUnitId, StateDataInputData.toModel(stateDataInputDto));
     }
 

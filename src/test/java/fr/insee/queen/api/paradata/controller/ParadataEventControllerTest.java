@@ -3,8 +3,8 @@ package fr.insee.queen.api.paradata.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.api.pilotage.controller.dummy.HabilitationFakeComponent;
 import fr.insee.queen.api.paradata.service.dummy.ParadataEventFakeService;
+import fr.insee.queen.api.pilotage.controller.dummy.PilotageFakeComponent;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,7 @@ class ParadataEventControllerTest {
 
     private ParadataEventFakeService paradataEventService;
 
-    private HabilitationFakeComponent habilitationComponent;
+    private PilotageFakeComponent pilotageComponent;
 
     private ParadataEventController controller;
 
@@ -27,8 +27,8 @@ class ParadataEventControllerTest {
     @BeforeEach
     public void init() {
         paradataEventService = new ParadataEventFakeService();
-        habilitationComponent = new HabilitationFakeComponent();
-        controller = new ParadataEventController(paradataEventService, habilitationComponent);
+        pilotageComponent = new PilotageFakeComponent();
+        controller = new ParadataEventController(paradataEventService, pilotageComponent);
     }
 
     @Test
@@ -38,7 +38,7 @@ class ParadataEventControllerTest {
                 {"idSU": "11", "object": {}}
                 """, ObjectNode.class);
         controller.addParadata(paradata);
-        assertThat(habilitationComponent.checked()).isTrue();
+        assertThat(pilotageComponent.checked()).isTrue();
         assertThat(paradataEventService.created()).isTrue();
     }
 

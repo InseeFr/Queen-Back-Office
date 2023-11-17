@@ -6,9 +6,6 @@ application:
     admin: admin
     webclient: webclient
     reviewer-alternative: alternate-reviewer
-  pilotage:
-    integration-override: true
-
   auth: OIDC
   security:
     # if oidc auth enabled

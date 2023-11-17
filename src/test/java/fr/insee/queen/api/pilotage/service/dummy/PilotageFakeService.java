@@ -32,6 +32,18 @@ public class PilotageFakeService implements PilotageService {
     public static final String SURVEY_UNIT1_ID = "pilotage-s1";
     public static final String SURVEY_UNIT2_ID = "pilotage-s2";
 
+    @Getter
+    private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
+            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
+            new SurveyUnitSummary("s2", "questionnaire-id", "campaign-id")
+    );
+
+    @Getter
+    private final List<PilotageCampaign> interviewerCampaigns = List.of(
+            new PilotageCampaign(CAMPAIGN1_ID, new ArrayList<>()),
+            new PilotageCampaign("interviewerCampaign2", new ArrayList<>())
+    );
+
     @Override
     public boolean isClosed(String campaignId, String authToken) {
         return this.isCampaignClosed;
@@ -42,10 +54,7 @@ public class PilotageFakeService implements PilotageService {
         if (this.hasEmptySurveyUnits) {
             return new ArrayList<>();
         }
-        return List.of(
-                new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
-                new SurveyUnitSummary("s2", "questionnaire-id", "campaign-id")
-        );
+        return surveyUnitSummaries;
     }
 
     @Override
@@ -65,14 +74,8 @@ public class PilotageFakeService implements PilotageService {
 
     @Override
     public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
-        if (this.hasEmptySurveyUnits) {
-            return new ArrayList<>();
-        }
         wentThroughInterviewerCampaigns = true;
-        return List.of(
-                new PilotageCampaign(CAMPAIGN1_ID, new ArrayList<>()),
-                new PilotageCampaign("interviewerCampaign2", new ArrayList<>())
-        );
+        return interviewerCampaigns;
     }
 
     @Override

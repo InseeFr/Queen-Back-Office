@@ -20,7 +20,7 @@ public class AuthenticationUserHelper implements AuthenticationHelper {
     public String getUserToken() {
         Authentication auth = getAuthenticationPrincipal();
         if (auth == null) {
-            throw new AuthenticationTokenException("Cannot retrieve token for the user. Ensure you are not in NOAUTH mode with pilotage integration override to false");
+            throw new AuthenticationTokenException("Cannot retrieve token for the user. Ensure you are not in NOAUTH mode with pilotage api enabled");
         }
         AbstractOAuth2Token token = (AbstractOAuth2Token) auth.getCredentials();
         return token.getTokenValue();

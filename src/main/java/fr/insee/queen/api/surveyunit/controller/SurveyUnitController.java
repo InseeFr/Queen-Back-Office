@@ -1,9 +1,8 @@
 package fr.insee.queen.api.surveyunit.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.pilotage.controller.HabilitationComponent;
+import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
-import fr.insee.queen.api.pilotage.service.PilotageService;
 import fr.insee.queen.api.surveyunit.controller.dto.input.SurveyUnitCreationData;
 import fr.insee.queen.api.surveyunit.controller.dto.input.SurveyUnitUpdateData;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitByCampaignDto;
@@ -17,9 +16,8 @@ import fr.insee.queen.api.web.validation.IdValid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,16 +33,12 @@ import java.util.List;
 @Tag(name = "06. Survey units", description = "Endpoints for survey units")
 @RequestMapping(path = "/api")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class SurveyUnitController {
-    @Value("${application.pilotage.integration-override}")
-    private final String integrationOverride;
     private final SurveyUnitService surveyUnitService;
-    private final PilotageService pilotageService;
-    private final HabilitationComponent habilitationComponent;
+    private final PilotageComponent pilotageComponent;
     private final AuthenticationHelper authHelper;
-
     /**
      * Retrieve all survey units id
      *
@@ -69,7 +63,7 @@ public class SurveyUnitController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public SurveyUnitDto getSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("GET survey-units with id {}", surveyUnitId);
-        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
         return SurveyUnitDto.fromModel(surveyUnitService.getSurveyUnit(surveyUnitId));
     }
 
@@ -85,7 +79,7 @@ public class SurveyUnitController {
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      @Valid @RequestBody SurveyUnitUpdateData surveyUnitUpdateData) {
         log.info("PUT survey-unit for reporting unit with id {}", surveyUnitId);
-        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         SurveyUnit surveyUnit = SurveyUnitUpdateData.toModel(surveyUnitId, surveyUnitUpdateData);
         surveyUnitService.updateSurveyUnit(surveyUnit);
     }
@@ -102,14 +96,8 @@ public class SurveyUnitController {
     public List<SurveyUnitByCampaignDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
         log.info("GET survey-units for campaign with id {}", campaignId);
 
-        List<SurveyUnitSummary> surveyUnits;
-        if (integrationOverride != null && integrationOverride.equals("true")) {
-            surveyUnits = surveyUnitService.findSummariesByCampaignId(campaignId);
-        } else {
-            String authToken = authHelper.getUserToken();
-            // get survey units of a campaign from the pilotage api
-            surveyUnits = pilotageService.getSurveyUnitsByCampaign(campaignId, authToken);
-        }
+        // get survey units of a campaign from the pilotage api
+        List<SurveyUnitSummary> surveyUnits = pilotageComponent.getSurveyUnitsByCampaign(campaignId);
 
         if (surveyUnits.isEmpty()) {
             throw new EntityNotFoundException(String.format("No survey units for the campaign with id %s", campaignId));
@@ -132,14 +120,8 @@ public class SurveyUnitController {
         String userId = authHelper.getUserId();
         log.info("GET survey-units for interviewer with id {}", userId);
 
-        if ((integrationOverride != null && integrationOverride.equals("true"))) {
-            return surveyUnitService.findAllSurveyUnits().stream()
-                    .map(SurveyUnitDto::fromModel)
-                    .toList();
-        }
-        String authToken = authHelper.getUserToken();
         // get survey units of the interviewer
-        List<SurveyUnit> surveyUnits = pilotageService.getInterviewerSurveyUnits(authToken);
+        List<SurveyUnit> surveyUnits = pilotageComponent.getInterviewerSurveyUnits();
 
         return surveyUnits.stream()
                 .map(SurveyUnitDto::fromModel)

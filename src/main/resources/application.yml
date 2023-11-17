@@ -37,8 +37,6 @@ application:
     alternative-habilitation-service:
       url: http://alternative.url
       campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
-    #If true, checkHabilitation and getSuFromPilotage are not used to secure the endpoints
-    integration-override: false
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -117,4 +115,8 @@ logging:
 
 feature:
   enable:
-    swagger: true
+    dataset: false
+    swagger: false
+  disable:
+    pilotage: false
+    cache: false
