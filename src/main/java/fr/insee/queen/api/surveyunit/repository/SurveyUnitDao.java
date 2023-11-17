@@ -5,6 +5,7 @@ import fr.insee.queen.api.campaign.repository.entity.QuestionnaireModelDB;
 import fr.insee.queen.api.campaign.repository.jpa.CampaignJpaRepository;
 import fr.insee.queen.api.campaign.repository.jpa.QuestionnaireModelJpaRepository;
 import fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof;
+import fr.insee.queen.api.paradata.repository.jpa.ParadataEventJpaRepository;
 import fr.insee.queen.api.surveyunit.repository.entity.*;
 import fr.insee.queen.api.surveyunit.repository.jpa.CommentJpaRepository;
 import fr.insee.queen.api.surveyunit.repository.jpa.DataJpaRepository;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * DAO to handle survey units in DB
@@ -38,6 +38,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     private final CampaignJpaRepository campaignRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
+    private final ParadataEventJpaRepository paradataEventRepository;
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
@@ -81,6 +82,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         commentRepository.deleteComments(campaignId);
         personalizationRepository.deletePersonalizations(campaignId);
         surveyUnitTempZoneRepository.deleteSurveyUnits(campaignId);
+        paradataEventRepository.deleteBySurveyUnitCampaignId(campaignId);
         crudRepository.deleteSurveyUnits(campaignId);
     }
 
@@ -91,6 +93,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         commentRepository.deleteBySurveyUnitId(surveyUnitId);
         personalizationRepository.deleteBySurveyUnitId(surveyUnitId);
         surveyUnitTempZoneRepository.deleteBySurveyUnitId(surveyUnitId);
+        paradataEventRepository.deleteBySurveyUnitId(surveyUnitId);
         crudRepository.deleteById(surveyUnitId);
     }
 
@@ -99,16 +102,16 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         CampaignDB campaign = campaignRepository.getReferenceById(surveyUnit.campaignId());
         QuestionnaireModelDB questionnaire = questionnaireModelRepository.getReferenceById(surveyUnit.questionnaireId());
         SurveyUnitDB surveyUnitDB = new SurveyUnitDB(surveyUnit.id(), campaign, questionnaire);
-        DataDB dataDB = new DataDB(UUID.randomUUID(), surveyUnit.data(), surveyUnitDB);
-        CommentDB commentDB = new CommentDB(UUID.randomUUID(), surveyUnit.comment(), surveyUnitDB);
-        PersonalizationDB personalizationDB = new PersonalizationDB(UUID.randomUUID(), surveyUnit.personalization(), surveyUnitDB);
+        DataDB dataDB = new DataDB(surveyUnit.data(), surveyUnitDB);
+        CommentDB commentDB = new CommentDB(surveyUnit.comment(), surveyUnitDB);
+        PersonalizationDB personalizationDB = new PersonalizationDB(surveyUnit.personalization(), surveyUnitDB);
         StateDataDB stateDataDB;
         StateData stateData = surveyUnit.stateData();
         if (stateData == null) {
             stateDataDB = new StateDataDB();
             stateDataDB.surveyUnit(surveyUnitDB);
         } else {
-            stateDataDB = new StateDataDB(UUID.randomUUID(), stateData.state(), stateData.date(), stateData.currentPage(), surveyUnitDB);
+            stateDataDB = new StateDataDB(stateData.state(), stateData.date(), stateData.currentPage(), surveyUnitDB);
         }
 
         surveyUnitDB.personalization(personalizationDB);
@@ -127,7 +130,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         int countUpdated = personalizationRepository.updatePersonalization(surveyUnitId, personalization);
         if (countUpdated == 0) {
             SurveyUnitDB surveyUnit = crudRepository.getReferenceById(surveyUnitId);
-            PersonalizationDB personalizationDB = new PersonalizationDB(UUID.randomUUID(), personalization, surveyUnit);
+            PersonalizationDB personalizationDB = new PersonalizationDB(personalization, surveyUnit);
             personalizationRepository.save(personalizationDB);
         }
     }
@@ -141,7 +144,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         int countUpdated = commentRepository.updateComment(surveyUnitId, comment);
         if (countUpdated == 0) {
             SurveyUnitDB surveyUnit = crudRepository.getReferenceById(surveyUnitId);
-            CommentDB commentDB = new CommentDB(UUID.randomUUID(), comment, surveyUnit);
+            CommentDB commentDB = new CommentDB(comment, surveyUnit);
             commentRepository.save(commentDB);
         }
     }
@@ -155,7 +158,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         int countUpdated = dataRepository.updateData(surveyUnitId, data);
         if (countUpdated == 0) {
             SurveyUnitDB surveyUnit = crudRepository.getReferenceById(surveyUnitId);
-            DataDB dataDB = new DataDB(UUID.randomUUID(), data, surveyUnit);
+            DataDB dataDB = new DataDB(data, surveyUnit);
             dataRepository.save(dataDB);
         }
     }

@@ -1,10 +1,8 @@
 package fr.insee.queen.api.surveyunittempzone.repository.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -20,13 +18,14 @@ import java.util.UUID;
 @Table(name = "survey_unit_temp_zone")
 @Getter
 @Setter
+@NoArgsConstructor
 public class SurveyUnitTempZoneDB {
 
     /**
      * The unique id of surveyUnitTempZone
      */
     @Id
-    @org.springframework.data.annotation.Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     /**
@@ -52,4 +51,11 @@ public class SurveyUnitTempZoneDB {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private String surveyUnit;
+
+    public SurveyUnitTempZoneDB(String surveyUnitId, String userId, Long date, String surveyUnit) {
+        this.surveyUnitId = surveyUnitId;
+        this.userId = userId;
+        this.date = date;
+        this.surveyUnit = surveyUnit;
+    }
 }

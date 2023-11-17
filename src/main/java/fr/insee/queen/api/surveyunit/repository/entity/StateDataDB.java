@@ -2,8 +2,8 @@ package fr.insee.queen.api.surveyunit.repository.entity;
 
 import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -12,16 +12,15 @@ import java.util.UUID;
 @Table(name = "state_data")
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 public class StateDataDB {
 
     /**
      * The id of the state data
      */
     @Id
-    @org.springframework.data.annotation.Id
-    @Column(name = "id")
-    protected UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     /**
      * The State of the state data
@@ -49,8 +48,10 @@ public class StateDataDB {
     @JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
     private SurveyUnitDB surveyUnit;
 
-    public StateDataDB() {
-        super();
-        this.id = UUID.randomUUID();
+    public StateDataDB(StateDataType state, Long date, String currentPage, SurveyUnitDB surveyUnit) {
+        this.state = state;
+        this.date = date;
+        this.currentPage = currentPage;
+        this.surveyUnit = surveyUnit;
     }
 }

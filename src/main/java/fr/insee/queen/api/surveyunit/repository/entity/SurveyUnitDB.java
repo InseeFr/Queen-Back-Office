@@ -22,7 +22,6 @@ public class SurveyUnitDB {
      * survey unit id
      */
     @Id
-    @org.springframework.data.annotation.Id
     private String id;
 
     /**

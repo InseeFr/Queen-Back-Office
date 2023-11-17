@@ -46,10 +46,9 @@ public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID>
     @Transactional
     @Modifying
     @Query(value = """
-            delete from state_data st where id in (
-                select st.id from survey_unit s
-                    where s.id = st.survey_unit_id
-                    and s.campaign_id = :campaignId
+            delete from state_data where survey_unit_id in (
+                select id from survey_unit
+                    where campaign_id = :campaignId
             )""", nativeQuery = true)
     void deleteStateDatas(String campaignId);
 
@@ -64,5 +63,7 @@ public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID>
      * Delete state data by survey unit
      * @param surveyUnitId survey unit id
      */
+    @Transactional
+    @Modifying
     void deleteBySurveyUnitId(String surveyUnitId);
 }

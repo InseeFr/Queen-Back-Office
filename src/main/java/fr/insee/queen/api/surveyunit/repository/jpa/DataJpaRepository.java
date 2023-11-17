@@ -23,10 +23,9 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-            delete from data d where id in (
-                select d.id from survey_unit s
-                    where s.id = d.survey_unit_id
-                    and s.campaign_id = :campaignId
+            delete from data where survey_unit_id in (
+                select id from survey_unit
+                    where campaign_id = :campaignId
             )""", nativeQuery = true)
     void deleteDatas(String campaignId);
 
@@ -55,5 +54,7 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
      * Delete data of a survey unit
      * @param surveyUnitId survey unit id
      */
+    @Transactional
+    @Modifying
     void deleteBySurveyUnitId(String surveyUnitId);
 }

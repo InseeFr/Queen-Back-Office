@@ -23,10 +23,9 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
     @Transactional
     @Modifying
     @Query(value = """
-            delete from personalization p where id in (
-                select p.id from survey_unit s
-                    where s.id = p.survey_unit_id
-                    and s.campaign_id = :campaignId
+            delete from personalization where survey_unit_id in (
+                select id from survey_unit
+                    where campaign_id = :campaignId
             )""", nativeQuery = true)
     void deletePersonalizations(String campaignId);
 
@@ -55,5 +54,7 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
      * Delete personalization of a survey unit
      * @param surveyUnitId survey unit id
      */
+    @Transactional
+    @Modifying
     void deleteBySurveyUnitId(String surveyUnitId);
 }

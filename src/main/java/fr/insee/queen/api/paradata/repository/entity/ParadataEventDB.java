@@ -2,8 +2,8 @@ package fr.insee.queen.api.paradata.repository.entity;
 
 import fr.insee.queen.api.surveyunit.repository.entity.SurveyUnitDB;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -14,15 +14,14 @@ import java.util.UUID;
 @Table(name = "paradata_event")
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 public class ParadataEventDB {
 
     /**
      * The id of the ParadataEvent
      */
     @Id
-    @org.springframework.data.annotation.Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     /**

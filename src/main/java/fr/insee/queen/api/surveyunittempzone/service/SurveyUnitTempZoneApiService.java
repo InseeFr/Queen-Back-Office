@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -20,8 +19,7 @@ public class SurveyUnitTempZoneApiService implements SurveyUnitTempZoneService {
     @Override
     public void saveSurveyUnitToTempZone(String surveyUnitId, String userId, JsonNode surveyUnit) {
         Long date = new Date().getTime();
-        UUID id = UUID.randomUUID();
-        surveyUnitTempZoneRepository.save(id, surveyUnitId, userId, date, surveyUnit.toString());
+        surveyUnitTempZoneRepository.save(surveyUnitId, userId, date, surveyUnit.toString());
     }
 
     @Override
