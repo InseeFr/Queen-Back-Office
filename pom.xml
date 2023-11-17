@@ -20,6 +20,13 @@
 		<testcontainers.version>1.15.2</testcontainers.version>
 		<fop.version>2.9</fop.version>
 		<snakeyaml.version>2.0</snakeyaml.version>
+		<!-- maven-surefire-plugin setting.
+			 Used for encoding with tests on windows (buggy windows components)
+		-->
+		<argLine>-Dfile.encoding=UTF-8</argLine>
+		<sonar.organization>inseefr</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.java.binaries>target</sonar.java.binaries>
 	</properties>
 
 	<dependencyManagement>
@@ -237,7 +244,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.7</version>
+						<version>0.8.11</version>
 						<configuration>
 							<excludes>
 								<exclude>fr/insee/queen/api/service/dataset/*.class</exclude>
@@ -340,13 +347,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<configuration>
-						<!--
-							{argLine} to not disturb jacoco coverage generation
-							encoding to force windows components to test with proper encoding
-						-->
-						<argLine>-Dfile.encoding=UTF-8</argLine>
-					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
