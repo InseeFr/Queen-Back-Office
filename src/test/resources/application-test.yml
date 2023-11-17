@@ -47,6 +47,9 @@ server:
       charset: UTF-8
       force: true
 feature:
-  enableSwagger: false
-  disableCache: true
-  enableDataset: true
+  enable:
+    swagger: false
+    dataset: true
+  disable:
+    cache: true
+    pilotage: true

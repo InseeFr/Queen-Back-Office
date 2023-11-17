@@ -116,4 +116,5 @@ logging:
       max-history: 90
 
 feature:
-  enableSwagger: true
+  enable:
+    swagger: true

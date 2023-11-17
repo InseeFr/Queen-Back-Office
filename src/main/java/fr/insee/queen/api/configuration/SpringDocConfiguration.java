@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 
 @Configuration
-@ConditionalOnProperty(value="feature.enableSwagger", havingValue = "true")
+@ConditionalOnProperty(value="feature.enable.swagger", havingValue = "true")
 public class SpringDocConfiguration {
 
     @Bean
