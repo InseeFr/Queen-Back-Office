@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,14 +43,13 @@ public class CampaignController {
     /**
      * Retrieve all campaigns
      *
-     * @param auth authenticated user
      * @return List of all {@link CampaignSummaryDto}
      */
     @Operation(summary = "Get list of all campaigns")
     @GetMapping(path = "/admin/campaigns")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-    public List<CampaignSummaryDto> getListCampaign(Authentication auth) {
-        String userId = authHelper.getUserId(auth);
+    public List<CampaignSummaryDto> getListCampaign() {
+        String userId = authHelper.getUserId();
         log.info("Admin {} request all campaigns", userId);
         return campaignService.getAllCampaigns()
                 .stream().map(CampaignSummaryDto::fromModel)
@@ -61,15 +59,14 @@ public class CampaignController {
     /**
      * Retrieve the campaigns the current user has access to (or all campaigns if admin)
      *
-     * @param auth authenticated user
      * @return List of {@link CampaignSummaryDto}
      */
     @Operation(summary = "Get campaign list for the current user")
     @GetMapping(path = "/campaigns")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-    public List<CampaignSummaryDto> getInterviewerCampaignList(Authentication auth) {
+    public List<CampaignSummaryDto> getInterviewerCampaignList() {
 
-        String userId = authHelper.getUserId(auth);
+        String userId = authHelper.getUserId();
         log.info("User {} need his campaigns", userId);
 
         if (integrationOverride != null && integrationOverride.equals("true")) {
@@ -79,7 +76,7 @@ public class CampaignController {
                     .map(CampaignSummaryDto::fromModel).toList();
         }
 
-        String authToken = authHelper.getAuthToken(auth);
+        String authToken = authHelper.getUserToken();
         List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns(authToken);
         log.info("{} campaign(s) found for {}", campaigns.size(), userId);
 
@@ -91,16 +88,14 @@ public class CampaignController {
     /**
      * Create a new campaign
      *
-     * @param auth authenticated user
      * @param campaignInputDto the value to create
      */
     @Operation(summary = "Create a campaign")
     @PostMapping(path = "/campaigns")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCampaign(@Valid @RequestBody CampaignCreationData campaignInputDto,
-                               Authentication auth) {
-        String userId = authHelper.getUserId(auth);
+    public void createCampaign(@Valid @RequestBody CampaignCreationData campaignInputDto) {
+        String userId = authHelper.getUserId();
         log.info("User {} requests campaign {} creation", userId, campaignInputDto.id());
         campaignService.createCampaign(CampaignCreationData.toModel(campaignInputDto));
     }
@@ -112,16 +107,14 @@ public class CampaignController {
      *
      * @param force      force the full deletion of the campaign (without checking if campaign is closed in pilotage api)
      * @param campaignId campaign id
-     * @param auth authenticated user
      */
     @Operation(summary = "Delete a campaign")
     @DeleteMapping(path = "/campaign/{id}")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)
     public void deleteCampaignById(@RequestParam("force") boolean force,
-                                   @IdValid @PathVariable(value = "id") String campaignId,
-                                   Authentication auth) {
-        String userId = authHelper.getUserId(auth);
+                                   @IdValid @PathVariable(value = "id") String campaignId) {
+        String userId = authHelper.getUserId();
         log.info("Admin {} requests deletion of campaign {}", userId, campaignId);
 
         if (force ||
@@ -131,7 +124,7 @@ public class CampaignController {
             return;
         }
 
-        String authToken = authHelper.getAuthToken(auth);
+        String authToken = authHelper.getUserToken();
         if (pilotageService.isClosed(campaignId, authToken)) {
             campaignService.delete(campaignId);
             log.info("Campaign with id {} deleted", campaignId);

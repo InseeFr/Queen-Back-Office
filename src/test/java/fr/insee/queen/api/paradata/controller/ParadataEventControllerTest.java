@@ -37,7 +37,7 @@ class ParadataEventControllerTest {
         ObjectNode paradata = mapper.readValue("""
                 {"idSU": "11", "object": {}}
                 """, ObjectNode.class);
-        controller.addParadata(paradata, null);
+        controller.addParadata(paradata);
         assertThat(habilitationComponent.checked()).isTrue();
         assertThat(paradataEventService.created()).isTrue();
     }
@@ -48,7 +48,7 @@ class ParadataEventControllerTest {
         ObjectNode paradata = mapper.readValue("""
                 {"idU": "11", "object": {}}
                 """, ObjectNode.class);
-        assertThatThrownBy(() -> controller.addParadata(paradata, null)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> controller.addParadata(paradata)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -57,6 +57,6 @@ class ParadataEventControllerTest {
         ObjectNode paradata = mapper.readValue("""
                 {"idSU": {}, "object": {}}
                 """, ObjectNode.class);
-        assertThatThrownBy(() -> controller.addParadata(paradata, null)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> controller.addParadata(paradata)).isInstanceOf(EntityNotFoundException.class);
     }
 }

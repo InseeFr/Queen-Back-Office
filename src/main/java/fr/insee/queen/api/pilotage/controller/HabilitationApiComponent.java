@@ -30,7 +30,7 @@ public class HabilitationApiComponent implements HabilitationComponent {
     private final String integrationOverride;
 
     @Override
-    public void checkHabilitations(Authentication auth, String surveyUnitId, PilotageRole... rolesToCheck) {
+    public void checkHabilitations(String surveyUnitId, PilotageRole... rolesToCheck) {
 
         SurveyUnitSummary surveyUnit = surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
 
@@ -42,6 +42,7 @@ public class HabilitationApiComponent implements HabilitationComponent {
             return;
         }
 
+        Authentication auth = authHelper.getAuthenticationPrincipal();
         if (!auth.isAuthenticated()) {
             // not authenticated user cannot have habilitation
             throw new HabilitationException();
@@ -55,11 +56,11 @@ public class HabilitationApiComponent implements HabilitationComponent {
             return;
         }
 
-        String userId = authHelper.getUserId(auth);
+        String userId = authHelper.getUserId();
         log.info("Check habilitation of user {} with role {} to access survey-unit {} ", userId, rolesToCheck, surveyUnit.id());
-
+        String userToken = authHelper.getUserToken();
         for (PilotageRole roleToCheck : rolesToCheck) {
-            if (pilotageService.hasHabilitation(surveyUnit, roleToCheck, userId, authHelper.getAuthToken(auth))) {
+            if (pilotageService.hasHabilitation(surveyUnit, roleToCheck, userId, userToken)) {
                 return;
             }
         }

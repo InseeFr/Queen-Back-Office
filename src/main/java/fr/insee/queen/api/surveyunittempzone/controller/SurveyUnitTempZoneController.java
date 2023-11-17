@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,17 +36,15 @@ public class SurveyUnitTempZoneController {
      *
      * @param surveyUnitId survey unit id
      * @param surveyUnit   survey unit json
-     * @param auth         authenticated user
      */
     @Operation(summary = "Create survey-unit to temp-zone")
     @PostMapping(path = "/survey-unit/{id}/temp-zone")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                             @NotNull @RequestBody ObjectNode surveyUnit,
-                                             Authentication auth) {
+                                             @NotNull @RequestBody ObjectNode surveyUnit) {
         log.info("POST survey-unit to temp-zone");
-        String userId = authHelper.getUserId(auth);
+        String userId = authHelper.getUserId();
         surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
     }
 

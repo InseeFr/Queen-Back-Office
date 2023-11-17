@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,19 +42,17 @@ public class DepositProofController {
      * Generate and retrieve a deposit proof (pdf file) for a survey unit
      *
      * @param surveyUnitId survey unit id
-     * @param auth         authenticated user
      * @param response     HttpServletResponse object
      */
     @Operation(summary = "Get deposit proof for a survey unit")
     @GetMapping(value = "/survey-unit/{id}/deposit-proof")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                     Authentication auth,
                                      HttpServletResponse response) {
         log.info("GET deposit-proof with survey unit id {}", surveyUnitId);
-        habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
 
-        String username = authHelper.getUserId(auth);
+        String username = authHelper.getUserId();
         PdfDepositProof depositProof = depositProofService.generateDepositProof(username, surveyUnitId);
 
         response.setContentType("application/pdf");

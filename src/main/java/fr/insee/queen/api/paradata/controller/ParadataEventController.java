@@ -14,7 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,13 +35,12 @@ public class ParadataEventController {
      * Create a paradata event for a survey unit
      *
      * @param paradataValue paradata value
-     * @param auth          authenticated user
      */
     @Operation(summary = "Create paradata event for a survey unit")
     @PostMapping(path = "/paradata")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     @ResponseStatus(HttpStatus.OK)
-    public void addParadata(@NotNull @RequestBody ObjectNode paradataValue, Authentication auth) {
+    public void addParadata(@NotNull @RequestBody ObjectNode paradataValue) {
         String paradataSurveyUnitIdParameter = "idSU";
         log.info("POST ParadataEvent");
         if (!paradataValue.has(paradataSurveyUnitIdParameter)) {
@@ -55,7 +53,7 @@ public class ParadataEventController {
         }
 
         String surveyUnitId = surveyUnitNode.textValue();
-        habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
+        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         paradataEventService.createParadataEvent(surveyUnitId, paradataValue.toString());
     }
 }

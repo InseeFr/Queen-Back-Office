@@ -12,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,16 +33,14 @@ public class CommentController {
      * Retrieve the comment linked to the survey unit
      *
      * @param surveyUnitId the id of survey unit
-     * @param auth         authenticated user
      * @return {@link String} the comment linked to the survey unit
      */
     @Operation(summary = "Get comment for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/comment")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-    public String getCommentBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                         Authentication auth) {
+    public String getCommentBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("GET comment for reporting unit with id {}", surveyUnitId);
-        habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
+        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return commentService.getComment(surveyUnitId);
     }
 
@@ -52,16 +49,14 @@ public class CommentController {
      *
      * @param commentValue the value to update
      * @param surveyUnitId the id of the survey unit
-     * @param auth         authenticated user
      */
     @Operation(summary = "Update comment for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/comment")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void setComment(@NotNull @RequestBody ObjectNode commentValue,
-                           @IdValid @PathVariable(value = "id") String surveyUnitId,
-                           Authentication auth) {
+                           @IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("PUT comment for reporting unit with id {}", surveyUnitId);
-        habilitationComponent.checkHabilitations(auth, surveyUnitId, PilotageRole.INTERVIEWER);
+        habilitationComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         commentService.updateComment(surveyUnitId, commentValue);
     }
 }
