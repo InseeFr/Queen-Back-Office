@@ -1,3 +1,3 @@
 feature:
-  disable:
-    cache: false
+  enable:
+    cache: true

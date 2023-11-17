@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@ConditionalOnExpression(value = "'${application.auth}' == 'OIDC' and ${feature.disable.pilotage} != true")
+@ConditionalOnExpression(value = "'${application.auth}' == 'OIDC' and ${feature.enable.pilotage} != false")
 @Component
 @AllArgsConstructor
 @Slf4j

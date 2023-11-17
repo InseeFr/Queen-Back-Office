@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@ConditionalOnExpression(value = "'${application.auth}' == 'NOAUTH' or ${feature.disable.pilotage} == true")
+@ConditionalOnExpression(value = "'${application.auth}' == 'NOAUTH' or ${feature.enable.pilotage} == false")
 @RequiredArgsConstructor
 @Component
 public class NoPilotageComponent implements PilotageComponent {

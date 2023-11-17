@@ -117,6 +117,5 @@ feature:
   enable:
     dataset: false
     swagger: false
-  disable:
-    pilotage: false
-    cache: false
+    pilotage: true
+    cache: true
