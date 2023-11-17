@@ -1,6 +1,7 @@
 package fr.insee.queen.api.pilotage.service;
 
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 
 import java.util.List;
@@ -22,6 +23,13 @@ public interface PilotageService {
      * @return List of {@link SurveyUnitSummary} survey units of the campaign
      */
     List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId, String authToken);
+
+    /**
+     * Retrieve survey unit list for an interviewer
+     * @param authToken user token
+     * @return List of {@link SurveyUnit} survey units of the campaign
+     */
+    List<SurveyUnit> getInterviewerSurveyUnits(String authToken);
 
     /**
      * Retrieve campaigns the user has access to as an interviewer

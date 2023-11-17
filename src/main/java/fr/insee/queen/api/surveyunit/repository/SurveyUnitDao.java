@@ -191,4 +191,16 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         saveData(surveyUnitId, surveyUnit.data());
         stateDataDao.save(surveyUnitId, surveyUnit.stateData());
     }
+
+    @Override
+    public List<SurveyUnit> find(List<String> surveyUnitIds) {
+        return crudRepository.findSurveyUnitsByIdIn(surveyUnitIds);
+    }
+
+    @Override
+    public List<SurveyUnit> findAll() {
+        return crudRepository.findAllSurveyUnits();
+    }
+
+
 }

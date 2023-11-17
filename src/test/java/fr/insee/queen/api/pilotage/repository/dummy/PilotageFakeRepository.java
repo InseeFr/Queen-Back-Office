@@ -13,7 +13,10 @@ import java.util.List;
 public class PilotageFakeRepository implements PilotageRepository {
 
     public static final String INTERVIEWER_CAMPAIGN1_ID = "interviewer-campaign1";
-    public static final String CURRENT_SU_CAMPAIGN1_ID = "su-campaign1";
+
+    public static final String SURVEY_UNIT1_ID = "pilotage-su-1";
+    public static final String SURVEY_UNIT2_ID = "pilotage-su-2";
+    public static final String SURVEY_UNIT3_ID = "pilotage-su-2";
 
     @Getter
     private boolean wentThroughIsClosedCampaign = false;
@@ -22,7 +25,7 @@ public class PilotageFakeRepository implements PilotageRepository {
     @Setter
     private boolean nullInterviewerCampaigns = false;
     @Setter
-    private boolean nullCurrentSurveyUnit = false;
+    private boolean nullSurveyUnits = false;
 
     @Override
     public boolean isClosed(String campaignId, String authToken) {
@@ -32,18 +35,18 @@ public class PilotageFakeRepository implements PilotageRepository {
 
     @Override
     public List<LinkedHashMap<String, String>> getSurveyUnits(String authToken, String campaignId) {
-        if (nullCurrentSurveyUnit) {
+        if (nullSurveyUnits) {
             return null;
         }
         LinkedHashMap<String, String> map1 = new LinkedHashMap<>();
-        map1.put("campaign", CURRENT_SU_CAMPAIGN1_ID);
-        map1.put("id", "survey-unit1");
+        map1.put("campaign", campaignId);
+        map1.put("id", SURVEY_UNIT1_ID);
         LinkedHashMap<String, String> map2 = new LinkedHashMap<>();
         map2.put("campaign", "su-campaign2");
-        map2.put("id", "survey-unit2");
+        map2.put("id", SURVEY_UNIT2_ID);
         LinkedHashMap<String, String> map3 = new LinkedHashMap<>();
-        map3.put("campaign", CURRENT_SU_CAMPAIGN1_ID);
-        map3.put("id", "survey-unit3");
+        map3.put("campaign", campaignId);
+        map3.put("id", SURVEY_UNIT3_ID);
         return List.of(map1, map2, map3);
     }
 

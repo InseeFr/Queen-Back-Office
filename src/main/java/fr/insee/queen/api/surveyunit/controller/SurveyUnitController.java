@@ -111,7 +111,7 @@ public class SurveyUnitController {
 
         List<SurveyUnitSummary> surveyUnits;
         if (integrationOverride != null && integrationOverride.equals("true")) {
-            surveyUnits = surveyUnitService.findByCampaignId(campaignId);
+            surveyUnits = surveyUnitService.findSummariesByCampaignId(campaignId);
         } else {
             String authToken = authHelper.getAuthToken(auth);
             // get survey units of a campaign from the pilotage api
@@ -124,6 +124,33 @@ public class SurveyUnitController {
 
         return surveyUnits.stream()
                 .map(SurveyUnitByCampaignDto::fromModel)
+                .toList();
+    }
+
+    /**
+     * Retrieve all the survey units of the current interviewer
+     *
+     * @param auth       authenticated user
+     * @return List of {@link SurveyUnitDto} survey units
+     */
+    @Operation(summary = "Get list of survey units linked to the current interviewer")
+    @GetMapping(path = "/survey-units/interviewer")
+    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
+    public List<SurveyUnitDto> getInterviewerSurveyUnits(Authentication auth) {
+        String userId = authHelper.getUserId(auth);
+        log.info("GET survey-units for interviewer with id {}", userId);
+
+        if ((integrationOverride != null && integrationOverride.equals("true"))) {
+            return surveyUnitService.findAllSurveyUnits().stream()
+                    .map(SurveyUnitDto::fromModel)
+                    .toList();
+        }
+        String authToken = authHelper.getAuthToken(auth);
+        // get survey units of the interviewer
+        List<SurveyUnit> surveyUnits = pilotageService.getInterviewerSurveyUnits(authToken);
+
+        return surveyUnits.stream()
+                .map(SurveyUnitDto::fromModel)
                 .toList();
     }
 

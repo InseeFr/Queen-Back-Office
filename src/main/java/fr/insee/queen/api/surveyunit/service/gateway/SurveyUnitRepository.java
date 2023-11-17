@@ -148,4 +148,18 @@ public interface SurveyUnitRepository {
      * @param surveyUnit survey unit to update
      */
     void updateInfos(SurveyUnit surveyUnit);
+
+    /**
+     *
+     * @param surveyUnitIds list of survey unit ids to find
+     * @return List of {@link SurveyUnit} survey units found
+     */
+    List<SurveyUnit> find(List<String> surveyUnitIds);
+
+    /**
+     * Return all full survey units (don't use this instead you're really sure !)
+     *
+     * @return List of {@link SurveyUnit} all survey units
+     */
+    List<SurveyUnit> findAll();
 }

@@ -2,8 +2,9 @@ package fr.insee.queen.api.surveyunit.controller;
 
 import fr.insee.queen.api.pilotage.controller.dummy.HabilitationFakeComponent;
 import fr.insee.queen.api.pilotage.service.dummy.PilotageFakeService;
-import fr.insee.queen.api.surveyunit.service.dummy.SurveyUnitFakeService;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitByCampaignDto;
+import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitDto;
+import fr.insee.queen.api.surveyunit.service.dummy.SurveyUnitFakeService;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.dummy.AuthenticationFakeHelper;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
@@ -41,8 +42,9 @@ class SurveyUnitControllerTest {
     void testGetSurveyUnitsCampaign() {
         surveyUnitController = new SurveyUnitController("true", surveyUnitService, pilotageService, habilitationComponent, authenticationHelper);
         List<SurveyUnitByCampaignDto> surveyUnits = surveyUnitController.getListSurveyUnitByCampaign("campaign-id", authenticatedUser);
-        assertThat(surveyUnits).hasSize(3);
+        assertThat(surveyUnits).hasSize(2);
         assertThat(surveyUnits.get(0).id()).isEqualTo(SurveyUnitFakeService.SURVEY_UNIT1_ID);
+        assertThat(surveyUnits.get(1).id()).isEqualTo(SurveyUnitFakeService.SURVEY_UNIT2_ID);
     }
 
     @Test
@@ -61,5 +63,25 @@ class SurveyUnitControllerTest {
         surveyUnitController = new SurveyUnitController("false", surveyUnitService, pilotageService, habilitationComponent, authenticationHelper);
         assertThatThrownBy(() -> surveyUnitController.getListSurveyUnitByCampaign("campaign-id", authenticatedUser))
                 .isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("On retrieving survey units for an interviewer, return survey units found")
+    void testGetSurveyUnitsForInterviewers03() {
+        surveyUnitController = new SurveyUnitController("false", surveyUnitService, pilotageService, habilitationComponent, authenticationHelper);
+        List<SurveyUnitDto> surveyUnits =  surveyUnitController.getInterviewerSurveyUnits(authenticatedUser);
+        assertThat(surveyUnits).size().isEqualTo(2);
+        assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeService.SURVEY_UNIT1_ID);
+        assertThat(surveyUnits.get(1).id()).isEqualTo(PilotageFakeService.SURVEY_UNIT2_ID);
+    }
+
+    @Test
+    @DisplayName("On retrieving survey units for an interviewer, return survey units found")
+    void testGetSurveyUnitsForInterviewers04() {
+        surveyUnitController = new SurveyUnitController("true", surveyUnitService, pilotageService, habilitationComponent, authenticationHelper);
+        List<SurveyUnitDto> surveyUnits =  surveyUnitController.getInterviewerSurveyUnits(authenticatedUser);
+        assertThat(surveyUnits).size().isEqualTo(2);
+        assertThat(surveyUnits.get(0).id()).isEqualTo(SurveyUnitFakeService.SURVEY_UNIT1_ID);
+        assertThat(surveyUnits.get(1).id()).isEqualTo(SurveyUnitFakeService.SURVEY_UNIT2_ID);
     }
 }
