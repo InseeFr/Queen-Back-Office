@@ -11,8 +11,9 @@ import java.util.List;
 
 /**
  * Repository to handle survey units in temp zone.
- * A survey unit going the temporary zone is a survey unit which cannot be found as a survey unit during an interviewer synchronisation
- * In this case and to handle the problem later, these kind of survey unit land to the temp zone.
+ * A survey unit is going to the temporary zone when an interviewer puts the survey unit while this survey unit is
+ * not affected to the interviewer
+ * In this case, problems are solved later ... (or not)
  *
  * @author Laurent Caouissin
  */
