@@ -83,12 +83,15 @@ springdoc:
   swagger-ui:
     oauth:
       client-id: ${application.security.oidc.client-id}
+      # /!\ when injecting this property from env var, cannot convert KCIDPHINT env var to kc_idp_hint otherwise
+      # This property is a hint for spring-boot to map the env var to this property
+      additionalQueryStringParams:
+        kc_idp_hint: my-idp
     path: /
     syntax-highlight:
       activated: false
     tagsSorter: alpha
     doc-expansion: none
-
 #Actuator Metrics
 management:
   endpoints:
