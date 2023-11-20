@@ -20,7 +20,7 @@ public record ApplicationProperties(
         List<String> corsOrigins,
         @NotEmpty(message = "Folder where temp files will be created cannot be empty.")
         String tempFolder,
-        @NotNull(message = "application.auth must be specified (KEYCLOAK or NOAUTH)")
+        @NotNull(message = "application.auth must be specified (OIDC or NOAUTH)")
         AuthEnumProperties auth) {
 
     @Override

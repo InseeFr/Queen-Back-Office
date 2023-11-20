@@ -32,7 +32,7 @@ class HabilitationComponentTest {
         pilotageService = new PilotageFakeService();
         authHelper = new AuthenticationFakeHelper();
         surveyUnitService = new SurveyUnitFakeService();
-        applicationProperties = new ApplicationProperties(null, null, null, null, null, null, AuthEnumProperties.KEYCLOAK);
+        applicationProperties = new ApplicationProperties(null, null, null, null, null, null, AuthEnumProperties.OIDC);
     }
 
     @Test

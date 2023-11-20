@@ -1,6 +1,6 @@
 package fr.insee.queen.api.configuration.auth;
 
-import fr.insee.queen.api.configuration.properties.KeycloakProperties;
+import fr.insee.queen.api.configuration.properties.OidcProperties;
 import fr.insee.queen.api.configuration.properties.RoleProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class GrantedAuthorityConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
     private static final String REALM_ACCESS_ROLE = "roles";
     private static final String REALM_ACCESS = "realm_access";
-    private final KeycloakProperties keycloakProperties;
+    private final OidcProperties oidcProperties;
     private final RoleProperties roleProperties;
 
     @SuppressWarnings("unchecked")
@@ -25,8 +25,8 @@ public class GrantedAuthorityConverter implements Converter<Jwt, Collection<Gran
         Map<String, Object> realmAccess = (Map<String, Object>) claims.get(REALM_ACCESS);
         List<String> roles = (List<String>) realmAccess.get(REALM_ACCESS_ROLE);
 
-        if (keycloakProperties.additionalRealm() != null) {
-            Map<String, Object> additionalRealmAccess = (Map<String, Object>) claims.get(keycloakProperties.additionalRealm());
+        if (oidcProperties.additionalRealm() != null) {
+            Map<String, Object> additionalRealmAccess = (Map<String, Object>) claims.get(oidcProperties.additionalRealm());
             if (additionalRealmAccess != null && additionalRealmAccess.containsKey(REALM_ACCESS_ROLE)) {
                 roles.addAll((List<String>) additionalRealmAccess.get(REALM_ACCESS_ROLE));
             }

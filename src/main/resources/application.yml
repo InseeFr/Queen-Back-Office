@@ -12,13 +12,12 @@ application:
     admin:
     webclient:
     reviewer-alternative:
-  auth:  # KEYCLOAK | NOAUTH
-  ## if KEYCLOAK enabled
+  auth:  # OIDC | NOAUTH
+  ## if OIDC enabled
   security:
-    # if keycloak auth enabled
-    keycloak:
+    oidc:
       auth-server-host: https://auth-server.host
-      auth-server-url: ${application.security.keycloak.auth-server-host}/auth
+      auth-server-url: ${application.security.oidc.auth-server-host}/auth
       client-id: my-client-id
       realm: my-realm
       principal-attribute: principal-attribute
@@ -70,7 +69,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${application.security.keycloak.auth-server-url}/realms/${application.security.keycloak.realm}
+          issuer-uri: ${application.security.oidc.auth-server-url}/realms/${application.security.oidc.realm}
 
   liquibase:
     enabled: true
@@ -84,7 +83,7 @@ spring:
 springdoc:
   swagger-ui:
     oauth:
-      client-id: ${application.security.keycloak.client-id}
+      client-id: ${application.security.oidc.client-id}
       oauth2RedirectUrl: ${application.host}/swagger-ui/oauth2-redirect.html
     path: /
     syntax-highlight:

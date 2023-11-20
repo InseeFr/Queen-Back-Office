@@ -1,7 +1,7 @@
 package fr.insee.queen.api.configuration;
 
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
-import fr.insee.queen.api.configuration.properties.KeycloakProperties;
+import fr.insee.queen.api.configuration.properties.OidcProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -25,9 +25,9 @@ public class SpringDocConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "application.auth", havingValue = "KEYCLOAK")
-    protected OpenAPI keycloakOpenAPI(ApplicationProperties applicationProperties, KeycloakProperties keycloakProperties, BuildProperties buildProperties) {
-        String authUrl = keycloakProperties.authServerUrl() + "/realms/" + keycloakProperties.realm() + "/protocol/openid-connect";
+    @ConditionalOnProperty(name = "application.auth", havingValue = "OIDC")
+    protected OpenAPI oidcOpenAPI(ApplicationProperties applicationProperties, OidcProperties oidcProperties, BuildProperties buildProperties) {
+        String authUrl = oidcProperties.authServerUrl() + "/realms/" + oidcProperties.realm() + "/protocol/openid-connect";
         String securitySchemeName = "oauth2";
 
         return generateOpenAPI(buildProperties)

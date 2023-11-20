@@ -36,7 +36,7 @@ public class LogInterceptor implements HandlerInterceptor {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String userId = AuthConstants.GUEST;
-        if (applicationProperties.auth().equals(AuthEnumProperties.KEYCLOAK)
+        if (applicationProperties.auth().equals(AuthEnumProperties.OIDC)
                 && authentication.getCredentials() instanceof Jwt jwt) {
             userId = jwt.getClaims().get("preferred_username").toString();
         }
