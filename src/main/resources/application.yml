@@ -1,5 +1,4 @@
 application:
-  host: http://localhost:8080
   public-urls:
     - /swagger-ui/**
     - /v3/api-docs/**
@@ -84,7 +83,6 @@ springdoc:
   swagger-ui:
     oauth:
       client-id: ${application.security.oidc.client-id}
-      oauth2RedirectUrl: ${application.host}/swagger-ui/oauth2-redirect.html
     path: /
     syntax-highlight:
       activated: false
