@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 /**
  * These endpoints handle the comment filled by a survey unit at the nd of the questionnaire*
  */
+
+@ConditionalOnExpression(value = "${feature.enable.comments} == true")
 @RestController
 @Tag(name = "06. Survey units")
 @RequestMapping(path = "/api")

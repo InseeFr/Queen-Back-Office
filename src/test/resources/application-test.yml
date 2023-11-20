@@ -49,3 +49,4 @@ feature:
     dataset: true
     cache: false
     pilotage: false
+    comments: true
