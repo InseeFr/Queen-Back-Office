@@ -9,6 +9,6 @@ public record OidcProperties(
         String authServerUrl,
         String realm,
         String principalAttribute,
-        String additionalRealm,
+        String roleClaim,
         String clientId) {
 }
