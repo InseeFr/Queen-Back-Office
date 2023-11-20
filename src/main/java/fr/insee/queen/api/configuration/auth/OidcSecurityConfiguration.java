@@ -2,7 +2,7 @@ package fr.insee.queen.api.configuration.auth;
 
 import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.configuration.properties.AuthEnumProperties;
-import fr.insee.queen.api.configuration.properties.KeycloakProperties;
+import fr.insee.queen.api.configuration.properties.OidcProperties;
 import fr.insee.queen.api.configuration.properties.RoleProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,18 +26,18 @@ import org.springframework.security.web.header.writers.XXssProtectionHeaderWrite
 import java.util.Collection;
 
 /**
- * Spring security configuration when using KEYCLOAK auth
+ * Spring security configuration when using OIDC auth
  */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@ConditionalOnProperty(name = "application.auth", havingValue = "KEYCLOAK")
+@ConditionalOnProperty(name = "application.auth", havingValue = "OIDC")
 @AllArgsConstructor
-public class KeycloakSecurityConfiguration {
+public class OidcSecurityConfiguration {
     private final PublicSecurityFilterChain publicSecurityFilterChainConfiguration;
 
     /**
-     * Configure spring security filter chain to handle keycloak authentication
+     * Configure spring security filter chain to handle OIDC authentication
      *
      * @param http Http Security Object
      * @return the spring security filter
@@ -47,7 +46,7 @@ public class KeycloakSecurityConfiguration {
     @Bean
     @Order(2)
     protected SecurityFilterChain filterChain(HttpSecurity http,
-                                              KeycloakProperties keycloakProperties, RoleProperties roleProperties) throws Exception {
+                                              OidcProperties oidcProperties, RoleProperties roleProperties) throws Exception {
         return http
                 .securityMatcher("/**")
                 .csrf(AbstractHttpConfigurer::disable)
@@ -62,37 +61,33 @@ public class KeycloakSecurityConfiguration {
                                         .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN)
                         ))
                 .authorizeHttpRequests(configurer -> configurer
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/healthcheck").permitAll()
-                        // actuator (actuator metrics are disabled by default)
-                        .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                         .anyRequest()
                         .authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter(keycloakProperties, roleProperties))))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter(oidcProperties, roleProperties))))
                 .build();
     }
 
     @Bean
     @Order(1)
     protected SecurityFilterChain filterPublicUrlsChain(HttpSecurity http, ApplicationProperties applicationProperties,
-                                                        KeycloakProperties keycloakProperties) throws Exception {
-        String authorizedConnectionHost = applicationProperties.auth().equals(AuthEnumProperties.KEYCLOAK) ?
-                " " + keycloakProperties.authServerHost() : "";
+                                                        OidcProperties oidcProperties) throws Exception {
+        String authorizedConnectionHost = applicationProperties.auth().equals(AuthEnumProperties.OIDC) ?
+                " " + oidcProperties.authServerHost() : "";
         return publicSecurityFilterChainConfiguration.buildSecurityPublicFilterChain(http, applicationProperties.publicUrls(), authorizedConnectionHost);
     }
 
     @Bean
-    protected JwtAuthenticationConverter jwtAuthenticationConverter(KeycloakProperties keycloakProperties, RoleProperties roleProperties) {
+    protected JwtAuthenticationConverter jwtAuthenticationConverter(OidcProperties oidcProperties, RoleProperties roleProperties) {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setPrincipalClaimName("name");
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter(keycloakProperties, roleProperties));
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter(oidcProperties, roleProperties));
         return jwtAuthenticationConverter;
     }
 
-    Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter(KeycloakProperties keycloakProperties, RoleProperties roleProperties) {
-        return new GrantedAuthorityConverter(keycloakProperties, roleProperties);
+    Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter(OidcProperties oidcProperties, RoleProperties roleProperties) {
+        return new GrantedAuthorityConverter(oidcProperties, roleProperties);
     }
 }
 

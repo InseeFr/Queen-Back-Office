@@ -4,7 +4,7 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
-    <springProfile name="dev,prod">
+    <springProfile name="default,dev,prod">
         <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_FILE}</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -14,7 +14,7 @@
             </rollingPolicy>
 
             <encoder>
-                <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%X{id}][%X{user}][%X{method} %X{path}] [%thread] %-5level %logger{36} - %htmlEncode{%m}%n</pattern>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
             </encoder>
         </appender>
 

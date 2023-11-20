@@ -30,7 +30,7 @@ public class AuthenticationUserHelper implements AuthenticationHelper {
             case NOAUTH -> {
                 return AuthConstants.GUEST;
             }
-            case KEYCLOAK -> {
+            case OIDC -> {
                 if (authentication.getCredentials() instanceof Jwt jwt) {
                     return jwt.getClaims().get("preferred_username").toString();
                 }

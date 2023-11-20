@@ -1,32 +1,26 @@
 application:
-  host: http://localhost:8080
   public-urls:
     - /swagger-ui/**
-    - /swagger-ui.html
     - /v3/api-docs/**
-    - /csrf
-    - /
-    - /webjars/**
-    - /swagger-resources/**
-    - /environnement
-    - /healthcheck
+    - /api/healthcheck
     - /actuator/**
+    - /
   roles:
     interviewer:
     reviewer:
     admin:
     webclient:
     reviewer-alternative:
-  auth:  # KEYCLOAK | NOAUTH
-  ## if KEYCLOAK enabled
-  #security:
-  #  keycloak:
-  #    auth-server-url:
-  #    realm:
-  #    client-id:
-  #    principal-attribute:
-  #    # other claim to read roles from in token
-  #    additional-realm:
+  auth:  # OIDC | NOAUTH
+  ## if OIDC enabled
+  security:
+    oidc:
+      auth-server-host: https://auth-server.host
+      auth-server-url: ${application.security.oidc.auth-server-host}/auth
+      client-id: my-client-id
+      realm: my-realm
+      principal-attribute: id-claim
+      role-claim: role-claim
   corsOrigins:
   # Folder where to store temp files.
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
@@ -70,12 +64,11 @@ spring:
         auto: validate
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  ## if Keycloak enabled
-  #security:
-  #  oauth2:
-  #    resourceserver:
-  #      jwt:
-  #        issuer-uri: ${application.security.keycloak.auth-server-url}/realms/${application.security.keycloak.realm}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${application.security.oidc.auth-server-url}/realms/${application.security.oidc.realm}
 
   liquibase:
     enabled: true
@@ -88,16 +81,17 @@ spring:
 
 springdoc:
   swagger-ui:
-    ## if keycloak enabled
-    #oauth:
-    #  client-id: ${application.security.keycloak.client-id}
-    #oauth2RedirectUrl: ${application.host}/swagger-ui/oauth2-redirect.html
+    oauth:
+      client-id: ${application.security.oidc.client-id}
+      # /!\ when injecting this property from env var, cannot convert KCIDPHINT env var to kc_idp_hint otherwise
+      # This property is a hint for spring-boot to map the env var to this property
+      additionalQueryStringParams:
+        kc_idp_hint: my-idp
     path: /
     syntax-highlight:
       activated: false
     tagsSorter: alpha
     doc-expansion: none
-
 #Actuator Metrics
 management:
   endpoints:
@@ -114,7 +108,9 @@ logging:
   level:
     root: INFO
     liquibase: ERROR
-
+  pattern:
+    console: "%d{YYYY-MM-dd HH:mm:ss.SSS} [%X{id}][%X{user}][%X{method} %X{path}] [%thread] %-5level %logger{36} - %htmlEncode{%m}%n"
+    file: ${logging.pattern.console}
   logback:
     rollingpolicy:
       max-history: 90
