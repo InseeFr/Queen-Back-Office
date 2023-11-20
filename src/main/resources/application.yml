@@ -2,15 +2,10 @@ application:
   host: http://localhost:8080
   public-urls:
     - /swagger-ui/**
-    - /swagger-ui.html
     - /v3/api-docs/**
-    - /csrf
-    - /
-    - /webjars/**
-    - /swagger-resources/**
-    - /environnement
-    - /healthcheck
+    - /api/healthcheck
     - /actuator/**
+    - /
   roles:
     interviewer:
     reviewer:

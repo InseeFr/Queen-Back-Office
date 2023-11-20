@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -62,10 +61,6 @@ public class KeycloakSecurityConfiguration {
                                         .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN)
                         ))
                 .authorizeHttpRequests(configurer -> configurer
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/healthcheck").permitAll()
-                        // actuator (actuator metrics are disabled by default)
-                        .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                         .anyRequest()
                         .authenticated()
                 )
