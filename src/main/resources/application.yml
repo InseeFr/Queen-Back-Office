@@ -19,14 +19,15 @@ application:
     reviewer-alternative:
   auth:  # KEYCLOAK | NOAUTH
   ## if KEYCLOAK enabled
-  #security:
-  #  keycloak:
-  #    auth-server-url:
-  #    realm:
-  #    client-id:
-  #    principal-attribute:
-  #    # other claim to read roles from in token
-  #    additional-realm:
+  security:
+    # if keycloak auth enabled
+    keycloak:
+      auth-server-host: https://auth-server.host
+      auth-server-url: ${application.security.keycloak.auth-server-host}/auth
+      client-id: my-client-id
+      realm: my-realm
+      principal-attribute: principal-attribute
+      additional-realm: additional-realm
   corsOrigins:
   # Folder where to store temp files.
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
@@ -70,12 +71,11 @@ spring:
         auto: validate
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  ## if Keycloak enabled
-  #security:
-  #  oauth2:
-  #    resourceserver:
-  #      jwt:
-  #        issuer-uri: ${application.security.keycloak.auth-server-url}/realms/${application.security.keycloak.realm}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${application.security.keycloak.auth-server-url}/realms/${application.security.keycloak.realm}
 
   liquibase:
     enabled: true
@@ -88,10 +88,9 @@ spring:
 
 springdoc:
   swagger-ui:
-    ## if keycloak enabled
-    #oauth:
-    #  client-id: ${application.security.keycloak.client-id}
-    #oauth2RedirectUrl: ${application.host}/swagger-ui/oauth2-redirect.html
+    oauth:
+      client-id: ${application.security.keycloak.client-id}
+      oauth2RedirectUrl: ${application.host}/swagger-ui/oauth2-redirect.html
     path: /
     syntax-highlight:
       activated: false
@@ -114,7 +113,6 @@ logging:
   level:
     root: INFO
     liquibase: ERROR
-
   logback:
     rollingpolicy:
       max-history: 90
