@@ -23,6 +23,6 @@ public class CampaignSummaryDto {
     }
 
     public static CampaignSummaryDto fromPilotageModel(PilotageCampaign campaign) {
-        return new CampaignSummaryDto(campaign.id(), campaign.questionnaireIds().stream().toList());
+        return new CampaignSummaryDto(campaign.getId(), campaign.getQuestionnaireIds().stream().toList());
     }
 }

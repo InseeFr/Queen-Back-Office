@@ -5,13 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 @Data
+@Accessors(fluent = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(fluent = false)
-public class PilotageCampaign {
+public class PilotageSurveyUnit {
     private String id;
-    private List<String> questionnaireIds;
+    private String campaign;
 }

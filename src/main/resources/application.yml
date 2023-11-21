@@ -28,13 +28,9 @@ application:
   temp-folder:
   # Pearljam-bo url
   pilotage:
-    service:
-      url:
-        scheme:
-        host:
-        port:
+    url:
     #alternative habilitation
-    alternative-habilitation-service:
+    alternative-habilitation:
       url: http://alternative.url
       campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
 spring:
@@ -112,7 +108,6 @@ logging:
   logback:
     rollingpolicy:
       max-history: 90
-
 feature:
   enable:
     dataset: false
