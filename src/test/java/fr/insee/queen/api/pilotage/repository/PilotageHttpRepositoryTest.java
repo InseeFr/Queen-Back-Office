@@ -66,9 +66,9 @@ class PilotageHttpRepositoryTest {
         mockServer.verify();
 
         assertThat(campaigns).hasSize(3);
-        assertThat(campaigns.get(0).getId()).isEqualTo("campaign-id-1");
-        assertThat(campaigns.get(1).getId()).isEqualTo("campaign-id-2");
-        assertThat(campaigns.get(2).getId()).isEqualTo("campaign-id-3");
+        assertThat(campaigns.get(0).id()).isEqualTo("campaign-id-1");
+        assertThat(campaigns.get(1).id()).isEqualTo("campaign-id-2");
+        assertThat(campaigns.get(2).id()).isEqualTo("campaign-id-3");
 
     }
 
@@ -181,12 +181,12 @@ class PilotageHttpRepositoryTest {
 
         List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits(accessToken);
         assertThat(surveyUnits).hasSize(3);
-        assertThat(surveyUnits.get(0).getCampaign()).isEqualTo("campaign-id1");
-        assertThat(surveyUnits.get(1).getCampaign()).isEqualTo("campaign-id2");
-        assertThat(surveyUnits.get(2).getCampaign()).isEqualTo("campaign-id3");
-        assertThat(surveyUnits.get(0).getId()).isEqualTo("survey-unit-id1");
-        assertThat(surveyUnits.get(1).getId()).isEqualTo("survey-unit-id2");
-        assertThat(surveyUnits.get(2).getId()).isEqualTo("survey-unit-id3");
+        assertThat(surveyUnits.get(0).campaign()).isEqualTo("campaign-id1");
+        assertThat(surveyUnits.get(1).campaign()).isEqualTo("campaign-id2");
+        assertThat(surveyUnits.get(2).campaign()).isEqualTo("campaign-id3");
+        assertThat(surveyUnits.get(0).id()).isEqualTo("survey-unit-id1");
+        assertThat(surveyUnits.get(1).id()).isEqualTo("survey-unit-id2");
+        assertThat(surveyUnits.get(2).id()).isEqualTo("survey-unit-id3");
         mockServer.verify();
     }
 

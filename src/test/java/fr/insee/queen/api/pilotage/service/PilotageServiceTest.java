@@ -51,7 +51,7 @@ class PilotageServiceTest {
     void testGetInterviewerCampaigns02() {
         List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns("auth-token");
         assertThat(campaigns).hasSize(2);
-        assertThat(campaigns.get(0).getId()).isEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
+        assertThat(campaigns.get(0).id()).isEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
     }
 
     @Test

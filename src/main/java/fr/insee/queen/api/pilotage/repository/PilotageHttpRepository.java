@@ -4,6 +4,8 @@ import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.api.pilotage.service.gateway.PilotageRepository;
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
+import fr.insee.queen.api.pilotage.service.model.PilotageCampaignEnabled;
+import fr.insee.queen.api.pilotage.service.model.PilotageHabilitation;
 import fr.insee.queen.api.pilotage.service.model.PilotageSurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -41,15 +45,15 @@ public class PilotageHttpRepository implements PilotageRepository {
         final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_CAMPAIGNS.formatted(campaignId);
 
         try {
-            ResponseEntity<LinkedHashMap<String, Boolean>> response =
+            ResponseEntity<PilotageCampaignEnabled> response =
                     restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, getHttpHeaders(authToken),
-                            new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>() {});
-            LinkedHashMap<String, Boolean> responseBody = response.getBody();
-            if (responseBody == null) {
+                            PilotageCampaignEnabled.class);
+            PilotageCampaignEnabled campaignEnabled = response.getBody();
+            if (campaignEnabled == null) {
                 log.error("Pilotage API does not have a body (was expecting a boolean value as response body");
                 throw new PilotageApiException();
             }
-            return !responseBody.get("ongoing");
+            return !campaignEnabled.ongoing();
         } catch (RestClientException e) {
             log.error(e.getMessage(), e);
             throw new PilotageApiException();
@@ -112,21 +116,21 @@ public class PilotageHttpRepository implements PilotageRepository {
         uriPilotageFilter.append(String.format("?id=%s&role=%s&campaign=%s&idep=%s", surveyUnit.id(), role.getExpectedRole(), campaignId, idep));
 
         try {
-            ResponseEntity<LinkedHashMap<String, Boolean>> response =
+            ResponseEntity<PilotageHabilitation> response =
                     restTemplate.exchange(uriPilotageFilter.toString(), HttpMethod.GET, getHttpHeaders(authToken),
-                            new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>(){});
+                            PilotageHabilitation.class);
 
-            LinkedHashMap<String, Boolean> responseBody = response.getBody();
+            PilotageHabilitation habilitation = response.getBody();
 
-            if (responseBody == null) {
+            if (habilitation == null) {
                 log.error("Pilotage API does not have a body (was expecting a boolean value)");
                 throw new PilotageApiException();
             }
 
-            boolean habilitationResult = responseBody.get("habilitated");
+
             log.info("Habilitation of user {} with role {} to access survey-unit {} : {}", idep, role.name(),
-                    surveyUnit.id(), habilitationResult ? "granted" : "denied");
-            return habilitationResult;
+                    surveyUnit.id(), habilitation.habilitated() ? "granted" : "denied");
+            return habilitation.habilitated();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             HttpStatusCode status = ex.getStatusCode();
             if (status.equals(HttpStatus.UNAUTHORIZED)) {

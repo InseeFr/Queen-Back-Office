@@ -26,7 +26,6 @@ public class PilotageApiService implements PilotageService {
     private final CampaignExistenceService campaignExistenceService;
     private final PilotageRepository pilotageRepository;
     private final QuestionnaireModelService questionnaireModelService;
-    public static final String CAMPAIGN = "campaign";
 
     @Override
     public boolean isClosed(String campaignId, String authToken) {
@@ -76,8 +75,8 @@ public class PilotageApiService implements PilotageService {
 
         log.debug("Detail : {}", displayDetail(surveyUnits));
         List<String> surveyUnitIds = surveyUnits.stream()
-                .filter(surveyUnit -> campaignId.equals(surveyUnit.getCampaign()))
-                .map(PilotageSurveyUnit::getId)
+                .filter(surveyUnit -> campaignId.equals(surveyUnit.campaign()))
+                .map(PilotageSurveyUnit::id)
                 .toList();
 
         log.info("Survey units found in pilotage api for campaign {}: {}", campaignId, surveyUnitIds.size());
@@ -99,7 +98,7 @@ public class PilotageApiService implements PilotageService {
 
         log.debug("Detail : {}", displayDetail(surveyUnits));
         List<String> surveyUnitIds = surveyUnits.stream()
-                .map(PilotageSurveyUnit::getId)
+                .map(PilotageSurveyUnit::id)
                 .toList();
 
         log.info("Survey units found in pilotage api: {}", surveyUnitIds.size());
@@ -109,9 +108,9 @@ public class PilotageApiService implements PilotageService {
     private String displayDetail(List<PilotageSurveyUnit> surveyUnits) {
         Map<String, Integer> countSurveyUnitsByCampaign = new HashMap<>();
         for (PilotageSurveyUnit surveyUnit : surveyUnits) {
-            String campaign = surveyUnit.getCampaign();
+            String campaign = surveyUnit.campaign();
             if(!countSurveyUnitsByCampaign.containsKey(campaign)) {
-                countSurveyUnitsByCampaign.put(surveyUnit.getCampaign(), 1);
+                countSurveyUnitsByCampaign.put(surveyUnit.campaign(), 1);
                 continue;
             }
             int count = countSurveyUnitsByCampaign.get(campaign) + 1;
@@ -132,9 +131,11 @@ public class PilotageApiService implements PilotageService {
             log.error("Pilotage API does not have a body (was expecting a campaign list)");
             throw new PilotageApiException();
         }
-        campaigns.forEach(pilotageCampaign ->
-                pilotageCampaign.setQuestionnaireIds(questionnaireModelService.getQuestionnaireIds(pilotageCampaign.getId())));
-        return campaigns;
+
+        return campaigns.stream()
+                .map(PilotageCampaign::id)
+                .map(campaignId -> new PilotageCampaign(campaignId, questionnaireModelService.getQuestionnaireIds(campaignId)))
+                .toList();
     }
 
     @Override
