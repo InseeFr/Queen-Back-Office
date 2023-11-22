@@ -114,3 +114,4 @@ feature:
     swagger: false
     pilotage: true
     cache: true
+    comments: false
