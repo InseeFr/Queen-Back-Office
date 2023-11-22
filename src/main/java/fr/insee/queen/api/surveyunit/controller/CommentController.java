@@ -2,6 +2,7 @@ package fr.insee.queen.api.surveyunit.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.surveyunit.service.CommentService;
@@ -40,6 +41,7 @@ public class CommentController {
      */
     @Operation(summary = "Get comment for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/comment")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getCommentBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("GET comment for reporting unit with id {}", surveyUnitId);
@@ -55,6 +57,7 @@ public class CommentController {
      */
     @Operation(summary = "Update comment for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/comment")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void setComment(@NotNull @RequestBody ObjectNode commentValue,
                            @IdValid @PathVariable(value = "id") String surveyUnitId) {

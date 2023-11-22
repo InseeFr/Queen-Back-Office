@@ -2,6 +2,7 @@ package fr.insee.queen.api.surveyunit.controller;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.surveyunit.service.PersonalizationService;
@@ -36,6 +37,7 @@ public class PersonalizationController {
      */
     @Operation(summary = "Get personalization for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/personalization")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getPersonalizationBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("GET personalization for reporting unit with id {}", surveyUnitId);
@@ -51,6 +53,7 @@ public class PersonalizationController {
      */
     @Operation(summary = "Update personalization for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/personalization")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void setPersonalization(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                    @NotNull @RequestBody ArrayNode personalizationValues) {

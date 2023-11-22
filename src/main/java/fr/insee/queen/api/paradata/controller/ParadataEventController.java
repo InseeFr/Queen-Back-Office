@@ -3,6 +3,7 @@ package fr.insee.queen.api.paradata.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.paradata.service.ParadataEventService;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
@@ -38,6 +39,7 @@ public class ParadataEventController {
      */
     @Operation(summary = "Create paradata event for a survey unit")
     @PostMapping(path = "/paradata")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     @ResponseStatus(HttpStatus.OK)
     public void addParadata(@NotNull @RequestBody ObjectNode paradataValue) {
