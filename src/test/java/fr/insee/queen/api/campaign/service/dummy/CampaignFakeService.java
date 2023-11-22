@@ -14,16 +14,15 @@ public class CampaignFakeService implements CampaignService {
     private boolean deleted = false;
     private boolean updated = false;
     private boolean created = false;
-    private boolean allCampaignsRetrieved = false;
     public static final String CAMPAIGN1_ID = "allCampaigns1";
+    public static final List<CampaignSummary> CAMPAIGN_SUMMARY_LIST = List.of(
+            new CampaignSummary(CAMPAIGN1_ID, "label", Set.of("questionnaireId1", "questionnaireId2")),
+            new CampaignSummary("allCampaigns2", "label", Set.of("questionnaireId1", "questionnaireId2"))
+    );
 
     @Override
     public List<CampaignSummary> getAllCampaigns() {
-        allCampaignsRetrieved = true;
-        return List.of(
-                new CampaignSummary(CAMPAIGN1_ID, "label", Set.of("questionnaireId1", "questionnaireId2")),
-                new CampaignSummary("allCampaigns2", "label", Set.of("questionnaireId1", "questionnaireId2"))
-        );
+        return CAMPAIGN_SUMMARY_LIST;
     }
 
     @Override

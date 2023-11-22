@@ -6,9 +6,6 @@ application:
     admin: admin
     webclient: webclient
     reviewer-alternative: alternate-reviewer
-  pilotage:
-    integration-override: true
-
   auth: OIDC
   security:
     # if oidc auth enabled
@@ -47,6 +44,8 @@ server:
       charset: UTF-8
       force: true
 feature:
-  enableSwagger: false
-  disableCache: true
-  enableDataset: true
+  enable:
+    swagger: false
+    dataset: true
+    cache: false
+    pilotage: false

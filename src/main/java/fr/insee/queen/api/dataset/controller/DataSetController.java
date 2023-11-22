@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api")
 @Slf4j
 @AllArgsConstructor
-@ConditionalOnProperty(name = "feature.enableDataset", havingValue = "true")
+@ConditionalOnProperty(name = "feature.enable.dataset", havingValue = "true")
 public class DataSetController {
     private final DataSetInjectorService injector;
 

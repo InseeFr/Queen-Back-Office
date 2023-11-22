@@ -28,17 +28,11 @@ application:
   temp-folder:
   # Pearljam-bo url
   pilotage:
-    service:
-      url:
-        scheme:
-        host:
-        port:
+    url:
     #alternative habilitation
-    alternative-habilitation-service:
+    alternative-habilitation:
       url: http://alternative.url
       campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
-    #If true, checkHabilitation and getSuFromPilotage are not used to secure the endpoints
-    integration-override: false
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -114,6 +108,9 @@ logging:
   logback:
     rollingpolicy:
       max-history: 90
-
 feature:
-  enableSwagger: true
+  enable:
+    dataset: false
+    swagger: false
+    pilotage: true
+    cache: true

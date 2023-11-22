@@ -19,9 +19,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -46,8 +44,8 @@ public class ExceptionControllerAdvice {
      * @param request request initiating the exception
      * @return the apierror object with linked status code
      */
-    private ResponseEntity<ApiError> processException(Exception ex, HttpStatus status, WebRequest request) {
-        return processException(ex, status, request, null);
+    private ResponseEntity<ApiError> generateResponseError(Exception ex, HttpStatus status, WebRequest request) {
+        return generateResponseError(ex, status, request, null);
     }
 
     /**
@@ -59,7 +57,7 @@ public class ExceptionControllerAdvice {
      * @param overrideErrorMessage message overriding default error message from exception
      * @return the apierror object with linked status code
      */
-    private ResponseEntity<ApiError> processException(Exception ex, HttpStatus status, WebRequest request, String overrideErrorMessage) {
+    private ResponseEntity<ApiError> generateResponseError(Exception ex, HttpStatus status, WebRequest request, String overrideErrorMessage) {
         String errorMessage = ex.getMessage();
         if (overrideErrorMessage != null) {
             errorMessage = overrideErrorMessage;
@@ -69,45 +67,34 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public void noHandlerFoundException(NoHandlerFoundException e, WebRequest request) {
-        log.error(e.getMessage(), e);
-        processException(e, HttpStatus.NOT_FOUND, request);
+    public ResponseEntity<ApiError> noHandlerFoundException(NoHandlerFoundException e, WebRequest request) {
+        log.error(e.getMessage());
+        return generateResponseError(e, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ResponseBody
-    public void accessDeniedException(AccessDeniedException e, WebRequest request) {
-        log.error(e.getMessage(), e);
-        processException(e, HttpStatus.FORBIDDEN, request);
+    public ResponseEntity<ApiError> accessDeniedException(AccessDeniedException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.FORBIDDEN, request);
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseBody
-    public void handleMethodArgumentNotValid(
+    public ResponseEntity<ApiError> handleMethodArgumentNotValid(
             MethodArgumentNotValidException e,
             WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.BAD_REQUEST, request, "Invalid parameters");
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request, "Invalid parameters");
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseBody
-    public void handleConstraintViolation(
+    public ResponseEntity<ApiError> handleConstraintViolation(
             ConstraintViolationException e,
             WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.BAD_REQUEST, request, "Invalid data");
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request, "Invalid data");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public void handleHttpMessageNotReadableException(
+    public ResponseEntity<ApiError> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException e, WebRequest request) {
         log.error(e.getMessage(), e);
 
@@ -122,91 +109,70 @@ public class ExceptionControllerAdvice {
             String location = mappingException.getLocation() != null ? "[line: " + mappingException.getLocation().getLineNr() + ", column: " + mappingException.getLocation().getColumnNr() + "]" : "";
             errorMessage = "Error when deserializing JSON. Check that your JSON properties are of the expected types " + location;
         }
-        processException(e, HttpStatus.BAD_REQUEST, request, errorMessage);
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request, errorMessage);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public void noEntityFoundException(EntityNotFoundException e, WebRequest request) {
+    @ExceptionHandler({EntityNotFoundException.class})
+    public ResponseEntity<ApiError> noEntityFoundException(EntityNotFoundException e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.NOT_FOUND, request);
+        return generateResponseError(e, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(AuthenticationTokenException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public void authenticationTokenExceptionException(AuthenticationTokenException e, WebRequest request) {
+    public ResponseEntity<ApiError> authenticationTokenExceptionException(AuthenticationTokenException e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
+        return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
     }
 
     @ExceptionHandler(HabilitationException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ResponseBody
-    public void habilitationException(HabilitationException e, WebRequest request) {
+    public ResponseEntity<ApiError> habilitationException(HabilitationException e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.FORBIDDEN, request);
+        return generateResponseError(e, HttpStatus.FORBIDDEN, request);
     }
 
     @ExceptionHandler(QuestionnaireInvalidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public void questionnaireInvalidException(QuestionnaireInvalidException e, WebRequest request) {
+    public ResponseEntity<ApiError> questionnaireInvalidException(QuestionnaireInvalidException e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.BAD_REQUEST, request);
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(CampaignDeletionException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    @ResponseBody
-    public void campaignDeletionException(CampaignDeletionException e, WebRequest request) {
+    public ResponseEntity<ApiError> campaignDeletionException(CampaignDeletionException e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.UNPROCESSABLE_ENTITY, request);
+        return generateResponseError(e, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
     @ExceptionHandler(EntityAlreadyExistException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public void entityAlreadyExistException(EntityAlreadyExistException e, WebRequest request) {
+    public ResponseEntity<ApiError> entityAlreadyExistException(EntityAlreadyExistException e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.BAD_REQUEST, request);
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(IntegrationComponentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public void integrationComponentException(IntegrationComponentException e, WebRequest request) {
+    public ResponseEntity<ApiError> integrationComponentException(IntegrationComponentException e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.BAD_REQUEST, request);
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(PilotageApiException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public void pilotageApiException(PilotageApiException e, WebRequest request) {
-        processException(e, HttpStatus.BAD_REQUEST, request);
+    public ResponseEntity<ApiError> pilotageApiException(PilotageApiException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler(DepositProofException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public void depositProofException(DepositProofException e, WebRequest request) {
-        processException(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    public ResponseEntity<ApiError> depositProofException(DepositProofException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    @ExceptionHandler(HttpClientErrorException.class)
-    @ResponseBody
-    public void exceptions(HttpClientErrorException e, WebRequest request) {
+    @ExceptionHandler(RestClientException.class)
+    public ResponseEntity<ApiError> exceptions(RestClientException e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.valueOf(e.getStatusCode().value()), request, ERROR_OCCURRED_LABEL);
+        return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public void exceptions(Exception e, WebRequest request) {
+    public ResponseEntity<ApiError> exceptions(Exception e, WebRequest request) {
         log.error(e.getMessage(), e);
-        processException(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
+        return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
     }
 }

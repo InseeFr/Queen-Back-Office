@@ -1,6 +1,7 @@
 package fr.insee.queen.api.web.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,11 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class ApiError {
+    @JsonProperty
     private Integer code;
+    @JsonProperty
     private String path;
+    @JsonProperty
     private String message;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss")
@@ -30,11 +34,7 @@ public class ApiError {
         if (errorMessage == null || errorMessage.isEmpty()) {
             errorMessage = status.getReasonPhrase();
         }
-        createApiError(status.value(), path, timestamp, errorMessage);
-    }
-
-    private void createApiError(int code, String path, Date timestamp, String errorMessage) {
-        this.code = code;
+        this.code = status.value();
         this.path = path;
         this.message = errorMessage;
         this.timestamp = timestamp;

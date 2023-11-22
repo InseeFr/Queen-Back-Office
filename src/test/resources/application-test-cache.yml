@@ -1,2 +1,3 @@
 feature:
-  disableCache: false
+  enable:
+    cache: true

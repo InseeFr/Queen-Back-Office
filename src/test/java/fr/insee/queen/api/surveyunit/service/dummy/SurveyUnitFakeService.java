@@ -5,27 +5,38 @@ import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitState;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
 public class SurveyUnitFakeService implements SurveyUnitService {
 
     public static final String SURVEY_UNIT1_ID = "survey-unit1";
-
     public static final String SURVEY_UNIT2_ID = "survey-unit2";
 
-    @Override
-    public boolean existsById(String surveyUnitId) {
-        return false;
-    }
+    @Setter
+    private boolean surveyUnitExist = true;
+    @Getter
+    private boolean checkSurveyUnitExist = false;
+
+    @Getter
+    private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
+            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
+            new SurveyUnitSummary("survey-unit2", "questionnaire-id", "campaign-id"),
+            new SurveyUnitSummary("survey-unit3", "questionnaire-id", "campaign-id")
+    );
 
     @Override
     public void throwExceptionIfSurveyUnitNotExist(String surveyUnitId) {
+        checkSurveyUnitExist = true;
+    }
 
+    @Override
+    public boolean existsById(String surveyUnitId) {
+        return surveyUnitExist;
     }
 
     @Override
@@ -35,10 +46,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public List<SurveyUnitSummary> findSummariesByCampaignId(String campaignId) {
-        return List.of(
-                new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", campaignId),
-                new SurveyUnitSummary(SURVEY_UNIT2_ID, "questionnaire-id", campaignId)
-        );
+        return surveyUnitSummaries;
     }
 
     @Override
@@ -87,7 +95,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
-        return new SurveyUnitSummary("survey-unit1", "questionnaire-id", "campaign-id");
+        return new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id");
     }
 
     @Override

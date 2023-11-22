@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Primary;
 
 @Configuration
 @ConditionalOnProperty(
-        value = "feature.disableCache",
-        havingValue = "true")
+        value = "feature.enable.cache",
+        havingValue = "false")
 public class NoOpCacheConfig {
     @Bean
     @Primary

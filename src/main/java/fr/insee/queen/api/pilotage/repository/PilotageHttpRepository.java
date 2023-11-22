@@ -1,9 +1,12 @@
 package fr.insee.queen.api.pilotage.repository;
 
-import fr.insee.queen.api.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
+import fr.insee.queen.api.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.api.pilotage.service.gateway.PilotageRepository;
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
+import fr.insee.queen.api.pilotage.service.model.PilotageCampaignEnabled;
+import fr.insee.queen.api.pilotage.service.model.PilotageHabilitation;
+import fr.insee.queen.api.pilotage.service.model.PilotageSurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -26,131 +29,116 @@ import java.util.regex.Pattern;
 public class PilotageHttpRepository implements PilotageRepository {
     public static final String API_HABILITATION = "/api/check-habilitation";
     public static final String API_PEARLJAM_SURVEYUNITS = "/api/survey-units";
+    public static final String API_PEARLJAM_CAMPAIGNS = "/campaigns/%s/ongoing";
     public static final String API_PEARLJAM_INTERVIEWER_CAMPAIGNS = "/api/interviewer/campaigns";
 
-    @Value("${application.pilotage.service.url.scheme}")
-    private final String pilotageScheme;
-    @Value("${application.pilotage.service.url.host}")
-    private final String pilotageHost;
-    @Value("${application.pilotage.service.url.port}")
-    private final String pilotagePort;
-    @Value("${application.pilotage.alternative-habilitation-service.url}")
+    @Value("${application.pilotage.url}")
+    private final String pilotageUrl;
+    @Value("${application.pilotage.alternative-habilitation.url}")
     private final String alternativeHabilitationServiceURL;
-    @Value("${application.pilotage.alternative-habilitation-service.campaignids-regex}")
+    @Value("${application.pilotage.alternative-habilitation.campaignids-regex}")
     private final String campaignIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
 
     @Override
     public boolean isClosed(String campaignId, String authToken) {
-        final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + "/campaigns/" + campaignId + "/ongoing";
+        final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_CAMPAIGNS.formatted(campaignId);
 
         try {
-            ResponseEntity<LinkedHashMap<String, Boolean>> response =
-                    exchange(uriPilotageFilter, authToken,
-                            new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>() {
-                            });
-            LinkedHashMap<String, Boolean> responseBody = response.getBody();
-            if (responseBody == null) {
+            ResponseEntity<PilotageCampaignEnabled> response =
+                    restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, getHttpHeaders(authToken),
+                            PilotageCampaignEnabled.class);
+            PilotageCampaignEnabled campaignEnabled = response.getBody();
+            if (campaignEnabled == null) {
                 log.error("Pilotage API does not have a body (was expecting a boolean value as response body");
                 throw new PilotageApiException();
             }
-            return !responseBody.get("ongoing");
+            return !campaignEnabled.ongoing();
         } catch (RestClientException e) {
             log.error(e.getMessage(), e);
             throw new PilotageApiException();
         }
     }
 
-    /**
-     * This method retrieve the data from the Pilotage API for the current user
-     *
-     * @param authToken authorization token header
-     * @return String of UserId
-     */
     @Override
-    public List<LinkedHashMap<String, String>> getSurveyUnits(String authToken, String campaignId) {
-        final String uriPilotageFilter = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + API_PEARLJAM_SURVEYUNITS;
-        ResponseEntity<List<LinkedHashMap<String, String>>> response =
-                exchange(uriPilotageFilter, authToken, new ParameterizedTypeReference<List<LinkedHashMap<String, String>>>() {
-                });
-        log.info("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
-        if (response.getStatusCode() != HttpStatus.OK) {
-            log.error("""
-                    GET survey-units for campaign with id {} resulting in 500
-                    caused by one of following:
-                    - No survey unit found in pearl jam DB
-                    - User not authorized
-                    """, campaignId);
-            throw new PilotageApiException(String.format("No survey unit found for the campaign id %s or user not authorized", campaignId));
+    public List<PilotageSurveyUnit> getSurveyUnits(String authToken) {
+        try {
+            final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_SURVEYUNITS;
+            ResponseEntity<List<PilotageSurveyUnit>> response =
+                    restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, getHttpHeaders(authToken),
+                            new ParameterizedTypeReference<List<PilotageSurveyUnit>>() {});
+            log.info("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
+            return response.getBody();
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
+                log.info("Got a 404 status code, 0 survey units returned");
+                return new ArrayList<>();
+            }
+            log.error(ex.getMessage(), ex);
+            throw new PilotageApiException();
         }
-        return response.getBody();
     }
 
     @Override
     public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
-        // call pilotage API
-        final String uriPilotageInterviewerCampaigns = pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + API_PEARLJAM_INTERVIEWER_CAMPAIGNS;
+        try {
+            final String uriPilotageInterviewerCampaigns = pilotageUrl + API_PEARLJAM_INTERVIEWER_CAMPAIGNS;
 
-        ResponseEntity<List<PilotageCampaign>> response =
-                exchange(uriPilotageInterviewerCampaigns, authToken, new ParameterizedTypeReference<List<PilotageCampaign>>() {
-                });
-        log.info("Pilotage API call returned {}", response.getStatusCode().value());
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            log.info("Got a {} status code, 0 campaigns returned", response.getStatusCode().value());
-            return Collections.emptyList();
+            ResponseEntity<List<PilotageCampaign>> response =
+                    restTemplate.exchange(uriPilotageInterviewerCampaigns, HttpMethod.GET, getHttpHeaders(authToken),
+                            new ParameterizedTypeReference<List<PilotageCampaign>>() {});
+            log.info("Pilotage API call returned {}", response.getStatusCode().value());
+            return response.getBody();
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
+                log.info("Got a 404 status code, 0 campaigns returned");
+                return new ArrayList<>();
+            }
+            log.error(ex.getMessage(), ex);
+            throw new PilotageApiException();
         }
-        return response.getBody();
     }
 
     @Override
     public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken) {
-        String uriPilotageFilter = "";
+        StringBuilder uriPilotageFilter = new StringBuilder();
         String campaignId = surveyUnit.campaignId();
 
         if (Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
             log.info("Current campaignId {} requires an alternative habilitation service {} ", campaignId, alternativeHabilitationServiceURL);
-            uriPilotageFilter += alternativeHabilitationServiceURL;
+            uriPilotageFilter.append(alternativeHabilitationServiceURL);
         } else {
-            uriPilotageFilter += pilotageScheme + "://" + pilotageHost + ":" + pilotagePort + API_HABILITATION;
+            uriPilotageFilter
+                    .append(pilotageUrl)
+                    .append(API_HABILITATION);
         }
 
-        uriPilotageFilter += "?id=" + surveyUnit.id()
-                + "&role=" + role.getExpectedRole() + "&campaign=" + campaignId + "&idep=" + idep;
+        uriPilotageFilter.append(String.format("?id=%s&role=%s&campaign=%s&idep=%s", surveyUnit.id(), role.getExpectedRole(), campaignId, idep));
 
         try {
-            ResponseEntity<LinkedHashMap<String, Boolean>> response =
-                    exchange(uriPilotageFilter, authToken, new ParameterizedTypeReference<LinkedHashMap<String, Boolean>>() {
-                    });
+            ResponseEntity<PilotageHabilitation> response =
+                    restTemplate.exchange(uriPilotageFilter.toString(), HttpMethod.GET, getHttpHeaders(authToken),
+                            PilotageHabilitation.class);
 
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                log.info(
-                        "Habilitation of user {} with role {} to access survey-unit {} denied : habilitation service returned {} ",
-                        idep, role.name(), surveyUnit.id(), response.getStatusCode());
-                return false;
-            }
+            PilotageHabilitation habilitation = response.getBody();
 
-            LinkedHashMap<String, Boolean> responseBody = response.getBody();
-
-            if (responseBody == null) {
+            if (habilitation == null) {
                 log.error("Pilotage API does not have a body (was expecting a boolean value)");
                 throw new PilotageApiException();
             }
 
-            boolean habilitationResult = responseBody.get("habilitated");
-            log.info("Habilitation of user {} with role {} to access survey-unit {} : {}", idep, role.name(),
-                    surveyUnit.id(), habilitationResult ? "granted" : "denied");
-            return habilitationResult;
 
-        } catch (HttpStatusCodeException e) {
-            if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+            log.info("Habilitation of user {} with role {} to access survey-unit {} : {}", idep, role.name(),
+                    surveyUnit.id(), habilitation.habilitated() ? "granted" : "denied");
+            return habilitation.habilitated();
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            HttpStatusCode status = ex.getStatusCode();
+            if (status.equals(HttpStatus.UNAUTHORIZED)) {
                 log.info("Habilitation of user {} with role {} to access survey-unit {} denied.",
                         idep, role.name(), surveyUnit.id());
                 return false;
             }
-            log.error(e.getMessage(), e);
-            throw new PilotageApiException();
-        } catch (RestClientException e) {
-            log.error(e.getMessage(), e);
+            log.error(ex.getMessage(), ex);
             throw new PilotageApiException();
         }
     }
@@ -160,9 +148,5 @@ public class PilotageHttpRepository implements PilotageRepository {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(authToken);
         return new HttpEntity<>(headers);
-    }
-
-    private <T> ResponseEntity<T> exchange(String url, String authToken, ParameterizedTypeReference<T> responseType) {
-        return restTemplate.exchange(url, HttpMethod.GET, getHttpHeaders(authToken), responseType);
     }
 }

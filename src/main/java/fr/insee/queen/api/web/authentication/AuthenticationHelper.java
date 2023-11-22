@@ -6,16 +6,21 @@ public interface AuthenticationHelper {
     /**
      * Retrieve the auth token of the current user
      *
-     * @param auth authenticated user
      * @return auth token
      */
-    String getAuthToken(Authentication auth);
+    String getUserToken();
 
     /**
      * Retrieve the user id from the current user
      *
-     * @param authentication authenticated user
      * @return the user id
      */
-    String getUserId(Authentication authentication);
+    String getUserId();
+
+    /**
+     * Retrieve the authentication principal for current user
+     *
+     * @return {@link Authentication} the authentication user object
+     */
+    Authentication getAuthenticationPrincipal();
 }

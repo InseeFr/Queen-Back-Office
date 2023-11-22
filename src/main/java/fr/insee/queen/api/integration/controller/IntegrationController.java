@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,15 +36,13 @@ public class IntegrationController {
      * (the campaign integration can be successful nut not the questionnaire integration for example)
      *
      * @param file the integration zip file containing all infos about campaign/questionnaire/nomenclatures
-     * @param auth authenticated user
      * @return {@link IntegrationResultsDto} the results of the integration
      */
     @Operation(summary = "Integrates the context of a campaign")
     @PostMapping(path = "/campaign/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
-    public IntegrationResultsDto integrateContext(@RequestParam("file") MultipartFile file,
-                                                  Authentication auth) {
-        String userId = authHelper.getUserId(auth);
+    public IntegrationResultsDto integrateContext(@RequestParam("file") MultipartFile file) {
+        String userId = authHelper.getUserId();
         log.info("User {} requests campaign creation via context ", userId);
         return integrationComponent.integrateContext(file);
     }
