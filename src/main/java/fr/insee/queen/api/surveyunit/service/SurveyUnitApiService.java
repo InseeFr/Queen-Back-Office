@@ -59,9 +59,19 @@ public class SurveyUnitApiService implements SurveyUnitService {
     }
 
     @Override
-    public List<SurveyUnitSummary> findByCampaignId(String campaignId) {
+    public List<SurveyUnitSummary> findSummariesByCampaignId(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         return surveyUnitRepository.findAllSummaryByCampaignId(campaignId);
+    }
+
+    @Override
+    public List<SurveyUnit> findByIds(List<String> surveyUnitIds) {
+        return surveyUnitRepository.find(surveyUnitIds);
+    }
+
+    @Override
+    public List<SurveyUnit> findAllSurveyUnits() {
+        return surveyUnitRepository.findAll();
     }
 
     @Override
@@ -74,7 +84,6 @@ public class SurveyUnitApiService implements SurveyUnitService {
     @Override
     public void updateSurveyUnit(SurveyUnit surveyUnit) {
         throwExceptionIfSurveyUnitNotExist(surveyUnit.id());
-
         surveyUnitRepository.updateInfos(surveyUnit);
     }
 
@@ -88,7 +97,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
     }
 
     @Override
-    public List<SurveyUnitSummary> findSummaryByIds(List<String> surveyUnits) {
+    public List<SurveyUnitSummary> findSummariesByIds(List<String> surveyUnits) {
         return surveyUnitRepository.findAllSummaryByIdIn(surveyUnits);
     }
 

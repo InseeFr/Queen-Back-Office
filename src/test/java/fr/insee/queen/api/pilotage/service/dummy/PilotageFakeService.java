@@ -1,8 +1,11 @@
 package fr.insee.queen.api.pilotage.service.dummy;
 
+import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.pilotage.service.PilotageService;
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
+import fr.insee.queen.api.surveyunit.service.model.StateData;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +29,8 @@ public class PilotageFakeService implements PilotageService {
     private boolean hasEmptySurveyUnits = false;
 
     public static final String CAMPAIGN1_ID = "interviewerCampaign1";
-    public static final String SURVEY_UNIT1_ID = "s1";
+    public static final String SURVEY_UNIT1_ID = "pilotage-s1";
+    public static final String SURVEY_UNIT2_ID = "pilotage-s2";
 
     @Override
     public boolean isClosed(String campaignId, String authToken) {
@@ -45,7 +49,25 @@ public class PilotageFakeService implements PilotageService {
     }
 
     @Override
+    public List<SurveyUnit> getInterviewerSurveyUnits(String authToken) {
+        if (this.hasEmptySurveyUnits) {
+            return new ArrayList<>();
+        }
+        return List.of(
+                new SurveyUnit(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id",
+                        "[]", "{}", "{}",
+                        new StateData(StateDataType.INIT, 0L, "2#3")),
+                new SurveyUnit(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id",
+                        "[]", "{}", "{}",
+                        new StateData(StateDataType.INIT, 0L, "2#3"))
+        );
+    }
+
+    @Override
     public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
+        if (this.hasEmptySurveyUnits) {
+            return new ArrayList<>();
+        }
         wentThroughInterviewerCampaigns = true;
         return List.of(
                 new PilotageCampaign(CAMPAIGN1_ID, new ArrayList<>()),

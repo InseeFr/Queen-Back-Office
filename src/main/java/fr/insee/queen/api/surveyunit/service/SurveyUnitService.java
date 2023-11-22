@@ -15,7 +15,7 @@ public interface SurveyUnitService {
 
     SurveyUnit getSurveyUnit(String id);
 
-    List<SurveyUnitSummary> findByCampaignId(String campaignId);
+    List<SurveyUnitSummary> findSummariesByCampaignId(String campaignId);
 
     List<String> findAllSurveyUnitIds();
 
@@ -23,7 +23,7 @@ public interface SurveyUnitService {
 
     void createSurveyUnit(SurveyUnit surveyUnit);
 
-    List<SurveyUnitSummary> findSummaryByIds(List<String> surveyUnits);
+    List<SurveyUnitSummary> findSummariesByIds(List<String> surveyUnits);
 
     Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId);
 
@@ -34,4 +34,8 @@ public interface SurveyUnitService {
     SurveyUnitDepositProof getSurveyUnitDepositProof(String surveyUnitId);
 
     SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId);
+
+    List<SurveyUnit> findByIds(List<String> surveyUnitIds);
+
+    List<SurveyUnit> findAllSurveyUnits();
 }

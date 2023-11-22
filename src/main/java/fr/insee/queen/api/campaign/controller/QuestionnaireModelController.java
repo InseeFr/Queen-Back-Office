@@ -113,7 +113,7 @@ public class QuestionnaireModelController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public ResponseEntity<SurveyUnitOkNokDto> getQuestionnaireModelIdBySurveyUnits(
             @NotEmpty @RequestBody List<String> surveyUnitIdsToSearch) {
-        List<SurveyUnitSummary> surveyUnitsFound = surveyUnitService.findSummaryByIds(surveyUnitIdsToSearch);
+        List<SurveyUnitSummary> surveyUnitsFound = surveyUnitService.findSummariesByIds(surveyUnitIdsToSearch);
         List<String> surveyUnitIdsFound = surveyUnitsFound.stream().map(SurveyUnitSummary::id).toList();
         List<SurveyUnitDto> surveyUnitsNOK = surveyUnitIdsToSearch.stream()
                 .filter(surveyUnitIdToSearch -> !surveyUnitIdsFound.contains(surveyUnitIdToSearch))

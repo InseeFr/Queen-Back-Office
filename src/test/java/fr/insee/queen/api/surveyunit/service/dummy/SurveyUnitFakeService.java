@@ -7,6 +7,7 @@ import fr.insee.queen.api.surveyunit.service.model.SurveyUnitState;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,8 @@ import java.util.Optional;
 public class SurveyUnitFakeService implements SurveyUnitService {
 
     public static final String SURVEY_UNIT1_ID = "survey-unit1";
+
+    public static final String SURVEY_UNIT2_ID = "survey-unit2";
 
     @Override
     public boolean existsById(String surveyUnitId) {
@@ -31,11 +34,10 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public List<SurveyUnitSummary> findByCampaignId(String campaignId) {
+    public List<SurveyUnitSummary> findSummariesByCampaignId(String campaignId) {
         return List.of(
-                new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
-                new SurveyUnitSummary("survey-unit2", "questionnaire-id", "campaign-id"),
-                new SurveyUnitSummary("survey-unit3", "questionnaire-id", "campaign-id")
+                new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", campaignId),
+                new SurveyUnitSummary(SURVEY_UNIT2_ID, "questionnaire-id", campaignId)
         );
     }
 
@@ -55,8 +57,11 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public List<SurveyUnitSummary> findSummaryByIds(List<String> surveyUnits) {
-        return null;
+    public List<SurveyUnitSummary> findSummariesByIds(List<String> surveyUnitIds) {
+        List<SurveyUnitSummary> surveyUnits = new ArrayList<>();
+
+        surveyUnitIds.forEach(surveyUnitId -> surveyUnits.add(new SurveyUnitSummary(surveyUnitId, "questionnaire-id", "campaign-id")));
+        return surveyUnits;
     }
 
     @Override
@@ -83,5 +88,18 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     @Override
     public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
         return new SurveyUnitSummary("survey-unit1", "questionnaire-id", "campaign-id");
+    }
+
+    @Override
+    public List<SurveyUnit> findByIds(List<String> surveyUnitIds) {
+        return null;
+    }
+
+    @Override
+    public List<SurveyUnit> findAllSurveyUnits() {
+        return List.of(
+                new SurveyUnit(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id", null, null, null, null),
+                new SurveyUnit(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id", null, null, null, null)
+        );
     }
 }

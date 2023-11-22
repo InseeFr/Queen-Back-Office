@@ -7,6 +7,7 @@ import fr.insee.queen.api.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.api.pilotage.service.gateway.PilotageRepository;
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
+import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,42 @@ public class PilotageApiService implements PilotageService {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         Map<String, SurveyUnitSummary> surveyUnitMap = new HashMap<>();
 
+        List<String> surveyUnitIds = getSurveyUnitIds(campaignId, authToken);
+
+        surveyUnitService.findSummariesByIds(surveyUnitIds)
+                .forEach(surveyUnitSummary ->
+                        surveyUnitMap.putIfAbsent(surveyUnitSummary.id(), surveyUnitSummary)
+                );
+        return surveyUnitMap.values().stream().toList();
+    }
+
+    @Override
+    public List<SurveyUnit> getInterviewerSurveyUnits(String authToken) {
+        Map<String, SurveyUnit> surveyUnitMap = new HashMap<>();
+        List<PilotageCampaign> campaigns = getInterviewerCampaigns(authToken);
+        List<String> surveyUnitIds = new ArrayList<>();
+        campaigns.forEach(campaign -> {
+            List<String> ids = getSurveyUnitIds(campaign.id(), authToken);
+            surveyUnitIds.addAll(ids);
+        });
+
+        surveyUnitService.findByIds(surveyUnitIds)
+                .forEach(surveyUnit ->
+                        surveyUnitMap.putIfAbsent(surveyUnit.id(), surveyUnit)
+                );
+        return surveyUnitMap.values().stream().toList();
+    }
+
+    /**
+     * Retrieve survey unit ids for the current interviewer for a campaign
+     *
+     * @param campaignId campaign id
+     * @param authToken auth token of current user
+     * @return List of survey unit ids
+     */
+    private List<String> getSurveyUnitIds(String campaignId, String authToken) {
         List<LinkedHashMap<String, String>> objects = pilotageRepository.getSurveyUnits(authToken, campaignId);
+        List<String> surveyUnitIds = new ArrayList<>();
 
         if (objects == null || objects.isEmpty()) {
             log.info("GET survey-units for campaign with id {} resulting in 404", campaignId);
@@ -49,14 +85,12 @@ public class PilotageApiService implements PilotageService {
         for (LinkedHashMap<String, String> map : objects) {
             if (map.get(CAMPAIGN).equals(campaignId)) {
                 log.info("ID : {}", map.get("id"));
-                surveyUnitService.findSummaryById(map.get("id")).ifPresent(surveyUnitSummary ->
-                        surveyUnitMap.putIfAbsent(surveyUnitSummary.id(), surveyUnitSummary)
-                );
+                surveyUnitIds.add(map.get("id"));
             }
         }
-        log.info("Number of SU to return : {}", surveyUnitMap.size());
+        log.info("Number of SU to return : {}", surveyUnitIds.size());
         log.info("GET survey-units for campaign with id {} resulting in 200", campaignId);
-        return surveyUnitMap.values().stream().toList();
+        return surveyUnitIds;
     }
 
     private String displayDetail(List<LinkedHashMap<String, String>> objects) {

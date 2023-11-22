@@ -1,6 +1,7 @@
 package fr.insee.queen.api.surveyunit.integration;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
+import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.MethodOrderer;
@@ -24,7 +25,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.List;
 
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -337,12 +338,41 @@ class SurveyUnitTests {
     }
 
     @Test
+    void when_non_interviewer_get_surveyunits_return_403() throws Exception {
+        mockMvc.perform(get("/api/survey-units/interviewer")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE)))
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void when_get_survey_units_for_interviewers_return_survey_units() throws Exception {
+        mockMvc.perform(get("/api/survey-units/interviewer")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER)))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(14)))
+                .andExpect(jsonPath("$[0].id").value("11"))
+                .andExpect(jsonPath("$[0].questionnaireId").value("simpsons"))
+                .andExpect(jsonPath("$[0].personalization.size()", is(2)))
+                .andExpect(jsonPath("$[0].data").value(is(not(emptyOrNullString()))))
+                .andExpect(jsonPath("$[0].stateData.state").value(StateDataType.EXTRACTED.name()))
+                .andExpect(jsonPath("$[0].stateData.date").value(1111111111))
+                .andExpect(jsonPath("$[0].stateData.currentPage").value("2.3#5"));
+    }
+
+    @Test
     void when_anonymous_user_access_authenticated_endpoints_return_401() throws Exception {
         List<String> getEdnPoints = List.of(
                 "/api/survey-units",
                 "/api/survey-unit/11",
                 "/api/survey-unit/11/deposit-proof",
-                "/api/campaign/VQS2021X00/survey-units");
+                "/api/campaign/VQS2021X00/survey-units",
+                "/api/survey-units/interviewer");
         for (String getEndPoint : getEdnPoints) {
             mockMvc.perform(get(getEndPoint)
                             .accept(MediaType.APPLICATION_JSON)

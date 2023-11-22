@@ -89,6 +89,28 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
     Optional<SurveyUnit> findOneById(String surveyUnitId);
 
     /**
+     * Retrieve all survey units with all details
+     *
+     * @return List of {@link SurveyUnit} survey units
+     */
+    @Query("""
+            select new fr.insee.queen.api.surveyunit.service.model.SurveyUnit(
+                s.id,
+                s.campaign.id,
+                s.questionnaireModel.id,
+                s.personalization.value,
+                s.data.value,
+                s.comment.value,
+                new fr.insee.queen.api.surveyunit.service.model.StateData(
+                    s.stateData.state,
+                    s.stateData.date,
+                    s.stateData.currentPage
+                ) as stateData
+            )
+            from SurveyUnitDB s left join s.personalization left join s.data left join s.comment left join s.stateData order by s.id asc""")
+    List<SurveyUnit> findAllSurveyUnits();
+
+    /**
      * Retrieve a survey unit with campaign and state data linked (used for deposit proof)
      *
      * @param surveyUnitId survey unit id
@@ -117,6 +139,34 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
      */
     @Query("select s.id from SurveyUnitDB s order by s.id asc")
     Optional<List<String>> findAllIds();
+
+    /**
+     * Search survey units by ids
+     * @param surveyUnitIds ids to search
+     * @return List of {@link SurveyUnit} survey units found
+     */
+    @Query("""
+            select new fr.insee.queen.api.surveyunit.service.model.SurveyUnit(
+                s.id,
+                s.campaign.id,
+                s.questionnaireModel.id,
+                s.personalization.value,
+                s.data.value,
+                s.comment.value,
+                new fr.insee.queen.api.surveyunit.service.model.StateData(
+                    s.stateData.state,
+                    s.stateData.date,
+                    s.stateData.currentPage
+                ) as stateData
+            )
+            from SurveyUnitDB s
+            left join s.personalization
+            left join s.data 
+            left join s.comment 
+            left join s.stateData 
+            where s.id in :surveyUnitIds
+            order by s.id asc""")
+    List<SurveyUnit> findSurveyUnitsByIdIn(List<String> surveyUnitIds);
 
     /**
      * Find survey units with state linked by ids
