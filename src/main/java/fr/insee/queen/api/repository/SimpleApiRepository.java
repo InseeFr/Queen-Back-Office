@@ -5,16 +5,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.dto.surveyunit.SurveyUnitResponseDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SimpleApiRepository {
 
     void updateSurveyUnitData(String id, JsonNode data);
+
     void updateSurveyUnitComment(String id, JsonNode comment);
+
     void updateSurveyUnitPersonalization(String id, JsonNode personalization);
+
     void updateSurveyUnitStateDate(String id, JsonNode stateData);
 
     String getCampaignIdFromSuId(String id);
+
     boolean idCampaignIsPresent(String id);
+
+    Optional<Long> findStateDataDateBySurveyUnitId(String id);
 
     void createSurveyUnit(String campaignId, SurveyUnitResponseDto surveyUnitResponseDto);
 
