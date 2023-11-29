@@ -7,7 +7,6 @@ import fr.insee.queen.api.campaign.service.exception.CampaignDeletionException;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
-import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
 import fr.insee.queen.api.web.authentication.AuthenticationHelper;
 import fr.insee.queen.api.web.validation.IdValid;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,28 +49,6 @@ public class CampaignController {
         log.info("Admin {} request all campaigns", userId);
         return campaignService.getAllCampaigns()
                 .stream().map(CampaignSummaryDto::fromModel)
-                .toList();
-    }
-
-    /**
-     * Retrieve the campaigns the current user has access to (or all campaigns if admin)
-     *
-     * @return List of {@link CampaignSummaryDto}
-     */
-    @Operation(summary = "Get campaign list for the current user")
-    @GetMapping(path = "/campaigns")
-    @DisplayRolesOnUI
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-    public List<CampaignSummaryDto> getInterviewerCampaignList() {
-
-        String userId = authHelper.getUserId();
-        log.info("User {} need his campaigns", userId);
-
-        List<PilotageCampaign> campaigns = pilotageComponent.getInterviewerCampaigns();
-        log.info("{} campaign(s) found for {}", campaigns.size(), userId);
-
-        return campaigns.stream()
-                .map(CampaignSummaryDto::fromPilotageModel)
                 .toList();
     }
 

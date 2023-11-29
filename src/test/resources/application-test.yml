@@ -50,3 +50,4 @@ feature:
     cache: false
     pilotage: false
     comments: true
+    interviewer-collect: true

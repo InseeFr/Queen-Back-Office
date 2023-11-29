@@ -6,13 +6,9 @@ import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.surveyunit.controller.dto.input.SurveyUnitCreationData;
 import fr.insee.queen.api.surveyunit.controller.dto.input.SurveyUnitUpdateData;
-import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitByCampaignDto;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitDto;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
-import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
-import fr.insee.queen.api.web.authentication.AuthenticationHelper;
-import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import fr.insee.queen.api.web.validation.IdValid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +35,7 @@ import java.util.List;
 public class SurveyUnitController {
     private final SurveyUnitService surveyUnitService;
     private final PilotageComponent pilotageComponent;
-    private final AuthenticationHelper authHelper;
+
     /**
      * Retrieve all survey units id
      *
@@ -86,52 +82,6 @@ public class SurveyUnitController {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         SurveyUnit surveyUnit = SurveyUnitUpdateData.toModel(surveyUnitId, surveyUnitUpdateData);
         surveyUnitService.updateSurveyUnit(surveyUnit);
-    }
-
-    /**
-     * Retrieve all the survey units of a campaign
-     *
-     * @param campaignId the id of campaign
-     * @return List of {@link SurveyUnitByCampaignDto}
-     */
-    @Operation(summary = "Get list of survey units for a campaign")
-    @GetMapping(path = "/campaign/{id}/survey-units")
-    @DisplayRolesOnUI
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-    public List<SurveyUnitByCampaignDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
-        log.info("GET survey-units for campaign with id {}", campaignId);
-
-        // get survey units of a campaign from the pilotage api
-        List<SurveyUnitSummary> surveyUnits = pilotageComponent.getSurveyUnitsByCampaign(campaignId);
-
-        if (surveyUnits.isEmpty()) {
-            throw new EntityNotFoundException(String.format("No survey units for the campaign with id %s", campaignId));
-        }
-
-        return surveyUnits.stream()
-                .map(SurveyUnitByCampaignDto::fromModel)
-                .toList();
-    }
-
-    /**
-     * Retrieve all the survey units of the current interviewer
-     *
-     * @return List of {@link SurveyUnitDto} survey units
-     */
-    @Operation(summary = "Get list of survey units linked to the current interviewer")
-    @GetMapping(path = "/survey-units/interviewer")
-    @DisplayRolesOnUI
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
-    public List<SurveyUnitDto> getInterviewerSurveyUnits() {
-        String userId = authHelper.getUserId();
-        log.info("GET survey-units for interviewer with id {}", userId);
-
-        // get survey units of the interviewer
-        List<SurveyUnit> surveyUnits = pilotageComponent.getInterviewerSurveyUnits();
-
-        return surveyUnits.stream()
-                .map(SurveyUnitDto::fromModel)
-                .toList();
     }
 
     /**
