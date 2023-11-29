@@ -2,6 +2,7 @@ package fr.insee.queen.api.surveyunittempzone.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.surveyunittempzone.controller.dto.output.SurveyUnitTempZoneDto;
 import fr.insee.queen.api.surveyunittempzone.service.SurveyUnitTempZoneService;
 import fr.insee.queen.api.web.authentication.AuthenticationHelper;
@@ -39,6 +40,7 @@ public class SurveyUnitTempZoneController {
      */
     @Operation(summary = "Create survey-unit to temp-zone")
     @PostMapping(path = "/survey-unit/{id}/temp-zone")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
@@ -55,6 +57,7 @@ public class SurveyUnitTempZoneController {
      */
     @Operation(summary = "GET all survey-units in temp-zone")
     @GetMapping(path = "/survey-units/temp-zone")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<SurveyUnitTempZoneDto> getSurveyUnitsInTempZone() {
         log.info("GET all survey-units in temp-zone");

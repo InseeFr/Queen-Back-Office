@@ -1,6 +1,7 @@
 package fr.insee.queen.api.surveyunit.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.surveyunit.controller.dto.input.StateDataInputData;
@@ -45,6 +46,7 @@ public class StateDataController {
      */
     @Operation(summary = "Get state-data for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/state-data")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public StateDataDto getStateDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("GET statedata for reporting unit with id {}", surveyUnitId);
@@ -60,6 +62,7 @@ public class StateDataController {
      */
     @Operation(summary = "Update state-data for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/state-data")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
                              @Valid @RequestBody StateDataInputData stateDataInputDto) {
@@ -76,6 +79,7 @@ public class StateDataController {
      */
     @Operation(summary = "Get state-data for all survey-units defined in request body ")
     @PostMapping(path = "survey-units/state-data")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public SurveyUnitOkNokDto getStateDataBySurveyUnits(@NotEmpty @RequestBody List<String> surveyUnitIdsToSearch) {
         List<SurveyUnitState> surveyUnitsFound = surveyUnitService.findWithStateByIds(surveyUnitIdsToSearch);

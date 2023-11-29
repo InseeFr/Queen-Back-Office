@@ -1,6 +1,5 @@
-package fr.insee.queen.api.configuration;
+package fr.insee.queen.api.configuration.swagger;
 
-import fr.insee.queen.api.configuration.properties.ApplicationProperties;
 import fr.insee.queen.api.configuration.properties.OidcProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -25,7 +24,7 @@ public class SpringDocConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "application.auth", havingValue = "OIDC")
-    protected OpenAPI oidcOpenAPI(ApplicationProperties applicationProperties, OidcProperties oidcProperties, BuildProperties buildProperties) {
+    protected OpenAPI oidcOpenAPI(OidcProperties oidcProperties, BuildProperties buildProperties) {
         String authUrl = oidcProperties.authServerUrl() + "/realms/" + oidcProperties.realm() + "/protocol/openid-connect";
         String securitySchemeName = "oauth2";
 

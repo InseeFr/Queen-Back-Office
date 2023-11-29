@@ -5,6 +5,7 @@ import fr.insee.queen.api.campaign.controller.dto.output.CampaignSummaryDto;
 import fr.insee.queen.api.campaign.service.CampaignService;
 import fr.insee.queen.api.campaign.service.exception.CampaignDeletionException;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
 import fr.insee.queen.api.web.authentication.AuthenticationHelper;
@@ -42,6 +43,7 @@ public class CampaignController {
      */
     @Operation(summary = "Get list of all campaigns")
     @GetMapping(path = "/admin/campaigns")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     public List<CampaignSummaryDto> getListCampaign() {
         String userId = authHelper.getUserId();
@@ -58,6 +60,7 @@ public class CampaignController {
      */
     @Operation(summary = "Get campaign list for the current user")
     @GetMapping(path = "/campaigns")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<CampaignSummaryDto> getInterviewerCampaignList() {
 
@@ -79,6 +82,7 @@ public class CampaignController {
      */
     @Operation(summary = "Create a campaign")
     @PostMapping(path = "/campaigns")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createCampaign(@Valid @RequestBody CampaignCreationData campaignInputDto) {
@@ -97,6 +101,7 @@ public class CampaignController {
      */
     @Operation(summary = "Delete a campaign")
     @DeleteMapping(path = "/campaign/{id}")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)
     public void deleteCampaignById(@RequestParam("force") boolean force,

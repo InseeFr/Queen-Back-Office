@@ -3,6 +3,7 @@ package fr.insee.queen.api.campaign.controller;
 import fr.insee.queen.api.campaign.controller.dto.input.NomenclatureCreationData;
 import fr.insee.queen.api.campaign.service.NomenclatureService;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
+import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.web.validation.IdValid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,6 +37,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get all nomenclatures Ids ")
     @GetMapping(path = "/nomenclatures")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<String> getNomenclaturesId() {
         log.info("GET all nomenclatures Ids");
@@ -51,6 +53,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get Nomenclature")
     @GetMapping(path = "/nomenclature/{id}")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getNomenclatureById(@IdValid @PathVariable(value = "id") String nomenclatureId) {
         log.info("GET nomenclature with id {}", nomenclatureId);
@@ -65,6 +68,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Create/update a nomenclature ")
     @PostMapping(path = "/nomenclature")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)
     public void postNomenclature(@Valid @RequestBody NomenclatureCreationData nomenclatureCreationDto) {
@@ -79,6 +83,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get list of required nomenclatures for a campaign")
     @GetMapping(path = "/campaign/{id}/required-nomenclatures")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<String> getListRequiredNomenclature(@IdValid @PathVariable(value = "id") String campaignId) {
         log.info("GET required-nomenclatures for campaign with id {}", campaignId);
@@ -93,6 +98,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get list of required nomenclature for a questionnaire")
     @GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
+    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<String> getListRequiredNomenclatureByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
         log.info("GET required-nomenclatures for questionnaire model with id {}", questionnaireId);
