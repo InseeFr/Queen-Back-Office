@@ -2,7 +2,6 @@ package fr.insee.queen.api.surveyunit.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.surveyunit.service.DataService;
@@ -37,7 +36,6 @@ public class DataController {
      */
     @Operation(summary = "Get data for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/data")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("GET Data for reporting unit with id {}", surveyUnitId);
@@ -54,7 +52,6 @@ public class DataController {
      */
     @Operation(summary = "Update data for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/data")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void updateData(@NotNull @RequestBody ObjectNode dataValue,
                            @IdValid @PathVariable(value = "id") String surveyUnitId) {

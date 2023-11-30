@@ -1,7 +1,6 @@
 package fr.insee.queen.api.dataset.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.dataset.service.DataSetInjectorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +31,6 @@ public class DataSetController {
      */
     @Operation(summary = "Create dataset")
     @PostMapping(path = "/create-dataset")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createDataSet() {

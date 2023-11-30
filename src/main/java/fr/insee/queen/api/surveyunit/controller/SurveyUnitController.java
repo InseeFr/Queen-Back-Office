@@ -1,7 +1,6 @@
 package fr.insee.queen.api.surveyunit.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
 import fr.insee.queen.api.pilotage.service.PilotageRole;
 import fr.insee.queen.api.surveyunit.controller.dto.input.SurveyUnitCreationData;
@@ -43,7 +42,6 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Get all survey-units ids")
     @GetMapping(path = "/survey-units")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     public List<String> getSurveyUnitIds() {
         log.info("GET survey-units");
@@ -58,7 +56,6 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Get survey-unit")
     @GetMapping(path = "/survey-unit/{id}")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public SurveyUnitDto getSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         log.info("GET survey-units with id {}", surveyUnitId);
@@ -74,7 +71,6 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Update survey-unit")
     @PutMapping(path = {"/survey-unit/{id}"})
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      @Valid @RequestBody SurveyUnitUpdateData surveyUnitUpdateData) {
@@ -92,7 +88,6 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Create/Update a survey unit")
     @PostMapping(path = "/campaign/{id}/survey-unit")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     public ResponseEntity<Void> createUpdateSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
                                                        @Valid @RequestBody SurveyUnitCreationData surveyUnitCreationData) {
@@ -115,7 +110,6 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Delete a survey unit")
     @DeleteMapping(path = "/survey-unit/{id}")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {

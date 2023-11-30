@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 
 @Component
-public class DisplayRolesOnUICustomizer implements OperationCustomizer {
+public class DisplayRolesOnSwaggerUI implements OperationCustomizer {
 
     /**
      * Display roles allowed to use an endpoint in the description field
@@ -17,10 +17,6 @@ public class DisplayRolesOnUICustomizer implements OperationCustomizer {
      */
     @Override
     public Operation customize(Operation operation, HandlerMethod handlerMethod) {
-        var annotation = handlerMethod.getMethodAnnotation(DisplayRolesOnUI.class);
-        if (annotation == null) {
-            return operation;
-        }
         var preAuthorizeAnnotation = handlerMethod.getMethodAnnotation(PreAuthorize.class);
         StringBuilder description = new StringBuilder();
         if(preAuthorizeAnnotation == null) {

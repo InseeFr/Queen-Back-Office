@@ -1,7 +1,6 @@
 package fr.insee.queen.api.depositproof.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.depositproof.service.DepositProofService;
 import fr.insee.queen.api.depositproof.service.exception.DepositProofException;
 import fr.insee.queen.api.depositproof.service.model.PdfDepositProof;
@@ -47,7 +46,6 @@ public class DepositProofController {
      */
     @Operation(summary = "Get deposit proof for a survey unit")
     @GetMapping(value = "/survey-unit/{id}/deposit-proof")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      HttpServletResponse response) {
