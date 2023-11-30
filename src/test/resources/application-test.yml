@@ -28,14 +28,15 @@ logging:
 zonky:
   test:
     database:
-      type: auto                     # The type of embedded database to be created when replacing the data source.
-      provider: default              # Provider to be used to create the underlying embedded database.
+      type: postgres                 # The type of embedded database to be created when replacing the data source.
+      provider: zonky                # Provider to be used to create the underlying embedded database.
       refresh: never                 # Determines the refresh mode of the embedded database.
       replace: any                   # Determines what type of existing DataSource beans can be replaced.
       postgres:
         server:
-          shared_buffers: 512MB
-          max_connections: 100
+          properties:
+            shared_buffers: 128MB
+            max_connections: 5
 
 #force charset for mockmvc
 server:
