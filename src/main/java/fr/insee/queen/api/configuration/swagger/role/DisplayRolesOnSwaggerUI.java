@@ -8,6 +8,7 @@ import org.springframework.web.method.HandlerMethod;
 
 @Component
 public class DisplayRolesOnSwaggerUI implements OperationCustomizer {
+    public static final String AUTHORIZED_ROLES = "Authorized roles: ";
 
     /**
      * Display roles allowed to use an endpoint in the description field
@@ -27,7 +28,7 @@ public class DisplayRolesOnSwaggerUI implements OperationCustomizer {
                     .append(operation.getDescription())
                     .append("\n");
         }
-        description.append("Authorized roles: ");
+        description.append(AUTHORIZED_ROLES);
         String roles = preAuthorizeAnnotation.value();
         for(RoleUIMapper roleUIMapper : RoleUIMapper.values()) {
             if(roles.contains(roleUIMapper.getRoleExpression())) {
