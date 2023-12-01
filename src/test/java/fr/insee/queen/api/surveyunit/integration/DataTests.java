@@ -69,7 +69,7 @@ class DataTests {
 
     @Test
     void on_get_data_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/survey-unit/pl_op/data")
+        mockMvc.perform(get("/api/survey-unit/plop$/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
@@ -122,7 +122,7 @@ class DataTests {
 
     @Test
     void on_update_data_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(put("/api/survey-unit/invalid_identifier/data")
+        mockMvc.perform(put("/api/survey-unit/invalid$identifier/data")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

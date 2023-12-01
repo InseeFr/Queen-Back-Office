@@ -54,7 +54,7 @@ class NomenclatureBuilderTest {
     @Test
     @DisplayName("on building nomenclature, when nomenclature input invalid return integration error")
     void testNomenclatureBuilder02() throws IOException {
-        String nomenclatureId = "cities_2023";
+        String nomenclatureId = "cities%2023";
         ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/invalid-input-nomenclatures.zip");
 
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);

@@ -167,7 +167,7 @@ class CampaignTests {
 
     @Test
     void on_delete_campaign_when_campaign_invalid_identifier_return_400() throws Exception {
-        mockMvc.perform(delete("/api/campaign/invalid_identifier")
+        mockMvc.perform(delete("/api/campaign/invalid!identifier")
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(adminUser))

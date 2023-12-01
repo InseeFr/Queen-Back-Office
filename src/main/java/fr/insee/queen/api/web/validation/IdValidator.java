@@ -16,6 +16,6 @@ public class IdValidator implements ConstraintValidator<IdValid, String> {
         if (identifier == null) {
             return false;
         }
-        return Pattern.matches("[A-Za-z0-9\\-]+", identifier);
+        return Pattern.matches("[A-Za-z0-9_\\-]+", identifier);
     }
 }

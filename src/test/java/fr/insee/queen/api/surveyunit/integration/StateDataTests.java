@@ -68,7 +68,7 @@ class StateDataTests {
 
     @Test
     void on_get_state_data_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/survey-unit/pl_op/state-data")
+        mockMvc.perform(get("/api/survey-unit/pl!op/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
