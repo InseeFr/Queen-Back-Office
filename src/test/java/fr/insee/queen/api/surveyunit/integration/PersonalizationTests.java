@@ -69,7 +69,7 @@ class PersonalizationTests {
 
     @Test
     void on_get_personalization_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/survey-unit/pl_op/personalization")
+        mockMvc.perform(get("/api/survey-unit/pl!op/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
@@ -122,7 +122,7 @@ class PersonalizationTests {
 
     @Test
     void on_update_personalization_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(put("/api/survey-unit/invalid_identifier/personalization")
+        mockMvc.perform(put("/api/survey-unit/invalid!identifier/personalization")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

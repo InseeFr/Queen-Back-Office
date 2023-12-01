@@ -55,7 +55,7 @@ class QuestionnaireBuilderTest {
     @Test
     @DisplayName("on building questionnaires, when questionnaire input invalid return integration error")
     void testQuestionnaireBuilder02() throws IOException {
-        String questionnaireId = "simpsons_v1";
+        String questionnaireId = "simpsons%v1";
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/invalid-input-questionnaires.zip");
 
@@ -123,7 +123,7 @@ class QuestionnaireBuilderTest {
     @DisplayName("on building questionnaires, when campaign id from xml different from campaign id in questionnaire xml return integration error")
     void testQuestionnaireBuilder06() throws IOException {
         String campaignId = "different-id";
-        String questionnaireId1 = "simpsons_v1";
+        String questionnaireId1 = "simpsons%v1";
         String questionnaireId2 = "simpson-v2";
 
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/invalid-input-questionnaires.zip");

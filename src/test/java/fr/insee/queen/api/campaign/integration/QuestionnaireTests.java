@@ -79,7 +79,7 @@ class QuestionnaireTests {
 
     @Test
     void on_get_questionnaires_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/invalid_identifier/questionnaires")
+        mockMvc.perform(get("/api/campaign/invalid%identifier/questionnaires")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
@@ -114,7 +114,7 @@ class QuestionnaireTests {
 
     @Test
     void on_get_questionnaire_ids_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/invalid_identifier/questionnaire-id")
+        mockMvc.perform(get("/api/campaign/invalid%identifier/questionnaire-id")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
@@ -123,7 +123,7 @@ class QuestionnaireTests {
 
     @Test
     void on_get_questionnaire_when_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/questionnaire/invalid_identifier")
+        mockMvc.perform(get("/api/questionnaire/invalid%identifier")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )

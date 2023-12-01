@@ -128,7 +128,7 @@ class NomenclatureTests {
 
     @Test
     void on_get_nomenclature_when_nomenclature_id_not_valid_return_400() throws Exception {
-        mockMvc.perform(get("/api/nomenclature/s4-_")
+        mockMvc.perform(get("/api/nomenclature/s4-%")
                         .with(authentication(nonAdminUser)))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -161,7 +161,7 @@ class NomenclatureTests {
 
     @Test
     void on_get_required_nomenclatures_when_campaign_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/_plop/required-nomenclatures")
+        mockMvc.perform(get("/api/campaign/%plop/required-nomenclatures")
                         .with(authentication(nonAdminUser)))
                 .andExpect(status().isBadRequest());
     }

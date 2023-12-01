@@ -69,7 +69,7 @@ class CommentTests {
 
     @Test
     void on_get_comment_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/survey-unit/pl_op/comment")
+        mockMvc.perform(get("/api/survey-unit/pl!op/comment")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
@@ -142,7 +142,7 @@ class CommentTests {
 
     @Test
     void on_update_comment_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(put("/api/survey-unit/invalid_identifier/comment")
+        mockMvc.perform(put("/api/survey-unit/invalid!identifier/comment")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

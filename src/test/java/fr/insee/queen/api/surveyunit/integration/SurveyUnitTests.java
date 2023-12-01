@@ -220,7 +220,7 @@ class SurveyUnitTests {
 
     @Test
     void on_get_survey_units_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/invalid_identifier/survey-units")
+        mockMvc.perform(get("/api/campaign/invalid!identifier/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(adminUser))
                 )
@@ -240,7 +240,7 @@ class SurveyUnitTests {
 
     @Test
     void on_create_survey_unit_when_campaign_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(post("/api/campaign/invalid_identifier/survey-unit")
+        mockMvc.perform(post("/api/campaign/invalid!identifier/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
@@ -251,7 +251,7 @@ class SurveyUnitTests {
 
     @Test
     void on_get_survey_unit_when_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/survey-unit/invalid_identifier")
+        mockMvc.perform(get("/api/survey-unit/invalid%identifier")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(adminUser))
                 )
@@ -269,7 +269,7 @@ class SurveyUnitTests {
 
     @Test
     void on_delete_survey_unit_when_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(delete("/api/survey-unit/invalid_identifier")
+        mockMvc.perform(delete("/api/survey-unit/invalid!identifier")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(adminUser))
                 )
