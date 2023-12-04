@@ -15,4 +15,5 @@
 	<include file="changelog/300_update_data_model.xml" relativeToChangelogFile="true"/>
 	<!-- Add new table (tempzone) in db -->
 	<include file="changelog/400_add_new_temp_zone.xml" relativeToChangelogFile="true"/>
+	<include file="changelog/410_indexes_survey_unit.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
