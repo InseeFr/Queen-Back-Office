@@ -115,3 +115,4 @@ feature:
     pilotage: true
     cache: true
     comments: false
+    interviewer-collect: false

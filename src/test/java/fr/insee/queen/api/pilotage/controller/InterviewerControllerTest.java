@@ -1,9 +1,9 @@
-package fr.insee.queen.api.surveyunit.controller;
+package fr.insee.queen.api.pilotage.controller;
 
+import fr.insee.queen.api.campaign.controller.dto.output.CampaignSummaryDto;
 import fr.insee.queen.api.pilotage.controller.dummy.PilotageFakeComponent;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitByCampaignDto;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitDto;
-import fr.insee.queen.api.surveyunit.service.dummy.SurveyUnitFakeService;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.dummy.AuthenticationFakeHelper;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
@@ -17,27 +17,32 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class SurveyUnitControllerTest {
-
-    private SurveyUnitController surveyUnitController;
+class InterviewerControllerTest {
     private PilotageFakeComponent pilotageComponent;
-    private AuthenticationFakeHelper authenticationHelper;
-    private Authentication authenticatedUser;
+    private InterviewerController interviewerController;
 
     @BeforeEach
-    public void init() {
+    void init() {
         AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
-        authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
-        authenticationHelper = new AuthenticationFakeHelper(authenticatedUser);
-        SurveyUnitFakeService surveyUnitService = new SurveyUnitFakeService();
+        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
+        AuthenticationFakeHelper authenticationHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageComponent = new PilotageFakeComponent();
-        surveyUnitController = new SurveyUnitController(surveyUnitService, pilotageComponent, authenticationHelper);
+        interviewerController = new InterviewerController(authenticationHelper, pilotageComponent);
+    }
+
+    @Test
+    @DisplayName("On retrieving interviewer campaigns, all interviewer campaigns are retrieved")
+    void testGetInterviewerCampaigns01() {
+        List<CampaignSummaryDto> campaigns = interviewerController.getInterviewerCampaignList();
+        assertThat(pilotageComponent.wentThroughInterviewerCampaigns()).isTrue();
+        assertThat(campaigns).hasSize(2);
+        assertThat(campaigns.get(0).id()).isEqualTo(PilotageFakeComponent.CAMPAIGN1_ID);
     }
 
     @Test
     @DisplayName("On retrieving survey units for a campaign, then return survey units from pilotage service")
     void testGetSurveyUnitsCampaign01() {
-        List<SurveyUnitByCampaignDto> surveyUnits = surveyUnitController.getListSurveyUnitByCampaign("campaign-id");
+        List<SurveyUnitByCampaignDto> surveyUnits = interviewerController.getListSurveyUnitByCampaign("campaign-id");
         assertThat(surveyUnits).hasSize(2);
         assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);
     }
@@ -46,14 +51,14 @@ class SurveyUnitControllerTest {
     @DisplayName("On retrieving survey units for a campaign, when survey units are empty then throws exception")
     void testGetSurveyUnitsCampaign02() {
         pilotageComponent.hasEmptySurveyUnits(true);
-        assertThatThrownBy(() -> surveyUnitController.getListSurveyUnitByCampaign("campaign-id"))
+        assertThatThrownBy(() -> interviewerController.getListSurveyUnitByCampaign("campaign-id"))
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
     @DisplayName("On retrieving survey units for an interviewer, return survey units found")
     void testGetSurveyUnitsForInterviewers03() {
-        List<SurveyUnitDto> surveyUnits =  surveyUnitController.getInterviewerSurveyUnits();
+        List<SurveyUnitDto> surveyUnits =  interviewerController.getInterviewerSurveyUnits();
         assertThat(surveyUnits).size().isEqualTo(2);
         assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);
         assertThat(surveyUnits.get(1).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT2_ID);
@@ -62,7 +67,7 @@ class SurveyUnitControllerTest {
     @Test
     @DisplayName("On retrieving survey units for an interviewer, return survey units found")
     void testGetSurveyUnitsForInterviewers04() {
-        List<SurveyUnitDto> surveyUnits =  surveyUnitController.getInterviewerSurveyUnits();
+        List<SurveyUnitDto> surveyUnits =  interviewerController.getInterviewerSurveyUnits();
         assertThat(surveyUnits).size().isEqualTo(2);
         assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);
         assertThat(surveyUnits.get(1).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT2_ID);
