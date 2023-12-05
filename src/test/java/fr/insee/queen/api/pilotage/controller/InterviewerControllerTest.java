@@ -17,12 +17,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class InterviewerControllerTest {
+class InterviewerControllerTest {
     private PilotageFakeComponent pilotageComponent;
     private InterviewerController interviewerController;
 
     @BeforeEach
-    public void init() {
+    void init() {
         AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
         Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
         AuthenticationFakeHelper authenticationHelper = new AuthenticationFakeHelper(authenticatedUser);
