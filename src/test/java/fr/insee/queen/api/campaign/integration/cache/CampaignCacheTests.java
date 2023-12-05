@@ -18,13 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Objects;
 
-import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("cache-testing")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase(provider = ZONKY)
+@AutoConfigureEmbeddedDatabase()
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
