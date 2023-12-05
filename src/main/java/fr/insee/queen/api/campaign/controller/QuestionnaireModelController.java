@@ -5,7 +5,6 @@ import fr.insee.queen.api.campaign.controller.dto.output.QuestionnaireModelIdDto
 import fr.insee.queen.api.campaign.controller.dto.output.QuestionnaireModelValueDto;
 import fr.insee.queen.api.campaign.service.QuestionnaireModelService;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitDto;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitOkNokDto;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
@@ -46,7 +45,6 @@ public class QuestionnaireModelController {
      */
     @Operation(summary = "Get questionnaire list for a campaign ")
     @GetMapping(path = "/campaign/{id}/questionnaires")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<QuestionnaireModelValueDto> getQuestionnaireDatasByCampaignId(
             @IdValid @PathVariable(value = "id") String campaignId) {
@@ -65,7 +63,6 @@ public class QuestionnaireModelController {
      */
     @Operation(summary = "Get questionnnaire")
     @GetMapping(path = "/questionnaire/{id}")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public QuestionnaireModelValueDto getQuestionnaireData(@IdValid @PathVariable(value = "id") String questionnaireModelId) {
         log.info("GET questionnaire for id {}", questionnaireModelId);
@@ -80,7 +77,6 @@ public class QuestionnaireModelController {
      */
     @Operation(summary = "Get list of questionnaire ids for a campaign")
     @GetMapping(path = "/campaign/{id}/questionnaire-id")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<QuestionnaireModelIdDto> getQuestionnaireIdsByCampaignId(
             @IdValid @PathVariable(value = "id") String campaignId) {
@@ -99,7 +95,6 @@ public class QuestionnaireModelController {
      */
     @Operation(summary = "Create a Questionnaire Model")
     @PostMapping(path = "/questionnaire-models")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createQuestionnaire(@RequestBody @Valid QuestionnaireModelCreationData questionnaireModelData) {
@@ -115,7 +110,6 @@ public class QuestionnaireModelController {
      */
     @Operation(summary = "Search questionnaire ids linked to survey units")
     @PostMapping(path = "/survey-units/questionnaire-model-id")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public ResponseEntity<SurveyUnitOkNokDto> getQuestionnaireModelIdBySurveyUnits(
             @NotEmpty @RequestBody List<String> surveyUnitIdsToSearch) {

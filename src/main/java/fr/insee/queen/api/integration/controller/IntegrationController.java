@@ -1,7 +1,6 @@
 package fr.insee.queen.api.integration.controller;
 
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.integration.controller.component.IntegrationComponent;
 import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultsDto;
 import fr.insee.queen.api.web.authentication.AuthenticationHelper;
@@ -41,7 +40,6 @@ public class IntegrationController {
      */
     @Operation(summary = "Integrates the context of a campaign")
     @PostMapping(path = "/campaign/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     public IntegrationResultsDto integrateContext(@RequestParam("file") MultipartFile file) {
         String userId = authHelper.getUserId();
