@@ -2,7 +2,6 @@ package fr.insee.queen.api.pilotage.controller;
 
 import fr.insee.queen.api.campaign.controller.dto.output.CampaignSummaryDto;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
-import fr.insee.queen.api.configuration.swagger.role.DisplayRolesOnUI;
 import fr.insee.queen.api.pilotage.service.model.PilotageCampaign;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitByCampaignDto;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitDto;
@@ -43,7 +42,6 @@ public class InterviewerController {
     @Operation(summary = "Get campaign list for the current user")
     @Tag(name = "02. Campaigns")
     @GetMapping(path = "/campaigns")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<CampaignSummaryDto> getInterviewerCampaignList() {
 
@@ -66,7 +64,6 @@ public class InterviewerController {
     @Operation(summary = "Get list of survey units linked to the current interviewer")
     @Tag(name = "06. Survey units")
     @GetMapping(path = "/survey-units/interviewer")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     public List<SurveyUnitDto> getInterviewerSurveyUnits() {
         String userId = authHelper.getUserId();
@@ -89,7 +86,6 @@ public class InterviewerController {
     @Operation(summary = "Get list of survey units for a campaign")
     @Tag(name = "06. Survey units")
     @GetMapping(path = "/campaign/{id}/survey-units")
-    @DisplayRolesOnUI
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<SurveyUnitByCampaignDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
         log.info("GET survey-units for campaign with id {}", campaignId);
