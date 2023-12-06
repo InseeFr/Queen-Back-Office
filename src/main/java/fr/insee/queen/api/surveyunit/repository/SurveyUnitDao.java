@@ -109,15 +109,15 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         StateData stateData = surveyUnit.stateData();
         if (stateData == null) {
             stateDataDB = new StateDataDB();
-            stateDataDB.surveyUnit(surveyUnitDB);
+            stateDataDB.setSurveyUnit(surveyUnitDB);
         } else {
             stateDataDB = new StateDataDB(stateData.state(), stateData.date(), stateData.currentPage(), surveyUnitDB);
         }
 
-        surveyUnitDB.personalization(personalizationDB);
-        surveyUnitDB.comment(commentDB);
-        surveyUnitDB.data(dataDB);
-        surveyUnitDB.stateData(stateDataDB);
+        surveyUnitDB.setPersonalization(personalizationDB);
+        surveyUnitDB.setComment(commentDB);
+        surveyUnitDB.setData(dataDB);
+        surveyUnitDB.setStateData(stateDataDB);
         crudRepository.save(surveyUnitDB);
     }
 

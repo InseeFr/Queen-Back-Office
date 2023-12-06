@@ -32,7 +32,7 @@ public class NoPilotageComponent implements PilotageComponent {
     @Override
     public List<PilotageCampaign> getInterviewerCampaigns() {
         return campaignService.getAllCampaigns().stream()
-                .map(campaign -> new PilotageCampaign(campaign.id(), campaign.questionnaireIds().stream().toList()))
+                .map(campaign -> new PilotageCampaign(campaign.getId(), campaign.getQuestionnaireIds().stream().toList()))
                 .toList();
     }
 

@@ -43,49 +43,49 @@ class IntegrationServiceTest {
         String nomenclatureId = "id";
         Nomenclature nomenclature = new Nomenclature(nomenclatureId, "label", JsonNodeFactory.instance.arrayNode().toString());
         IntegrationResult result = integrationService.create(nomenclature);
-        assertThat(result.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(result.id()).isEqualTo(nomenclatureId);
-        assertThat(result.cause()).isEqualTo(String.format(IntegrationResultLabel.NOMENCLATURE_ALREADY_EXISTS, nomenclatureId));
-        assertThat(nomenclatureService.saved()).isFalse();
+        assertThat(result.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(result.getId()).isEqualTo(nomenclatureId);
+        assertThat(result.getCause()).isEqualTo(String.format(IntegrationResultLabel.NOMENCLATURE_ALREADY_EXISTS, nomenclatureId));
+        assertThat(nomenclatureService.isSaved()).isFalse();
     }
 
     @Test
     @DisplayName("On create nomenclature, when nomenclature does not exist, return integration success")
     void testIntegrationNomenclature02() {
         String nomenclatureId = "id";
-        nomenclatureService.nonExistingNomenclatures(List.of(nomenclatureId));
+        nomenclatureService.setNonExistingNomenclatures(List.of(nomenclatureId));
         Nomenclature nomenclature = new Nomenclature(nomenclatureId, "label", JsonNodeFactory.instance.arrayNode().toString());
         IntegrationResult result = integrationService.create(nomenclature);
-        assertThat(result.status()).isEqualTo(IntegrationStatus.CREATED);
-        assertThat(result.id()).isEqualTo(nomenclatureId);
-        assertThat(nomenclatureService.saved()).isTrue();
+        assertThat(result.getStatus()).isEqualTo(IntegrationStatus.CREATED);
+        assertThat(result.getId()).isEqualTo(nomenclatureId);
+        assertThat(nomenclatureService.isSaved()).isTrue();
     }
 
     @Test
     @DisplayName("On save campaign, when campaign exists, update campaign")
     void testIntegrationCampaign01() {
         String campaignId = "id";
-        campaignExistenceService.campaignExist(true);
+        campaignExistenceService.setCampaignExist(true);
 
         Campaign campaign = new Campaign(campaignId, "label", JsonNodeFactory.instance.objectNode().toString());
         IntegrationResult campaignResult = integrationService.create(campaign);
-        assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.UPDATED);
-        assertThat(campaignResult.id()).isEqualTo(campaignId);
-        assertThat(campaignService.updated()).isTrue();
+        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.UPDATED);
+        assertThat(campaignResult.getId()).isEqualTo(campaignId);
+        assertThat(campaignService.isUpdated()).isTrue();
     }
 
     @Test
     @DisplayName("On save campaign, when campaign does not exist, create campaign")
     void testIntegrationCampaign02() {
         String campaignId = "id";
-        campaignExistenceService.campaignExist(false);
+        campaignExistenceService.setCampaignExist(false);
 
         Campaign campaign = new Campaign(campaignId, "label", JsonNodeFactory.instance.objectNode().toString());
         IntegrationResult campaignResult = integrationService.create(campaign);
 
-        assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.CREATED);
-        assertThat(campaignResult.id()).isEqualTo(campaignId);
-        assertThat(campaignService.created()).isTrue();
+        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);
+        assertThat(campaignResult.getId()).isEqualTo(campaignId);
+        assertThat(campaignService.isCreated()).isTrue();
     }
 
     @Test
@@ -93,15 +93,15 @@ class IntegrationServiceTest {
     void testIntegrationQuestionnaire01() {
         String questionnaireId = "id-questionnaire";
         String campaignId = "id-campaign";
-        campaignExistenceService.campaignExist(false);
+        campaignExistenceService.setCampaignExist(false);
         QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label",
                 JsonNodeFactory.instance.objectNode().toString(), new HashSet<>(), campaignId);
         List<IntegrationResult> results = integrationService.create(questionnaire);
         assertThat(results).hasSize(1);
         IntegrationResult result = results.get(0);
-        assertThat(result.id()).isEqualTo(questionnaireId);
-        assertThat(result.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(result.cause()).isEqualTo(String.format(IntegrationResultLabel.CAMPAIGN_DO_NOT_EXIST, campaignId));
+        assertThat(result.getId()).isEqualTo(questionnaireId);
+        assertThat(result.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(result.getCause()).isEqualTo(String.format(IntegrationResultLabel.CAMPAIGN_DO_NOT_EXIST, campaignId));
     }
 
     @Test
@@ -114,13 +114,13 @@ class IntegrationServiceTest {
         String existingNomenclature1 = "exist-nomenclature1";
         String existingNomenclature2 = "exist-nomenclature2";
 
-        nomenclatureService.nonExistingNomenclatures(List.of(nonExistingNomenclature1, nonExistingNomenclature2));
+        nomenclatureService.setNonExistingNomenclatures(List.of(nonExistingNomenclature1, nonExistingNomenclature2));
         QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label",
                 JsonNodeFactory.instance.objectNode().toString(), Set.of(existingNomenclature1, nonExistingNomenclature1, existingNomenclature2, nonExistingNomenclature2), campaignId);
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
         List<IntegrationResult> errorResults = results.stream()
-                .filter(result -> result.status().equals(IntegrationStatus.ERROR)).toList();
+                .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR)).toList();
         assertThat(errorResults).hasSize(2);
         IntegrationResult errorResult1 = new IntegrationResult(questionnaireId, IntegrationStatus.ERROR,
                 String.format(IntegrationResultLabel.NOMENCLATURE_DO_NOT_EXIST, nonExistingNomenclature1));
@@ -140,11 +140,11 @@ class IntegrationServiceTest {
                 JsonNodeFactory.instance.objectNode().toString(), new HashSet<>(), campaignId);
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
-        assertThat(questionnaireService.updated()).isTrue();
+        assertThat(questionnaireService.isUpdated()).isTrue();
         assertThat(results).hasSize(1);
         IntegrationResult result = results.get(0);
-        assertThat(result.id()).isEqualTo(questionnaireId);
-        assertThat(result.status()).isEqualTo(IntegrationStatus.UPDATED);
+        assertThat(result.getId()).isEqualTo(questionnaireId);
+        assertThat(result.getStatus()).isEqualTo(IntegrationStatus.UPDATED);
     }
 
     @Test
@@ -152,15 +152,15 @@ class IntegrationServiceTest {
     void testIntegrationQuestionnaire03() {
         String questionnaireId = "id-questionnaire";
         String campaignId = "id-campaign";
-        questionnaireExistenceService.questionnaireExist(false);
+        questionnaireExistenceService.setQuestionnaireExist(false);
         QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label",
                 JsonNodeFactory.instance.objectNode().toString(), new HashSet<>(), campaignId);
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
-        assertThat(questionnaireService.created()).isTrue();
+        assertThat(questionnaireService.isCreated()).isTrue();
         assertThat(results).hasSize(1);
         IntegrationResult result = results.get(0);
-        assertThat(result.id()).isEqualTo(questionnaireId);
-        assertThat(result.status()).isEqualTo(IntegrationStatus.CREATED);
+        assertThat(result.getId()).isEqualTo(questionnaireId);
+        assertThat(result.getStatus()).isEqualTo(IntegrationStatus.CREATED);
     }
 }

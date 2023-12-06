@@ -34,9 +34,9 @@ class InterviewerControllerTest {
     @DisplayName("On retrieving interviewer campaigns, all interviewer campaigns are retrieved")
     void testGetInterviewerCampaigns01() {
         List<CampaignSummaryDto> campaigns = interviewerController.getInterviewerCampaignList();
-        assertThat(pilotageComponent.wentThroughInterviewerCampaigns()).isTrue();
+        assertThat(pilotageComponent.isWentThroughInterviewerCampaigns()).isTrue();
         assertThat(campaigns).hasSize(2);
-        assertThat(campaigns.get(0).id()).isEqualTo(PilotageFakeComponent.CAMPAIGN1_ID);
+        assertThat(campaigns.get(0).getId()).isEqualTo(PilotageFakeComponent.CAMPAIGN1_ID);
     }
 
     @Test
@@ -50,7 +50,7 @@ class InterviewerControllerTest {
     @Test
     @DisplayName("On retrieving survey units for a campaign, when survey units are empty then throws exception")
     void testGetSurveyUnitsCampaign02() {
-        pilotageComponent.hasEmptySurveyUnits(true);
+        pilotageComponent.setHasEmptySurveyUnits(true);
         assertThatThrownBy(() -> interviewerController.getListSurveyUnitByCampaign("campaign-id"))
                 .isInstanceOf(EntityNotFoundException.class);
     }

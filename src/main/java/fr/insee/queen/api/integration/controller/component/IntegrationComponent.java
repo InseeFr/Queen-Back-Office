@@ -80,17 +80,17 @@ public class IntegrationComponent {
 
         try (ZipFile zf = new ZipFile(integrationFile)) {
             List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureBuilder.build(zf);
-            result.nomenclatures(nomenclatureResults);
+            result.setNomenclatures(nomenclatureResults);
 
             IntegrationResultUnitDto campaignResult = campaignBuilder.build(zf);
-            result.campaign(campaignResult);
+            result.setCampaign(campaignResult);
 
-            if (campaignResult.status() == IntegrationStatus.ERROR) {
+            if (campaignResult.getStatus() == IntegrationStatus.ERROR) {
                 return result;
             }
 
-            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(campaignResult.id(), zf);
-            result.questionnaireModels(questionnaireResults);
+            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(campaignResult.getId(), zf);
+            result.setQuestionnaireModels(questionnaireResults);
 
             return result;
         } catch (IOException e) {

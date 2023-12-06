@@ -28,15 +28,15 @@ public class CampaignDao implements CampaignRepository {
     @Override
     @Transactional
     public void create(Campaign campaign) {
-        Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.questionnaireIds());
-        CampaignDB campaignDB = new CampaignDB(campaign.id(), campaign.label(), questionnaireModels);
+        Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.getQuestionnaireIds());
+        CampaignDB campaignDB = new CampaignDB(campaign.getId(), campaign.getLabel(), questionnaireModels);
         questionnaireModels.parallelStream()
-                .forEach(questionnaireModel -> questionnaireModel.campaign(campaignDB));
+                .forEach(questionnaireModel -> questionnaireModel.setCampaign(campaignDB));
 
-        String metadataValue = campaign.metadata();
+        String metadataValue = campaign.getMetadata();
         if (metadataValue != null) {
             MetadataDB m = new MetadataDB(metadataValue, campaignDB);
-            campaignDB.metadata(m);
+            campaignDB.setMetadata(m);
         }
         jpaRepository.save(campaignDB);
     }
@@ -50,11 +50,11 @@ public class CampaignDao implements CampaignRepository {
     public List<CampaignSummary> getAllWithQuestionnaireIds() {
         return jpaRepository.findAllWithQuestionnaireModels().stream()
                 .map(campaign -> new CampaignSummary(
-                        campaign.id(),
-                        campaign.label(),
-                        campaign.questionnaireModels()
+                        campaign.getId(),
+                        campaign.getLabel(),
+                        campaign.getQuestionnaireModels()
                                 .stream()
-                                .map(QuestionnaireModelDB::id)
+                                .map(QuestionnaireModelDB::getId)
                                 .collect(Collectors.toSet()))
                 )
                 .toList();
@@ -73,32 +73,32 @@ public class CampaignDao implements CampaignRepository {
         }
         CampaignDB campaign = campaignOpt.get();
         return Optional.of(new CampaignSummary(
-                campaign.id(),
-                campaign.label(),
-                campaign.questionnaireModels()
+                campaign.getId(),
+                campaign.getLabel(),
+                campaign.getQuestionnaireModels()
                         .stream()
-                        .map(QuestionnaireModelDB::id)
+                        .map(QuestionnaireModelDB::getId)
                         .collect(Collectors.toSet()))
         );
     }
 
     @Override
     public void update(Campaign campaign) {
-        CampaignDB campaignDB = jpaRepository.findById(campaign.id())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaign.id())));
-        campaignDB.label(campaign.label());
+        CampaignDB campaignDB = jpaRepository.findById(campaign.getId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaign.getId())));
+        campaignDB.setLabel(campaign.getLabel());
 
-        String metadataValue = campaign.metadata();
-        MetadataDB metadata = campaignDB.metadata();
+        String metadataValue = campaign.getMetadata();
+        MetadataDB metadata = campaignDB.getMetadata();
         if (metadata == null) {
             metadata = new MetadataDB(metadataValue, campaignDB);
-            campaignDB.metadata(metadata);
+            campaignDB.setMetadata(metadata);
         } else {
-            metadata.value(metadataValue);
+            metadata.setValue(metadataValue);
         }
-        campaignDB.questionnaireModels().clear();
-        Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.questionnaireIds());
-        campaignDB.questionnaireModels(questionnaireModels);
+        campaignDB.getQuestionnaireModels().clear();
+        Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.getQuestionnaireIds());
+        campaignDB.setQuestionnaireModels(questionnaireModels);
         jpaRepository.save(campaignDB);
     }
 

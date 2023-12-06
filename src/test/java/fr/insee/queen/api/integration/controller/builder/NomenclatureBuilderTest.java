@@ -60,14 +60,14 @@ class NomenclatureBuilderTest {
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
-                .filter(result -> result.status().equals(IntegrationStatus.ERROR))
+                .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
         IntegrationResultUnitDto errorResult = resultErrors.get(0);
-        assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(errorResult.id()).isEqualTo(nomenclatureId);
-        assertThat(errorResult.cause()).contains("id: The identifier is invalid.");
-        assertThat(errorResult.cause()).contains("label: must not be blank.");
+        assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(errorResult.getId()).isEqualTo(nomenclatureId);
+        assertThat(errorResult.getCause()).contains("id: The identifier is invalid.");
+        assertThat(errorResult.getCause()).contains("label: must not be blank.");
     }
 
     @Test
@@ -78,14 +78,14 @@ class NomenclatureBuilderTest {
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
-                .filter(result -> result.status().equals(IntegrationStatus.ERROR))
+                .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
         log.error(resultErrors.toString());
         IntegrationResultUnitDto errorResult = resultErrors.get(0);
-        assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(errorResult.id()).isEqualTo("cities2023");
-        assertThat(errorResult.cause()).contains(String.format(IntegrationResultLabel.NOMENCLATURE_FILE_NOT_FOUND, "cities2023.json"));
+        assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(errorResult.getId()).isEqualTo("cities2023");
+        assertThat(errorResult.getCause()).contains(String.format(IntegrationResultLabel.NOMENCLATURE_FILE_NOT_FOUND, "cities2023.json"));
     }
 
     @Test
@@ -96,9 +96,9 @@ class NomenclatureBuilderTest {
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto nomenclatureResult = results.get(0);
-        assertThat(nomenclatureResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(nomenclatureResult.id()).isNull();
-        assertThat(nomenclatureResult.cause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationNomenclatureBuilder.NOMENCLATURES_XML));
+        assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(nomenclatureResult.getId()).isNull();
+        assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationNomenclatureBuilder.NOMENCLATURES_XML));
     }
 
     @Test
@@ -109,8 +109,8 @@ class NomenclatureBuilderTest {
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto nomenclatureResult = results.get(0);
-        assertThat(nomenclatureResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(nomenclatureResult.id()).isNull();
-        assertThat(nomenclatureResult.cause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationNomenclatureBuilder.NOMENCLATURES_XML, ""));
+        assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(nomenclatureResult.getId()).isNull();
+        assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationNomenclatureBuilder.NOMENCLATURES_XML, ""));
     }
 }

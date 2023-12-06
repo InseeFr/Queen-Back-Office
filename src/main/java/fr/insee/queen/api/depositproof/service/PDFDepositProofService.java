@@ -34,8 +34,8 @@ public class PDFDepositProofService implements DepositProofService {
     @Override
     public PdfDepositProof generateDepositProof(String userId, String surveyUnitId) {
         SurveyUnitDepositProof surveyUnit = surveyUnitService.getSurveyUnitDepositProof(surveyUnitId);
-        String campaignId = surveyUnit.campaign().id();
-        String campaignLabel = surveyUnit.campaign().label();
+        String campaignId = surveyUnit.campaign().getId();
+        String campaignLabel = surveyUnit.campaign().getLabel();
         String date = "";
 
         if (surveyUnit.stateData() == null) {

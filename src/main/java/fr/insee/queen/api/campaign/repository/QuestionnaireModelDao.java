@@ -41,24 +41,24 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
     @Override
     @Transactional
     public void create(QuestionnaireModel questionnaireData) {
-        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.requiredNomenclatureIds());
-        QuestionnaireModelDB questionnaire = new QuestionnaireModelDB(questionnaireData.id(), questionnaireData.label(), questionnaireData.value(), requiredNomenclatures);
-        if (questionnaireData.campaignId() != null) {
-            CampaignDB campaign = campaignJpaRepository.getReferenceById(questionnaireData.campaignId());
-            questionnaire.campaign(campaign);
+        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.getRequiredNomenclatureIds());
+        QuestionnaireModelDB questionnaire = new QuestionnaireModelDB(questionnaireData.getId(), questionnaireData.getLabel(), questionnaireData.getValue(), requiredNomenclatures);
+        if (questionnaireData.getCampaignId() != null) {
+            CampaignDB campaign = campaignJpaRepository.getReferenceById(questionnaireData.getCampaignId());
+            questionnaire.setCampaign(campaign);
         }
         jpaRepository.save(questionnaire);
     }
 
     @Override
     public void update(QuestionnaireModel questionnaireData) {
-        QuestionnaireModelDB questionnaire = jpaRepository.getReferenceById(questionnaireData.id());
-        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.requiredNomenclatureIds());
-        questionnaire.label(questionnaireData.label());
-        questionnaire.value(questionnaireData.value());
-        questionnaire.nomenclatures(requiredNomenclatures);
-        CampaignDB campaign = campaignJpaRepository.getReferenceById(questionnaireData.campaignId());
-        questionnaire.campaign(campaign);
+        QuestionnaireModelDB questionnaire = jpaRepository.getReferenceById(questionnaireData.getId());
+        Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.getRequiredNomenclatureIds());
+        questionnaire.setLabel(questionnaireData.getLabel());
+        questionnaire.setValue(questionnaireData.getValue());
+        questionnaire.setNomenclatures(requiredNomenclatures);
+        CampaignDB campaign = campaignJpaRepository.getReferenceById(questionnaireData.getCampaignId());
+        questionnaire.setCampaign(campaign);
 
         jpaRepository.save(questionnaire);
     }

@@ -31,7 +31,7 @@ class NoPilotageComponentTest {
     void testCheckHabilitations01() {
         pilotageComponent = new NoPilotageComponent(surveyUnitService, campaignService);
         pilotageComponent.checkHabilitations("11", PilotageRole.INTERVIEWER);
-        assertThat(surveyUnitService.checkSurveyUnitExist()).isTrue();
+        assertThat(surveyUnitService.isCheckSurveyUnitExist()).isTrue();
     }
 
     @Test
@@ -47,7 +47,7 @@ class NoPilotageComponentTest {
     void testGetSUByCampaign() {
         pilotageComponent = new NoPilotageComponent(surveyUnitService, campaignService);
         List<SurveyUnitSummary> surveyUnits = pilotageComponent.getSurveyUnitsByCampaign("campaign-id");
-        assertThat(surveyUnits).isEqualTo(surveyUnitService.surveyUnitSummaries());
+        assertThat(surveyUnits).isEqualTo(surveyUnitService.getSurveyUnitSummaries());
     }
 
     @Test
@@ -56,7 +56,7 @@ class NoPilotageComponentTest {
         pilotageComponent = new NoPilotageComponent(surveyUnitService, campaignService);
         List<PilotageCampaign> campaignSummaries = pilotageComponent.getInterviewerCampaigns();
         for(CampaignSummary campaign : CampaignFakeService.CAMPAIGN_SUMMARY_LIST) {
-            assertThat(campaignSummaries).contains(new PilotageCampaign(campaign.id(), campaign.questionnaireIds().stream().toList()));
+            assertThat(campaignSummaries).contains(new PilotageCampaign(campaign.getId(), campaign.getQuestionnaireIds().stream().toList()));
         }
 
     }

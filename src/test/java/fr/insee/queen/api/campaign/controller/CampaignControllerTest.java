@@ -31,20 +31,20 @@ class CampaignControllerTest {
     @DisplayName("On deletion, when force is true, deletion is done")
     void testDeletion() {
         campaignController.deleteCampaignById(true, "11");
-        assertThat(campaignService.deleted()).isTrue();
+        assertThat(campaignService.isDeleted()).isTrue();
     }
 
     @Test
     @DisplayName("On deletion, when campaign is closed, deletion is done")
     void testDeletion_02() {
         campaignController.deleteCampaignById(false, "11");
-        assertThat(campaignService.deleted()).isTrue();
+        assertThat(campaignService.isDeleted()).isTrue();
     }
 
     @Test
     @DisplayName("On deletion, when campaign is opened, deletion is aborted")
     void testDeletionException() {
-        pilotageComponent.isCampaignClosed(false);
+        pilotageComponent.setCampaignClosed(false);
         assertThatThrownBy(() -> campaignController.deleteCampaignById(false, "11"))
                 .isInstanceOf(CampaignDeletionException.class);
     }

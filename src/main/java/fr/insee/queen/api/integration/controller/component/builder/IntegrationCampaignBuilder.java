@@ -61,7 +61,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
         try {
             schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, CAMPAIGN_XML, "campaign_integration_template.xsd");
         } catch (IntegrationValidationException ex) {
-            return ex.resultError();
+            return ex.getResultError();
         }
         return buildCampaign(integrationZipFile);
     }

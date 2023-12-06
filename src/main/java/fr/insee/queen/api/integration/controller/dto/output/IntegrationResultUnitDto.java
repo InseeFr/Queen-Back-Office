@@ -26,7 +26,7 @@ public class IntegrationResultUnitDto implements Serializable {
     private final String cause;
 
     public static IntegrationResultUnitDto fromModel(IntegrationResult result) {
-        return new IntegrationResultUnitDto(result.id(), result.status(), result.cause());
+        return new IntegrationResultUnitDto(result.getId(), result.getStatus(), result.getCause());
     }
 
     public static IntegrationResultUnitDto integrationResultUnitCreated(String id) {

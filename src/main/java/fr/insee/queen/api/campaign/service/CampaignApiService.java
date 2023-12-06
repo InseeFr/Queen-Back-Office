@@ -44,7 +44,7 @@ public class CampaignApiService implements CampaignService {
                 findWithQuestionnaireIds(campaignId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaignId)));
 
-        Set<String> questionnaireIds = campaignSummary.questionnaireIds();
+        Set<String> questionnaireIds = campaignSummary.getQuestionnaireIds();
 
         if (questionnaireIds != null && !questionnaireIds.isEmpty()) {
             questionnaireIds.forEach(id -> {
@@ -66,9 +66,9 @@ public class CampaignApiService implements CampaignService {
     })
     @Override
     public void createCampaign(Campaign campaign) {
-        String campaignId = campaign.id();
+        String campaignId = campaign.getId();
         campaignExistenceService.throwExceptionIfCampaignAlreadyExist(campaignId);
-        throwExceptionIfInvalidQuestionnairesBeforeSave(campaign.id(), campaign.questionnaireIds());
+        throwExceptionIfInvalidQuestionnairesBeforeSave(campaign.getId(), campaign.getQuestionnaireIds());
         campaignRepository.create(campaign);
     }
 
@@ -77,9 +77,9 @@ public class CampaignApiService implements CampaignService {
     })
     @Override
     public void updateCampaign(Campaign campaign) {
-        String campaignId = campaign.id();
+        String campaignId = campaign.getId();
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-        throwExceptionIfInvalidQuestionnairesBeforeSave(campaignId, campaign.questionnaireIds());
+        throwExceptionIfInvalidQuestionnairesBeforeSave(campaignId, campaign.getQuestionnaireIds());
         campaignRepository.update(campaign);
     }
 

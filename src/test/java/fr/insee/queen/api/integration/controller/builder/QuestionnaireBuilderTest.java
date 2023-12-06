@@ -62,14 +62,14 @@ class QuestionnaireBuilderTest {
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
-                .filter(result -> result.status().equals(IntegrationStatus.ERROR))
+                .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
         IntegrationResultUnitDto errorResult = resultErrors.get(0);
-        assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(errorResult.id()).isEqualTo(questionnaireId);
-        assertThat(errorResult.cause()).contains("idQuestionnaireModel: The identifier is invalid.");
-        assertThat(errorResult.cause()).contains("label: must not be empty.");
+        assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(errorResult.getId()).isEqualTo(questionnaireId);
+        assertThat(errorResult.getCause()).contains("idQuestionnaireModel: The identifier is invalid.");
+        assertThat(errorResult.getCause()).contains("label: must not be empty.");
     }
 
     @Test
@@ -81,14 +81,14 @@ class QuestionnaireBuilderTest {
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
-                .filter(result -> result.status().equals(IntegrationStatus.ERROR))
+                .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
         log.error(resultErrors.toString());
         IntegrationResultUnitDto errorResult = resultErrors.get(0);
-        assertThat(errorResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(errorResult.id()).isEqualTo("simpson-v2");
-        assertThat(errorResult.cause()).contains(String.format(IntegrationResultLabel.QUESTIONNAIRE_FILE_NOT_FOUND, "simpsons-v2.json"));
+        assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(errorResult.getId()).isEqualTo("simpson-v2");
+        assertThat(errorResult.getCause()).contains(String.format(IntegrationResultLabel.QUESTIONNAIRE_FILE_NOT_FOUND, "simpsons-v2.json"));
     }
 
     @Test
@@ -100,9 +100,9 @@ class QuestionnaireBuilderTest {
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto questionnaireResult = results.get(0);
-        assertThat(questionnaireResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(questionnaireResult.id()).isNull();
-        assertThat(questionnaireResult.cause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML));
+        assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(questionnaireResult.getId()).isNull();
+        assertThat(questionnaireResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML));
     }
 
     @Test
@@ -114,9 +114,9 @@ class QuestionnaireBuilderTest {
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto questionnaireResult = results.get(0);
-        assertThat(questionnaireResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(questionnaireResult.id()).isNull();
-        assertThat(questionnaireResult.cause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML, ""));
+        assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(questionnaireResult.getId()).isNull();
+        assertThat(questionnaireResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML, ""));
     }
 
     @Test

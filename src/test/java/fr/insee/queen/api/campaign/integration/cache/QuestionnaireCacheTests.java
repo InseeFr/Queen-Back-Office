@@ -150,7 +150,7 @@ class QuestionnaireCacheTests {
     }
 
     void check_questionnaire_cache_on_creation(QuestionnaireModel questionnaireData) {
-        String questionnaireId = questionnaireData.id();
+        String questionnaireId = questionnaireData.getId();
 
         // before creating questionnaire, cache does not contain the questionnaire
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId)).isNull();
