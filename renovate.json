@@ -1,22 +1,40 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    "semanticCommits"
-  ],
+  "extends": ["config:recommended", ":semanticCommits", ":disableRateLimiting"],
   "packageRules": [
     {
-      "matchPackagePatterns": [
-        "*"
-      ]
+      "matchPackagePatterns": ["*"],
+      "labels": ["dependencies"],
+      "bumpVersion": "patch",
+      "dependencyDashboardApproval": true
+    },
+    {
+      "groupName": "spring",
+      "groupSlug": "spring",
+      "matchPackagePatterns": ["org.springframework.*"],
+      "bumpVersion": "minor",
+      "dependencyDashboardApproval": true
+    },
+    {
+      "groupName": "all minor dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "bumpVersion": "patch",
+      "dependencyDashboardApproval": false
+    },
+    {
+      "groupName": "spring minor dependencies",
+      "groupSlug": "spring-minor-patch",
+      "matchPackagePatterns": ["org.springframework.*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "bumpVersion": "patch",
+      "dependencyDashboardApproval": false
     }
   ],
-  "semanticCommits": "enabled",
   "vulnerabilityAlerts": {
     "enabled": true,
-    "labels": ["security"]
+    "addLabels": ["security"],
+    "bumpVersion": "patch"
   },
-  "separateMajorMinor": true,
-  "baseBranches": ["v4-develop"],
-  "useBaseBranchConfig": "merge"
+  "timezone": "Europe/Paris"
 }
