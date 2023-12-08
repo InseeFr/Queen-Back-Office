@@ -34,14 +34,14 @@ class PilotageServiceTest {
     @DisplayName("On check if campaign closed, check campaign existence")
     void testCampaignIsClosed() {
         pilotageService.isClosed("11", "auth-token");
-        assertThat(campaignExistenceService.checkCampaignExist()).isTrue();
-        assertThat(pilotageRepository.wentThroughIsClosedCampaign()).isTrue();
+        assertThat(campaignExistenceService.isCheckCampaignExist()).isTrue();
+        assertThat(pilotageRepository.isWentThroughIsClosedCampaign()).isTrue();
     }
 
     @Test
     @DisplayName("On retrieving interviewer campaigns throw exception if campaigns are null")
     void testGetInterviewerCampaigns01() {
-        pilotageRepository.nullInterviewerCampaigns(true);
+        pilotageRepository.setNullInterviewerCampaigns(true);
         assertThatThrownBy(() -> pilotageService.getInterviewerCampaigns("auth-token"))
                 .isInstanceOf(PilotageApiException.class);
     }
@@ -73,7 +73,7 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On retrieving survey units by campaign, when current survey unit is null return empty collection")
     void testGetSurveyUnitsByCampaign_01() {
-        pilotageRepository.nullCurrentSurveyUnit(true);
+        pilotageRepository.setNullCurrentSurveyUnit(true);
         List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign("campaign-id", "auth-token");
         assertThat(surveyUnits).isEmpty();
     }
@@ -81,9 +81,9 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On retrieving survey units by campaign check campaign existence")
     void testGetSurveyUnitsByCampaign_02() {
-        pilotageRepository.nullCurrentSurveyUnit(true);
+        pilotageRepository.setNullCurrentSurveyUnit(true);
         pilotageService.getSurveyUnitsByCampaign("campaign-id", "auth-token");
-        assertThat(campaignExistenceService.checkCampaignExist()).isTrue();
+        assertThat(campaignExistenceService.isCheckCampaignExist()).isTrue();
     }
 
     @Test

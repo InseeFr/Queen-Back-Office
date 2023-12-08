@@ -54,20 +54,20 @@ class IntegrationComponentTest {
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
         IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
         log.error(result.toString());
-        assertThat(result.campaign()).isEqualTo(campaignBuilder.resultSuccess());
-        assertThat(result.nomenclatures()).isEqualTo(nomenclatureBuilder.results());
-        assertThat(result.questionnaireModels()).isEqualTo(questionnaireBuilder.results());
+        assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultSuccess());
+        assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
+        assertThat(result.getQuestionnaireModels()).isEqualTo(questionnaireBuilder.getResults());
     }
 
     @Test
     @DisplayName("when integrating campaign result in errors, then do not process questionnaires")
     void integrate03() throws IOException {
-        campaignBuilder.resultIsInErrorState(true);
+        campaignBuilder.setResultIsInErrorState(true);
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("integration/integration-component.zip");
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
         IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
-        assertThat(result.campaign()).isEqualTo(campaignBuilder.resultError());
-        assertThat(result.nomenclatures()).isEqualTo(nomenclatureBuilder.results());
-        assertThat(result.questionnaireModels()).isNull();
+        assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultError());
+        assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
+        assertThat(result.getQuestionnaireModels()).isNull();
     }
 }

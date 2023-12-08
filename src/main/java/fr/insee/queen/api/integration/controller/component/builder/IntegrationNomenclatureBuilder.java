@@ -50,7 +50,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
         try {
             schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
         } catch (IntegrationValidationException ex) {
-            return List.of(ex.resultError());
+            return List.of(ex.getResultError());
         }
         return buildNomenclatures(integrationZipFile);
     }
@@ -80,7 +80,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
                 ArrayNode nomenclatureValue = readNomenclatureStream(nomenclatureId, nomenclatureFilename, zf);
                 results.add(buildNomenclature(nomenclatureId, nomenclatureLabel, nomenclatureValue));
             } catch (IntegrationValidationException ex) {
-                results.add(ex.resultError());
+                results.add(ex.getResultError());
             }
         }
         return results;

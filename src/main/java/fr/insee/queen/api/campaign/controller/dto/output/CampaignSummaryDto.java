@@ -19,7 +19,7 @@ public class CampaignSummaryDto {
     private List<String> questionnaireIds;
 
     public static CampaignSummaryDto fromModel(CampaignSummary campaign) {
-        return new CampaignSummaryDto(campaign.id(), campaign.questionnaireIds().stream().toList());
+        return new CampaignSummaryDto(campaign.getId(), campaign.getQuestionnaireIds().stream().toList());
     }
 
     public static CampaignSummaryDto fromPilotageModel(PilotageCampaign campaign) {

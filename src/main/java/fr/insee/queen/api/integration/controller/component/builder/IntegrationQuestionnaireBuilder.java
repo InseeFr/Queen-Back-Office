@@ -54,7 +54,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
         try {
             schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, QUESTIONNAIRE_MODELS_XML, "questionnaireModels_integration_template.xsd");
         } catch (IntegrationValidationException ex) {
-            return List.of(ex.resultError());
+            return List.of(ex.getResultError());
         }
         return buildQuestionnaireModels(campaignId, integrationZipFile);
     }
@@ -79,7 +79,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
                 ObjectNode qmValue = readQuestionnaireStream(qm, zf);
                 results.addAll(buildQuestionnaireModel(campaignId, qm, qmValue));
             } catch (IntegrationValidationException ex) {
-                results.add(ex.resultError());
+                results.add(ex.getResultError());
             }
         }
         return results;

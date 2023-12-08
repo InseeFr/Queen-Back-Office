@@ -28,7 +28,7 @@ public class IntegrationApiService implements IntegrationService {
 
     @Override
     public IntegrationResult create(Campaign campaign) {
-        String id = campaign.id();
+        String id = campaign.getId();
 
         if (campaignExistenceService.existsById(id)) {
             log.info("Updating campaign {}", id);
@@ -56,8 +56,8 @@ public class IntegrationApiService implements IntegrationService {
 
     @Override
     public List<IntegrationResult> create(QuestionnaireModel questionnaire) {
-        String campaignId = questionnaire.campaignId();
-        String qmId = questionnaire.id();
+        String campaignId = questionnaire.getCampaignId();
+        String qmId = questionnaire.getId();
         boolean hasError = false;
 
         List<IntegrationResult> results = new ArrayList<>();
@@ -72,7 +72,7 @@ public class IntegrationApiService implements IntegrationService {
         }
 
         // Checking if required nomenclatures exist
-        for (String nomenclatureId : questionnaire.requiredNomenclatureIds()) {
+        for (String nomenclatureId : questionnaire.getRequiredNomenclatureIds()) {
             if (!nomenclatureService.existsById(nomenclatureId)) {
                 hasError = true;
                 log.info("Cannot create Questionnaire model {}, nomenclature {} does not exist", qmId, nomenclatureId);

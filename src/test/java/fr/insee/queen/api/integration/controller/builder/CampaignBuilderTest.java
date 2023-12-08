@@ -42,8 +42,8 @@ class CampaignBuilderTest {
         ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/valid-campaign.zip");
 
         IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
-        assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.CREATED);
-        assertThat(campaignResult.id()).isEqualTo(campaignId);
+        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);
+        assertThat(campaignResult.getId()).isEqualTo(campaignId);
     }
 
     @Test
@@ -53,10 +53,10 @@ class CampaignBuilderTest {
         ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/invalid-input-campaign.zip");
 
         IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
-        assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(campaignResult.id()).isEqualTo(campaignId);
-        assertThat(campaignResult.cause()).contains("id: The identifier is invalid.");
-        assertThat(campaignResult.cause()).contains("label: must not be blank.");
+        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(campaignResult.getId()).isEqualTo(campaignId);
+        assertThat(campaignResult.getCause()).contains("id: The identifier is invalid.");
+        assertThat(campaignResult.getCause()).contains("label: must not be blank.");
     }
 
     @Test
@@ -65,9 +65,9 @@ class CampaignBuilderTest {
         ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/forgotten-input-campaign.zip");
 
         IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
-        assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(campaignResult.id()).isNull();
-        assertThat(campaignResult.cause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationCampaignBuilder.CAMPAIGN_XML, ""));
+        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(campaignResult.getId()).isNull();
+        assertThat(campaignResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationCampaignBuilder.CAMPAIGN_XML, ""));
     }
 
     @Test
@@ -76,8 +76,8 @@ class CampaignBuilderTest {
         ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/xml-campaign-missing.zip");
 
         IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
-        assertThat(campaignResult.status()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(campaignResult.id()).isNull();
-        assertThat(campaignResult.cause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationCampaignBuilder.CAMPAIGN_XML));
+        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(campaignResult.getId()).isNull();
+        assertThat(campaignResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationCampaignBuilder.CAMPAIGN_XML));
     }
 }

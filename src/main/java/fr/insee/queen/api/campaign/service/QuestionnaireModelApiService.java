@@ -40,11 +40,11 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
     @Override
     @Transactional
     public void createQuestionnaire(QuestionnaireModel questionnaire) {
-        questionnaireModelExistenceService.throwExceptionIfQuestionnaireAlreadyExist(questionnaire.id());
+        questionnaireModelExistenceService.throwExceptionIfQuestionnaireAlreadyExist(questionnaire.getId());
 
-        if (!nomenclatureService.areNomenclaturesValid(questionnaire.requiredNomenclatureIds())) {
+        if (!nomenclatureService.areNomenclaturesValid(questionnaire.getRequiredNomenclatureIds())) {
             throw new QuestionnaireInvalidException(String.format("Cannot create questionnaire model %s as some nomenclatures do not exist",
-                    questionnaire.id()));
+                    questionnaire.getId()));
         }
 
         questionnaireModelRepository.create(questionnaire);
@@ -58,12 +58,12 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
     })
     @Transactional
     public void updateQuestionnaire(QuestionnaireModel questionnaire) {
-        campaignExistenceService.throwExceptionIfCampaignNotExist(questionnaire.campaignId());
-        questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(questionnaire.id());
+        campaignExistenceService.throwExceptionIfCampaignNotExist(questionnaire.getCampaignId());
+        questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(questionnaire.getId());
 
-        if (!nomenclatureService.areNomenclaturesValid(questionnaire.requiredNomenclatureIds())) {
+        if (!nomenclatureService.areNomenclaturesValid(questionnaire.getRequiredNomenclatureIds())) {
             throw new QuestionnaireInvalidException(String.format("Cannot update questionnaire model %s as some nomenclatures do not exist",
-                    questionnaire.id()));
+                    questionnaire.getId()));
         }
         questionnaireModelRepository.update(questionnaire);
     }

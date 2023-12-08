@@ -12,7 +12,7 @@ import java.util.List;
 public class IntegrationFakeService implements IntegrationService {
     @Override
     public IntegrationResult create(Campaign campaign) {
-        return new IntegrationResult(campaign.id(), IntegrationStatus.CREATED, null);
+        return new IntegrationResult(campaign.getId(), IntegrationStatus.CREATED, null);
     }
 
     @Override
@@ -22,6 +22,6 @@ public class IntegrationFakeService implements IntegrationService {
 
     @Override
     public List<IntegrationResult> create(QuestionnaireModel questionnaire) {
-        return List.of(new IntegrationResult(questionnaire.id(), IntegrationStatus.CREATED, null));
+        return List.of(new IntegrationResult(questionnaire.getId(), IntegrationStatus.CREATED, null));
     }
 }

@@ -38,8 +38,8 @@ class ParadataEventControllerTest {
                 {"idSU": "11", "object": {}}
                 """, ObjectNode.class);
         controller.addParadata(paradata);
-        assertThat(pilotageComponent.checked()).isTrue();
-        assertThat(paradataEventService.created()).isTrue();
+        assertThat(pilotageComponent.isChecked()).isTrue();
+        assertThat(paradataEventService.isCreated()).isTrue();
     }
 
     @Test
