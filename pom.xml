@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.4</version>
+		<version>3.2.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>fr.insee.queen</groupId>
@@ -19,7 +19,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<testcontainers.version>1.15.2</testcontainers.version>
 		<fop.version>2.9</fop.version>
-		<snakeyaml.version>2.0</snakeyaml.version>
 		<!-- maven-surefire-plugin setting.
 			 Used for encoding with tests on windows (buggy windows components)
 		-->
