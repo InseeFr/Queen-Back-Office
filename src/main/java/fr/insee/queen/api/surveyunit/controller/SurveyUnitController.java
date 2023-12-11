@@ -44,7 +44,6 @@ public class SurveyUnitController {
     @GetMapping(path = "/survey-units")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     public List<String> getSurveyUnitIds() {
-        log.info("GET survey-units");
         return surveyUnitService.findAllSurveyUnitIds();
     }
 
@@ -58,7 +57,6 @@ public class SurveyUnitController {
     @GetMapping(path = "/survey-unit/{id}")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public SurveyUnitDto getSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId) {
-        log.info("GET survey-units with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
         return SurveyUnitDto.fromModel(surveyUnitService.getSurveyUnit(surveyUnitId));
     }
@@ -74,7 +72,6 @@ public class SurveyUnitController {
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      @Valid @RequestBody SurveyUnitUpdateData surveyUnitUpdateData) {
-        log.info("PUT survey-unit for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         SurveyUnit surveyUnit = SurveyUnitUpdateData.toModel(surveyUnitId, surveyUnitUpdateData);
         surveyUnitService.updateSurveyUnit(surveyUnit);
@@ -113,7 +110,6 @@ public class SurveyUnitController {
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
-        log.info("DELETE survey-unit with id {}", surveyUnitId);
         surveyUnitService.delete(surveyUnitId);
     }
 }

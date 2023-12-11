@@ -48,7 +48,6 @@ public class QuestionnaireModelController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<QuestionnaireModelValueDto> getQuestionnaireDatasByCampaignId(
             @IdValid @PathVariable(value = "id") String campaignId) {
-        log.info("GET questionnaire for campaign with id {}", campaignId);
         return questionnaireModelService
                 .getQuestionnaireDatas(campaignId).stream()
                 .map(QuestionnaireModelValueDto::new)
@@ -65,7 +64,6 @@ public class QuestionnaireModelController {
     @GetMapping(path = "/questionnaire/{id}")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public QuestionnaireModelValueDto getQuestionnaireData(@IdValid @PathVariable(value = "id") String questionnaireModelId) {
-        log.info("GET questionnaire for id {}", questionnaireModelId);
         return new QuestionnaireModelValueDto(questionnaireModelService.getQuestionnaireData(questionnaireModelId));
     }
 
@@ -80,7 +78,6 @@ public class QuestionnaireModelController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<QuestionnaireModelIdDto> getQuestionnaireIdsByCampaignId(
             @IdValid @PathVariable(value = "id") String campaignId) {
-        log.info("GET questionnaire Id for campaign with id {}", campaignId);
         return questionnaireModelService
                 .getQuestionnaireIds(campaignId)
                 .stream()
@@ -98,7 +95,6 @@ public class QuestionnaireModelController {
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createQuestionnaire(@RequestBody @Valid QuestionnaireModelCreationData questionnaireModelData) {
-        log.info("POST Questionnaire Model with id {}", questionnaireModelData.idQuestionnaireModel());
         questionnaireModelService.createQuestionnaire(QuestionnaireModelCreationData.toModel(questionnaireModelData));
     }
 

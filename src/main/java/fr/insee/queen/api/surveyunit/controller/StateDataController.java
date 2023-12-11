@@ -47,7 +47,6 @@ public class StateDataController {
     @GetMapping(path = "/survey-unit/{id}/state-data")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public StateDataDto getStateDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
-        log.info("GET statedata for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return StateDataDto.fromModel(stateDataService.getStateData(surveyUnitId));
     }
@@ -63,7 +62,6 @@ public class StateDataController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
                              @Valid @RequestBody StateDataInputData stateDataInputDto) {
-        log.info("PUT statedata for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         stateDataService.updateStateData(surveyUnitId, StateDataInputData.toModel(stateDataInputDto));
     }

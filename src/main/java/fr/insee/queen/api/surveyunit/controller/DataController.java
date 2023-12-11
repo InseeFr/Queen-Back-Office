@@ -38,7 +38,6 @@ public class DataController {
     @GetMapping(path = "/survey-unit/{id}/data")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
-        log.info("GET Data for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return dataService.getData(surveyUnitId);
     }
@@ -55,7 +54,6 @@ public class DataController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void updateData(@NotNull @RequestBody ObjectNode dataValue,
                            @IdValid @PathVariable(value = "id") String surveyUnitId) {
-        log.info("PUT data for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         dataService.updateData(surveyUnitId, dataValue);
     }

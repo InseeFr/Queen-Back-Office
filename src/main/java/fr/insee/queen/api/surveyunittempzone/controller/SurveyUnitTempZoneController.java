@@ -43,7 +43,6 @@ public class SurveyUnitTempZoneController {
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                              @NotNull @RequestBody ObjectNode surveyUnit) {
-        log.info("POST survey-unit to temp-zone");
         String userId = authHelper.getUserId();
         surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
     }
@@ -57,7 +56,6 @@ public class SurveyUnitTempZoneController {
     @GetMapping(path = "/survey-units/temp-zone")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<SurveyUnitTempZoneDto> getSurveyUnitsInTempZone() {
-        log.info("GET all survey-units in temp-zone");
         return surveyUnitTempZoneService.getAllSurveyUnitTempZone()
                 .stream().map(SurveyUnitTempZoneDto::fromModel)
                 .toList();

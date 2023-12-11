@@ -42,7 +42,6 @@ public class CommentController {
     @GetMapping(path = "/survey-unit/{id}/comment")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getCommentBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
-        log.info("GET comment for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return commentService.getComment(surveyUnitId);
     }
@@ -58,7 +57,6 @@ public class CommentController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void setComment(@NotNull @RequestBody ObjectNode commentValue,
                            @IdValid @PathVariable(value = "id") String surveyUnitId) {
-        log.info("PUT comment for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         commentService.updateComment(surveyUnitId, commentValue);
     }

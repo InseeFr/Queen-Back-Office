@@ -3,7 +3,6 @@ package fr.insee.queen.api.integration.controller;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.integration.controller.component.IntegrationComponent;
 import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultsDto;
-import fr.insee.queen.api.web.authentication.AuthenticationHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @Validated
 public class IntegrationController {
-    private final AuthenticationHelper authHelper;
     private final IntegrationComponent integrationComponent;
 
     /**
@@ -42,8 +40,6 @@ public class IntegrationController {
     @PostMapping(path = "/campaign/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     public IntegrationResultsDto integrateContext(@RequestParam("file") MultipartFile file) {
-        String userId = authHelper.getUserId();
-        log.info("User {} requests campaign creation via context ", userId);
         return integrationComponent.integrateContext(file);
     }
 }

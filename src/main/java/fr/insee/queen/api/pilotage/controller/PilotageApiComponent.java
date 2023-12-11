@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @ConditionalOnExpression(value = "'${application.auth}' == 'OIDC' and ${feature.enable.pilotage} != false")
@@ -40,13 +41,9 @@ public class PilotageApiComponent implements PilotageComponent {
 
     @Override
     public List<PilotageCampaign> getInterviewerCampaigns() {
-        String userId = authHelper.getUserId();
-        log.info("User {} need his campaigns", userId);
-
         String authToken = authHelper.getUserToken();
         List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns(authToken);
-        log.info("{} campaign(s) found for {}", campaigns.size(), userId);
-
+        log.info("{} campaign(s) found", campaigns.size());
         return campaigns;
     }
 
@@ -63,25 +60,27 @@ public class PilotageApiComponent implements PilotageComponent {
 
         if (!auth.isAuthenticated()) {
             // anonymous user cannot have habilitation
-            throw new HabilitationException();
+            throw new HabilitationException("Habilitation denied: user is not authenticated");
         }
 
         List<String> userRoles = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
+        String userId = authHelper.getUserId();
         if (userRoles.contains("ROLE_ADMIN") || userRoles.contains("ROLE_WEBCLIENT")) {
+            log.info("Habilitation granted: user {} is admin", userId);
             return;
         }
 
-        String userId = authHelper.getUserId();
-        log.info("Check habilitation of user {} with role {} to access survey-unit {} ", userId, rolesToCheck, surveyUnit.id());
+
         String userToken = authHelper.getUserToken();
         for (PilotageRole roleToCheck : rolesToCheck) {
             if (pilotageService.hasHabilitation(surveyUnit, roleToCheck, userId, userToken)) {
+                log.info("Habilitation granted: user {} has access to survey-unit {} with role {}", userId, surveyUnit.id(), roleToCheck);
                 return;
             }
         }
-        throw new HabilitationException();
+        throw new HabilitationException(String.format("Habilitation denied: user %s has not access to survey-unit %s with roles %s", userId, surveyUnit.id(), Arrays.toString(rolesToCheck)));
     }
 }

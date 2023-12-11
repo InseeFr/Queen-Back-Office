@@ -38,7 +38,6 @@ public class NomenclatureController {
     @GetMapping(path = "/nomenclatures")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<String> getNomenclaturesId() {
-        log.info("GET all nomenclatures Ids");
         return nomenclatureService.getAllNomenclatureIds();
     }
 
@@ -53,7 +52,6 @@ public class NomenclatureController {
     @GetMapping(path = "/nomenclature/{id}")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getNomenclatureById(@IdValid @PathVariable(value = "id") String nomenclatureId) {
-        log.info("GET nomenclature with id {}", nomenclatureId);
         return nomenclatureService.getNomenclature(nomenclatureId).value();
 
     }
@@ -81,7 +79,6 @@ public class NomenclatureController {
     @GetMapping(path = "/campaign/{id}/required-nomenclatures")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<String> getListRequiredNomenclature(@IdValid @PathVariable(value = "id") String campaignId) {
-        log.info("GET required-nomenclatures for campaign with id {}", campaignId);
         return nomenclatureService.findRequiredNomenclatureByCampaign(campaignId);
     }
 
@@ -95,7 +92,6 @@ public class NomenclatureController {
     @GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<String> getListRequiredNomenclatureByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
-        log.info("GET required-nomenclatures for questionnaire model with id {}", questionnaireId);
         return nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
     }
 }

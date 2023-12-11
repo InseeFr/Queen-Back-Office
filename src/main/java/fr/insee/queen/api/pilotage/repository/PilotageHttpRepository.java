@@ -67,11 +67,11 @@ public class PilotageHttpRepository implements PilotageRepository {
             ResponseEntity<List<PilotageSurveyUnit>> response =
                     restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, getHttpHeaders(authToken),
                             new ParameterizedTypeReference<List<PilotageSurveyUnit>>() {});
-            log.info("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
+            log.debug("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
             return response.getBody();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
-                log.info("Got a 404 status code, 0 survey units returned");
+                log.debug("Got a 404 status code, 0 survey units returned");
                 return new ArrayList<>();
             }
             log.error(ex.getMessage(), ex);
@@ -87,11 +87,11 @@ public class PilotageHttpRepository implements PilotageRepository {
             ResponseEntity<List<PilotageCampaign>> response =
                     restTemplate.exchange(uriPilotageInterviewerCampaigns, HttpMethod.GET, getHttpHeaders(authToken),
                             new ParameterizedTypeReference<List<PilotageCampaign>>() {});
-            log.info("Pilotage API call returned {}", response.getStatusCode().value());
+            log.debug("Pilotage API call returned {}", response.getStatusCode().value());
             return response.getBody();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
-                log.info("Got a 404 status code, 0 campaigns returned");
+                log.debug("Got a 404 status code, 0 campaigns returned");
                 return new ArrayList<>();
             }
             log.error(ex.getMessage(), ex);
@@ -105,7 +105,7 @@ public class PilotageHttpRepository implements PilotageRepository {
         String campaignId = surveyUnit.campaignId();
 
         if (Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
-            log.info("Current campaignId {} requires an alternative habilitation service {} ", campaignId, alternativeHabilitationServiceURL);
+            log.debug("Current campaignId {} requires an alternative habilitation service {} ", campaignId, alternativeHabilitationServiceURL);
             uriPilotageFilter.append(alternativeHabilitationServiceURL);
         } else {
             uriPilotageFilter
@@ -128,13 +128,13 @@ public class PilotageHttpRepository implements PilotageRepository {
             }
 
 
-            log.info("Habilitation of user {} with role {} to access survey-unit {} : {}", idep, role.name(),
+            log.debug("Habilitation of user {} with role {} to access survey-unit {} : {}", idep, role.name(),
                     surveyUnit.id(), habilitation.habilitated() ? "granted" : "denied");
             return habilitation.habilitated();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             HttpStatusCode status = ex.getStatusCode();
             if (status.equals(HttpStatus.UNAUTHORIZED)) {
-                log.info("Habilitation of user {} with role {} to access survey-unit {} denied.",
+                log.debug("Habilitation of user {} with role {} to access survey-unit {} denied.",
                         idep, role.name(), surveyUnit.id());
                 return false;
             }
