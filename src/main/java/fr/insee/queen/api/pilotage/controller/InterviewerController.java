@@ -46,8 +46,6 @@ public class InterviewerController {
     public List<CampaignSummaryDto> getInterviewerCampaignList() {
 
         String userId = authHelper.getUserId();
-        log.info("User {} need his campaigns", userId);
-
         List<PilotageCampaign> campaigns = pilotageComponent.getInterviewerCampaigns();
         log.info("{} campaign(s) found for {}", campaigns.size(), userId);
 
@@ -66,9 +64,6 @@ public class InterviewerController {
     @GetMapping(path = "/survey-units/interviewer")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     public List<SurveyUnitDto> getInterviewerSurveyUnits() {
-        String userId = authHelper.getUserId();
-        log.info("GET survey-units for interviewer with id {}", userId);
-
         // get survey units for the interviewer
         List<SurveyUnit> surveyUnits = pilotageComponent.getInterviewerSurveyUnits();
 
@@ -88,8 +83,6 @@ public class InterviewerController {
     @GetMapping(path = "/campaign/{id}/survey-units")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public List<SurveyUnitByCampaignDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
-        log.info("GET survey-units for campaign with id {}", campaignId);
-
         // get survey units of a campaign from the pilotage api
         List<SurveyUnitSummary> surveyUnits = pilotageComponent.getSurveyUnitsByCampaign(campaignId);
 

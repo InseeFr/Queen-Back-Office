@@ -6,7 +6,6 @@ import fr.insee.queen.api.campaign.service.CampaignService;
 import fr.insee.queen.api.campaign.service.exception.CampaignDeletionException;
 import fr.insee.queen.api.configuration.auth.AuthorityRole;
 import fr.insee.queen.api.pilotage.controller.PilotageComponent;
-import fr.insee.queen.api.web.authentication.AuthenticationHelper;
 import fr.insee.queen.api.web.validation.IdValid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class CampaignController {
-    private final AuthenticationHelper authHelper;
     private final CampaignService campaignService;
     private final PilotageComponent pilotageComponent;
 
@@ -43,8 +41,6 @@ public class CampaignController {
     @GetMapping(path = "/admin/campaigns")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     public List<CampaignSummaryDto> getListCampaign() {
-        String userId = authHelper.getUserId();
-        log.info("Admin {} request all campaigns", userId);
         return campaignService.getAllCampaigns()
                 .stream().map(CampaignSummaryDto::fromModel)
                 .toList();
@@ -60,8 +56,6 @@ public class CampaignController {
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createCampaign(@Valid @RequestBody CampaignCreationData campaignInputDto) {
-        String userId = authHelper.getUserId();
-        log.info("User {} requests campaign {} creation", userId, campaignInputDto.id());
         campaignService.createCampaign(CampaignCreationData.toModel(campaignInputDto));
     }
 
@@ -79,9 +73,6 @@ public class CampaignController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteCampaignById(@RequestParam("force") boolean force,
                                    @IdValid @PathVariable(value = "id") String campaignId) {
-        String userId = authHelper.getUserId();
-        log.info("Admin {} requests deletion of campaign {}", userId, campaignId);
-
         if (force || pilotageComponent.isClosed(campaignId)) {
             campaignService.delete(campaignId);
             log.info("Campaign with id {} deleted", campaignId);

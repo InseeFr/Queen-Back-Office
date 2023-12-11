@@ -46,7 +46,7 @@ public class LogInterceptor implements HandlerInterceptor {
         MDC.put("method", method);
         MDC.put("user", userId);
 
-        log.info("[{}] - [{}] - [{}]", userId, method, operationPath);
+        log.info("[{}] {} {}", userId, method, operationPath);
         return true;
     }
 

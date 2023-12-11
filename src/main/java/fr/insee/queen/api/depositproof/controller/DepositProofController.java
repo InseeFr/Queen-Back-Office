@@ -49,7 +49,6 @@ public class DepositProofController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      HttpServletResponse response) {
-        log.info("GET deposit-proof with survey unit id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
 
         String username = authHelper.getUserId();

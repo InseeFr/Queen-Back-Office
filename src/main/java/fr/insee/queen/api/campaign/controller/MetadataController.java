@@ -37,7 +37,6 @@ public class MetadataController {
     @GetMapping(path = "/campaign/{id}/metadata")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId) {
-        log.info("GET metadata for campaign with id {}", campaignId);
         return metadataService.getMetadata(campaignId);
     }
 
@@ -51,7 +50,6 @@ public class MetadataController {
     @GetMapping(path = "/questionnaire/{id}/metadata")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
-        log.info("GET metadata for questionnaire with id {}", questionnaireId);
         return metadataService.getMetadataByQuestionnaireId(questionnaireId);
     }
 }

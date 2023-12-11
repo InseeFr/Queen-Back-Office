@@ -38,7 +38,6 @@ public class PersonalizationController {
     @GetMapping(path = "/survey-unit/{id}/personalization")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public String getPersonalizationBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
-        log.info("GET personalization for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return personalizationService.getPersonalization(surveyUnitId);
     }
@@ -54,7 +53,6 @@ public class PersonalizationController {
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void setPersonalization(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                    @NotNull @RequestBody ArrayNode personalizationValues) {
-        log.info("PUT personalization for reporting unit with id {}", surveyUnitId);
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         personalizationService.updatePersonalization(surveyUnitId, personalizationValues);
     }

@@ -42,7 +42,6 @@ public class ParadataEventController {
     @ResponseStatus(HttpStatus.OK)
     public void addParadata(@NotNull @RequestBody ObjectNode paradataValue) {
         String paradataSurveyUnitIdParameter = "idSU";
-        log.info("POST ParadataEvent");
         if (!paradataValue.has(paradataSurveyUnitIdParameter)) {
             throw new EntityNotFoundException("Paradata does not contain the survey unit id");
         }
