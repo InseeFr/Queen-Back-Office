@@ -30,7 +30,7 @@ public class NomenclatureController {
     private final NomenclatureService nomenclatureService;
 
     /**
-     * Retrieve all nomenclatures
+     * Retrieve all nomenclatures ids
      *
      * @return list of all nomenclature ids
      */
