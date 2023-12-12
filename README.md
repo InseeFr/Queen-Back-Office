@@ -2,14 +2,14 @@
 
 # Queen-Back-Office
 Back-office services for Queen  
-REST API for communication between Queen DB and Queen UI.
+REST API used for communication with Queen/Stromae UI
 
 ## Requirements
 For building and running the application you need:
-- [JDK 11](https://jdk.java.net/archive/)
+- Java 21
 - Maven 3  
 
-## Install and excute unit tests
+## Install and execute unit tests
 Use the maven clean and maven install 
 ```shell
 mvn clean install
@@ -22,194 +22,218 @@ mvn spring-boot:run
 ```  
 
 ## Application Accesses locally
-To access to swagger-ui, use this url : [http://localhost:8080/api/swagger-ui.html](http://localhost:8080/swagger-ui.html)  
-To access to h2 console, use this url : [http://localhost:8080/api/h2-console](http://localhost:8080/api/h2-console)  
+To access to swagger-ui, use this url : [http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)  
 
-
-## Keycloak Configuration 
-1. To start the server on port 8180 execute in the bin folder of your keycloak :
-```shell
-standalone.bat -Djboss.socket.binding.port-offset=100 (on Windows)
-
-standalone.sh -Djboss.socket.binding.port-offset=100 (on Unix-based systems)
-```  
-2. Go to the console administration and create role investigator and a user with this role.
-
-## Database configuration
-Queen-Back-Office manage 2 Database configurations :
-1 - PostgreSQL database with JPA connectors
-2 - MongoDb database
-It is possible to switch between both configurations via the following property: 
-```shell
-fr.insee.queen.application.persistenceType
-```
-It can take the 2 following values : MONGODB or JPA
+## Database
+Queen-Back-Office uses postgresql as data source
  
-## Deploy application on Tomcat server
+## Deployment
 ### 1. Package the application
-Use the [Spring Boot Maven plugin]  (https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html) like so:  
 ```shell
 mvn clean package
 ```  
-The war will be generate in `/target` repository  
+The jar will be generated in `/target` repository  
 
-### 2. Install tomcat and deploy war
-To deploy the war file in Tomcat, you need to : 
-Download Apache Tomcat and unpackage it into a tomcat folder  
-Copy your WAR file from target/ to the tomcat/webapps/ folder  
-
-### 3. Tomcat config
-Before to startup the tomcat server, some configurations are needed : 
- 
-
-#### External Properties file
-Create queenbo.properties or colemcobo.properties near war file and complete the following properties:  
-```shell  
-#Profile configuration
-spring.profiles.active=prod
-
-#Logs configuration
-fr.insee.queen.logging.path=${catalina.base}/webapps/log4j2.xml
-fr.insee.queen.logging.level=DEBUG
-
-#Application configuration
-fr.insee.queen.application.mode=noauth or basic or keycloak
-fr.insee.queen.application.crosOrigin=*
-fr.insee.queen.application.persistenceType = MONGODB or JPA
-
-#Database configuration
-fr.insee.queen.persistence.database.host = queen-db
-fr.insee.queen.persistence.database.port = 5432
-fr.insee.queen.persistence.database.schema = queen
-fr.insee.queen.persistence.database.user = queen
-fr.insee.queen.persistence.database.password = queen
-fr.insee.queen.persistence.database.driver = org.postgresql.Driver
-fr.insee.queen.defaultSchema=public
-
-#Keycloak configuration
-keycloak.realm=insee-realm
-keycloak.resource=queen-web
-keycloak.auth-server-url=http://localhost:8180/auth
-keycloak.public-client=true
-keycloak.bearer-only=true
-keycloak.principal-attribute:preferred_username
-
-#Roles
-fr.insee.queen.interviewer.role=investigator
-fr.insee.queen.reviewer.role=reviewer
-fr.insee.queen.reviewer-alternative.role=reviewer-alternative
-fr.insee.queen.admin.role=admin
-
-#Pilotage Api
-fr.insee.queen.pilotage.service.url.scheme=http
-fr.insee.queen.pilotage.service.url.host=localhost
-fr.insee.queen.pilotage.service.url.port=8081
-
-#If true, checkHabilitation and getSuFromPilotage are not used to secure the endpoints
-fr.insee.queen.pilotage.integration.override=false
-
-#Other claim to read roles from in token
-fr.insee.queen.token.claim.role=inseegroupedefaut
-
+### 2. Launch app with embedded tomcat
+```shell
+java -jar app.jar
 ```
 
-#### External log file
-Create log4j2.xml near war file and define your  external config for logs.  
+### 3. Application Access
+To access the swagger-ui, use this url : [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
-### 4. Tomcat start
-From a terminal navigate to tomcat/bin folder and execute  
+## Docker/Kubernetes
+
+A Dockerfile is present on this root project to deploy a container. You can [get docker images on docker hub](https://hub.docker.com/r/inseefr/queen-back-office/tags)
+
+[Helm chart repository](https://github.com/InseeFr/Helm-Charts/) is available for the queen backoffice/db/frontend
+
+
+## Liquibase
+Liquibase is enabled by default and run changelogs if needed.
+
+### Generate diff changelog between twos databases
 ```shell
-catalina.bat run (on Windows)
-```  
-```shell
-catalina.sh run (on Unix-based systems)
-```  
+#Don't forget to edit configuration properties in pom.xml for this
+mvn liquibase:diff
+```
 
-### 5. Application Access
-To access to swagger-ui, use this url : [http://localhost:8080/queen-1.1.1/swagger-ui.html](http://localhost:8080/queen-1.1.1/swagger-ui.html)  
-To access to keycloak, use this url : [http://localhost:8180](http://localhost:8180)  
+#### Properties
+Minimal configuration for dev purpose only (there is no auth in this configuration)
+User is considered as authenticated admin user
 
-## Before you commit
-Before committing code please ensure,  
-1 - README.md is updated  
-2 - A successful build is run and all tests are sucessful  
-3 - All newly implemented APIs are documented  
-4 - All newly added properties are documented  
+```yaml  
+application:
+  corsOrigins: https://test.com #mandatory
+  # define folder where temp files will be created
+  # /!\ do not use the OS default temp folder or java.io.tmpdir as it causes security issues
+  # give only access rights to this folder to the user executing the tomcat process 
+  temp-folder: /opt/app/app-temp
+  auth: NOAUTH
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/defaultSchema
+    username: 
+    password: 
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+  jackson:
+    serialization:
+      indent_output: true
+logging:
+  file:
+    name: /path/to/log/folder/queen.log
+  level:
+    root: INFO
+feature:
+  enable:
+    # enable data loading in DB 
+    dataset: true
+    # enable swagger
+    swagger: true
+    # enable pilotage api 
+    pilotage: false
+    # enable cache
+    cache: true
+    # enable comments endpoints
+    comments: false
+    # enable interviewer endpoints 
+    interviewer-collect: false
+```
+
+Configuration example with OIDC and pilotage api enabled
+
+```yaml 
+application:
+  corsOrigins: https://test.com # mandatory
+  # define folder where temp files will be created
+  # /!\ do not use the OS default temp folder or java.io.tmpdir as it causes security issues
+  # give only access rights to this folder to the user executing the tomcat process 
+  temp-folder: /opt/app/app-temp
+  auth: OIDC
+  roles:
+    interviewer: interviewer_role
+    reviewer: reviewer_role
+    admin: admin_role
+    webclient: webclient_role
+    reviewer-alternative: reviewer_alternative_role
+  pilotage:
+    # url used to check habilitations for a user 
+    url: https://pilotage-api.com
+  security:
+    # if oidc auth enabled
+    oidc:
+      auth-server-host: https://auth.host
+      client-id: clientId
+      realm: realmUsed
+      principal-attribute: username
+      role-claim: role_claim
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/defaultSchema
+    username: 
+    password: 
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+logging:
+  file:
+    name: /path/to/log/folder/queen.log
+  level:
+    root: INFO
+springdoc:
+  swagger-ui:
+    oauth:
+      additionalQueryStringParams:
+        kc_idp_hint : idp_hint
+feature:
+  enable:
+    # enable data loading in DB 
+    dataset: true
+    # enable swagger
+    swagger: true
+    # enable pilotage api 
+    pilotage: true
+    # enable cache
+    cache: true
+    # enable comments endpoints
+    comments: false
+    # enable interviewer endpoints 
+    interviewer-collect: false
+```
 
 ## End-Points
 - Campaign
-	- `GET /campaigns` : get the campaign list
-	- `POST /campaigns` : post a new campaign
-	- `POST /campaign/context` : integrates the context of a campaign
-	- `DELETE /campaign/{id}` : delete a campaign
+	- `GET /campaigns` : Retrieve the campaigns the current user has access to
+    - `GET /admin/campaigns` : Retrieve all campaigns
+	- `POST /campaigns` : Create a new campaign
+	- `POST /campaign/context` : Integrate a full campaign (campaign/nomenclatures/questionnaires. The results of the integration indicate the successful/failed integrations
+	- `DELETE /campaign/{id}` : Delete a campaign
 	
 
 - Questionnaire
-	- `GET /questionnaire/{id}` : get the questionnaire by his id
-	- `GET /campaign/{id}/questionnaires` : get the list of model json 
-	- `GET /campaign/{idCampaign}/questionnaire-id` : id of the questionnaire associated to the campaign
-	- `POST /questionnaire-models` : post a new questionnaire
+	- `GET /questionnaire/{id}` : Retrieve the data structure of a questionnaire
+	- `GET /campaign/{id}/questionnaires` : Retrieve the data structure of all questionnaires linked to a campaign
+	- `GET /campaign/{idCampaign}/questionnaire-id` : Retrieve all the questionnaire ids for a campaign
+	- `POST /questionnaire-models` : Create a new questionnaire
 
 - SurveyUnit
-	- `GET /survey-unit/{id}` : get survey-unit by id
-	- `GET /survey-unit/{id}/deposit-prof` : get the deposit-proof of survey-unit by id
-	- `GET /campaign/{id}/survey-units` : get the list of survey-unit of campaign id
-	- `PUT /survey-unit/{id}` : update a survey-unit
-	- `POST /campaign/{id}/survey-unit` : post a survey-unit for a campaign
-	- `DELETE /survey-unit/{id}` : delete a survey-unit by id
+	- `GET /survey-units` : Retrieve all survey units id 
+	- `GET /survey-unit/{id}` : Retrieve the survey unit
+	- `GET /survey-unit/{id}/deposit-prof` : Generate and retrieve a deposit proof (pdf file) for a survey unit
+	- `GET /campaign/{id}/survey-units` : Retrieve all the survey units of a campaign
+	- `PUT /survey-unit/{id}` : Update a survey unit
+    - `GET /survey-units/interviewer` : Retrieve all the survey units of the current interviewer
+	- `POST /campaign/{id}/survey-unit` : Create or update a survey unit
+	- `DELETE /survey-unit/{id}` : Delete a survey unit
 
 - Data
-	- `GET /survey-unit/{id}/data` : get the data of reporting unit id
-	- `PUT /survey-unit/{id}/data` : update the data of reporting unit id
+	- `GET /survey-unit/{id}/data` : Retrieve the data of a survey unit
+	- `PUT /survey-unit/{id}/data` : Update the data of a survey unit
 
 - Comment
-	- `GET /survey-unit/{id}/comment` : get the comment of reporting unit id 
-	- `PUT /survey-unit/{id}/comment` : update the comment of reporting unit id
+	- `GET /survey-unit/{id}/comment` : Retrieve the comment of a survey unit
+	- `PUT /survey-unit/{id}/comment` : Update the comment of a survey unit
 
 - Nomenclatures
-	- `GET /campaign/{id}/required-nomenclatures` : get the nomenclature of a campaign
-	- `GET /questionnaire/{id}/required-nomenclatures` : get the nomenclature of a questionnaire
-	- `GET /nomenclature/{id}` : get the nomenclature json
-	- `POST /nomenclature` : post a new nomenclature
+	- `GET /questionnaire/{id}/required-nomenclatures` : Retrieve all required nomenclatures of a questionnaire
+    - `GET /campaign/{id}/required-nomenclatures` : Retrieve all required nomenclatures of a campaign
+	- `GET /nomenclature/{id}` : Retrieve the json value of a nomenclature
+	- `POST /nomenclature` : Create/update a nomenclature
+    - `GET /nomenclatures` : Retrieve all nomenclatures ids
 
 - Personalization
-	- `GET /survey-unit/{id}/personalization` : get the personalization of a survey-unit
-	- `PUT /survey-unit/{id}/personalization` : put the personalization for a survey-unit
+	- `GET /survey-unit/{id}/personalization` : Retrieve the personalization of a survey unit
+	- `PUT /survey-unit/{id}/personalization` : Update the personalization of a survey unit
 	
 - Metadata
-	- `GET /campaign/{id}/metadata` : get the metadata by campaign Id
-	- `GET /questionnaire/{id}/metadata` : get the metadata by questionnaire id
+	- `GET /campaign/{id}/metadata` : Retrieve campaign metadata
+	- `GET /questionnaire/{id}/metadata` : Retrieve campaign metadata
 
 - Paradata
-	- `POST /paradata` : post the metadata of a campaign
+	- `POST /paradata` : Create a paradata event for a survey unit
 	
 - StateData
-	- `GET /survey-unit/{id}/state-data` : get the state-data of a survey-unit
-	- `PUT /survey-unit/{id}/state-data` : put the state-data for a survey-unit
+	- `GET /survey-unit/{id}/state-data` : Retrieve the state-data of a survey unit
+	- `PUT /survey-unit/{id}/state-data` : Update the state-data of a survey unit
 	- `POST /survey-units/state-data` : Get state-data for all survey-units defined in request body
 	
 - DataSet
-	- `POST /create-dataset` : Create dataset
+	- `POST /create-dataset` : Create dataset for demo environments
 
 ## Libraries used
-- spring-boot-jpa
+- spring-boot-data-jpa
 - spring-boot-security
 - spring-boot-web
 - spring-boot-tomcat
 - spring-boot-test
+- spring-boot-starter-oauth2-resource-server
 - liquibase
-- h2 database
 - postgresql
 - junit
-- springfox-swagger2
-- hibernate
-- hibernate-types-52 (for jsonb type)
-- keycloak 
-
-## Developers
-- Benjamin Claudel (benjamin.claudel@keyconsulting.fr)
-- Samuel Corcaud (samuel.corcaud@keyconsulting.fr)
-- Paul Guillemet (paul.guillemet@keyconsulting.fr)
+- springdoc
+- caffeine (cache)
 
 ## License
-Please check [LICENSE](https://github.com/InseeFr/Queen-Back-Office/blob/master/LICENSE) file
+Please check [LICENSE](https://github.com/InseeFr/Queen-Back-Office/blob/main/LICENSE) file
