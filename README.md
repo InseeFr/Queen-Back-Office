@@ -21,9 +21,6 @@ Use the [Spring Boot Maven plugin](https://docs.spring.io/spring-boot/docs/curre
 mvn spring-boot:run
 ```  
 
-## Application Accesses locally
-To access to swagger-ui, use this url : [http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)  
-
 ## Database
 Queen-Back-Office uses postgresql as data source
  
@@ -54,7 +51,7 @@ Liquibase is enabled by default and run changelogs if needed.
 
 ### Generate diff changelog between twos databases
 ```shell
-#Don't forget to edit configuration properties in pom.xml for this
+# Don't forget to edit configuration properties in pom.xml for this
 mvn liquibase:diff
 ```
 
@@ -142,11 +139,6 @@ logging:
     name: /path/to/log/folder/queen.log
   level:
     root: INFO
-springdoc:
-  swagger-ui:
-    oauth:
-      additionalQueryStringParams:
-        kc_idp_hint : idp_hint
 feature:
   enable:
     # enable data loading in DB 
