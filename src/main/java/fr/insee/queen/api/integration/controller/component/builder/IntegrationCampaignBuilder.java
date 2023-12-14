@@ -60,11 +60,6 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
 
     @Override
     public IntegrationResultUnitDto build(ZipFile integrationZipFile, boolean isXmlIntegration) {
-        try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, CAMPAIGN_XML, "campaign_integration_template.xsd");
-        } catch (IntegrationValidationException ex) {
-            return ex.getResultError();
-        }
         if(isXmlIntegration) {
             return buildXmlCampaign(integrationZipFile);
         }
@@ -72,6 +67,12 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
     }
 
     private IntegrationResultUnitDto buildXmlCampaign(ZipFile zf) {
+        try {
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, CAMPAIGN_XML, "campaign_integration_template.xsd");
+        } catch (IntegrationValidationException ex) {
+            return ex.getResultError();
+        }
+
         Document doc;
         try {
             doc = schemaComponent.buildDocument(zf.getInputStream(zf.getEntry(CAMPAIGN_XML)));
@@ -84,7 +85,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
         String id;
         try {
             XPathExpression expr = xpath.compile("/Campaign/Id/text()");
-            id = expr.evaluate(doc, XPathConstants.STRING).toString().toUpperCase();
+            id = expr.evaluate(doc, XPathConstants.STRING).toString();
         } catch (XPathExpressionException e) {
             log.error("Error when parsing campaign xml", e);
             return IntegrationResultUnitDto.integrationResultUnitError(null, IntegrationResultLabel.CAMPAIGN_ID_INCORRECT);
