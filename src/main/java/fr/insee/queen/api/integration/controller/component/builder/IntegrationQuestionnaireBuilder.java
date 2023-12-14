@@ -53,11 +53,6 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
 
     @Override
     public List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile, boolean isXmlIntegration) {
-        try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, QUESTIONNAIRE_MODELS_XML, "questionnaireModels_integration_template.xsd");
-        } catch (IntegrationValidationException ex) {
-            return List.of(ex.getResultError());
-        }
 
         if(isXmlIntegration) {
             return buildXmlQuestionnaireModels(campaignId, integrationZipFile);
@@ -66,6 +61,12 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
     }
 
     private List<IntegrationResultUnitDto> buildXmlQuestionnaireModels(String campaignId, ZipFile zf) {
+        try {
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, QUESTIONNAIRE_MODELS_XML, "questionnaireModels_integration_template.xsd");
+        } catch (IntegrationValidationException ex) {
+            return List.of(ex.getResultError());
+        }
+
         List<IntegrationResultUnitDto> results = new ArrayList<>();
         Document doc;
         try {
@@ -87,23 +88,32 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
     }
 
     private List<IntegrationResultUnitDto> buildQuestionnaireModels(String campaignId, ZipFile zf) {
-
-        List<IntegrationResultUnitDto> results = new ArrayList<>();
         try {
             schemaComponent.throwExceptionIfDataFileNotExist(zf, QUESTIONNAIRE_MODELS_JSON);
-            ZipEntry zipQuestionnairesFile = zf.getEntry(QUESTIONNAIRE_MODELS_JSON);
-            List<QuestionnaireModelItem> questionnaireModelItems = mapper.readValue(zf.getInputStream(zipQuestionnairesFile), new TypeReference<List<QuestionnaireModelItem>>(){});
-            for(QuestionnaireModelItem questionnaireModelItem : questionnaireModelItems) {
-                ObjectNode qmValue = readQuestionnaireStream(questionnaireModelItem, zf);
-                results.addAll(buildQuestionnaireModel(campaignId, questionnaireModelItem, qmValue));
-            }
         } catch (IntegrationValidationException ex) {
-            results.add(ex.getResultError());
-        }  catch (IOException e) {
+            return List.of(ex.getResultError());
+        }
+
+        ZipEntry zipQuestionnairesFile = zf.getEntry(QUESTIONNAIRE_MODELS_JSON);
+        List<QuestionnaireModelItem> questionnaireModelItems;
+
+        try {
+            questionnaireModelItems = mapper.readValue(zf.getInputStream(zipQuestionnairesFile), new TypeReference<List<QuestionnaireModelItem>>(){});
+        } catch (IOException e) {
             IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
                     null,
                     String.format(IntegrationResultLabel.JSON_PARSING_ERROR, QUESTIONNAIRE_MODELS_JSON));
-            results.add(resultError);
+            return List.of(resultError);
+        }
+
+        List<IntegrationResultUnitDto> results = new ArrayList<>();
+        for(QuestionnaireModelItem questionnaireModelItem : questionnaireModelItems) {
+            try {
+                ObjectNode qmValue = readQuestionnaireStream(questionnaireModelItem, zf);
+                results.addAll(buildQuestionnaireModel(campaignId, questionnaireModelItem, qmValue));
+            } catch (IntegrationValidationException ex) {
+                results.add(ex.getResultError());
+            }
         }
         return results;
     }
@@ -175,16 +185,16 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
             InputStream questionnaireInputStream = getQuestionnaireInputStream(zipFile, questionnaireModelItem);
             return mapper.readValue(questionnaireInputStream, ObjectNode.class);
         } catch (IOException e) {
-            log.info("Could not parse json in file {}", questionnaireModelItem.fileName());
+            log.info("Could not parse json in file {}", questionnaireModelItem.filename());
             throw new IntegrationValidationException(IntegrationResultUnitDto.integrationResultUnitError(
                     questionnaireModelItem.id(),
-                    String.format(IntegrationResultLabel.JSON_PARSING_ERROR, questionnaireModelItem.fileName()))
+                    String.format(IntegrationResultLabel.JSON_PARSING_ERROR, questionnaireModelItem.filename()))
             );
         }
     }
 
     private InputStream getQuestionnaireInputStream(ZipFile zf, QuestionnaireModelItem questionnaireModelItem) throws IntegrationValidationException, IOException {
-        String qmFileName = questionnaireModelItem.fileName();
+        String qmFileName = questionnaireModelItem.filename();
         ZipEntry qmValueEntry = zf.getEntry("questionnaireModels/" + qmFileName);
         if (qmValueEntry == null) {
             log.info("Questionnaire model file {} could not be found in input zip", qmFileName);

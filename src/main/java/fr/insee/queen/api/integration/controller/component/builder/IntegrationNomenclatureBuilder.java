@@ -49,19 +49,19 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
 
     @Override
     public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile, boolean isXmlIntegration) {
-        try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
-        } catch (IntegrationValidationException ex) {
-            return List.of(ex.getResultError());
-        }
         if(isXmlIntegration) {
             return buildXmlNomenclatures(integrationZipFile);
         }
-
         return buildNomenclatures(integrationZipFile);
     }
 
     private List<IntegrationResultUnitDto> buildXmlNomenclatures(ZipFile zf) {
+
+        try {
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
+        } catch (IntegrationValidationException ex) {
+            return List.of(ex.getResultError());
+        }
 
         List<IntegrationResultUnitDto> results = new ArrayList<>();
 
@@ -93,24 +93,32 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     }
 
     private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {
-
-        List<IntegrationResultUnitDto> results = new ArrayList<>();
-
         try {
             schemaComponent.throwExceptionIfDataFileNotExist(zf, NOMENCLATURES_JSON);
-            ZipEntry zipNomenclaturesFile = zf.getEntry(NOMENCLATURES_JSON);
-            List<NomenclatureItem> nomenclatureItems = mapper.readValue(zf.getInputStream(zipNomenclaturesFile), new TypeReference<List<NomenclatureItem>>(){});
-            for(NomenclatureItem nomenclatureItem : nomenclatureItems) {
-                ArrayNode nomenclatureValue = readNomenclatureStream(nomenclatureItem.id(), nomenclatureItem.fileName(), zf);
-                results.add(buildNomenclature(nomenclatureItem.id(), nomenclatureItem.label(), nomenclatureValue));
-            }
         } catch (IntegrationValidationException ex) {
-            results.add(ex.getResultError());
+            return List.of(ex.getResultError());
+        }
+
+        ZipEntry zipNomenclaturesFile = zf.getEntry(NOMENCLATURES_JSON);
+        List<NomenclatureItem> nomenclatureItems;
+
+        try {
+            nomenclatureItems = mapper.readValue(zf.getInputStream(zipNomenclaturesFile), new TypeReference<List<NomenclatureItem>>() {});
         } catch (IOException e) {
             IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
                     null,
                     String.format(IntegrationResultLabel.JSON_PARSING_ERROR, NOMENCLATURES_JSON));
-            results.add(resultError);
+            return List.of(resultError);
+        }
+
+        List<IntegrationResultUnitDto> results = new ArrayList<>();
+        for(NomenclatureItem nomenclatureItem : nomenclatureItems) {
+            try {
+                ArrayNode nomenclatureValue = readNomenclatureStream(nomenclatureItem.id(), nomenclatureItem.filename(), zf);
+                results.add(buildNomenclature(nomenclatureItem.id(), nomenclatureItem.label(), nomenclatureValue));
+            } catch (IntegrationValidationException ex) {
+                results.add(ex.getResultError());
+            }
         }
         return results;
     }
