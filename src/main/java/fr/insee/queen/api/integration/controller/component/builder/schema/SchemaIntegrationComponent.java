@@ -28,14 +28,8 @@ public class SchemaIntegrationComponent implements SchemaComponent {
     @Override
     public void throwExceptionIfXmlDataFileNotValid(ZipFile zipFile, String xmlFileName, String xsdSchemaFileName) throws IntegrationValidationException {
 
+        throwExceptionIfDataFileNotExist(zipFile, xmlFileName);
         ZipEntry zipXmlFile = zipFile.getEntry(xmlFileName);
-        if (zipXmlFile == null) {
-            IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
-                    null,
-                    String.format(IntegrationResultLabel.FILE_NOT_FOUND, xmlFileName));
-            throw new IntegrationValidationException(resultError);
-        }
-
         try {
             InputStream templateStream = getClass().getClassLoader().getResourceAsStream("templates/" + xsdSchemaFileName);
             SchemaFactory facto = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -48,6 +42,17 @@ public class SchemaIntegrationComponent implements SchemaComponent {
         } catch (Exception ex) {
             IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(null,
                     String.format(IntegrationResultLabel.FILE_INVALID, xmlFileName, ex.getMessage()));
+            throw new IntegrationValidationException(resultError);
+        }
+    }
+
+    @Override
+    public void throwExceptionIfDataFileNotExist(ZipFile zipFile, String fileName) throws IntegrationValidationException {
+        ZipEntry zipXmlFile = zipFile.getEntry(fileName);
+        if (zipXmlFile == null) {
+            IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
+                    null,
+                    String.format(IntegrationResultLabel.FILE_NOT_FOUND, fileName));
             throw new IntegrationValidationException(resultError);
         }
     }

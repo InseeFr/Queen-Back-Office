@@ -1,5 +1,6 @@
 package fr.insee.queen.api.integration.controller.component.builder;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaComponent;
@@ -38,24 +39,29 @@ import java.util.zip.ZipFile;
 public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     private final SchemaComponent schemaComponent;
     private final Validator validator;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper mapper;
     private final IntegrationService integrationService;
     private static final String LABEL = "Label";
     private static final String ID = "Id";
     private static final String FILENAME = "FileName";
     public static final String NOMENCLATURES_XML = "nomenclatures.xml";
+    public static final String NOMENCLATURES_JSON = "nomenclatures.json";
 
     @Override
-    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile) {
-        try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
-        } catch (IntegrationValidationException ex) {
-            return List.of(ex.getResultError());
+    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile, boolean isXmlIntegration) {
+        if(isXmlIntegration) {
+            return buildXmlNomenclatures(integrationZipFile);
         }
         return buildNomenclatures(integrationZipFile);
     }
 
-    private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {
+    private List<IntegrationResultUnitDto> buildXmlNomenclatures(ZipFile zf) {
+
+        try {
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
+        } catch (IntegrationValidationException ex) {
+            return List.of(ex.getResultError());
+        }
 
         List<IntegrationResultUnitDto> results = new ArrayList<>();
 
@@ -86,6 +92,37 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
         return results;
     }
 
+    private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {
+        try {
+            schemaComponent.throwExceptionIfDataFileNotExist(zf, NOMENCLATURES_JSON);
+        } catch (IntegrationValidationException ex) {
+            return List.of(ex.getResultError());
+        }
+
+        ZipEntry zipNomenclaturesFile = zf.getEntry(NOMENCLATURES_JSON);
+        List<NomenclatureItem> nomenclatureItems;
+
+        try {
+            nomenclatureItems = mapper.readValue(zf.getInputStream(zipNomenclaturesFile), new TypeReference<List<NomenclatureItem>>() {});
+        } catch (IOException e) {
+            IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
+                    null,
+                    String.format(IntegrationResultLabel.JSON_PARSING_ERROR, NOMENCLATURES_JSON));
+            return List.of(resultError);
+        }
+
+        List<IntegrationResultUnitDto> results = new ArrayList<>();
+        for(NomenclatureItem nomenclatureItem : nomenclatureItems) {
+            try {
+                ArrayNode nomenclatureValue = readNomenclatureStream(nomenclatureItem.id(), nomenclatureItem.filename(), zf);
+                results.add(buildNomenclature(nomenclatureItem.id(), nomenclatureItem.label(), nomenclatureValue));
+            } catch (IntegrationValidationException ex) {
+                results.add(ex.getResultError());
+            }
+        }
+        return results;
+    }
+
     private IntegrationResultUnitDto buildNomenclature(String nomenclatureId, String nomenclatureLabel, ArrayNode nomenclatureValue) {
         NomenclatureIntegrationData nomenclature = new NomenclatureIntegrationData(nomenclatureId, nomenclatureLabel, nomenclatureValue);
         Set<ConstraintViolation<NomenclatureIntegrationData>> violations = validator.validate(nomenclature);
@@ -107,7 +144,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     private ArrayNode readNomenclatureStream(String nomenclatureId, String nomenclatureFilename, ZipFile zipFile) throws IntegrationValidationException {
         try {
             InputStream questionnaireInputStream = getNomenclatureInputStream(zipFile, nomenclatureId, nomenclatureFilename);
-            return objectMapper.readValue(questionnaireInputStream, ArrayNode.class);
+            return mapper.readValue(questionnaireInputStream, ArrayNode.class);
         } catch (IOException e) {
             log.info("Could not parse json in file {}", nomenclatureFilename);
             throw new IntegrationValidationException(IntegrationResultUnitDto.integrationResultUnitError(

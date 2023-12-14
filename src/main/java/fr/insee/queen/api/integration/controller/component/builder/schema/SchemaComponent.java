@@ -22,6 +22,15 @@ public interface SchemaComponent {
     void throwExceptionIfXmlDataFileNotValid(ZipFile zipFile, String xmlFileName, String xsdSchemaFileName) throws IntegrationValidationException;
 
     /**
+     * Check if the file exists in zip
+     *
+     * @param zipFile the zip file
+     * @param fileName the name of the xml file to check
+     * @throws IntegrationValidationException integration validation exception
+     */
+    void throwExceptionIfDataFileNotExist(ZipFile zipFile, String fileName) throws IntegrationValidationException;
+
+    /**
      * Build a document from an xml input stream
      *
      * @param xmlFileStream xml file input stream

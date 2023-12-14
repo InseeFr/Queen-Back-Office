@@ -10,8 +10,9 @@ public interface NomenclatureBuilder {
      * Create the nomenclatures
      *
      * @param integrationZipFile zip file containing all infos for integration
+     * @param isXmlIntegration Is integration done with xml files
      * @return List of {@link IntegrationResultUnitDto} integration results for the nomenclatures
      */
-    List<IntegrationResultUnitDto> build(ZipFile integrationZipFile);
+    List<IntegrationResultUnitDto> build(ZipFile integrationZipFile, boolean isXmlIntegration);
 }
 

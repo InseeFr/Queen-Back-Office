@@ -16,7 +16,7 @@ public class NomenclatureFakeBuilder implements NomenclatureBuilder {
     );
 
     @Override
-    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile) {
+    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile, boolean isXmlIntegration) {
         return results;
     }
 }

@@ -7,6 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
+import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -74,14 +78,15 @@ class IntegrationTests {
                 .andExpect(status().isUnauthorized());
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("getPaths")
     @DisplayName("on integrate context, return integration state")
-    void integrateContext03() throws Exception {
-        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("integration/integration-component.zip");
+    void integrateContext030(String internalZipPath, String urlPath) throws Exception {
+        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("integration" + internalZipPath + "/integration-component.zip");
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, zipInputStream
         );
 
-        MvcResult result = mockMvc.perform(multipart("/api/campaign/context")
+        MvcResult result = mockMvc.perform(multipart("/api/campaign" + urlPath + "/context")
                         .file(uploadedFile)
                         .with(authentication(adminUser))
                 )
@@ -97,10 +102,17 @@ class IntegrationTests {
                         { "id":"regions2019", "status":"ERROR", "cause":"Nomenclature file 'regions2019.json' could not be found in input zip" }
                     ],
                     "questionnaireModels":[
-                        { "id":"simpsons-2023-v1","status":"ERROR","cause":"Questionnaire model has campaign id SIMPSONS2020X00 while campaign in zip has id SIMPSONS2023X00"},
+                        { "id":"simpsons-2023-v1", "status":"CREATED"},
                         { "id":"simpsons-2023-v2", "status":"ERROR", "cause":"Questionnaire model file 'simpsons-v2' could not be found in input zip" }
                     ]
                 }""";
-        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
+    }
+
+    private static Stream<Arguments> getPaths() {
+        return Stream.of(
+                Arguments.of("/json", ""),
+                Arguments.of("/xml", "/xml")
+        );
     }
 }

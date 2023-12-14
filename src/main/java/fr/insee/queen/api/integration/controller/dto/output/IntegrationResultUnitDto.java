@@ -13,6 +13,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @RequiredArgsConstructor
 @EqualsAndHashCode
+@ToString
 @Getter
 public class IntegrationResultUnitDto implements Serializable {
     @Serial

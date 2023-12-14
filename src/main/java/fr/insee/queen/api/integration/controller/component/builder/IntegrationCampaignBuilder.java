@@ -39,6 +39,7 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
@@ -51,22 +52,27 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
     private final SchemaComponent schemaComponent;
     private final Validator validator;
     private final IntegrationService integrationService;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper mapper;
     private static final String LABEL = "Label";
     private static final String METADATA = "Metadata";
     public static final String CAMPAIGN_XML = "campaign.xml";
+    public static final String CAMPAIGN_JSON = "campaign.json";
 
     @Override
-    public IntegrationResultUnitDto build(ZipFile integrationZipFile) {
-        try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, CAMPAIGN_XML, "campaign_integration_template.xsd");
-        } catch (IntegrationValidationException ex) {
-            return ex.getResultError();
+    public IntegrationResultUnitDto build(ZipFile integrationZipFile, boolean isXmlIntegration) {
+        if(isXmlIntegration) {
+            return buildXmlCampaign(integrationZipFile);
         }
         return buildCampaign(integrationZipFile);
     }
 
-    private IntegrationResultUnitDto buildCampaign(ZipFile zf) {
+    private IntegrationResultUnitDto buildXmlCampaign(ZipFile zf) {
+        try {
+            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, CAMPAIGN_XML, "campaign_integration_template.xsd");
+        } catch (IntegrationValidationException ex) {
+            return ex.getResultError();
+        }
+
         Document doc;
         try {
             doc = schemaComponent.buildDocument(zf.getInputStream(zf.getEntry(CAMPAIGN_XML)));
@@ -79,7 +85,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
         String id;
         try {
             XPathExpression expr = xpath.compile("/Campaign/Id/text()");
-            id = expr.evaluate(doc, XPathConstants.STRING).toString().toUpperCase();
+            id = expr.evaluate(doc, XPathConstants.STRING).toString();
         } catch (XPathExpressionException e) {
             log.error("Error when parsing campaign xml", e);
             return IntegrationResultUnitDto.integrationResultUnitError(null, IntegrationResultLabel.CAMPAIGN_ID_INCORRECT);
@@ -88,7 +94,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
         NodeList metadataTags = doc.getElementsByTagName(METADATA);
         NodeList labelTags = doc.getElementsByTagName(LABEL);
 
-        ObjectNode metadataValue = objectMapper.createObjectNode();
+        ObjectNode metadataValue = mapper.createObjectNode();
         if (metadataTags.getLength() > 0) {
             log.info("Setting metadata for campaign {}", id);
             try {
@@ -105,11 +111,26 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             label = labelTags.item(0).getTextContent();
         }
 
-        return buildCampaign(id, label, metadataValue);
+        CampaignIntegrationData campaign = new CampaignIntegrationData(id, label, metadataValue);
+        return buildCampaign(campaign);
     }
 
-    private IntegrationResultUnitDto buildCampaign(String id, String label, ObjectNode metadata) {
-        CampaignIntegrationData campaign = new CampaignIntegrationData(id, label, metadata);
+    private IntegrationResultUnitDto buildCampaign(ZipFile zf) {
+        try {
+            schemaComponent.throwExceptionIfDataFileNotExist(zf, CAMPAIGN_JSON);
+            ZipEntry zipCampaignFile = zf.getEntry(CAMPAIGN_JSON);
+            CampaignIntegrationData campaign = mapper.readValue(zf.getInputStream(zipCampaignFile), CampaignIntegrationData.class);
+            return buildCampaign(campaign);
+        } catch (IntegrationValidationException ex) {
+            return ex.getResultError();
+        }  catch (IOException e) {
+            return IntegrationResultUnitDto.integrationResultUnitError(
+                    null,
+                    String.format(IntegrationResultLabel.JSON_PARSING_ERROR, CAMPAIGN_JSON));
+        }
+    }
+
+    private IntegrationResultUnitDto buildCampaign(CampaignIntegrationData campaign) {
         Set<ConstraintViolation<CampaignIntegrationData>> violations = validator.validate(campaign);
         if (!violations.isEmpty()) {
             StringBuilder violationMessage = new StringBuilder();
@@ -127,7 +148,6 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
     }
 
     private ObjectNode convertMetadataValueToObjectNode(Node xmlNode) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         String jsonString = XML.toJSONObject(toString(xmlNode)).toString();
         ObjectNode metadataObject = mapper.readValue(jsonString, ObjectNode.class);
         if (metadataObject.get(METADATA).isEmpty()) {
