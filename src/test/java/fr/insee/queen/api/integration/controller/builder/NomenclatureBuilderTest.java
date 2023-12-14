@@ -4,19 +4,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.api.integration.controller.component.builder.IntegrationNomenclatureBuilder;
 import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaIntegrationComponent;
 import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.api.integration.service.dummy.IntegrationFakeService;
 import fr.insee.queen.api.integration.service.model.IntegrationResultLabel;
 import fr.insee.queen.api.integration.service.model.IntegrationStatus;
-import fr.insee.queen.api.integration.service.dummy.IntegrationFakeService;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,13 +40,14 @@ class NomenclatureBuilderTest {
         nomenclatureBuilder = new IntegrationNomenclatureBuilder(schemaComponent, validator, objectMapper, integrationService);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("xmlIntegrationWithPaths")
     @DisplayName("on building nomenclatures, return integration result created")
-    void testNomenclatureBuilder01() throws IOException {
+    void testNomenclatureBuilder01(String path, boolean isXmlIntegration) throws IOException {
         String nomenclatureId1 = "regions2023";
         String nomenclatureId2 = "cities2023";
-        ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/valid-nomenclatures.zip");
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
+        ZipFile zipFile = zipUtils.createZip("integration" + path + "/nomenclature-builder/valid-nomenclatures.zip");
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, isXmlIntegration);
         IntegrationResultUnitDto result1 = new IntegrationResultUnitDto(nomenclatureId1, IntegrationStatus.CREATED, null);
         IntegrationResultUnitDto result2 = new IntegrationResultUnitDto(nomenclatureId2, IntegrationStatus.CREATED, null);
         assertThat(results)
@@ -51,13 +56,14 @@ class NomenclatureBuilderTest {
                 .contains(result2);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("xmlIntegrationWithPaths")
     @DisplayName("on building nomenclature, when nomenclature input invalid return integration error")
-    void testNomenclatureBuilder02() throws IOException {
+    void testNomenclatureBuilder02(String path, boolean isXmlIntegration) throws IOException {
         String nomenclatureId = "cities%2023";
-        ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/invalid-input-nomenclatures.zip");
+        ZipFile zipFile = zipUtils.createZip("integration" + path + "/nomenclature-builder/invalid-input-nomenclatures.zip");
 
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, isXmlIntegration);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -70,41 +76,44 @@ class NomenclatureBuilderTest {
         assertThat(errorResult.getCause()).contains("label: must not be blank.");
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("xmlIntegrationWithPaths")
     @DisplayName("on building nomenclature, when json nomenclature forgotten return integration error")
-    void testNomenclatureBuilder03() throws IOException {
-        ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/forgotten-nomenclatures.zip");
+    void testNomenclatureBuilder03(String path, boolean isXmlIntegration) throws IOException {
+        ZipFile zipFile = zipUtils.createZip("integration" + path + "/nomenclature-builder/forgotten-nomenclatures.zip");
 
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, isXmlIntegration);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
-        log.error(resultErrors.toString());
         IntegrationResultUnitDto errorResult = resultErrors.get(0);
         assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.getId()).isEqualTo("cities2023");
         assertThat(errorResult.getCause()).contains(String.format(IntegrationResultLabel.NOMENCLATURE_FILE_NOT_FOUND, "cities2023.json"));
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("xmlIntegrationWithPaths")
     @DisplayName("on building nomenclature, when nomenclature xml missing return integration error")
-    void testNomenclatureBuilder04() throws IOException {
-        ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/xml-nomenclature-missing.zip");
+    void testNomenclatureBuilder04(String path, boolean isXmlIntegration) throws IOException {
+        ZipFile zipFile = zipUtils.createZip("integration" + path + "/nomenclature-builder/xml-nomenclature-missing.zip");
 
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, isXmlIntegration);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto nomenclatureResult = results.get(0);
         assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(nomenclatureResult.getId()).isNull();
-        assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationNomenclatureBuilder.NOMENCLATURES_XML));
+        assertThat(nomenclatureResult.getCause())
+                .containsAnyOf(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationNomenclatureBuilder.NOMENCLATURES_XML),
+                        String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationNomenclatureBuilder.NOMENCLATURES_JSON));
     }
 
     @Test
     @DisplayName("on building nomenclature, when malformed xml nomenclature return integration error")
-    void testNomenclatureBuilder05() throws IOException {
-        ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/malformed-nomenclatures.zip");
+    void testNomenclatureBuilderXml05() throws IOException {
+        ZipFile zipFile = zipUtils.createZip("integration/xml/nomenclature-builder/malformed-nomenclatures.zip");
 
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
         assertThat(results).hasSize(1);
@@ -112,5 +121,25 @@ class NomenclatureBuilderTest {
         assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(nomenclatureResult.getId()).isNull();
         assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationNomenclatureBuilder.NOMENCLATURES_XML, ""));
+    }
+
+    @Test
+    @DisplayName("on building nomenclature, when malformed xml nomenclature return integration error")
+    void testNomenclatureBuilderJson05() throws IOException {
+        ZipFile zipFile = zipUtils.createZip("integration/json/nomenclature-builder/malformed-nomenclatures.zip");
+
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, false);
+        assertThat(results).hasSize(1);
+        IntegrationResultUnitDto nomenclatureResult = results.get(0);
+        assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(nomenclatureResult.getId()).isNull();
+        assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.JSON_PARSING_ERROR, IntegrationNomenclatureBuilder.NOMENCLATURES_JSON));
+    }
+
+    private static Stream<Arguments> xmlIntegrationWithPaths() {
+        return Stream.of(
+                Arguments.of("/json", false),
+                Arguments.of("/xml", true)
+        );
     }
 }

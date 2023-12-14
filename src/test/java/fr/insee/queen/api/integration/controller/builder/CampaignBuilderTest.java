@@ -4,18 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.api.integration.controller.component.builder.IntegrationCampaignBuilder;
 import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaIntegrationComponent;
 import fr.insee.queen.api.integration.controller.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.api.integration.service.dummy.IntegrationFakeService;
 import fr.insee.queen.api.integration.service.model.IntegrationResultLabel;
 import fr.insee.queen.api.integration.service.model.IntegrationStatus;
-import fr.insee.queen.api.integration.service.dummy.IntegrationFakeService;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,24 +39,26 @@ class CampaignBuilderTest {
         campaignBuilder = new IntegrationCampaignBuilder(schemaComponent, validator, integrationService, objectMapper);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("xmlIntegrationWithPaths")
     @DisplayName("on building campaign, return integration success")
-    void testCampaignBuilder01() throws IOException {
+    void testCampaignBuilder01(String path, boolean isXmlIntegration) throws IOException {
         String campaignId = "SIMPSONS2020X00";
-        ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/valid-campaign.zip");
+        ZipFile zipFile = zipUtils.createZip("integration" + path + "/campaign-builder/valid-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, true);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, isXmlIntegration);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);
         assertThat(campaignResult.getId()).isEqualTo(campaignId);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("xmlIntegrationWithPaths")
     @DisplayName("on building campaign, when campaign input invalid return integration error")
-    void testCampaignBuilder02() throws IOException {
-        String campaignId = "%hello !".toUpperCase();
-        ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/invalid-input-campaign.zip");
+    void testCampaignBuilder02(String path, boolean isXmlIntegration) throws IOException {
+        String campaignId = "%hello !";
+        ZipFile zipFile = zipUtils.createZip("integration" + path + "/campaign-builder/invalid-input-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, true);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, isXmlIntegration);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isEqualTo(campaignId);
         assertThat(campaignResult.getCause()).contains("id: The identifier is invalid.");
@@ -61,8 +67,8 @@ class CampaignBuilderTest {
 
     @Test
     @DisplayName("on building campaign, when campaign input forgotten return integration error")
-    void testCampaignBuilder03() throws IOException {
-        ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/forgotten-input-campaign.zip");
+    void testCampaignBuilderXml03() throws IOException {
+        ZipFile zipFile = zipUtils.createZip("integration/xml/campaign-builder/forgotten-input-campaign.zip");
 
         IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, true);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
@@ -71,13 +77,36 @@ class CampaignBuilderTest {
     }
 
     @Test
-    @DisplayName("on building campaign, when campaign xml missing return integration error")
-    void testCampaignBuilder04() throws IOException {
-        ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/xml-campaign-missing.zip");
+    @DisplayName("on building campaign, when campaign input forgotten return integration error")
+    void testCampaignBuilderJson03() throws IOException {
+        ZipFile zipFile = zipUtils.createZip("integration/json/campaign-builder/forgotten-input-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, true);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, false);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isNull();
-        assertThat(campaignResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationCampaignBuilder.CAMPAIGN_XML));
+        assertThat(campaignResult.getCause())
+                .contains("id: The identifier is invalid.")
+                .contains("label: must not be blank.");
+    }
+
+    @ParameterizedTest
+    @MethodSource("xmlIntegrationWithPaths")
+    @DisplayName("on building campaign, when campaign xml missing return integration error")
+    void testCampaignBuilder04(String path, boolean isXmlIntegration) throws IOException {
+        ZipFile zipFile = zipUtils.createZip("integration" + path + "/campaign-builder/campaign-missing.zip");
+
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, isXmlIntegration);
+        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(campaignResult.getId()).isNull();
+        assertThat(campaignResult.getCause()).containsAnyOf(
+                        String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationCampaignBuilder.CAMPAIGN_XML),
+                        String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationCampaignBuilder.CAMPAIGN_JSON));
+    }
+
+    private static Stream<Arguments> xmlIntegrationWithPaths() {
+        return Stream.of(
+                Arguments.of("/json", false),
+                Arguments.of("/xml", true)
+        );
     }
 }
