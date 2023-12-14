@@ -11,7 +11,6 @@ import fr.insee.queen.api.integration.service.model.IntegrationStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,11 +60,11 @@ public class IntegrationComponent {
      * @param isXmlIntegration Is integration done with xml files
      * @return {@link IntegrationResultsDto} integration results
      */
-    private IntegrationResultsDto integrateContext(File integrationFile, MultipartFile file, boolean isXmlIntegration) throws IOException {
+    private IntegrationResultsDto integrateContext(File integrationFile, MultipartFile file, boolean isXmlIntegration) {
         try (FileOutputStream o = new FileOutputStream(integrationFile)) {
             IOUtils.copy(file.getInputStream(), o);
             return doIntegration(integrationFile, isXmlIntegration);
-        } catch (JSONException e) {
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new IntegrationComponentException(e.getMessage());
         }
@@ -78,7 +77,7 @@ public class IntegrationComponent {
      * @param isXmlIntegration Is integration done with xml files
      * @return {@link IntegrationResultsDto} integration results
      */
-    private IntegrationResultsDto doIntegration(File integrationFile, boolean isXmlIntegration) throws JSONException {
+    private IntegrationResultsDto doIntegration(File integrationFile, boolean isXmlIntegration) {
         IntegrationResultsDto result = new IntegrationResultsDto();
 
         try (ZipFile zf = new ZipFile(integrationFile)) {
