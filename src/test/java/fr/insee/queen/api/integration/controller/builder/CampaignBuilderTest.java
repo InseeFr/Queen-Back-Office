@@ -41,7 +41,7 @@ class CampaignBuilderTest {
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/valid-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, true);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);
         assertThat(campaignResult.getId()).isEqualTo(campaignId);
     }
@@ -52,7 +52,7 @@ class CampaignBuilderTest {
         String campaignId = "%hello !".toUpperCase();
         ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/invalid-input-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, true);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isEqualTo(campaignId);
         assertThat(campaignResult.getCause()).contains("id: The identifier is invalid.");
@@ -64,7 +64,7 @@ class CampaignBuilderTest {
     void testCampaignBuilder03() throws IOException {
         ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/forgotten-input-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, true);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isNull();
         assertThat(campaignResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationCampaignBuilder.CAMPAIGN_XML, ""));
@@ -75,7 +75,7 @@ class CampaignBuilderTest {
     void testCampaignBuilder04() throws IOException {
         ZipFile zipFile = zipUtils.createZip("integration/campaign-builder/xml-campaign-missing.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, true);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isNull();
         assertThat(campaignResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationCampaignBuilder.CAMPAIGN_XML));

@@ -1,5 +1,6 @@
 package fr.insee.queen.api.integration.controller.component.builder;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.api.integration.controller.component.builder.schema.SchemaComponent;
@@ -38,24 +39,29 @@ import java.util.zip.ZipFile;
 public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     private final SchemaComponent schemaComponent;
     private final Validator validator;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper mapper;
     private final IntegrationService integrationService;
     private static final String LABEL = "Label";
     private static final String ID = "Id";
     private static final String FILENAME = "FileName";
     public static final String NOMENCLATURES_XML = "nomenclatures.xml";
+    public static final String NOMENCLATURES_JSON = "nomenclatures.json";
 
     @Override
-    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile) {
+    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile, boolean isXmlIntegration) {
         try {
             schemaComponent.throwExceptionIfXmlDataFileNotValid(integrationZipFile, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
         } catch (IntegrationValidationException ex) {
             return List.of(ex.getResultError());
         }
+        if(isXmlIntegration) {
+            return buildXmlNomenclatures(integrationZipFile);
+        }
+
         return buildNomenclatures(integrationZipFile);
     }
 
-    private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {
+    private List<IntegrationResultUnitDto> buildXmlNomenclatures(ZipFile zf) {
 
         List<IntegrationResultUnitDto> results = new ArrayList<>();
 
@@ -86,6 +92,29 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
         return results;
     }
 
+    private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {
+
+        List<IntegrationResultUnitDto> results = new ArrayList<>();
+
+        try {
+            schemaComponent.throwExceptionIfDataFileNotExist(zf, NOMENCLATURES_JSON);
+            ZipEntry zipNomenclaturesFile = zf.getEntry(NOMENCLATURES_JSON);
+            List<NomenclatureItem> nomenclatureItems = mapper.readValue(zf.getInputStream(zipNomenclaturesFile), new TypeReference<List<NomenclatureItem>>(){});
+            for(NomenclatureItem nomenclatureItem : nomenclatureItems) {
+                ArrayNode nomenclatureValue = readNomenclatureStream(nomenclatureItem.id(), nomenclatureItem.fileName(), zf);
+                results.add(buildNomenclature(nomenclatureItem.id(), nomenclatureItem.label(), nomenclatureValue));
+            }
+        } catch (IntegrationValidationException ex) {
+            results.add(ex.getResultError());
+        } catch (IOException e) {
+            IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
+                    null,
+                    String.format(IntegrationResultLabel.JSON_PARSING_ERROR, NOMENCLATURES_JSON));
+            results.add(resultError);
+        }
+        return results;
+    }
+
     private IntegrationResultUnitDto buildNomenclature(String nomenclatureId, String nomenclatureLabel, ArrayNode nomenclatureValue) {
         NomenclatureIntegrationData nomenclature = new NomenclatureIntegrationData(nomenclatureId, nomenclatureLabel, nomenclatureValue);
         Set<ConstraintViolation<NomenclatureIntegrationData>> violations = validator.validate(nomenclature);
@@ -107,7 +136,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     private ArrayNode readNomenclatureStream(String nomenclatureId, String nomenclatureFilename, ZipFile zipFile) throws IntegrationValidationException {
         try {
             InputStream questionnaireInputStream = getNomenclatureInputStream(zipFile, nomenclatureId, nomenclatureFilename);
-            return objectMapper.readValue(questionnaireInputStream, ArrayNode.class);
+            return mapper.readValue(questionnaireInputStream, ArrayNode.class);
         } catch (IOException e) {
             log.info("Could not parse json in file {}", nomenclatureFilename);
             throw new IntegrationValidationException(IntegrationResultUnitDto.integrationResultUnitError(

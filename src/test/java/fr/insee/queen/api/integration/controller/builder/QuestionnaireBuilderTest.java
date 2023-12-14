@@ -43,7 +43,7 @@ class QuestionnaireBuilderTest {
         String questionnaireId2 = "simpson-v2";
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/valid-questionnaires.zip");
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, true);
         IntegrationResultUnitDto result1 = IntegrationResultUnitDto.integrationResultUnitCreated(questionnaireId1);
         IntegrationResultUnitDto result2 = IntegrationResultUnitDto.integrationResultUnitCreated(questionnaireId2);
         assertThat(results)
@@ -59,7 +59,7 @@ class QuestionnaireBuilderTest {
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/invalid-input-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, true);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -78,7 +78,7 @@ class QuestionnaireBuilderTest {
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/forgotten-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, true);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -97,7 +97,7 @@ class QuestionnaireBuilderTest {
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/xml-questionnaire-missing.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, true);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto questionnaireResult = results.get(0);
         assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
@@ -111,7 +111,7 @@ class QuestionnaireBuilderTest {
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/malformed-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, true);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto questionnaireResult = results.get(0);
         assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
@@ -128,7 +128,7 @@ class QuestionnaireBuilderTest {
 
         ZipFile zipFile = zipUtils.createZip("integration/questionnaire-builder/invalid-input-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, true);
         IntegrationResultUnitDto expectedResult1 = IntegrationResultUnitDto.integrationResultUnitError(questionnaireId1, String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, "SIMPSONS2020X00", campaignId));
         IntegrationResultUnitDto expectedResult2 = IntegrationResultUnitDto.integrationResultUnitError(questionnaireId2, String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, "SIMPSONS2020X00", campaignId));
 

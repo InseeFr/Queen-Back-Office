@@ -40,13 +40,14 @@ public class IntegrationComponent {
      * Return results about the integration of each component (campaign/questionnaires/nomenclatures)
      *
      * @param integrationFile integration file
+     * @param isXmlIntegration Is integration done with xml files
      * @return {@link IntegrationResultsDto} integration results
      */
-    public IntegrationResultsDto integrateContext(MultipartFile integrationFile) {
+    public IntegrationResultsDto integrateContext(MultipartFile integrationFile, boolean isXmlIntegration) {
         try {
             Path tempDirectoryPath = Path.of(applicationProperties.tempFolder());
             File zip = Files.createTempFile(tempDirectoryPath, UUID.randomUUID().toString(), ".temp").toFile();
-            return integrateContext(zip, integrationFile);
+            return integrateContext(zip, integrationFile, isXmlIntegration);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new IntegrationComponentException(e.getMessage());
@@ -57,12 +58,13 @@ public class IntegrationComponent {
      * Try to do the full integration of a campaign.
      *
      * @param integrationFile integration file
+     * @param isXmlIntegration Is integration done with xml files
      * @return {@link IntegrationResultsDto} integration results
      */
-    private IntegrationResultsDto integrateContext(File integrationFile, MultipartFile file) throws IOException {
+    private IntegrationResultsDto integrateContext(File integrationFile, MultipartFile file, boolean isXmlIntegration) throws IOException {
         try (FileOutputStream o = new FileOutputStream(integrationFile)) {
             IOUtils.copy(file.getInputStream(), o);
-            return doIntegration(integrationFile);
+            return doIntegration(integrationFile, isXmlIntegration);
         } catch (JSONException e) {
             log.error(e.getMessage(), e);
             throw new IntegrationComponentException(e.getMessage());
@@ -73,23 +75,24 @@ public class IntegrationComponent {
      * Try to do the full integration of a campaign.
      *
      * @param integrationFile integration file
+     * @param isXmlIntegration Is integration done with xml files
      * @return {@link IntegrationResultsDto} integration results
      */
-    private IntegrationResultsDto doIntegration(File integrationFile) throws JSONException {
+    private IntegrationResultsDto doIntegration(File integrationFile, boolean isXmlIntegration) throws JSONException {
         IntegrationResultsDto result = new IntegrationResultsDto();
 
         try (ZipFile zf = new ZipFile(integrationFile)) {
-            List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureBuilder.build(zf);
+            List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureBuilder.build(zf, isXmlIntegration);
             result.setNomenclatures(nomenclatureResults);
 
-            IntegrationResultUnitDto campaignResult = campaignBuilder.build(zf);
+            IntegrationResultUnitDto campaignResult = campaignBuilder.build(zf, isXmlIntegration);
             result.setCampaign(campaignResult);
 
             if (campaignResult.getStatus() == IntegrationStatus.ERROR) {
                 return result;
             }
 
-            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(campaignResult.getId(), zf);
+            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(campaignResult.getId(), zf, isXmlIntegration);
             result.setQuestionnaireModels(questionnaireResults);
 
             return result;

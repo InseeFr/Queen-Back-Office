@@ -42,7 +42,7 @@ class NomenclatureBuilderTest {
         String nomenclatureId1 = "regions2023";
         String nomenclatureId2 = "cities2023";
         ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/valid-nomenclatures.zip");
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
         IntegrationResultUnitDto result1 = new IntegrationResultUnitDto(nomenclatureId1, IntegrationStatus.CREATED, null);
         IntegrationResultUnitDto result2 = new IntegrationResultUnitDto(nomenclatureId2, IntegrationStatus.CREATED, null);
         assertThat(results)
@@ -57,7 +57,7 @@ class NomenclatureBuilderTest {
         String nomenclatureId = "cities%2023";
         ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/invalid-input-nomenclatures.zip");
 
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -75,7 +75,7 @@ class NomenclatureBuilderTest {
     void testNomenclatureBuilder03() throws IOException {
         ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/forgotten-nomenclatures.zip");
 
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -93,7 +93,7 @@ class NomenclatureBuilderTest {
     void testNomenclatureBuilder04() throws IOException {
         ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/xml-nomenclature-missing.zip");
 
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto nomenclatureResult = results.get(0);
         assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
@@ -106,7 +106,7 @@ class NomenclatureBuilderTest {
     void testNomenclatureBuilder05() throws IOException {
         ZipFile zipFile = zipUtils.createZip("integration/nomenclature-builder/malformed-nomenclatures.zip");
 
-        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile);
+        List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto nomenclatureResult = results.get(0);
         assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);

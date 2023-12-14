@@ -44,7 +44,7 @@ class IntegrationComponentTest {
     void integrate01() {
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, "Hello, World!".getBytes()
         );
-        assertThatThrownBy(() -> integrationComponent.integrateContext(uploadedFile)).isInstanceOf(IntegrationComponentException.class);
+        assertThatThrownBy(() -> integrationComponent.integrateContext(uploadedFile, true)).isInstanceOf(IntegrationComponentException.class);
     }
 
     @Test
@@ -52,7 +52,7 @@ class IntegrationComponentTest {
     void integrate02() throws IOException {
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("integration/integration-component.zip");
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
-        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
+        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile, true);
         log.error(result.toString());
         assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultSuccess());
         assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
@@ -65,7 +65,7 @@ class IntegrationComponentTest {
         campaignBuilder.setResultIsInErrorState(true);
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("integration/integration-component.zip");
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
-        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
+        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile, true);
         assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultError());
         assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
         assertThat(result.getQuestionnaireModels()).isNull();

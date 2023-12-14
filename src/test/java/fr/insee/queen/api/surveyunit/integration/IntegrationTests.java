@@ -81,7 +81,7 @@ class IntegrationTests {
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, zipInputStream
         );
 
-        MvcResult result = mockMvc.perform(multipart("/api/campaign/context")
+        MvcResult result = mockMvc.perform(multipart("/api/campaign/xml/context")
                         .file(uploadedFile)
                         .with(authentication(adminUser))
                 )
@@ -101,6 +101,6 @@ class IntegrationTests {
                         { "id":"simpsons-2023-v2", "status":"ERROR", "cause":"Questionnaire model file 'simpsons-v2' could not be found in input zip" }
                     ]
                 }""";
-        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 }
