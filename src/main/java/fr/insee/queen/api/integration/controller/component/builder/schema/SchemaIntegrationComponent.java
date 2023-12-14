@@ -37,7 +37,7 @@ public class SchemaIntegrationComponent implements SchemaComponent {
         }
 
         try {
-            InputStream templateStream = getClass().getClassLoader().getResourceAsStream("templates//" + xsdSchemaFileName);
+            InputStream templateStream = getClass().getClassLoader().getResourceAsStream("templates/" + xsdSchemaFileName);
             SchemaFactory facto = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             facto.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             facto.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
