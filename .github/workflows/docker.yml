@@ -46,7 +46,7 @@ jobs:
         run: echo "::set-output name=prop::$(echo ${GITHUB_REF#refs/heads/})"
       - run: echo "Current branch ${{steps.extract_branch.outputs.prop}}"
       - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: inseefr/queen-back-office
           username: ${{ secrets.DOCKERHUB_USERNAME }}

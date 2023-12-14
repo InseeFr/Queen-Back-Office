@@ -65,7 +65,7 @@ jobs:
         run: echo "::set-output name=prop::$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)"
       - run: echo ${{steps.version.outputs.prop}}
       - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: inseefr/queen-back-office
           username: ${{ secrets.DOCKERHUB_USERNAME }}
