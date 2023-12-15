@@ -2,11 +2,11 @@ package fr.insee.queen.api.integration.controller.component.builder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
+import java.util.Set;
 
 public record QuestionnaireModelItem(String id,
                                      String label,
                                      String filename,
                                      @JsonProperty("required-nomenclatures")
-                                     List<String> requiredNomenclatures) {
+                                     Set<String> requiredNomenclatures) {
 }
