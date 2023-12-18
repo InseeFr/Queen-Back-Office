@@ -200,7 +200,7 @@
 						<version>0.8.11</version>
 						<configuration>
 							<excludes>
-								<exclude>fr/insee/queen/api/service/dataset/*.class</exclude>
+								<exclude>fr/insee/queen/api/dataset/service/*.class</exclude>
 							</excludes>
 						</configuration>
 						<executions>
