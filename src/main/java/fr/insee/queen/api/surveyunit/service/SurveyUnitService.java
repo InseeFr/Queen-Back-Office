@@ -13,6 +13,8 @@ public interface SurveyUnitService {
 
     void throwExceptionIfSurveyUnitNotExist(String surveyUnitId);
 
+    void throwExceptionIfSurveyUnitExist(String surveyUnitId);
+
     SurveyUnit getSurveyUnit(String id);
 
     List<SurveyUnitSummary> findSummariesByCampaignId(String campaignId);

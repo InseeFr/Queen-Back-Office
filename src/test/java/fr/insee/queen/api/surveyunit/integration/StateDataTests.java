@@ -77,7 +77,13 @@ class StateDataTests {
     @Test
     void on_update_state_data_state_data_is_updated() throws Exception {
         String surveyUnitId = "12";
-        String stateDataJson = JsonTestHelper.getResourceFileAsString("db/dataset/state_data.json");
+        String stateDataJson = """
+            {
+              "state": "EXTRACTED",
+              "date": 9999999999,
+              "currentPage": "2.3#5"
+            }
+        """;
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))

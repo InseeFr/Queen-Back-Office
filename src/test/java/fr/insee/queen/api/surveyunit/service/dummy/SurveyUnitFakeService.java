@@ -23,6 +23,9 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     private boolean checkSurveyUnitExist = false;
 
     @Getter
+    private boolean checkSurveyUnitNotExist = false;
+
+    @Getter
     private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
             new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
             new SurveyUnitSummary("survey-unit2", "questionnaire-id", "campaign-id"),
@@ -32,6 +35,11 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     @Override
     public void throwExceptionIfSurveyUnitNotExist(String surveyUnitId) {
         checkSurveyUnitExist = true;
+    }
+
+    @Override
+    public void throwExceptionIfSurveyUnitExist(String surveyUnitId) {
+        checkSurveyUnitNotExist = true;
     }
 
     @Override

@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -14,14 +16,27 @@ public class StateDataApiService implements StateDataService {
 
     private final StateDataRepository stateDataRepository;
 
+    public static final String NOT_FOUND_MESSAGE = "State data not found for survey unit %s";
+
     @Override
     public StateData getStateData(String surveyUnitId) {
         return stateDataRepository.find(surveyUnitId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("State data not found for survey unit %s", surveyUnitId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, surveyUnitId)));
     }
 
     @Override
-    public void updateStateData(String surveyUnitId, StateData stateData) {
-        stateDataRepository.save(surveyUnitId, stateData);
+    public void saveStateData(String surveyUnitId, StateData stateData) {
+        Optional<StateData> previousStateData = stateDataRepository.find(surveyUnitId);
+        if (previousStateData.isEmpty()) {
+            stateDataRepository.save(surveyUnitId, stateData);
+            return;
+        }
+
+        // update only if incoming state-data is newer
+        Long previousDate = previousStateData.get().date();
+        Long newDate = stateData.date();
+        if (newDate.compareTo(previousDate) > 0) {
+            stateDataRepository.save(surveyUnitId, stateData);
+        }
     }
 }

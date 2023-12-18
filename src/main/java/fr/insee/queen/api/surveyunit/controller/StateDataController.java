@@ -63,7 +63,7 @@ public class StateDataController {
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
                              @Valid @RequestBody StateDataInputData stateDataInputDto) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
-        stateDataService.updateStateData(surveyUnitId, StateDataInputData.toModel(stateDataInputDto));
+        stateDataService.saveStateData(surveyUnitId, StateDataInputData.toModel(stateDataInputDto));
     }
 
     /**

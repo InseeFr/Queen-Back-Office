@@ -15,18 +15,20 @@ import java.util.Objects;
 public class CampaignExistenceApiService implements CampaignExistenceService {
     private final CampaignRepository campaignRepository;
     private final CacheManager cacheManager;
+    public static final String NOT_FOUND_MESSAGE = "Campaign %s was not found";
+    public static final String ALREADY_EXIST_MESSAGE = "Campaign %s already exist";
 
     @Override
     public void throwExceptionIfCampaignNotExist(String campaignId) {
         if (!existsById(campaignId)) {
-            throw new EntityNotFoundException(String.format("Campaign %s was not found", campaignId));
+            throw new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, campaignId));
         }
     }
 
     @Override
     public void throwExceptionIfCampaignAlreadyExist(String campaignId) {
         if (existsById(campaignId)) {
-            throw new EntityAlreadyExistException(String.format("Campaign %s already exist", campaignId));
+            throw new EntityAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, campaignId));
         }
     }
 
