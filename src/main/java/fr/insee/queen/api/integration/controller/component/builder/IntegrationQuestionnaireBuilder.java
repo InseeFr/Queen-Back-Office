@@ -25,9 +25,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -137,10 +137,10 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
 
 
         NodeList qmNomenclatures = qm.getElementsByTagName(NOMENCLATURE);
-        List<String> requiredNomenclatureIds = IntStream.range(0, qmNomenclatures.getLength())
+        Set<String> requiredNomenclatureIds = IntStream.range(0, qmNomenclatures.getLength())
                 .filter(j -> qmNomenclatures.item(j).getNodeType() == Node.ELEMENT_NODE)
                 .mapToObj(j -> qmNomenclatures.item(j).getTextContent())
-                .toList();
+                .collect(Collectors.toSet());
 
         QuestionnaireModelItem questionnaireModelItem = new QuestionnaireModelItem(qmId, qmLabel, qmFileName, requiredNomenclatureIds);
         try {
@@ -160,7 +160,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
                 qmCampaignId,
                 questionnaireModelItem.label(),
                 qmValue,
-                new HashSet<>(questionnaireModelItem.requiredNomenclatures()));
+                questionnaireModelItem.requiredNomenclatures());
         Set<ConstraintViolation<QuestionnaireModelIntegrationData>> violations = validator.validate(questionnaire);
         if (!violations.isEmpty()) {
             StringBuilder violationMessage = new StringBuilder();
