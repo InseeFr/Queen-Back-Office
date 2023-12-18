@@ -9,6 +9,7 @@ import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitDto;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitOkNokDto;
 import fr.insee.queen.api.surveyunit.service.StateDataService;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitState;
 import fr.insee.queen.api.web.validation.IdValid;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +62,7 @@ public class StateDataController {
     @PutMapping(path = "/survey-unit/{id}/state-data")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                             @Valid @RequestBody StateDataInputData stateDataInputDto) {
+                             @Valid @RequestBody StateDataInputData stateDataInputDto) throws StateDataDateInvalidDateException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         stateDataService.saveStateData(surveyUnitId, StateDataInputData.toModel(stateDataInputDto));
     }

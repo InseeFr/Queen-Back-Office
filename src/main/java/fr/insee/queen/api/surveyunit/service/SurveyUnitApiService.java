@@ -4,6 +4,7 @@ import fr.insee.queen.api.campaign.service.CampaignExistenceService;
 import fr.insee.queen.api.campaign.service.QuestionnaireModelExistenceService;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.gateway.SurveyUnitRepository;
 import fr.insee.queen.api.surveyunit.service.model.StateData;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
@@ -100,13 +101,19 @@ public class SurveyUnitApiService implements SurveyUnitService {
         if (newStateData == null) {
             return;
         }
-        stateDataService.saveStateData(surveyUnit.id(), newStateData);
+        try {
+            stateDataService.saveStateData(surveyUnit.id(), newStateData);
+        } catch (StateDataDateInvalidDateException ex) {
+            // in the case of survey unit update, a problem with state data does not require to
+            // rollback the other updates on survey unit
+            log.warn(String.format("%s - %s", surveyUnit.id(), ex.getMessage()));
+        }
     }
 
     @Transactional
     @Override
     @CacheEvict(value = CacheName.SURVEY_UNIT_EXIST, key = "#surveyUnit.id")
-    public void createSurveyUnit(SurveyUnit surveyUnit) {
+    public void createSurveyUnit(SurveyUnit surveyUnit) throws StateDataDateInvalidDateException {
         throwExceptionIfSurveyUnitExist(surveyUnit.id());
         campaignExistenceService.throwExceptionIfCampaignNotExist(surveyUnit.campaignId());
         questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(surveyUnit.questionnaireId());

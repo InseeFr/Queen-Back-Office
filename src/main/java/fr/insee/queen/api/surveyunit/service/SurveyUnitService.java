@@ -1,6 +1,7 @@
 package fr.insee.queen.api.surveyunit.service;
 
 import fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitState;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
@@ -23,7 +24,7 @@ public interface SurveyUnitService {
 
     void updateSurveyUnit(SurveyUnit surveyUnit);
 
-    void createSurveyUnit(SurveyUnit surveyUnit);
+    void createSurveyUnit(SurveyUnit surveyUnit) throws StateDataDateInvalidDateException;
 
     List<SurveyUnitSummary> findSummariesByIds(List<String> surveyUnits);
 

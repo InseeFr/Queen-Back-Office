@@ -8,6 +8,7 @@ import fr.insee.queen.api.depositproof.service.exception.DepositProofException;
 import fr.insee.queen.api.integration.controller.component.exception.IntegrationComponentException;
 import fr.insee.queen.api.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.api.pilotage.service.exception.PilotageApiException;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
 import fr.insee.queen.api.web.authentication.AuthenticationTokenException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -112,7 +113,7 @@ public class ExceptionControllerAdvice {
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request, errorMessage);
     }
 
-    @ExceptionHandler({EntityNotFoundException.class})
+    @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiError> noEntityFoundException(EntityNotFoundException e, WebRequest request) {
         log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.NOT_FOUND, request);
@@ -162,6 +163,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(DepositProofException.class)
     public ResponseEntity<ApiError> depositProofException(DepositProofException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    @ExceptionHandler(StateDataDateInvalidDateException.class)
+    public ResponseEntity<ApiError> stateDataException(StateDataDateInvalidDateException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler(RestClientException.class)

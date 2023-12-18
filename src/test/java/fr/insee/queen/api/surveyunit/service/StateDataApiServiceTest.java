@@ -2,6 +2,7 @@ package fr.insee.queen.api.surveyunit.service;
 
 import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.surveyunit.dao.dummy.StateDataFakeDao;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.StateData;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +43,7 @@ class StateDataApiServiceTest {
 
     @Test
     @DisplayName("On saving new state data, when previous state data doesn't exist, save new state data")
-    void testSave01() {
+    void testSave01() throws StateDataDateInvalidDateException {
         stateDataDao.setHasEmptyStateData(true);
         StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 1000000L, "5");
         stateDataService.saveStateData(surveyUnitId, stateDataUpdate);
@@ -51,7 +52,7 @@ class StateDataApiServiceTest {
 
     @Test
     @DisplayName("On saving new state data, when previous state data is older, save new state data")
-    void testSave02() {
+    void testSave02() throws StateDataDateInvalidDateException {
         StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 100000000L, "5");
         assertThat(stateDataUpdate.date()).isGreaterThan(StateDataFakeDao.STATE_DATA.date());
         stateDataService.saveStateData(surveyUnitId, stateDataUpdate);
@@ -59,11 +60,13 @@ class StateDataApiServiceTest {
     }
 
     @Test
-    @DisplayName("On saving new state data, when previous state data is newer, new state data is not saved")
+    @DisplayName("On saving new state data, when previous state data is newer, throw exception")
     void testSave03() {
         StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 800000L, "5");
         assertThat(stateDataUpdate.date()).isLessThanOrEqualTo(StateDataFakeDao.STATE_DATA.date());
-        stateDataService.saveStateData(surveyUnitId, stateDataUpdate);
+        assertThatThrownBy(() -> stateDataService.saveStateData(surveyUnitId, stateDataUpdate))
+                .isInstanceOf(StateDataDateInvalidDateException.class)
+                .hasMessage(StateDataApiService.INVALID_DATE_MESSAGE);
         assertThat(stateDataDao.getStateDataSaved()).isNull();
     }
 }
