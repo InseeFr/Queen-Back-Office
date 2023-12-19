@@ -34,7 +34,6 @@ class StateDataApiServiceTest {
     @Test
     @DisplayName("On retrieving state data, when state data is empty, throw exception")
     void testGet02() {
-        String surveyUnitId = "11";
         stateDataDao.setHasEmptyStateData(true);
         assertThatThrownBy(() -> stateDataService.getStateData(surveyUnitId))
                 .isInstanceOf(EntityNotFoundException.class)
