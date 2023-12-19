@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class QuestionnaireModelApiExistenceService implements QuestionnaireModelExistenceService {
     private final QuestionnaireModelRepository questionnaireModelRepository;
+    public static final String NOT_FOUND_MESSAGE = "Questionnaire model %s was not found";
+    public static final String ALREADY_EXIST_MESSAGE = "Questionnaire model %s already exist";
 
     public boolean existsById(String questionnaireId) {
         return questionnaireModelRepository.exists(questionnaireId);
@@ -18,14 +20,14 @@ public class QuestionnaireModelApiExistenceService implements QuestionnaireModel
     @Override
     public void throwExceptionIfQuestionnaireNotExist(String questionnaireId) {
         if (!existsById(questionnaireId)) {
-            throw new EntityNotFoundException(String.format("Questionnaire model %s was not found", questionnaireId));
+            throw new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, questionnaireId));
         }
     }
 
     @Override
     public void throwExceptionIfQuestionnaireAlreadyExist(String questionnaireId) {
         if (existsById(questionnaireId)) {
-            throw new EntityAlreadyExistException(String.format("Questionnaire model %s already exist", questionnaireId));
+            throw new EntityAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, questionnaireId));
         }
     }
 }

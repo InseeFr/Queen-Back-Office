@@ -1,13 +1,16 @@
 package fr.insee.queen.api.surveyunit.service;
 
 import fr.insee.queen.api.campaign.service.CampaignExistenceService;
-import fr.insee.queen.api.campaign.service.QuestionnaireModelApiExistenceService;
+import fr.insee.queen.api.campaign.service.QuestionnaireModelExistenceService;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.gateway.SurveyUnitRepository;
+import fr.insee.queen.api.surveyunit.service.model.StateData;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitState;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
+import fr.insee.queen.api.web.exception.EntityAlreadyExistException;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +29,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SurveyUnitApiService implements SurveyUnitService {
     private final SurveyUnitRepository surveyUnitRepository;
+    private final StateDataService stateDataService;
     private final CampaignExistenceService campaignExistenceService;
-    private final QuestionnaireModelApiExistenceService questionnaireModelExistenceService;
+    private final QuestionnaireModelExistenceService questionnaireModelExistenceService;
     private final CacheManager cacheManager;
-
-    public static final String SURVEY_UNIT_NOT_FOUND_LABEL = "Survey unit %s was not found";
+    public static final String NOT_FOUND_MESSAGE = "Survey unit %s was not found";
+    public static final String ALREADY_EXIST_MESSAGE = "Survey unit %s already exists";
 
     @Override
     public boolean existsById(String surveyUnitId) {
@@ -48,14 +52,21 @@ public class SurveyUnitApiService implements SurveyUnitService {
     @Override
     public void throwExceptionIfSurveyUnitNotExist(String surveyUnitId) {
         if (!existsById(surveyUnitId)) {
-            throw new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, surveyUnitId));
+            throw new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, surveyUnitId));
+        }
+    }
+
+    @Override
+    public void throwExceptionIfSurveyUnitExist(String surveyUnitId) {
+        if (existsById(surveyUnitId)) {
+            throw new EntityAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, surveyUnitId));
         }
     }
 
     @Override
     public SurveyUnit getSurveyUnit(String id) {
         return surveyUnitRepository.find(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, id)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, id)));
     }
 
     @Override
@@ -84,16 +95,33 @@ public class SurveyUnitApiService implements SurveyUnitService {
     @Override
     public void updateSurveyUnit(SurveyUnit surveyUnit) {
         throwExceptionIfSurveyUnitNotExist(surveyUnit.id());
+        StateData newStateData = surveyUnit.stateData();
+
         surveyUnitRepository.updateInfos(surveyUnit);
+        if (newStateData == null) {
+            return;
+        }
+        try {
+            stateDataService.saveStateData(surveyUnit.id(), newStateData);
+        } catch (StateDataInvalidDateException ex) {
+            // in the case of survey unit update, a problem with state data does not require to
+            // rollback the other updates on survey unit
+            log.warn(String.format("%s - %s", surveyUnit.id(), ex.getMessage()));
+        }
     }
 
     @Transactional
     @Override
     @CacheEvict(value = CacheName.SURVEY_UNIT_EXIST, key = "#surveyUnit.id")
-    public void createSurveyUnit(SurveyUnit surveyUnit) {
+    public void createSurveyUnit(SurveyUnit surveyUnit) throws StateDataInvalidDateException {
+        throwExceptionIfSurveyUnitExist(surveyUnit.id());
         campaignExistenceService.throwExceptionIfCampaignNotExist(surveyUnit.campaignId());
         questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(surveyUnit.questionnaireId());
         surveyUnitRepository.create(surveyUnit);
+        StateData stateData = surveyUnit.stateData();
+        if(stateData != null) {
+            stateDataService.saveStateData(surveyUnit.id(), surveyUnit.stateData());
+        }
     }
 
     @Override
@@ -136,12 +164,12 @@ public class SurveyUnitApiService implements SurveyUnitService {
     public SurveyUnitDepositProof getSurveyUnitDepositProof(String surveyUnitId) {
         return surveyUnitRepository
                 .findWithCampaignAndStateById(surveyUnitId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, surveyUnitId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, surveyUnitId)));
     }
 
     @Override
     public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
         return findSummaryById(surveyUnitId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(SURVEY_UNIT_NOT_FOUND_LABEL, surveyUnitId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, surveyUnitId)));
     }
 }

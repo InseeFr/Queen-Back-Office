@@ -75,9 +75,28 @@ class StateDataTests {
     }
 
     @Test
-    void on_update_state_data_state_data_is_updated() throws Exception {
+    void on_update_state_data_when_date_invalid_return_409() throws Exception {
         String surveyUnitId = "12";
         String stateDataJson = JsonTestHelper.getResourceFileAsString("db/dataset/state_data.json");
+        mockMvc.perform(put("/api/survey-unit/" + surveyUnitId + "/state-data")
+                        .content(stateDataJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
+                )
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void on_update_state_data_state_data_is_updated() throws Exception {
+        String surveyUnitId = "12";
+        String stateDataJson = """
+            {
+              "state": "EXTRACTED",
+              "date": 9999999999,
+              "currentPage": "2.3#5"
+            }
+        """;
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))

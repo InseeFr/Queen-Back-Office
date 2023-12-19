@@ -13,6 +13,7 @@ import fr.insee.queen.api.dataset.service.DataSetInjectorService;
 import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.paradata.service.ParadataEventService;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.StateData;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import lombok.AllArgsConstructor;
@@ -291,7 +292,11 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
                 data.toString(),
                 comment.toString(),
                 stateData);
-        surveyUnitService.createSurveyUnit(surveyunit);
+        try {
+            surveyUnitService.createSurveyUnit(surveyunit);
+        } catch (StateDataInvalidDateException e) {
+            log.error(String.format("%s - %s", surveyUnitId, e.getMessage()));
+        }
     }
 
     private void createParadataEvents(String surveyUnitId) {

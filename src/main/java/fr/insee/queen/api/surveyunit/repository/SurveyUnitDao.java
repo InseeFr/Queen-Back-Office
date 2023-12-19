@@ -6,13 +6,15 @@ import fr.insee.queen.api.campaign.repository.jpa.CampaignJpaRepository;
 import fr.insee.queen.api.campaign.repository.jpa.QuestionnaireModelJpaRepository;
 import fr.insee.queen.api.depositproof.service.model.SurveyUnitDepositProof;
 import fr.insee.queen.api.paradata.repository.jpa.ParadataEventJpaRepository;
-import fr.insee.queen.api.surveyunit.repository.entity.*;
+import fr.insee.queen.api.surveyunit.repository.entity.CommentDB;
+import fr.insee.queen.api.surveyunit.repository.entity.DataDB;
+import fr.insee.queen.api.surveyunit.repository.entity.PersonalizationDB;
+import fr.insee.queen.api.surveyunit.repository.entity.SurveyUnitDB;
 import fr.insee.queen.api.surveyunit.repository.jpa.CommentJpaRepository;
 import fr.insee.queen.api.surveyunit.repository.jpa.DataJpaRepository;
 import fr.insee.queen.api.surveyunit.repository.jpa.PersonalizationJpaRepository;
 import fr.insee.queen.api.surveyunit.repository.jpa.SurveyUnitJpaRepository;
 import fr.insee.queen.api.surveyunit.service.gateway.SurveyUnitRepository;
-import fr.insee.queen.api.surveyunit.service.model.StateData;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitState;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
@@ -105,19 +107,9 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         DataDB dataDB = new DataDB(surveyUnit.data(), surveyUnitDB);
         CommentDB commentDB = new CommentDB(surveyUnit.comment(), surveyUnitDB);
         PersonalizationDB personalizationDB = new PersonalizationDB(surveyUnit.personalization(), surveyUnitDB);
-        StateDataDB stateDataDB;
-        StateData stateData = surveyUnit.stateData();
-        if (stateData == null) {
-            stateDataDB = new StateDataDB();
-            stateDataDB.setSurveyUnit(surveyUnitDB);
-        } else {
-            stateDataDB = new StateDataDB(stateData.state(), stateData.date(), stateData.currentPage(), surveyUnitDB);
-        }
-
         surveyUnitDB.setPersonalization(personalizationDB);
         surveyUnitDB.setComment(commentDB);
         surveyUnitDB.setData(dataDB);
-        surveyUnitDB.setStateData(stateDataDB);
         crudRepository.save(surveyUnitDB);
     }
 
@@ -189,7 +181,6 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         savePersonalization(surveyUnitId, surveyUnit.personalization());
         saveComment(surveyUnitId, surveyUnit.comment());
         saveData(surveyUnitId, surveyUnit.data());
-        stateDataDao.save(surveyUnitId, surveyUnit.stateData());
     }
 
     @Override

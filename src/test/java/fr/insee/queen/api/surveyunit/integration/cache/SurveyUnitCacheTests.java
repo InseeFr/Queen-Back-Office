@@ -3,6 +3,7 @@ package fr.insee.queen.api.surveyunit.integration.cache;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitApiService;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
@@ -44,7 +45,7 @@ class SurveyUnitCacheTests {
 
     @Test
     @DisplayName("When handling surveyUnits, handle correctly cache for surveyUnit existence")
-    void check_surveyUnit_existence_cache() {
+    void check_surveyUnit_existence_cache() throws StateDataInvalidDateException {
         String surveyUnitId = "surveyU-unit-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST)).get(surveyUnitId)).isNull();
         surveyUnitService.existsById(surveyUnitId);
@@ -75,7 +76,7 @@ class SurveyUnitCacheTests {
 
     @Test
     @DisplayName("When handling surveyUnits, handle correctly cache for survey units with campaign")
-    void check_surveyUnit_campaign_cache() {
+    void check_surveyUnit_campaign_cache() throws StateDataInvalidDateException {
         String surveyUnitId = "survey-unit-campaign-cache-id";
 
         // check cache is null at beginning
