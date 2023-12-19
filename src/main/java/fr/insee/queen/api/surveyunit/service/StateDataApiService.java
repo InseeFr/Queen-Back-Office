@@ -18,7 +18,7 @@ public class StateDataApiService implements StateDataService {
     private final StateDataRepository stateDataRepository;
 
     public static final String NOT_FOUND_MESSAGE = "State data not found for survey unit %s";
-    public static final String INVALID_DATE_MESSAGE = "State date is invalid";
+    public static final String INVALID_DATE_MESSAGE = "Date for state data is invalid";
 
     @Override
     public StateData getStateData(String surveyUnitId) {
@@ -37,7 +37,7 @@ public class StateDataApiService implements StateDataService {
         // update only if incoming state-data is newer
         Long previousDate = previousStateData.get().date();
         Long newDate = stateData.date();
-        if (newDate.compareTo(previousDate) <= 0) {
+        if (newDate.compareTo(previousDate) < 0) {
             throw new StateDataDateInvalidDateException(INVALID_DATE_MESSAGE);
         }
         stateDataRepository.save(surveyUnitId, stateData);
