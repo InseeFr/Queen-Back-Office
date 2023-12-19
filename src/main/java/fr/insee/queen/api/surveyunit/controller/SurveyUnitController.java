@@ -7,7 +7,7 @@ import fr.insee.queen.api.surveyunit.controller.dto.input.SurveyUnitCreationData
 import fr.insee.queen.api.surveyunit.controller.dto.input.SurveyUnitUpdateData;
 import fr.insee.queen.api.surveyunit.controller.dto.output.SurveyUnitDto;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
-import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.web.validation.IdValid;
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,7 +88,7 @@ public class SurveyUnitController {
     @PostMapping(path = "/campaign/{id}/survey-unit")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
     public ResponseEntity<Void> createUpdateSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
-                                                       @Valid @RequestBody SurveyUnitCreationData surveyUnitCreationData) throws StateDataDateInvalidDateException {
+                                                       @Valid @RequestBody SurveyUnitCreationData surveyUnitCreationData) throws StateDataInvalidDateException {
         SurveyUnit surveyUnit = SurveyUnitCreationData.toModel(surveyUnitCreationData, campaignId);
         if (surveyUnitService.existsById(surveyUnitCreationData.id())) {
             log.info("Update survey-unit with id {}", surveyUnitCreationData.id());

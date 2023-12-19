@@ -1,7 +1,7 @@
 package fr.insee.queen.api.surveyunit.service.dummy;
 
 import fr.insee.queen.api.surveyunit.service.StateDataService;
-import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.StateData;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,9 +21,9 @@ public class StateDataFakeService implements StateDataService {
     }
 
     @Override
-    public void saveStateData(String surveyUnitId, StateData stateData) throws StateDataDateInvalidDateException {
+    public void saveStateData(String surveyUnitId, StateData stateData) throws StateDataInvalidDateException {
         if(isDateInvalid) {
-            throw new StateDataDateInvalidDateException(ERROR_MESSAGE);
+            throw new StateDataInvalidDateException(ERROR_MESSAGE);
         }
         stateDataSaved = stateData;
     }

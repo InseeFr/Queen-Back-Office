@@ -5,7 +5,7 @@ import fr.insee.queen.api.campaign.service.dummy.QuestionnaireModelExistenceFake
 import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.surveyunit.dao.dummy.SurveyUnitFakeDao;
 import fr.insee.queen.api.surveyunit.service.dummy.StateDataFakeService;
-import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.StateData;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.web.exception.EntityAlreadyExistException;
@@ -40,7 +40,7 @@ class SurveyUnitApiServiceTest {
 
     @Test
     @DisplayName("On creating survey unit, check campaign existence")
-    void testCreate01() throws StateDataDateInvalidDateException {
+    void testCreate01() throws StateDataInvalidDateException {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
         SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
         surveyUnitFakeDao.setSurveyUnitExist(false);
@@ -51,7 +51,7 @@ class SurveyUnitApiServiceTest {
 
     @Test
     @DisplayName("On creating survey unit, check questionnaire existence")
-    void testCreate02() throws StateDataDateInvalidDateException {
+    void testCreate02() throws StateDataInvalidDateException {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
         SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
         surveyUnitFakeDao.setSurveyUnitExist(false);
@@ -72,7 +72,7 @@ class SurveyUnitApiServiceTest {
 
     @Test
     @DisplayName("On creating survey unit, when state data is null, don't save it")
-    void testCreate04() throws StateDataDateInvalidDateException {
+    void testCreate04() throws StateDataInvalidDateException {
         SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", null);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         surveyUnitApiService.createSurveyUnit(surveyUnit);
@@ -82,7 +82,7 @@ class SurveyUnitApiServiceTest {
 
     @Test
     @DisplayName("On creating survey unit, when state data is not null, save it")
-    void testCreate05() throws StateDataDateInvalidDateException {
+    void testCreate05() throws StateDataInvalidDateException {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
         SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
         surveyUnitFakeDao.setSurveyUnitExist(false);

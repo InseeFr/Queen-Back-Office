@@ -1,6 +1,6 @@
 package fr.insee.queen.api.surveyunit.service;
 
-import fr.insee.queen.api.surveyunit.service.exception.StateDataDateInvalidDateException;
+import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.gateway.StateDataRepository;
 import fr.insee.queen.api.surveyunit.service.model.StateData;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
@@ -27,7 +27,7 @@ public class StateDataApiService implements StateDataService {
     }
 
     @Override
-    public void saveStateData(String surveyUnitId, StateData stateData) throws StateDataDateInvalidDateException {
+    public void saveStateData(String surveyUnitId, StateData stateData) throws StateDataInvalidDateException {
         Optional<StateData> previousStateData = stateDataRepository.find(surveyUnitId);
         if (previousStateData.isEmpty()) {
             stateDataRepository.save(surveyUnitId, stateData);
@@ -38,7 +38,7 @@ public class StateDataApiService implements StateDataService {
         Long previousDate = previousStateData.get().date();
         Long newDate = stateData.date();
         if (newDate.compareTo(previousDate) < 0) {
-            throw new StateDataDateInvalidDateException(INVALID_DATE_MESSAGE);
+            throw new StateDataInvalidDateException(INVALID_DATE_MESSAGE);
         }
         stateDataRepository.save(surveyUnitId, stateData);
     }
