@@ -7,10 +7,7 @@ import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -25,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
@@ -39,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase()
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Transactional
 class NomenclatureTests {
     @Autowired
     private MockMvc mockMvc;
@@ -58,7 +56,6 @@ class NomenclatureTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
-    @Order(1)
     void on_post_nomenclature_json_nomenclature_created() throws Exception {
         String nomenclatureName = "plop";
         String nomenclatureJsonFile = "db/dataset/nomenclature/public_regions-2019.json";
@@ -76,8 +73,7 @@ class NomenclatureTests {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"plop,db/dataset/nomenclature/public_regions-2019.json"})
-    @Order(2)
+    @CsvSource(value = {"regions2019,db/dataset/nomenclature/public_regions-2019.json"})
     void on_get_nomenclature_return_json_nomenclature(String nomenclatureName, String nomenclatureJsonFile) throws Exception {
         MvcResult result = mockMvc.perform(get("/api/nomenclature/" + nomenclatureName)
                         .with(authentication(nonAdminUser)))
@@ -89,9 +85,8 @@ class NomenclatureTests {
     }
 
     @Test
-    @Order(3)
     void on_post_nomenclature_json_nomenclature_updated() throws Exception {
-        String nomenclatureName = "plop";
+        String nomenclatureName = "regions2019";
         String nomenclatureJsonFile = "db/dataset/nomenclature/cities_2019_nomenclature.json";
         on_get_nomenclature_return_json_nomenclature(nomenclatureName, "db/dataset/nomenclature/public_regions-2019.json");
         ArrayNode jsonNomenclature = JsonTestHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
@@ -107,13 +102,12 @@ class NomenclatureTests {
     }
 
     @Test
-    @Order(4)
     void on_get_nomenclatures_return_all_nomenclatures() throws Exception {
         mockMvc.perform(get("/api/nomenclatures")
                         .with(authentication(nonAdminUser)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(7)))
-                .andExpect(jsonPath("$[*]").value(containsInAnyOrder("plop", "cities2019", "regions2019", "L_DEPNAIS", "L_NATIONETR", "L_PAYSNAIS", "cog-communes")));
+                .andExpect(jsonPath("$.size()", is(6)))
+                .andExpect(jsonPath("$[*]").value(containsInAnyOrder("cities2019", "regions2019", "L_DEPNAIS", "L_NATIONETR", "L_PAYSNAIS", "cog-communes")));
     }
 
     @ParameterizedTest

@@ -3,10 +3,7 @@ package fr.insee.queen.api.surveyunit.integration;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -20,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -33,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase()
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Transactional
 class SurveyUnitsTempZoneTests {
 
     @Autowired
@@ -53,8 +52,7 @@ class SurveyUnitsTempZoneTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @ParameterizedTest
-    @ValueSource(strings = {"11", "12"})
-    @Order(1)
+    @ValueSource(strings = {"survey-unit-tempzone-11", "survey-unit-tempzone-12"})
     void on_create_survey_unit_then_return_201(String surveyUnitId) throws Exception {
         // no control on questionnaire id ...
         String questionnaireId = "\"questionnaire-" + surveyUnitId + "\"";
@@ -80,12 +78,12 @@ class SurveyUnitsTempZoneTests {
     }
 
     @Test
-    @Order(2)
     void on_get_survey_units_return_survey_units() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/survey-units/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(not(is(emptyOrNullString()))))
                 .andExpect(jsonPath("$[1].id").value(not(is(emptyOrNullString()))))
@@ -98,7 +96,7 @@ class SurveyUnitsTempZoneTests {
                 [
                     {
                       "surveyUnitId": "11",
-                      "userId": "dupont-identifier",
+                      "userId": "user-id",
                       "surveyUnit": {
                           "data": {
                             "EXTERNAL": {
@@ -113,7 +111,7 @@ class SurveyUnitsTempZoneTests {
                     },
                     {
                       "surveyUnitId": "12",
-                      "userId":"dupont-identifier",
+                      "userId":"user-id",
                       "surveyUnit": {
                           "data": {
                             "EXTERNAL": {

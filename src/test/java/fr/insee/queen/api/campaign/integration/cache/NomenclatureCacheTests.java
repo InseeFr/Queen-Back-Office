@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase()
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 class NomenclatureCacheTests {
 

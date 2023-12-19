@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase()
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 class SurveyUnitCacheTests {
 

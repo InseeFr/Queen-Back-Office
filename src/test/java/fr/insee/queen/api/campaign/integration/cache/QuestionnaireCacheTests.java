@@ -30,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase()
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 class QuestionnaireCacheTests {
 
@@ -57,7 +56,6 @@ class QuestionnaireCacheTests {
     }
 
     @Test
-    @Order(0)
     @DisplayName("When creating questionnaire, handle correctly cache")
     void check_questionnaire_cache01() {
         String questionnaireId = "questionnaire-cache-id";
@@ -65,7 +63,6 @@ class QuestionnaireCacheTests {
     }
 
     @Test
-    @Order(1)
     @DisplayName("When updating questionnaire, handle correctly cache")
     void check_questionnaire_cache02() {
         String questionnaireId = "questionnaire-cache-id";
@@ -97,7 +94,6 @@ class QuestionnaireCacheTests {
     }
 
     @Test
-    @Order(2)
     @DisplayName("When deleting campaigns, handle cache eviction on associated questionnaires")
     void check_questionnaire_cache03() {
         String questionnaireId1 = "questionnaire-cache-id1";
@@ -121,7 +117,6 @@ class QuestionnaireCacheTests {
     }
 
     @Test
-    @Order(3)
     @DisplayName("When updating campaign, handle cache eviction on all questionnaire metadatas")
     void check_questionnaire_cache04() {
         String questionnaireId1 = "questionnaire-cache-id1";

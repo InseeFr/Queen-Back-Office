@@ -1,6 +1,5 @@
 package fr.insee.queen.api.surveyunittempzone.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.api.surveyunittempzone.service.gateway.SurveyUnitTempZoneRepository;
 import fr.insee.queen.api.surveyunittempzone.service.model.SurveyUnitTempZone;
 import lombok.AllArgsConstructor;
@@ -17,9 +16,9 @@ public class SurveyUnitTempZoneApiService implements SurveyUnitTempZoneService {
     private final SurveyUnitTempZoneRepository surveyUnitTempZoneRepository;
 
     @Override
-    public void saveSurveyUnitToTempZone(String surveyUnitId, String userId, JsonNode surveyUnit) {
+    public void saveSurveyUnitToTempZone(String surveyUnitId, String userId, String surveyUnitData) {
         Long date = new Date().getTime();
-        surveyUnitTempZoneRepository.save(surveyUnitId, userId, date, surveyUnit.toString());
+        surveyUnitTempZoneRepository.save(surveyUnitId, userId, date, surveyUnitData);
     }
 
     @Override

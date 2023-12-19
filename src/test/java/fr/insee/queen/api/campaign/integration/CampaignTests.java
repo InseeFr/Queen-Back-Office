@@ -9,10 +9,7 @@ import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -36,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase()
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Transactional
 class CampaignTests {
 
     @Autowired
@@ -56,7 +54,6 @@ class CampaignTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
-    @Order(1)
     void on_get_campaigns_return_json_campaigns() throws Exception {
         mockMvc.perform(get("/api/admin/campaigns")
                         .with(authentication(adminUser))
@@ -69,7 +66,6 @@ class CampaignTests {
     }
 
     @Test
-    @Order(2)
     void on_create_campaigns_return_200() throws Exception {
         String questionnaireId = "questionnaire-for-campaign-creation";
         ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode("db/dataset/simpsons.json");
@@ -106,9 +102,8 @@ class CampaignTests {
     }
 
     @Test
-    @Order(3)
     void on_delete_campaign_process_deletion() throws Exception {
-        String campaignName = "CAMPAIGN-12345";
+        String campaignName = "LOG2021X11Web";
         mockMvc.perform(delete("/api/campaign/" + campaignName)
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)

@@ -4,10 +4,7 @@ import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -21,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase()
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Transactional
 class SurveyUnitTests {
     @Autowired
     private MockMvc mockMvc;
@@ -64,7 +62,6 @@ class SurveyUnitTests {
 
     // tests on list before tests on create/update
     @Test
-    @Order(1)
     void on_get_survey_units_by_campaign_return_survey_units() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
@@ -85,7 +82,6 @@ class SurveyUnitTests {
     }
 
     @Test
-    @Order(2)
     void on_get_survey_unit_ids_return_ids() throws Exception {
         mockMvc.perform(get("/api/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
@@ -96,7 +92,6 @@ class SurveyUnitTests {
     }
 
     @Test
-    @Order(3)
     void on_create_survey_unit_then_survey_unit_is_saved() throws Exception {
         mockMvc.perform(post("/api/campaign/VQS2021X00/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
@@ -110,17 +105,16 @@ class SurveyUnitTests {
     }
 
     @Test
-    @Order(4)
     void on_update_survey_unit_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataUpdated = """
                 {
-                    "id":"test-surveyunit",
+                    "id":"11",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
                     "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED"},
                     "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
-                    "questionnaireId":"VQS2021X00"
+                    "questionnaireId":"simpsons"
                 }""";
-        mockMvc.perform(post("/api/campaign/VQS2021X00/survey-unit")
+        mockMvc.perform(post("/api/campaign/simpsons/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitDataUpdated)
@@ -128,21 +122,20 @@ class SurveyUnitTests {
                 )
                 .andExpect(status().isOk());
 
-        on_get_survey_unit_return_survey_unit("test-surveyunit", surveyUnitDataUpdated);
+        on_get_survey_unit_return_survey_unit("11", surveyUnitDataUpdated);
     }
 
     @Test
-    @Order(4)
-    void on_update_with_put__survey_unit_then_survey_unit_is_saved() throws Exception {
+    void on_update_with_put_survey_unit_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataUpdated = """
                 {
-                    "id":"test-surveyunit",
+                    "id":"11",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
                     "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED 2"},
                     "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
-                    "questionnaireId":"VQS2021X00"
+                    "questionnaireId":"simpsons"
                 }""";
-        mockMvc.perform(put("/api/survey-unit/test-surveyunit")
+        mockMvc.perform(put("/api/survey-unit/11")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitDataUpdated)
@@ -150,11 +143,10 @@ class SurveyUnitTests {
                 )
                 .andExpect(status().isOk());
 
-        on_get_survey_unit_return_survey_unit("test-surveyunit", surveyUnitDataUpdated);
+        on_get_survey_unit_return_survey_unit("11", surveyUnitDataUpdated);
     }
 
     @Test
-    @Order(5)
     void on_create_survey_unit_without_statedata_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataWithoutState = """
                 {
@@ -193,8 +185,7 @@ class SurveyUnitTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"test-surveyunit", "test-surveyunit2"})
-    @Order(5)
+    @ValueSource(strings = {"11", "12"})
     void on_delete_survey_unit_process_deletion(String surveyUnitId) throws Exception {
         mockMvc.perform(delete("/api/survey-unit/" + surveyUnitId)
                         .accept(MediaType.APPLICATION_JSON)

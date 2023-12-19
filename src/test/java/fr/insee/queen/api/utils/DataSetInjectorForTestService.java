@@ -16,6 +16,7 @@ import fr.insee.queen.api.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.api.surveyunit.service.model.StateData;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
+import fr.insee.queen.api.surveyunittempzone.service.SurveyUnitTempZoneService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -39,6 +40,7 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
     private final ParadataEventService paradataEventService;
     private final QuestionnaireModelService questionnaireModelService;
     private final NomenclatureService nomenclatureService;
+    private final SurveyUnitTempZoneService surveyUnitTempZoneService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final String CURRENT_PAGE = "2.3#5";
@@ -228,6 +230,9 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
                 getDataValue(),
                 objectMapper.createObjectNode(),
                 StateDataType.INIT);
+
+        createSurveyUnitInTempZone("11");
+
         log.info("Simpsons dataset - end");
     }
 
@@ -297,6 +302,27 @@ public class DataSetInjectorForTestService implements DataSetInjectorService {
         } catch (StateDataInvalidDateException e) {
             log.error(String.format("%s - %s", surveyUnitId, e.getMessage()));
         }
+    }
+
+    private void createSurveyUnitInTempZone(String surveyUnitId) {
+        if (surveyUnitService.existsById(surveyUnitId)) {
+            return;
+        }
+        log.info("Create survey unit in tempzone {}", surveyUnitId);
+        String questionnaireId = "\"questionnaire-" + surveyUnitId + "\"";
+        String surveyUnitData = """
+                {
+                  "data": {
+                    "EXTERNAL": {
+                      "ADR": "Rue des Plantes",
+                      "NUMTH": "1"
+                    }
+                  },
+                  "comment": {},
+                  "personalization": [],
+                  "questionnaireId":""" + questionnaireId + """
+                }""";
+        surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, "user-id", surveyUnitData);
     }
 
     private void createParadataEvents(String surveyUnitId) {
