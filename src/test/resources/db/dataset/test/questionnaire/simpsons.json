@@ -1,0 +1,12 @@
+{
+  "id": "i6vwi2506qf2mms",
+  "label": "Questionnaire SIMPSONS 20201215",
+  "modele": "SIMPSONS",
+  "maxPage": "37",
+  "missing": true,
+  "variables": [],
+  "pagination": "question",
+  "enoCoreVersion": "2.2.11",
+  "generatingDate": "16-09-2021 09:08:11",
+  "lunaticModelVersion": "2.2.3"
+}

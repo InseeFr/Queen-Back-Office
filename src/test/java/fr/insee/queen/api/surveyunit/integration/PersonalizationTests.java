@@ -1,5 +1,6 @@
 package fr.insee.queen.api.surveyunit.integration;
 
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
@@ -14,11 +15,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,9 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@Transactional
 class PersonalizationTests {
     @Autowired
     private MockMvc mockMvc;
@@ -52,7 +53,7 @@ class PersonalizationTests {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/personalization.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/test/surveyunit/personalization.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
@@ -75,9 +76,10 @@ class PersonalizationTests {
     }
 
     @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_personalization_personalization_is_updated() throws Exception {
         String surveyUnitId = "12";
-        String personalizationJson = JsonTestHelper.getResourceFileAsString("db/dataset/personalization.json");
+        String personalizationJson = JsonTestHelper.getResourceFileAsString("db/dataset/test/surveyunit/personalization.json");
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))

@@ -3,6 +3,7 @@ package fr.insee.queen.api.campaign.integration;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.campaign.controller.dto.input.NomenclatureCreationData;
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
@@ -20,13 +21,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,9 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@Transactional
 class NomenclatureTests {
     @Autowired
     private MockMvc mockMvc;
@@ -56,9 +57,10 @@ class NomenclatureTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_post_nomenclature_json_nomenclature_created() throws Exception {
         String nomenclatureName = "plop";
-        String nomenclatureJsonFile = "db/dataset/nomenclature/public_regions-2019.json";
+        String nomenclatureJsonFile = "db/dataset/test/nomenclature/regions-2019.json";
         on_get_nomenclature_when_nomenclature_not_exists_return_404(nomenclatureName);
         ArrayNode jsonNomenclature = JsonTestHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
         NomenclatureCreationData nomenclature = new NomenclatureCreationData(nomenclatureName, "label", jsonNomenclature);
@@ -73,7 +75,7 @@ class NomenclatureTests {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"regions2019,db/dataset/nomenclature/public_regions-2019.json"})
+    @CsvSource(value = {"regions2019,db/dataset/test/nomenclature/regions-2019.json"})
     void on_get_nomenclature_return_json_nomenclature(String nomenclatureName, String nomenclatureJsonFile) throws Exception {
         MvcResult result = mockMvc.perform(get("/api/nomenclature/" + nomenclatureName)
                         .with(authentication(nonAdminUser)))
@@ -85,10 +87,10 @@ class NomenclatureTests {
     }
 
     @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_post_nomenclature_json_nomenclature_updated() throws Exception {
         String nomenclatureName = "regions2019";
-        String nomenclatureJsonFile = "db/dataset/nomenclature/cities_2019_nomenclature.json";
-        on_get_nomenclature_return_json_nomenclature(nomenclatureName, "db/dataset/nomenclature/public_regions-2019.json");
+        String nomenclatureJsonFile = "db/dataset/test/nomenclature/regions-2019-update.json";
         ArrayNode jsonNomenclature = JsonTestHelper.getResourceFileAsArrayNode(nomenclatureJsonFile);
         NomenclatureCreationData nomenclature = new NomenclatureCreationData(nomenclatureName, "label", jsonNomenclature);
         mockMvc.perform(post("/api/nomenclature")

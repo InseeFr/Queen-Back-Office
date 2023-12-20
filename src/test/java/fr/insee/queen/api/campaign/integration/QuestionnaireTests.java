@@ -3,6 +3,7 @@ package fr.insee.queen.api.campaign.integration;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.campaign.controller.dto.input.QuestionnaireModelCreationData;
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
@@ -20,14 +21,15 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,9 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@Transactional
 class QuestionnaireTests {
     @Autowired
     private MockMvc mockMvc;
@@ -137,10 +138,9 @@ class QuestionnaireTests {
                 .andExpect(status().isNotFound());
     }
 
-    @ParameterizedTest
-    @CsvSource("simpsons,db/dataset/simpsons.json")
-    void on_get_questionnaire_return_correct_questionnaire(String questionnaireId, String questionnaireFile) throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/questionnaire/" + questionnaireId)
+    @Test
+    void on_get_questionnaire_return_correct_questionnaire() throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/questionnaire/simpsons")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
@@ -148,12 +148,13 @@ class QuestionnaireTests {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = "{ \"value\": " + JsonTestHelper.getResourceFileAsString(questionnaireFile) + "}";
+        String expectedResult = "{ \"value\": " + JsonTestHelper.getResourceFileAsString("db/dataset/test/questionnaire/simpsons.json") + "}";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
     @ParameterizedTest
-    @CsvSource("questionnaire-creation-test,db/dataset/simpsons.json")
+    @CsvSource("questionnaire-creation-test,db/dataset/test/questionnaire/simpsons.json")
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_questionnaire_check_questionnaire_created(String questionnaireId, String questionnaireFile) throws Exception {
         ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode(questionnaireFile);
         Set<String> nomenclatures = Set.of("cities2019", "regions2019");

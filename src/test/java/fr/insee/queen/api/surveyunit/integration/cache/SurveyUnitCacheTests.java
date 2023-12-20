@@ -1,6 +1,7 @@
 package fr.insee.queen.api.surveyunit.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitApiService;
 import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
@@ -8,26 +9,28 @@ import fr.insee.queen.api.surveyunit.service.model.SurveyUnit;
 import fr.insee.queen.api.surveyunit.service.model.SurveyUnitSummary;
 import fr.insee.queen.api.web.exception.EntityNotFoundException;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("cache-testing")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@Transactional
 class SurveyUnitCacheTests {
 
     @Autowired
@@ -44,8 +47,9 @@ class SurveyUnitCacheTests {
 
     @Test
     @DisplayName("When handling surveyUnits, handle correctly cache for surveyUnit existence")
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_surveyUnit_existence_cache() throws StateDataInvalidDateException {
-        String surveyUnitId = "surveyU-unit-cache-id";
+        String surveyUnitId = "survey-unit-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST)).get(surveyUnitId)).isNull();
         surveyUnitService.existsById(surveyUnitId);
         Boolean surveyUnitExist =  Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST).get(surveyUnitId, Boolean.class));
@@ -75,6 +79,7 @@ class SurveyUnitCacheTests {
 
     @Test
     @DisplayName("When handling surveyUnits, handle correctly cache for survey units with campaign")
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_surveyUnit_campaign_cache() throws StateDataInvalidDateException {
         String surveyUnitId = "survey-unit-campaign-cache-id";
 

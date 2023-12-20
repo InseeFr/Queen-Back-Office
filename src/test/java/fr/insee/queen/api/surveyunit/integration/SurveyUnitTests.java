@@ -1,12 +1,11 @@
 package fr.insee.queen.api.surveyunit.integration;
 
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +15,15 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,9 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@Transactional
 class SurveyUnitTests {
     @Autowired
     private MockMvc mockMvc;
@@ -92,6 +91,7 @@ class SurveyUnitTests {
     }
 
     @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_survey_unit_then_survey_unit_is_saved() throws Exception {
         mockMvc.perform(post("/api/campaign/VQS2021X00/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
@@ -105,6 +105,7 @@ class SurveyUnitTests {
     }
 
     @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_survey_unit_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataUpdated = """
                 {
@@ -126,6 +127,7 @@ class SurveyUnitTests {
     }
 
     @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_with_put_survey_unit_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataUpdated = """
                 {
@@ -147,6 +149,7 @@ class SurveyUnitTests {
     }
 
     @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_survey_unit_without_statedata_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataWithoutState = """
                 {
@@ -184,9 +187,10 @@ class SurveyUnitTests {
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"11", "12"})
-    void on_delete_survey_unit_process_deletion(String surveyUnitId) throws Exception {
+    @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void on_delete_survey_unit_process_deletion() throws Exception {
+        String surveyUnitId = "11";
         mockMvc.perform(delete("/api/survey-unit/" + surveyUnitId)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(adminUser))

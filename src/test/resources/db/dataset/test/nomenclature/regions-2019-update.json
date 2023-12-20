@@ -1,0 +1,18 @@
+[
+  {
+    "ncc": "GUADELOUPE",
+    "reg": "02",
+    "tncc": 4,
+    "nccenr": "Guadeloupee",
+    "libelle": "Guadeloupee",
+    "cheflieu": 971055
+  },
+  {
+    "ncc": "MARTINIQUE",
+    "reg": "02",
+    "tncc": 3,
+    "nccenr": "Martinique",
+    "libelle": "Martinique",
+    "cheflieu": 97209
+  }
+]

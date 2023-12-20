@@ -7,16 +7,19 @@ import fr.insee.queen.api.campaign.service.NomenclatureService;
 import fr.insee.queen.api.campaign.service.QuestionnaireModelService;
 import fr.insee.queen.api.campaign.service.model.Campaign;
 import fr.insee.queen.api.campaign.service.model.QuestionnaireModel;
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,13 +27,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("cache-testing")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@Transactional
 class QuestionnaireCacheTests {
 
     @Autowired
@@ -56,14 +59,16 @@ class QuestionnaireCacheTests {
     }
 
     @Test
-    @DisplayName("When creating questionnaire, handle correctly cache")
+    @DisplayName("When creating questionnaire, cache is handled")
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache01() {
         String questionnaireId = "questionnaire-cache-id";
         check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode().toString(), Set.of("cities2019", "regions2019")));
     }
 
     @Test
-    @DisplayName("When updating questionnaire, handle correctly cache")
+    @DisplayName("When updating questionnaire, cache is handled")
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache02() {
         String questionnaireId = "questionnaire-cache-id";
         String campaignId = "campaign-cache-id";
@@ -95,6 +100,7 @@ class QuestionnaireCacheTests {
 
     @Test
     @DisplayName("When deleting campaigns, handle cache eviction on associated questionnaires")
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache03() {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
@@ -118,6 +124,7 @@ class QuestionnaireCacheTests {
 
     @Test
     @DisplayName("When updating campaign, handle cache eviction on all questionnaire metadatas")
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache04() {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
