@@ -4,29 +4,31 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.campaign.service.CampaignExistenceService;
 import fr.insee.queen.api.campaign.service.CampaignService;
 import fr.insee.queen.api.campaign.service.model.Campaign;
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashSet;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("cache-testing")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Transactional
 class CampaignCacheTests {
 
     @Autowired
@@ -47,6 +49,7 @@ class CampaignCacheTests {
 
     @Test
     @DisplayName("When handling campaigns, handle correctly cache for campaign existence")
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_campaign_existence_cache() {
         String campaignId = "campaign-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();

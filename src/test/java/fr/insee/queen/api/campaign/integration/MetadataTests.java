@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
 class MetadataTests {
     @Autowired
@@ -58,7 +58,7 @@ class MetadataTests {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/logement/metadata/metadata.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/test/campaign/metadata/metadata.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 
@@ -97,7 +97,7 @@ class MetadataTests {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/logement/metadata/metadata.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/test/campaign/metadata/metadata.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 

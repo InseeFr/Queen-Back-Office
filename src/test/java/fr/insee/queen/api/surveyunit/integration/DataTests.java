@@ -1,12 +1,11 @@
 package fr.insee.queen.api.surveyunit.integration;
 
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +15,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,9 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DataTests {
     @Autowired
     private MockMvc mockMvc;
@@ -53,7 +53,7 @@ class DataTests {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/data.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/test/surveyunit/data.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
@@ -76,9 +76,10 @@ class DataTests {
     }
 
     @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_data_data_is_updated() throws Exception {
         String surveyUnitId = "12";
-        String dataJson = JsonTestHelper.getResourceFileAsString("db/dataset/data.json");
+        String dataJson = JsonTestHelper.getResourceFileAsString("db/dataset/test/surveyunit/data.json");
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))

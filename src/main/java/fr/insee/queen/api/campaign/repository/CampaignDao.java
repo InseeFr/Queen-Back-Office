@@ -83,6 +83,7 @@ public class CampaignDao implements CampaignRepository {
     }
 
     @Override
+    @Transactional
     public void update(Campaign campaign) {
         CampaignDB campaignDB = jpaRepository.findById(campaign.getId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaign.getId())));

@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.campaign.controller.dto.input.CampaignCreationData;
 import fr.insee.queen.api.campaign.controller.dto.input.MetadataCreationData;
 import fr.insee.queen.api.campaign.controller.dto.input.QuestionnaireModelCreationData;
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Set;
@@ -27,6 +26,7 @@ import java.util.Set;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,9 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CampaignTests {
 
     @Autowired
@@ -56,7 +55,6 @@ class CampaignTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
-    @Order(1)
     void on_get_campaigns_return_json_campaigns() throws Exception {
         mockMvc.perform(get("/api/admin/campaigns")
                         .with(authentication(adminUser))
@@ -69,10 +67,10 @@ class CampaignTests {
     }
 
     @Test
-    @Order(2)
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_campaigns_return_200() throws Exception {
         String questionnaireId = "questionnaire-for-campaign-creation";
-        ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode("db/dataset/simpsons.json");
+        ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode("db/dataset/test/questionnaire/simpsons.json");
         Set<String> nomenclatures = Set.of("cities2019", "regions2019");
         QuestionnaireModelCreationData questionnaire = new QuestionnaireModelCreationData(questionnaireId, "label questionnaire", questionnaireJson, nomenclatures);
         mockMvc.perform(post("/api/questionnaire-models")
@@ -106,9 +104,9 @@ class CampaignTests {
     }
 
     @Test
-    @Order(3)
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_delete_campaign_process_deletion() throws Exception {
-        String campaignName = "CAMPAIGN-12345";
+        String campaignName = "LOG2021X11Web";
         mockMvc.perform(delete("/api/campaign/" + campaignName)
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)

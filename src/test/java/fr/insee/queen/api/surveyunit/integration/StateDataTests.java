@@ -1,12 +1,13 @@
 package fr.insee.queen.api.surveyunit.integration;
 
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +17,20 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StateDataTests {
     @Autowired
     private MockMvc mockMvc;
@@ -52,7 +54,7 @@ class StateDataTests {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/state_data.json");
+        String expectedResult = JsonTestHelper.getResourceFileAsString("db/dataset/test/surveyunit/state_data.json");
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
@@ -77,7 +79,13 @@ class StateDataTests {
     @Test
     void on_update_state_data_when_date_invalid_return_409() throws Exception {
         String surveyUnitId = "12";
-        String stateDataJson = JsonTestHelper.getResourceFileAsString("db/dataset/state_data.json");
+        String stateDataJson = """
+            {
+              "state": "EXTRACTED",
+              "date": 1111111110,
+              "currentPage": "2.3#5"
+            }
+        """;
         mockMvc.perform(put("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .content(stateDataJson)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -87,14 +95,16 @@ class StateDataTests {
                 .andExpect(status().isConflict());
     }
 
-    @Test
-    void on_update_state_data_state_data_is_updated() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"1111111111","1111111112"})
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void on_update_state_data_state_data_is_updated(String timestamp) throws Exception {
         String surveyUnitId = "12";
         String stateDataJson = """
             {
               "state": "EXTRACTED",
-              "date": 9999999999,
-              "currentPage": "2.3#5"
+              "date":""" + timestamp + """
+              ,"currentPage": "2.3#5"
             }
         """;
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
@@ -174,7 +184,7 @@ class StateDataTests {
 
     @Test
     void on_update_state_data_when_su_not_exist_return_404() throws Exception {
-        String stateDataJson = JsonTestHelper.getResourceFileAsString("db/dataset/state_data.json");
+        String stateDataJson = JsonTestHelper.getResourceFileAsString("db/dataset/test/surveyunit/state_data.json");
         mockMvc.perform(put("/api/survey-unit/not-exist/state-data")
                         .content(stateDataJson)
                         .contentType(MediaType.APPLICATION_JSON)

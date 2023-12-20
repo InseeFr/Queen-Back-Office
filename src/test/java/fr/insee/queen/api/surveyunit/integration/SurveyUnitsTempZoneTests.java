@@ -1,14 +1,10 @@
 package fr.insee.queen.api.surveyunit.integration;
 
+import fr.insee.queen.api.configuration.Constants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,9 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureEmbeddedDatabase()
+@AutoConfigureEmbeddedDatabase
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SurveyUnitsTempZoneTests {
 
     @Autowired
@@ -52,12 +50,11 @@ class SurveyUnitsTempZoneTests {
 
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
-    @ParameterizedTest
-    @ValueSource(strings = {"11", "12"})
-    @Order(1)
-    void on_create_survey_unit_then_return_201(String surveyUnitId) throws Exception {
+    @Test
+    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void on_create_survey_unit_then_survey_unit_created() throws Exception {
+        String surveyUnitId = "surveyunit-temp-11";
         // no control on questionnaire id ...
-        String questionnaireId = "\"questionnaire-" + surveyUnitId + "\"";
         String tempZoneInput = """
                 {
                   "data": {
@@ -66,9 +63,9 @@ class SurveyUnitsTempZoneTests {
                       "NUMTH": "1"
                     }
                   },
-                  "comment": {},
-                  "personalization": [],
-                  "questionnaireId":""" + questionnaireId + """
+                  "comment": {"plip": "plop"},
+                  "personalization": [{},{}],
+                  "questionnaireId":"questionnaire-11"
                 }""";
         mockMvc.perform(post("/api/survey-unit/" + surveyUnitId + "/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
@@ -77,28 +74,49 @@ class SurveyUnitsTempZoneTests {
                         .with(authentication(adminUser))
                 )
                 .andExpect(status().isCreated());
+
+        String expressionFilter = "$[?(@.surveyUnitId == '" + surveyUnitId + "')]";
+        MvcResult result = mockMvc.perform(get("/api/survey-units/temp-zone")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(nonAdminUser))
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)))
+                .andExpect(jsonPath(expressionFilter + ".id", is(not(empty()))))
+                .andExpect(jsonPath(expressionFilter + ".date", is(not(empty()))))
+                .andExpect(jsonPath(expressionFilter + ".userId").value("dupont-identifier"))
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        String expectedResult = """
+        [
+            {},
+            {},
+            {
+                "surveyUnit":""" + tempZoneInput + """
+            }
+        ]""";
+        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.LENIENT);
     }
 
     @Test
-    @Order(2)
     void on_get_survey_units_return_survey_units() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/survey-units/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(not(is(emptyOrNullString()))))
-                .andExpect(jsonPath("$[1].id").value(not(is(emptyOrNullString()))))
-                .andExpect(jsonPath("$[0].date").value(not(is(emptyOrNullString()))))
-                .andExpect(jsonPath("$[1].date").value(not(is(emptyOrNullString()))))
                 .andReturn();
         String content = result.getResponse().getContentAsString();
 
         String expectedResult = """
                 [
                     {
-                      "surveyUnitId": "11",
-                      "userId": "dupont-identifier",
+                      "id":"42858b14-2a0c-4d17-afd0-f50a0f9a8dd5",
+                      "surveyUnitId": "temp-11",
+                      "userId": "user-id",
+                      "date":900000000,
                       "surveyUnit": {
                           "data": {
                             "EXTERNAL": {
@@ -112,8 +130,10 @@ class SurveyUnitsTempZoneTests {
                       }
                     },
                     {
-                      "surveyUnitId": "12",
-                      "userId":"dupont-identifier",
+                      "id":"6fcbbd84-3464-4290-b8fc-cdf0082ee339",
+                      "surveyUnitId": "temp-12",
+                      "userId":"user-id",
+                      "date":900000000,
                       "surveyUnit": {
                           "data": {
                             "EXTERNAL": {
