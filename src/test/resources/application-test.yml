@@ -15,12 +15,13 @@ application:
       realm: my-realm
       principal-attribute: username
       additional-realm: additional-realm
+  temp-folder: ${java.io.tmpdir}
+spring:
   liquibase:
     enabled: true
     contexts: test
     defaultSchema: public
-    change-log: classpath:db/master.xml
-  temp-folder: ${java.io.tmpdir}
+    change-log: classpath:db/integration-test.xml
 logging:
   level:
     root: INFO
@@ -47,7 +48,7 @@ server:
 feature:
   enable:
     swagger: false
-    dataset: true
+    dataset: false
     cache: false
     pilotage: false
     comments: true
