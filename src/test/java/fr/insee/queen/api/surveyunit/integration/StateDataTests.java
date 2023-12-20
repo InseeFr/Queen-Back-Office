@@ -6,6 +6,8 @@ import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +79,13 @@ class StateDataTests {
     @Test
     void on_update_state_data_when_date_invalid_return_409() throws Exception {
         String surveyUnitId = "12";
-        String stateDataJson = JsonTestHelper.getResourceFileAsString("db/dataset/test/surveyunit/state_data.json");
+        String stateDataJson = """
+            {
+              "state": "EXTRACTED",
+              "date": 1111111110,
+              "currentPage": "2.3#5"
+            }
+        """;
         mockMvc.perform(put("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .content(stateDataJson)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -87,15 +95,16 @@ class StateDataTests {
                 .andExpect(status().isConflict());
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"1111111111","1111111112"})
     @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void on_update_state_data_state_data_is_updated() throws Exception {
+    void on_update_state_data_state_data_is_updated(String timestamp) throws Exception {
         String surveyUnitId = "12";
         String stateDataJson = """
             {
               "state": "EXTRACTED",
-              "date": 9999999999,
-              "currentPage": "2.3#5"
+              "date":""" + timestamp + """
+              ,"currentPage": "2.3#5"
             }
         """;
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
