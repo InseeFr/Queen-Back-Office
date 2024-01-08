@@ -3,7 +3,7 @@ package fr.insee.queen.api.campaign.integration.cache;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.campaign.service.NomenclatureService;
 import fr.insee.queen.api.campaign.service.model.Nomenclature;
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.AfterEach;
@@ -44,7 +44,7 @@ class NomenclatureCacheTests {
 
     @Test
     @DisplayName("When saving nomenclature, evict the associated nomenclature in nomenclature cache")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_nomenclature_cache() {
         String nomenclatureId = "nomenclature-cache-id";
 

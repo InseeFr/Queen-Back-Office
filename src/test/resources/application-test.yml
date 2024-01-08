@@ -49,6 +49,7 @@ feature:
   enable:
     swagger: false
     dataset: false
+    dataset-endpoints: true
     cache: false
     pilotage: false
     comments: true

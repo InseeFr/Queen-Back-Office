@@ -1,6 +1,6 @@
 package fr.insee.queen.api.surveyunit.integration;
 
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.depositproof.service.model.StateDataType;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
@@ -91,7 +91,7 @@ class SurveyUnitTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_survey_unit_then_survey_unit_is_saved() throws Exception {
         mockMvc.perform(post("/api/campaign/VQS2021X00/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
@@ -105,7 +105,7 @@ class SurveyUnitTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_survey_unit_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataUpdated = """
                 {
@@ -127,7 +127,7 @@ class SurveyUnitTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_with_put_survey_unit_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataUpdated = """
                 {
@@ -149,7 +149,7 @@ class SurveyUnitTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_survey_unit_without_statedata_then_survey_unit_is_saved() throws Exception {
         String surveyUnitDataWithoutState = """
                 {
@@ -188,7 +188,7 @@ class SurveyUnitTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_delete_survey_unit_process_deletion() throws Exception {
         String surveyUnitId = "11";
         mockMvc.perform(delete("/api/survey-unit/" + surveyUnitId)

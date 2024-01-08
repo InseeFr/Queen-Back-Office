@@ -111,6 +111,7 @@ logging:
 feature:
   enable:
     dataset: false
+    dataset-endpoints: false
     swagger: false
     pilotage: true
     cache: true

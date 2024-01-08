@@ -1,6 +1,6 @@
 package fr.insee.queen.api.surveyunit.integration;
 
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -79,7 +79,7 @@ class IntegrationTests {
     @ParameterizedTest
     @MethodSource("getPaths")
     @DisplayName("on integrate context, return integration state")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void integrateContext030(String internalZipPath, String urlPath) throws Exception {
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("integration" + internalZipPath + "/integration-component.zip");
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, zipInputStream
