@@ -1,6 +1,6 @@
 package fr.insee.queen.api.surveyunit.integration;
 
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -51,7 +51,7 @@ class SurveyUnitsTempZoneTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_survey_unit_then_survey_unit_created() throws Exception {
         String surveyUnitId = "surveyunit-temp-11";
         // no control on questionnaire id ...

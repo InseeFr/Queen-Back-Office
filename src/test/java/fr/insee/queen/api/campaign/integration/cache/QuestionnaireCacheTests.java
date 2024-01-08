@@ -7,7 +7,7 @@ import fr.insee.queen.api.campaign.service.NomenclatureService;
 import fr.insee.queen.api.campaign.service.QuestionnaireModelService;
 import fr.insee.queen.api.campaign.service.model.Campaign;
 import fr.insee.queen.api.campaign.service.model.QuestionnaireModel;
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.AfterEach;
@@ -60,7 +60,7 @@ class QuestionnaireCacheTests {
 
     @Test
     @DisplayName("When creating questionnaire, cache is handled")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache01() {
         String questionnaireId = "questionnaire-cache-id";
         check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode().toString(), Set.of("cities2019", "regions2019")));
@@ -68,7 +68,7 @@ class QuestionnaireCacheTests {
 
     @Test
     @DisplayName("When updating questionnaire, cache is handled")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache02() {
         String questionnaireId = "questionnaire-cache-id";
         String campaignId = "campaign-cache-id";
@@ -100,7 +100,7 @@ class QuestionnaireCacheTests {
 
     @Test
     @DisplayName("When deleting campaigns, handle cache eviction on associated questionnaires")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache03() {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
@@ -124,7 +124,7 @@ class QuestionnaireCacheTests {
 
     @Test
     @DisplayName("When updating campaign, handle cache eviction on all questionnaire metadatas")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache04() {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";

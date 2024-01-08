@@ -1,6 +1,6 @@
 package fr.insee.queen.api.surveyunit.integration;
 
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
@@ -85,7 +85,7 @@ class CommentTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_comment_comment_is_updated() throws Exception {
         String surveyUnitId = "12";
         String commentJson = JsonTestHelper.getResourceFileAsString("db/dataset/test/surveyunit/comment.json");

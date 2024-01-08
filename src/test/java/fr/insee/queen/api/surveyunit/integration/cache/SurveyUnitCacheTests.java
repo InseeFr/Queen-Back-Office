@@ -1,7 +1,7 @@
 package fr.insee.queen.api.surveyunit.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import fr.insee.queen.api.surveyunit.service.SurveyUnitApiService;
 import fr.insee.queen.api.surveyunit.service.exception.StateDataInvalidDateException;
@@ -47,7 +47,7 @@ class SurveyUnitCacheTests {
 
     @Test
     @DisplayName("When handling surveyUnits, handle correctly cache for surveyUnit existence")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_surveyUnit_existence_cache() throws StateDataInvalidDateException {
         String surveyUnitId = "survey-unit-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_EXIST)).get(surveyUnitId)).isNull();
@@ -79,7 +79,7 @@ class SurveyUnitCacheTests {
 
     @Test
     @DisplayName("When handling surveyUnits, handle correctly cache for survey units with campaign")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_surveyUnit_campaign_cache() throws StateDataInvalidDateException {
         String surveyUnitId = "survey-unit-campaign-cache-id";
 

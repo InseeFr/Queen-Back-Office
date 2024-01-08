@@ -1,6 +1,6 @@
 package fr.insee.queen.api.dataset.integration;
 
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -47,8 +47,8 @@ class DataSetTests {
 
     @Test
     @DisplayName("on creating dataset, create the dataset")
-    @Sql(value = Constants.TRUNCATE_SQL_SCRIPT, executionPhase = BEFORE_TEST_METHOD)
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.TRUNCATE_SQL_SCRIPT, executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void createDataset01() throws Exception {
         mockMvc.perform(get("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)

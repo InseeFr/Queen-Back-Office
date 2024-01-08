@@ -3,7 +3,7 @@ package fr.insee.queen.api.campaign.integration;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.campaign.controller.dto.input.NomenclatureCreationData;
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
@@ -57,7 +57,7 @@ class NomenclatureTests {
     private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_post_nomenclature_json_nomenclature_created() throws Exception {
         String nomenclatureName = "plop";
         String nomenclatureJsonFile = "db/dataset/test/nomenclature/regions-2019.json";
@@ -87,7 +87,7 @@ class NomenclatureTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_post_nomenclature_json_nomenclature_updated() throws Exception {
         String nomenclatureName = "regions2019";
         String nomenclatureJsonFile = "db/dataset/test/nomenclature/regions-2019-update.json";

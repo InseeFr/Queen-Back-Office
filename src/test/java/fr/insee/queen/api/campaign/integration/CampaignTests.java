@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.api.campaign.controller.dto.input.CampaignCreationData;
 import fr.insee.queen.api.campaign.controller.dto.input.MetadataCreationData;
 import fr.insee.queen.api.campaign.controller.dto.input.QuestionnaireModelCreationData;
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.api.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.api.utils.JsonTestHelper;
@@ -67,7 +67,7 @@ class CampaignTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_campaigns_return_200() throws Exception {
         String questionnaireId = "questionnaire-for-campaign-creation";
         ObjectNode questionnaireJson = JsonTestHelper.getResourceFileAsObjectNode("db/dataset/test/questionnaire/simpsons.json");
@@ -104,7 +104,7 @@ class CampaignTests {
     }
 
     @Test
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_delete_campaign_process_deletion() throws Exception {
         String campaignName = "LOG2021X11Web";
         mockMvc.perform(delete("/api/campaign/" + campaignName)

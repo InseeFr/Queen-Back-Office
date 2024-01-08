@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.api.campaign.service.CampaignExistenceService;
 import fr.insee.queen.api.campaign.service.CampaignService;
 import fr.insee.queen.api.campaign.service.model.Campaign;
-import fr.insee.queen.api.configuration.Constants;
+import fr.insee.queen.api.configuration.ScriptConstants;
 import fr.insee.queen.api.configuration.cache.CacheName;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.AfterEach;
@@ -49,7 +49,7 @@ class CampaignCacheTests {
 
     @Test
     @DisplayName("When handling campaigns, handle correctly cache for campaign existence")
-    @Sql(value = Constants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_campaign_existence_cache() {
         String campaignId = "campaign-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
