@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -50,17 +50,16 @@ class DataSetTests {
     @Sql(value = ScriptConstants.TRUNCATE_SQL_SCRIPT, executionPhase = BEFORE_TEST_METHOD)
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void createDataset01() throws Exception {
-        mockMvc.perform(get("/api/create-dataset")
+        mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(adminUser))
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
     void createDataset02() throws Exception {
-        mockMvc.perform(get("/api/create-dataset")
-                        .param("force", "true")
+        mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(nonAdminUser))
                 )
@@ -69,8 +68,7 @@ class DataSetTests {
 
     @Test
     void createDataset03() throws Exception {
-        mockMvc.perform(get("/api/create-dataset")
-                        .param("force", "true")
+        mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(anonymousUser))
                 )
