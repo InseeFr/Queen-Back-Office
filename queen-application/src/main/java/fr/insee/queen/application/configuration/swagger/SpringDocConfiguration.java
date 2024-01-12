@@ -13,17 +13,17 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 
 @Configuration
-@ConditionalOnProperty(value="feature.enable.swagger", havingValue = "true")
+@ConditionalOnProperty(value="feature.swagger.enabled", havingValue = "true")
 public class SpringDocConfiguration {
 
     @Bean
-    @ConditionalOnProperty(name = "application.auth", havingValue = "NOAUTH")
+    @ConditionalOnProperty(name = "feature.oidc.enabled", havingValue = "false")
     protected OpenAPI noAuthOpenAPI(BuildProperties buildProperties) {
         return generateOpenAPI(buildProperties);
     }
 
     @Bean
-    @ConditionalOnProperty(name = "application.auth", havingValue = "OIDC")
+    @ConditionalOnProperty(name = "feature.oidc.enabled", havingValue = "true")
     protected OpenAPI oidcOpenAPI(OidcProperties oidcProperties, BuildProperties buildProperties) {
         String authUrl = oidcProperties.authServerUrl() + "/realms/" + oidcProperties.realm() + "/protocol/openid-connect";
         String securitySchemeName = "oauth2";

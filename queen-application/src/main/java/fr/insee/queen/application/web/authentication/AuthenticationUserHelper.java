@@ -1,7 +1,7 @@
 package fr.insee.queen.application.web.authentication;
 
 import fr.insee.queen.application.configuration.auth.AuthConstants;
-import fr.insee.queen.application.configuration.properties.ApplicationProperties;
+import fr.insee.queen.application.configuration.properties.OidcProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class AuthenticationUserHelper implements AuthenticationHelper {
-    private final ApplicationProperties applicationProperties;
+    private final OidcProperties oidcProperties;
 
     @Override
     public String getUserToken() {
         Authentication auth = getAuthenticationPrincipal();
         if (auth == null) {
-            throw new AuthenticationTokenException("Cannot retrieve token for the user. Ensure you are not in NOAUTH mode with pilotage api enabled");
+            throw new AuthenticationTokenException("Cannot retrieve token for the user. Ensure you have not disabled oidc with pilotage api enabled");
         }
         AbstractOAuth2Token token = (AbstractOAuth2Token) auth.getCredentials();
         return token.getTokenValue();
@@ -29,18 +29,13 @@ public class AuthenticationUserHelper implements AuthenticationHelper {
     @Override
     public String getUserId() {
         Authentication auth = getAuthenticationPrincipal();
-        switch (applicationProperties.auth()) {
-            case NOAUTH -> {
-                return AuthConstants.GUEST;
+        if(oidcProperties.enabled()) {
+            if (auth.getCredentials() instanceof Jwt jwt) {
+                return jwt.getClaims().get("preferred_username").toString();
             }
-            case OIDC -> {
-                if (auth.getCredentials() instanceof Jwt jwt) {
-                    return jwt.getClaims().get("preferred_username").toString();
-                }
-                throw new AuthenticationTokenException("Cannot retrieve token for the user.");
-            }
-            default -> throw new AuthenticationTokenException("No authentication mode used");
+            throw new AuthenticationTokenException("Cannot retrieve token for the user.");
         }
+        return AuthConstants.GUEST;
     }
 
     @Override

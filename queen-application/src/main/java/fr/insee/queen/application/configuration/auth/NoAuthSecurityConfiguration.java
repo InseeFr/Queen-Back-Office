@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 
-@ConditionalOnProperty(name = "application.auth", havingValue = "NOAUTH")
+@ConditionalOnProperty(name = "feature.oidc.enabled", havingValue = "false")
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
