@@ -12,8 +12,12 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)-rc" >> $GITHUB_OUTPUT
-
+        run: |
+          if [[ "${{ github.base_ref }}" == "main" ]]; then
+            echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+          else
+            echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT" >> $GITHUB_OUTPUT
+          fi
       - name: Print version
         run: echo ${{ steps.version.outputs.version }}
 
