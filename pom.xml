@@ -22,7 +22,7 @@
         <sonar.organization>inseefr</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.java.binaries>target</sonar.java.binaries>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../queen-application/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/queen-application/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <parent>
@@ -73,36 +73,12 @@
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
-                                <configuration>
-                                    <append>true</append>
-                                </configuration>
                             </execution>
                             <execution>
                                 <id>report</id>
                                 <goals>
                                     <goal>report</goal>
                                 </goals>
-                                <configuration>
-                                    <formats>
-                                        <format>XML</format>
-                                    </formats>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>merge</id>
-                                <goals>
-                                    <goal>merge</goal>
-                                </goals>
-                                <configuration>
-                                    <fileSets>
-                                        <fileSet implementation="org.apache.maven.shared.model.fileset.FileSet">
-                                            <directory>${project.basedir}</directory>
-                                            <includes>
-                                                <include>**/*.exec</include>
-                                            </includes>
-                                        </fileSet>
-                                    </fileSets>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
