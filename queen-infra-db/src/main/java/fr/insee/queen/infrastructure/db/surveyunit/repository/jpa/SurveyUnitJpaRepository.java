@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa;
 
-import fr.insee.queen.domain.depositproof.model.SurveyUnitDepositProof;
+import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
@@ -117,7 +117,7 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
      * @return {@link SurveyUnitDepositProof} survey unit
      */
     @Query("""
-            select new fr.insee.queen.domain.depositproof.model.SurveyUnitDepositProof(
+            select new fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof(
                 s.id,
                 new fr.insee.queen.domain.campaign.model.CampaignSummary(
                     s.campaign.id,
@@ -161,9 +161,9 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             )
             from SurveyUnitDB s
             left join s.personalization
-            left join s.data 
-            left join s.comment 
-            left join s.stateData 
+            left join s.data
+            left join s.comment
+            left join s.stateData
             where s.id in :surveyUnitIds
             order by s.id asc""")
     List<SurveyUnit> findSurveyUnitsByIdIn(List<String> surveyUnitIds);

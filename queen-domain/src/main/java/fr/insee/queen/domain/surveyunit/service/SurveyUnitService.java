@@ -1,6 +1,6 @@
 package fr.insee.queen.domain.surveyunit.service;
 
-import fr.insee.queen.domain.depositproof.model.SurveyUnitDepositProof;
+import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;

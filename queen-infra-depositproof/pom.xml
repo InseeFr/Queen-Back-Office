@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.insee.queen</groupId>
-			<artifactId>queen-domain</artifactId>
+			<artifactId>queen-domain-depositproof</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

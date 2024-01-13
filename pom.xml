@@ -36,6 +36,8 @@
         <module>queen-application</module>
         <module>queen-domain</module>
         <module>queen-infra-db</module>
+        <module>queen-domain-depositproof</module>
+        <module>queen-domain-pilotage</module>
         <module>queen-infra-pilotage</module>
         <module>queen-infra-depositproof</module>
     </modules>

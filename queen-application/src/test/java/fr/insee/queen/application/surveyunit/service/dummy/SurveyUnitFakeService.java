@@ -1,7 +1,7 @@
 package fr.insee.queen.application.surveyunit.service.dummy;
 
-import fr.insee.queen.domain.depositproof.model.SurveyUnitDepositProof;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
+import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
