@@ -11,6 +11,10 @@
 	<name>queen-infra-db</name>
 	<description>DAO for Queen/Stromae</description>
 
+	<properties>
+		<postgresql.version>42.5.4</postgresql.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>fr.insee.queen</groupId>
@@ -27,7 +31,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.5.4</version>
+			<version>${postgresql.version}</version>
 		</dependency>
 
 		<dependency>
@@ -56,6 +60,7 @@
 					<artifactId>liquibase-maven-plugin</artifactId>
 					<version>${liquibase.version}</version>
 					<dependencies>
+						<!-- need to add these dependencies with spring boot ... sic -->
 						<dependency>
 							<groupId>org.liquibase.ext</groupId>
 							<artifactId>liquibase-hibernate6</artifactId>
