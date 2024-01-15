@@ -20,20 +20,21 @@ target/
 *.ipr
 
 ### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
 build/
-/logs
+logs
 
 ### VS Code ###
 .vscode/
 
-src/main/resources/application-*.yaml
-src/main/resources/application-*.yml
-src/main/resources/application-*.properties
+**/.flattened-pom.xml
+**/src/main/resources/application-*.yaml
+**/src/main/resources/application-*.yml
+**/src/main/resources/application-*.properties
 
 *.DS_Store
-/.apt_generated_tests/
+.apt_generated_tests/

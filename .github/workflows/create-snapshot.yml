@@ -16,7 +16,7 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)-rc" >> $GITHUB_OUTPUT
+        run: echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT" >> $GITHUB_OUTPUT
 
       - name: Print version
         run: echo ${{ steps.version.outputs.version }}
@@ -46,26 +46,26 @@ jobs:
 
       - name: Get previous tag
         id: previousTag
-        run: echo "previousTag=$(git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | grep '^[0-9]\+\.[0-9]\+\.[0-9]\+\-rc$' | tail -1)" >> $GITHUB_OUTPUT
+        run: echo "previousTag=$(git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | grep '^[0-9]\+\.[0-9]\+\.[0-9]\+\-SNAPSHOT$' | tail -1)" >> $GITHUB_OUTPUT
 
-#      - name: Create release note
-#        id: changelog
-#        uses: requarks/changelog-action@v1
-#        with:
-#          fromTag: ${{ github.sha }}
-#          toTag: ${{ steps.previousTag.outputs.previousTag}}
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          writeToFile: false
-#
-#      - uses: softprops/action-gh-release@v1
-#        with:
-#          tag_name: ${{ needs.check-version.outputs.release-version }}
-#          target_commitish: ${{ github.head_ref || github.ref }}
-#          name: ${{ needs.check-version.outputs.release-version }}
-#          body: ${{steps.changelog.outputs.changes}}
-#          prerelease: true
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create release note
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          fromTag: ${{ github.sha }}
+          toTag: ${{ steps.previousTag.outputs.previousTag}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          writeToFile: false
+
+      - uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.check-version.outputs.release-version }}
+          target_commitish: ${{ github.head_ref || github.ref }}
+          name: ${{ needs.check-version.outputs.release-version }}
+          body: ${{steps.changelog.outputs.changes}}
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-release:
     needs: create-release
@@ -86,14 +86,14 @@ jobs:
           distribution: "temurin"
           java-version: "21"
 
-      - name: Build App
-        run: mvn package --no-transfer-progress
+      - name: Build API
+        run: mvn package -Dchangelist=-SNAPSHOT --no-transfer-progress
 
-      - name: Upload App jar
+      - name: Upload API jar
         uses: actions/upload-artifact@v3
         with:
           name: app-jar
-          path: target/*.jar
+          path: queen-application/target/*.jar
 
   docker:
     needs:
@@ -109,7 +109,7 @@ jobs:
           name: app-jar
           path: target/
 
-      - name: Publish to Registry
+      - name: Publish to Docker Hub
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: inseefr/queen-back-office

@@ -4,6 +4,13 @@
 Back-office services for Queen  
 REST API used for communication with Queen/Stromae UI
 
+## Modules
+- queen-application: api module for queen
+- queen-domain: business logic
+- queen-infra-db: db access to queen data
+- queen-infra-depositproof: deposit proof generation
+- queen-infra-pilotage: access to pilotage api (check habilitations, ...)
+
 ## Requirements
 For building and running the application you need:
 - Java 21
@@ -16,7 +23,7 @@ mvn clean install
 ```  
 
 ## Running the application locally
-Use the [Spring Boot Maven plugin](https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html) like so:  
+On queen-application module: 
 ```shell
 mvn spring-boot:run
 ```  
@@ -50,6 +57,8 @@ A Dockerfile is present on this root project to deploy a container. You can [get
 Liquibase is enabled by default and run changelogs if needed.
 
 ### Generate diff changelog between twos databases
+On queen-infra-db module: 
+
 ```shell
 # Don't forget to edit configuration properties in pom.xml for this
 mvn liquibase:diff

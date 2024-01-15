@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>fr.insee.queen</groupId>
+		<artifactId>queen-parent</artifactId>
+		<version>${revision}${changelist}</version>
+	</parent>
+	<artifactId>queen-infra-db</artifactId>
+	<name>queen-infra-db</name>
+	<description>DAO for Queen/Stromae</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.insee.queen</groupId>
+			<artifactId>queen-domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+    </dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-maven-plugin</artifactId>
+					<version>${liquibase.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.liquibase.ext</groupId>
+							<artifactId>liquibase-hibernate6</artifactId>
+							<version>${liquibase.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.liquibase</groupId>
+							<artifactId>liquibase-core</artifactId>
+							<version>${liquibase.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework.boot</groupId>
+							<artifactId>spring-boot-starter-data-jpa</artifactId>
+							<version>3.2.1</version>
+						</dependency>
+						<dependency>
+							<groupId>jakarta.validation</groupId>
+							<artifactId>jakarta.validation-api</artifactId>
+							<version>3.0.2</version>
+						</dependency>
+						<dependency>
+							<groupId>org.javassist</groupId>
+							<artifactId>javassist</artifactId>
+							<version>3.29.0-GA</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<changeLogFile>src/main/resources/db/master.xml</changeLogFile>
+						<diffChangeLogFile>src/main/resources/db/changelog/new_changelog.xml</diffChangeLogFile>
+						<driver>org.postgresql.Driver</driver>
+						<url>jdbc:postgresql://localhost:5432/queen</url>
+						<defaultSchemaName>public</defaultSchemaName>
+						<contexts>test,dev,prod</contexts>
+						<username></username>
+						<password></password>
+						<referenceUrl>hibernate:spring:fr.insee.queen.application.domain?dialect=org.hibernate.dialect.PostgreSQLDialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
+						<referenceDriver>liquibase.ext.hibernate.database.connection.HibernateDriver</referenceDriver>
+						<referenceDefaultSchemaName>public</referenceDefaultSchemaName>
+						<verbose>true</verbose>
+						<logging>debug</logging>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
+

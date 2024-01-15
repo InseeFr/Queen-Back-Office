@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-jar
-          path: target/*.jar
+          path: queen-application/target/*.jar
 
   create-release:
     needs: [ check-version, build-sources ]
