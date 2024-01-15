@@ -29,7 +29,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Validated
-@ConditionalOnProperty(name = "feature.enable.interviewer-collect", havingValue="true")
+@ConditionalOnProperty(name = "feature.interviewer-mode.enabled", havingValue="true")
 public class InterviewerController {
     private final AuthenticationHelper authHelper;
     private final PilotageComponent pilotageComponent;

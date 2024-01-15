@@ -1,8 +1,7 @@
 package fr.insee.queen.application.configuration.log;
 
 import fr.insee.queen.application.configuration.auth.AuthConstants;
-import fr.insee.queen.application.configuration.properties.ApplicationProperties;
-import fr.insee.queen.application.configuration.properties.AuthEnumProperties;
+import fr.insee.queen.application.configuration.properties.OidcProperties;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,10 +20,10 @@ import java.util.UUID;
 @Slf4j
 public class LogInterceptor implements HandlerInterceptor {
 
-    private final ApplicationProperties applicationProperties;
+    private final OidcProperties oidcProperties;
 
-    public LogInterceptor(ApplicationProperties applicationProperties) {
-        this.applicationProperties = applicationProperties;
+    public LogInterceptor(OidcProperties oidcProperties) {
+        this.oidcProperties = oidcProperties;
     }
 
     @Override
@@ -36,7 +35,7 @@ public class LogInterceptor implements HandlerInterceptor {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String userId = AuthConstants.GUEST;
-        if (applicationProperties.auth().equals(AuthEnumProperties.OIDC)
+        if (oidcProperties.enabled()
                 && authentication.getCredentials() instanceof Jwt jwt) {
             userId = jwt.getClaims().get("preferred_username").toString();
         }

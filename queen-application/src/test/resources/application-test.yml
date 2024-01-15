@@ -6,16 +6,32 @@ application:
     admin: admin
     webclient: webclient
     reviewer-alternative: alternate-reviewer
-  auth: OIDC
-  security:
-    # if oidc auth enabled
-    oidc:
-      auth-server-host: https://auth.oauth2
-      client-id: client
-      realm: my-realm
-      principal-attribute: username
-      additional-realm: additional-realm
   temp-folder: ${java.io.tmpdir}
+
+feature:
+  oidc:
+    enabled: true
+    auth-server-host: https://auth.oauth2
+    client-id: client
+    realm: my-realm
+    principal-attribute: username
+    additional-realm: additional-realm
+  dataset:
+    # create demo dataset on startup
+    load-on-start: false
+    # display api endpoint to create dataset
+    display-endpoint: true
+  swagger:
+    enabled: false
+  pilotage:
+    enabled: false
+  cache:
+    enabled: false
+  comments:
+    enabled: true
+  interviewer-mode:
+    enabled: true
+
 spring:
   liquibase:
     enabled: true
@@ -45,12 +61,3 @@ server:
     encoding:
       charset: UTF-8
       force: true
-feature:
-  enable:
-    swagger: false
-    dataset: false
-    dataset-endpoints: true
-    cache: false
-    pilotage: false
-    comments: true
-    interviewer-collect: true

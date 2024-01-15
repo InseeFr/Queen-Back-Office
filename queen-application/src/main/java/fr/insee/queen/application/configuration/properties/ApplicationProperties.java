@@ -1,7 +1,6 @@
 package fr.insee.queen.application.configuration.properties;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,9 +18,7 @@ public record ApplicationProperties(
         @NotEmpty(message = "cors origins must be specified")
         List<String> corsOrigins,
         @NotEmpty(message = "Folder where temp files will be created cannot be empty.")
-        String tempFolder,
-        @NotNull(message = "application.auth must be specified (OIDC or NOAUTH)")
-        AuthEnumProperties auth) {
+        String tempFolder) {
 
     @Override
     public boolean equals(Object o) {
@@ -31,13 +28,12 @@ public record ApplicationProperties(
         return Objects.equals(host, that.host)
                 && Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
-                && Arrays.equals(publicUrls, that.publicUrls)
-                && auth.equals(that.auth);
+                && Arrays.equals(publicUrls, that.publicUrls);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(host, title, description, auth);
+        int result = Objects.hash(host, title, description);
         result = 31 * result + Arrays.hashCode(publicUrls);
         return result;
     }
@@ -49,7 +45,6 @@ public record ApplicationProperties(
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", publicUrls=" + Arrays.toString(publicUrls) +
-                ", auth='" + auth + '\'' +
                 '}';
     }
 }

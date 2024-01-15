@@ -1,7 +1,6 @@
 package fr.insee.queen.application.configuration.auth;
 
 import fr.insee.queen.application.configuration.properties.ApplicationProperties;
-import fr.insee.queen.application.configuration.properties.AuthEnumProperties;
 import fr.insee.queen.application.configuration.properties.OidcProperties;
 import fr.insee.queen.application.configuration.properties.RoleProperties;
 import lombok.AllArgsConstructor;
@@ -31,7 +30,7 @@ import java.util.Collection;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@ConditionalOnProperty(name = "application.auth", havingValue = "OIDC")
+@ConditionalOnProperty(name = "feature.oidc.enabled", havingValue = "true")
 @AllArgsConstructor
 public class OidcSecurityConfiguration {
     private final PublicSecurityFilterChain publicSecurityFilterChainConfiguration;
@@ -73,7 +72,7 @@ public class OidcSecurityConfiguration {
     @Order(1)
     protected SecurityFilterChain filterPublicUrlsChain(HttpSecurity http, ApplicationProperties applicationProperties,
                                                         OidcProperties oidcProperties) throws Exception {
-        String authorizedConnectionHost = applicationProperties.auth().equals(AuthEnumProperties.OIDC) ?
+        String authorizedConnectionHost = oidcProperties.enabled() ?
                 " " + oidcProperties.authServerHost() : "";
         return publicSecurityFilterChainConfiguration.buildSecurityPublicFilterChain(http, applicationProperties.publicUrls(), authorizedConnectionHost);
     }

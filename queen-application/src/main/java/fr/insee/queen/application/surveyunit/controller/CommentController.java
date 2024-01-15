@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * These endpoints handle the comment filled by a survey unit at the nd of the questionnaire*
  */
 
-@ConditionalOnExpression(value = "${feature.enable.comments} == true")
+@ConditionalOnExpression(value = "${feature.comments.enabled} == true")
 @RestController
 @Tag(name = "06. Survey units")
 @RequestMapping(path = "/api")

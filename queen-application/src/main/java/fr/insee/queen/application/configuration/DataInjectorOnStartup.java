@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 
 @Slf4j
-@ConditionalOnProperty(name = "feature.enable.dataset", havingValue = "true")
+@ConditionalOnProperty(name = "feature.dataset.load-on-start", havingValue = "true")
 @Configuration
 @RequiredArgsConstructor
 public class DataInjectorOnStartup {

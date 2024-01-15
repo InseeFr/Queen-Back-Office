@@ -11,28 +11,41 @@ application:
     admin:
     webclient:
     reviewer-alternative:
-  auth:  # OIDC | NOAUTH
-  ## if OIDC enabled
-  security:
-    oidc:
-      auth-server-host: https://auth-server.host
-      auth-server-url: ${application.security.oidc.auth-server-host}/auth
-      client-id: my-client-id
-      realm: my-realm
-      principal-attribute: id-claim
-      role-claim: role-claim
   corsOrigins:
   # Folder where to store temp files.
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
   # Use a folder with permissions for the app only
   temp-folder:
-  # Pearljam-bo url
+
+feature:
+  oidc:
+    enabled: true
+    auth-server-host: https://auth-server.host
+    auth-server-url: ${feature.oidc.auth-server-host}/auth
+    client-id: my-client-id
+    realm: my-realm
+    principal-attribute: id-claim
+    role-claim: role-claim
+  dataset:
+    # create demo dataset on startup
+    load-on-start: false
+    # display api endpoint to create dataset
+    display-endpoint: false
+  swagger:
+    enabled: false
   pilotage:
+    enabled: true
     url:
-    #alternative habilitation
     alternative-habilitation:
       url: http://alternative.url
       campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
+  cache:
+    enabled: true
+  comments:
+    enabled: false
+  interviewer-mode:
+    enabled: false
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -62,8 +75,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${application.security.oidc.auth-server-url}/realms/${application.security.oidc.realm}
-
+          issuer-uri: ${feature.oidc.auth-server-url}/realms/${feature.oidc.realm}
   liquibase:
     enabled: true
     contexts: prod
@@ -76,7 +88,7 @@ spring:
 springdoc:
   swagger-ui:
     oauth:
-      client-id: ${application.security.oidc.client-id}
+      client-id: ${feature.oidc.client-id}
       # /!\ when injecting this property from env var, cannot convert KCIDPHINT env var to kc_idp_hint otherwise
       # This property is a hint for spring-boot to map the env var to this property
       additionalQueryStringParams:
@@ -108,12 +120,3 @@ logging:
   logback:
     rollingpolicy:
       max-history: 90
-feature:
-  enable:
-    dataset: false
-    dataset-endpoints: false
-    swagger: false
-    pilotage: true
-    cache: true
-    comments: false
-    interviewer-collect: false

@@ -32,11 +32,11 @@ public class PilotageHttpRepository implements PilotageRepository {
     public static final String API_PEARLJAM_CAMPAIGNS = "/campaigns/%s/ongoing";
     public static final String API_PEARLJAM_INTERVIEWER_CAMPAIGNS = "/api/interviewer/campaigns";
 
-    @Value("${application.pilotage.url}")
+    @Value("${feature.pilotage.url}")
     private final String pilotageUrl;
-    @Value("${application.pilotage.alternative-habilitation.url}")
+    @Value("${feature.pilotage.alternative-habilitation.url}")
     private final String alternativeHabilitationServiceURL;
-    @Value("${application.pilotage.alternative-habilitation.campaignids-regex}")
+    @Value("${feature.pilotage.alternative-habilitation.campaignids-regex}")
     private final String campaignIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
 

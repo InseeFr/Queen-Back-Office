@@ -65,7 +65,7 @@ mvn liquibase:diff
 ```
 
 #### Properties
-Minimal configuration for dev purpose only (there is no auth in this configuration)
+Minimal configuration for dev purpose only (no auth, no habilitation checks on pilotage api)
 User is considered as authenticated admin user
 
 ```yaml  
@@ -75,7 +75,6 @@ application:
   # /!\ do not use the OS default temp folder or java.io.tmpdir as it causes security issues
   # give only access rights to this folder to the user executing the tomcat process 
   temp-folder: /opt/app/app-temp
-  auth: NOAUTH
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/defaultSchema
@@ -93,75 +92,101 @@ logging:
   level:
     root: INFO
 feature:
-  enable:
-    # enable data loading in DB 
-    dataset: true
-    # enable swagger
-    swagger: true
-    # enable pilotage api 
-    pilotage: false
-    # enable cache
-    cache: true
-    # enable comments endpoints
-    comments: false
-    # enable interviewer endpoints 
-    interviewer-collect: false
+  oidc:
+    enabled: false
+
+  dataset:
+    # create demo dataset on startup
+    load-on-start: true
+    # display api endpoint to create dataset
+    display-endpoint: true
+
+  # enable swagger
+  swagger:
+    enabled: true
+
+  # enable pilotage api 
+  pilotage:
+    enabled: false
+
+  # enable cache  
+  cache:
+    enabled: true
+  
+  # enable comment endpoints
+  comments:
+    enabled: true
+  
+  # enable interviewer features
+  interviewer-mode:
+    enabled: false
 ```
 
-Configuration example with OIDC and pilotage api enabled
+Configuration example with OIDC/habilitations/interviewer features enabled
 
-```yaml 
+```yaml  
 application:
-  corsOrigins: https://test.com # mandatory
+  corsOrigins: https://test.com #mandatory
   # define folder where temp files will be created
   # /!\ do not use the OS default temp folder or java.io.tmpdir as it causes security issues
   # give only access rights to this folder to the user executing the tomcat process 
   temp-folder: /opt/app/app-temp
-  auth: OIDC
   roles:
     interviewer: interviewer_role
     reviewer: reviewer_role
     admin: admin_role
     webclient: webclient_role
     reviewer-alternative: reviewer_alternative_role
-  pilotage:
-    # url used to check habilitations for a user 
-    url: https://pilotage-api.com
-  security:
-    # if oidc auth enabled
-    oidc:
-      auth-server-host: https://auth.host
-      client-id: clientId
-      realm: realmUsed
-      principal-attribute: username
-      role-claim: role_claim
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/defaultSchema
     username: 
     password: 
     driver-class-name: org.postgresql.Driver
-  jpa:
-    show-sql: true
 logging:
   file:
     name: /path/to/log/folder/queen.log
   level:
     root: INFO
 feature:
-  enable:
-    # enable data loading in DB 
-    dataset: true
-    # enable swagger
-    swagger: true
-    # enable pilotage api 
-    pilotage: true
-    # enable cache
-    cache: true
-    # enable comments endpoints
-    comments: false
-    # enable interviewer endpoints 
-    interviewer-collect: false
+  oidc:
+    enabled: true
+    auth-server-host: https://auth-server.host
+    auth-server-url: ${feature.oidc.auth-server-host}/auth
+    client-id: my-client-id
+    realm: my-realm
+    principal-attribute: id-claim
+    role-claim: role-claim
+
+  dataset:
+    # create demo dataset on startup
+    load-on-start: false
+    # display api endpoint to create dataset
+    display-endpoint: false
+
+  # enable swagger
+  swagger:
+    enabled: true
+
+  # enable pilotage api 
+  pilotage:
+    enabled: true
+    url:
+    alternative-habilitation:
+      url: http://alternative.url
+      campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
+
+  # enable cache  
+  cache:
+    enabled: true
+  
+  # enable comment endpoints
+  comments:
+    enabled: true
+  
+  # enable interviewer features
+  interviewer-mode:
+    enabled: true
 ```
 
 ## End-Points
