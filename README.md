@@ -131,6 +131,12 @@ application:
   # /!\ do not use the OS default temp folder or java.io.tmpdir as it causes security issues
   # give only access rights to this folder to the user executing the tomcat process 
   temp-folder: /opt/app/app-temp
+  roles:
+    interviewer: interviewer_role
+    reviewer: reviewer_role
+    admin: admin_role
+    webclient: webclient_role
+    reviewer-alternative: reviewer_alternative_role
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/defaultSchema
