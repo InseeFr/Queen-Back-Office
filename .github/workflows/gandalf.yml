@@ -25,13 +25,13 @@ jobs:
         name: Check tag existence
         id: check-tag-exists
         with:
-          tag: ${{ steps.version-step.outputs.version }}
+          tag: ${{ steps.version.outputs.version }}
 
       - name: Tag verification
         id: check-tag
         run: |
           if [[ "${{ steps.check-tag-exists.outputs.exists }}" == "true" ]]; then
-            echo "Tag ${{ steps.version-step.outputs.version }} already exists, don't forget to upgrade your pom"
+            echo "Tag ${{ steps.version.outputs.version }} already exists, don't forget to upgrade your pom"
             exit 1
           fi
   test:

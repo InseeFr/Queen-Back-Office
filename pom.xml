@@ -10,7 +10,7 @@
     <description>Modules for queen back-office</description>
 
     <properties>
-        <revision>4.0.1</revision>
+        <revision>4.0.2</revision>
         <changelist></changelist>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,6 +36,8 @@
         <module>queen-application</module>
         <module>queen-domain</module>
         <module>queen-infra-db</module>
+        <module>queen-domain-depositproof</module>
+        <module>queen-domain-pilotage</module>
         <module>queen-infra-pilotage</module>
         <module>queen-infra-depositproof</module>
     </modules>

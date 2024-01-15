@@ -25,13 +25,13 @@ jobs:
         name: Check tag existence
         id: check-tag-exists
         with:
-          tag: ${{ steps.version-step.outputs.version }}
+          tag: ${{ steps.version.outputs.version }}
 
       - name: Tag verification
         id: check-tag
         run: |
           if [[ "${{ steps.check-tag-exists.outputs.exists }}" == "true" ]]; then
-            echo "Nothing to tag/release, the tag ${{ steps.version-step.outputs.version }} already exists"
+            echo "Nothing to tag/release, the tag ${{ steps.version.outputs.version }} already exists"
             exit 1
           fi
 

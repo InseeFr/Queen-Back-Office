@@ -4,7 +4,7 @@ import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.depositproof.gateway.DepositProofGeneration;
 import fr.insee.queen.domain.depositproof.model.PdfDepositProof;
 import fr.insee.queen.domain.surveyunit.model.StateDataType;
-import fr.insee.queen.domain.depositproof.model.SurveyUnitDepositProof;
+import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

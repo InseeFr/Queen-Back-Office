@@ -7,6 +7,8 @@ REST API used for communication with Queen/Stromae UI
 ## Modules
 - queen-application: api module for queen
 - queen-domain: business logic
+- queen-domain-pilotage: business logic for habilitations/interviewer specific features 
+- queen-domain-depositproof: business logic for deposit proof generation
 - queen-infra-db: db access to queen data
 - queen-infra-depositproof: deposit proof generation
 - queen-infra-pilotage: access to pilotage api (check habilitations, ...)

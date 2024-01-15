@@ -11,6 +11,10 @@
 	<name>queen-infra-db</name>
 	<description>DAO for Queen/Stromae</description>
 
+	<properties>
+		<postgresql.version>42.5.4</postgresql.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>fr.insee.queen</groupId>
@@ -21,6 +25,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- Database -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
 		</dependency>
 
 		<dependency>
@@ -49,6 +60,7 @@
 					<artifactId>liquibase-maven-plugin</artifactId>
 					<version>${liquibase.version}</version>
 					<dependencies>
+						<!-- need to add these dependencies with spring boot ... sic -->
 						<dependency>
 							<groupId>org.liquibase.ext</groupId>
 							<artifactId>liquibase-hibernate6</artifactId>
@@ -84,7 +96,7 @@
 						<contexts>test,dev,prod</contexts>
 						<username></username>
 						<password></password>
-						<referenceUrl>hibernate:spring:fr.insee.queen.application.domain?dialect=org.hibernate.dialect.PostgreSQLDialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
+						<referenceUrl>hibernate:spring:fr.insee.queen.infrastructure.db?dialect=org.hibernate.dialect.PostgreSQLDialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
 						<referenceDriver>liquibase.ext.hibernate.database.connection.HibernateDriver</referenceDriver>
 						<referenceDefaultSchemaName>public</referenceDefaultSchemaName>
 						<verbose>true</verbose>

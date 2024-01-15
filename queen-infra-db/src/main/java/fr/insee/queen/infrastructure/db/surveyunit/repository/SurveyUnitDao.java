@@ -1,8 +1,8 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository;
 
-import fr.insee.queen.domain.depositproof.model.SurveyUnitDepositProof;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
+import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;

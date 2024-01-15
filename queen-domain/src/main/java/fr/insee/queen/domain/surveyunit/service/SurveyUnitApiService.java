@@ -5,13 +5,9 @@ import fr.insee.queen.domain.campaign.service.QuestionnaireModelExistenceService
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
-import fr.insee.queen.domain.depositproof.model.SurveyUnitDepositProof;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
-import fr.insee.queen.domain.surveyunit.model.StateData;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;

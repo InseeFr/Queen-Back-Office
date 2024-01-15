@@ -11,6 +11,15 @@
 	<name>queen-application</name>
 	<description>API for Queen/Stromae</description>
 
+	<properties>
+		<caffeine.version>3.1.8</caffeine.version>
+		<zonky-spring.version>2.4.0</zonky-spring.version>
+		<zonky-postgres.version>2.0.4</zonky-postgres.version>
+		<springdoc.version>2.1.0</springdoc.version>
+		<commons-io.version>2.11.0</commons-io.version>
+		<org-json.version>20231013</org-json.version>
+		<guava.version>33.0.0-jre</guava.version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -76,22 +85,15 @@
 		<dependency>
 			<groupId>io.zonky.test</groupId>
 			<artifactId>embedded-database-spring-test</artifactId>
-			<version>2.4.0</version>
+			<version>${zonky-spring.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>io.zonky.test</groupId>
 			<artifactId>embedded-postgres</artifactId>
-			<version>2.0.4</version>
+			<version>${zonky-postgres.version}</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- Database -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.5.4</version>
 		</dependency>
 
 		<dependency>
@@ -114,7 +116,7 @@
 		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
-			<version>3.1.8</version>
+			<version>${caffeine.version}</version>
 		</dependency>
 
 		<!-- Actuator Metrics -->
@@ -133,7 +135,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.1.0</version>
+			<version>${springdoc.version}</version>
 		</dependency>
 
 		<dependency>
@@ -145,22 +147,50 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.11.0</version>
+			<version>${commons-io.version}</version>
 		</dependency>
+
 
 		<!-- XML conversion -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20231013</version>
+			<version>${org-json.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>33.0.0-jre</version>
+			<version>${guava.version}</version>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>coverage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.8.11</version>
+						<executions>
+							<execution>
+								<id>report-aggregate</id>
+								<goals>
+									<goal>report-aggregate</goal>
+								</goals>
+								<configuration>
+									<includeCurrentProject>true</includeCurrentProject>
+								</configuration>
+								<phase>verify</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>
@@ -178,23 +208,6 @@
 								<description>${project.description}</description>
 							</additionalProperties>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.11</version>
-				<executions>
-					<execution>
-						<id>report-aggregate</id>
-						<goals>
-							<goal>report-aggregate</goal>
-						</goals>
-						<configuration>
-							<includeCurrentProject>true</includeCurrentProject>
-						</configuration>
-						<phase>verify</phase>
 					</execution>
 				</executions>
 			</plugin>
