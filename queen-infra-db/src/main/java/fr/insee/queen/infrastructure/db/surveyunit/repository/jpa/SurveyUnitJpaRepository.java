@@ -5,6 +5,7 @@ import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
+import fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -72,21 +73,19 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
      * @return {@link SurveyUnit} survey unit
      */
     @Query("""
-            select new fr.insee.queen.domain.surveyunit.model.SurveyUnit(
+            select new fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection(
                 s.id,
                 s.campaign.id,
                 s.questionnaireModel.id,
                 s.personalization.value,
                 s.data.value,
                 s.comment.value,
-                new fr.insee.queen.domain.surveyunit.model.StateData(
-                    s.stateData.state,
-                    s.stateData.date,
-                    s.stateData.currentPage
-                ) as stateData
+                s.stateData.state,
+                s.stateData.date,
+                s.stateData.currentPage
             )
             from SurveyUnitDB s left join s.personalization left join s.data left join s.comment left join s.stateData where s.id=:surveyUnitId""")
-    Optional<SurveyUnit> findOneById(String surveyUnitId);
+    Optional<SurveyUnitProjection> findOneById(String surveyUnitId);
 
     /**
      * Retrieve all survey units with all details
@@ -94,21 +93,19 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
      * @return List of {@link SurveyUnit} survey units
      */
     @Query("""
-            select new fr.insee.queen.domain.surveyunit.model.SurveyUnit(
+            select new fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection(
                 s.id,
                 s.campaign.id,
                 s.questionnaireModel.id,
                 s.personalization.value,
                 s.data.value,
                 s.comment.value,
-                new fr.insee.queen.domain.surveyunit.model.StateData(
-                    s.stateData.state,
-                    s.stateData.date,
-                    s.stateData.currentPage
-                ) as stateData
+                s.stateData.state,
+                s.stateData.date,
+                s.stateData.currentPage
             )
             from SurveyUnitDB s left join s.personalization left join s.data left join s.comment left join s.stateData order by s.id asc""")
-    List<SurveyUnit> findAllSurveyUnits();
+    List<SurveyUnitProjection> findAllSurveyUnits();
 
     /**
      * Retrieve a survey unit with campaign and state data linked (used for deposit proof)
@@ -146,18 +143,16 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
      * @return List of {@link SurveyUnit} survey units found
      */
     @Query("""
-            select new fr.insee.queen.domain.surveyunit.model.SurveyUnit(
+            select new fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection(
                 s.id,
                 s.campaign.id,
                 s.questionnaireModel.id,
                 s.personalization.value,
                 s.data.value,
                 s.comment.value,
-                new fr.insee.queen.domain.surveyunit.model.StateData(
-                    s.stateData.state,
-                    s.stateData.date,
-                    s.stateData.currentPage
-                ) as stateData
+                s.stateData.state,
+                s.stateData.date,
+                s.stateData.currentPage
             )
             from SurveyUnitDB s
             left join s.personalization
@@ -166,7 +161,7 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             left join s.stateData
             where s.id in :surveyUnitIds
             order by s.id asc""")
-    List<SurveyUnit> findSurveyUnitsByIdIn(List<String> surveyUnitIds);
+    List<SurveyUnitProjection> findSurveyUnitsByIdIn(List<String> surveyUnitIds);
 
     /**
      * Find survey units with state linked by ids

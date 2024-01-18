@@ -9,6 +9,7 @@ import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
 import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireModelJpaRepository;
+import fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.DataJpaRepository;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.PersonalizationJpaRepository;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.SurveyUnitJpaRepository;
@@ -59,7 +60,8 @@ public class SurveyUnitDao implements SurveyUnitRepository {
 
     @Override
     public Optional<SurveyUnit> find(String surveyUnitId) {
-        return crudRepository.findOneById(surveyUnitId);
+        return crudRepository.findOneById(surveyUnitId)
+                .map(SurveyUnitProjection::toModel);
     }
 
     @Override
@@ -185,12 +187,16 @@ public class SurveyUnitDao implements SurveyUnitRepository {
 
     @Override
     public List<SurveyUnit> find(List<String> surveyUnitIds) {
-        return crudRepository.findSurveyUnitsByIdIn(surveyUnitIds);
+        return crudRepository.findSurveyUnitsByIdIn(surveyUnitIds).stream()
+                .map(SurveyUnitProjection::toModel)
+                .toList();
     }
 
     @Override
     public List<SurveyUnit> findAll() {
-        return crudRepository.findAllSurveyUnits();
+        return crudRepository.findAllSurveyUnits().stream()
+                .map(SurveyUnitProjection::toModel)
+                .toList();
     }
 
 

@@ -163,7 +163,6 @@ class SurveyUnitTests {
                     "id":"test-surveyunit2",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
                     "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
-                    "stateData": {"state": null,"date": null,"currentPage": null},
                     "questionnaireId":"VQS2021X00"
                 }""";
         mockMvc.perform(post("/api/campaign/VQS2021X00/survey-unit")
