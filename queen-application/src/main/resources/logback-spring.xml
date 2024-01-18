@@ -23,7 +23,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="default,dev,test">
+    <springProfile name="default,dev,test,prod">
         <root level="INFO">
             <appender-ref ref="CONSOLE" />
         </root>
