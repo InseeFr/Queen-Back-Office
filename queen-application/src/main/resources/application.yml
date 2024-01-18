@@ -3,7 +3,6 @@ application:
     - /swagger-ui/**
     - /v3/api-docs/**
     - /api/healthcheck
-    - /actuator/**
     - /
   roles:
     interviewer:
@@ -102,14 +101,9 @@ springdoc:
 management:
   endpoints:
     enabled-by-default: false
-    metrics:
-      enabled: true
-    prometheus:
-      enabled: true
     web:
-      exposure:
-        include: metrics,prometheus
-
+      discovery:
+        enabled: false
 logging:
   level:
     root: INFO
