@@ -80,7 +80,7 @@ public class OidcSecurityConfiguration {
     @Bean
     protected JwtAuthenticationConverter jwtAuthenticationConverter(OidcProperties oidcProperties, RoleProperties roleProperties) {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setPrincipalClaimName("name");
+        jwtAuthenticationConverter.setPrincipalClaimName(oidcProperties.principalAttribute());
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter(oidcProperties, roleProperties));
         return jwtAuthenticationConverter;
     }
