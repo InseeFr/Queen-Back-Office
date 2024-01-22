@@ -1,6 +1,7 @@
 package fr.insee.queen.application.configuration.auth;
 
 import fr.insee.queen.application.configuration.properties.ApplicationProperties;
+import fr.insee.queen.application.configuration.rest.RestTemplateAddJsonHeaderInterceptor;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.web.client.RestTemplate;
 
 @ConditionalOnProperty(name = "feature.oidc.enabled", havingValue = "false")
 @Configuration
@@ -56,4 +58,10 @@ public class NoAuthSecurityConfiguration {
         return publicSecurityFilterChainConfiguration.buildSecurityPublicFilterChain(http, applicationProperties.publicUrls());
     }
 
+    @Bean
+    protected RestTemplate restTemplatePilotage() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add(new RestTemplateAddJsonHeaderInterceptor());
+        return restTemplate;
+    }
 }

@@ -41,12 +41,13 @@ public class PilotageHttpRepository implements PilotageRepository {
     private final RestTemplate restTemplate;
 
     @Override
-    public boolean isClosed(String campaignId, String authToken) {
+    public boolean isClosed(String campaignId) {
         final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_CAMPAIGNS.formatted(campaignId);
 
         try {
             ResponseEntity<PilotageCampaignEnabled> response =
-                    restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, getHttpHeaders(authToken),
+                    restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
+                            null,
                             PilotageCampaignEnabled.class);
             PilotageCampaignEnabled campaignEnabled = response.getBody();
             if (campaignEnabled == null) {
@@ -61,11 +62,12 @@ public class PilotageHttpRepository implements PilotageRepository {
     }
 
     @Override
-    public List<PilotageSurveyUnit> getSurveyUnits(String authToken) {
+    public List<PilotageSurveyUnit> getSurveyUnits() {
         try {
             final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_SURVEYUNITS;
             ResponseEntity<List<PilotageSurveyUnit>> response =
-                    restTemplate.exchange(uriPilotageFilter, HttpMethod.GET, getHttpHeaders(authToken),
+                    restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
+                            null,
                             new ParameterizedTypeReference<List<PilotageSurveyUnit>>() {});
             log.debug("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
             return response.getBody();
@@ -80,12 +82,13 @@ public class PilotageHttpRepository implements PilotageRepository {
     }
 
     @Override
-    public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
+    public List<PilotageCampaign> getInterviewerCampaigns() {
         try {
             final String uriPilotageInterviewerCampaigns = pilotageUrl + API_PEARLJAM_INTERVIEWER_CAMPAIGNS;
 
             ResponseEntity<List<PilotageCampaign>> response =
-                    restTemplate.exchange(uriPilotageInterviewerCampaigns, HttpMethod.GET, getHttpHeaders(authToken),
+                    restTemplate.exchange(uriPilotageInterviewerCampaigns, HttpMethod.GET,
+                            null,
                             new ParameterizedTypeReference<List<PilotageCampaign>>() {});
             log.debug("Pilotage API call returned {}", response.getStatusCode().value());
             return response.getBody();
@@ -100,7 +103,7 @@ public class PilotageHttpRepository implements PilotageRepository {
     }
 
     @Override
-    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken) {
+    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
         StringBuilder uriPilotageFilter = new StringBuilder();
         String campaignId = surveyUnit.campaignId();
 
@@ -117,7 +120,8 @@ public class PilotageHttpRepository implements PilotageRepository {
 
         try {
             ResponseEntity<PilotageHabilitation> response =
-                    restTemplate.exchange(uriPilotageFilter.toString(), HttpMethod.GET, getHttpHeaders(authToken),
+                    restTemplate.exchange(uriPilotageFilter.toString(), HttpMethod.GET,
+                            null,
                             PilotageHabilitation.class);
 
             PilotageHabilitation habilitation = response.getBody();
@@ -141,12 +145,5 @@ public class PilotageHttpRepository implements PilotageRepository {
             log.error(ex.getMessage(), ex);
             throw new PilotageApiException();
         }
-    }
-
-    private HttpEntity<String> getHttpHeaders(String authToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(authToken);
-        return new HttpEntity<>(headers);
     }
 }

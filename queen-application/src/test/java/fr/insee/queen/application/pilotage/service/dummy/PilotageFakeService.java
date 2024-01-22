@@ -45,12 +45,12 @@ public class PilotageFakeService implements PilotageService {
     );
 
     @Override
-    public boolean isClosed(String campaignId, String authToken) {
+    public boolean isClosed(String campaignId) {
         return this.isCampaignClosed;
     }
 
     @Override
-    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId, String authToken) {
+    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId) {
         if (this.hasEmptySurveyUnits) {
             return new ArrayList<>();
         }
@@ -58,7 +58,7 @@ public class PilotageFakeService implements PilotageService {
     }
 
     @Override
-    public List<SurveyUnit> getInterviewerSurveyUnits(String authToken) {
+    public List<SurveyUnit> getInterviewerSurveyUnits() {
         if (this.hasEmptySurveyUnits) {
             return new ArrayList<>();
         }
@@ -73,13 +73,13 @@ public class PilotageFakeService implements PilotageService {
     }
 
     @Override
-    public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
+    public List<PilotageCampaign> getInterviewerCampaigns() {
         wentThroughInterviewerCampaigns = true;
         return interviewerCampaigns;
     }
 
     @Override
-    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken) {
+    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
         wentThroughHasHabilitation++;
         return this.hasHabilitation;
     }

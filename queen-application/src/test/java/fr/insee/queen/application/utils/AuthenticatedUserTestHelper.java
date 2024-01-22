@@ -3,7 +3,6 @@ package fr.insee.queen.application.utils;
 import fr.insee.queen.application.configuration.auth.AuthConstants;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -17,11 +16,11 @@ import java.util.Map;
 
 public class AuthenticatedUserTestHelper {
 
-    public Authentication getAuthenticatedUser() {
+    public JwtAuthenticationToken getAuthenticatedUser() {
         return getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER);
     }
 
-    public Authentication getAuthenticatedUser(AuthorityRoleEnum... roles) {
+    public JwtAuthenticationToken getAuthenticatedUser(AuthorityRoleEnum... roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (AuthorityRoleEnum role : roles) {
             authorities.add(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + role.name()));
@@ -34,9 +33,9 @@ public class AuthenticatedUserTestHelper {
         return new JwtAuthenticationToken(jwt, authorities, "Jean Dupont");
     }
 
-    public Authentication getNotAuthenticatedUser() {
+    public AnonymousAuthenticationToken getNotAuthenticatedUser() {
         Map<String, String> principal = new HashMap<>();
-        Authentication auth = new AnonymousAuthenticationToken("id", principal, List.of(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + "ANONYMOUS")));
+        AnonymousAuthenticationToken auth = new AnonymousAuthenticationToken("id", principal, List.of(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + "ANONYMOUS")));
         auth.setAuthenticated(false);
         return auth;
     }

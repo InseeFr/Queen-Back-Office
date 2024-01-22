@@ -32,7 +32,6 @@ class PilotageHttpRepositoryTest {
     private final String pilotageUrl = "http://www.pilotage.com";
     private final String alternativeHabilitationServiceURL = "http://www.pilotage-alternative.com";
     private MockRestServiceServer mockServer;
-    private final String accessToken = "access-token";
     private final String campaignId = "campaign-id";
 
     @BeforeEach
@@ -56,14 +55,12 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_INTERVIEWER_CAMPAIGNS)))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(campaignsResponse)
                 );
 
-        List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns(accessToken);
+        List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns();
         mockServer.verify();
 
         assertThat(campaigns).hasSize(3);
@@ -79,13 +76,11 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_INTERVIEWER_CAMPAIGNS)))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns(accessToken);
+        List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns();
         mockServer.verify();
         assertThat(campaigns).isEmpty();
     }
@@ -96,13 +91,11 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_INTERVIEWER_CAMPAIGNS)))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.getInterviewerCampaigns(accessToken))
+        assertThatThrownBy(() -> pilotageRepository.getInterviewerCampaigns())
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
@@ -115,14 +108,12 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_CAMPAIGNS.formatted(campaignId))))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(campaignResponse)
                 );
 
-        boolean isClosed = pilotageRepository.isClosed(campaignId, accessToken);
+        boolean isClosed = pilotageRepository.isClosed(campaignId);
         mockServer.verify();
         assertThat(isClosed).isEqualTo(!Boolean.parseBoolean(status));
     }
@@ -133,13 +124,11 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_CAMPAIGNS.formatted(campaignId))))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.isClosed(campaignId, accessToken))
+        assertThatThrownBy(() -> pilotageRepository.isClosed(campaignId))
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
@@ -150,13 +139,11 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_CAMPAIGNS.formatted(campaignId))))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.isClosed(campaignId, accessToken))
+        assertThatThrownBy(() -> pilotageRepository.isClosed(campaignId))
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
@@ -173,14 +160,12 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_SURVEYUNITS)))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(response)
                 );
 
-        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits(accessToken);
+        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits();
         assertThat(surveyUnits).hasSize(3);
         assertThat(surveyUnits.get(0).campaign()).isEqualTo("campaign-id1");
         assertThat(surveyUnits.get(1).campaign()).isEqualTo("campaign-id2");
@@ -197,13 +182,11 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_SURVEYUNITS)))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.getSurveyUnits(accessToken))
+        assertThatThrownBy(() -> pilotageRepository.getSurveyUnits())
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
@@ -214,13 +197,11 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_SURVEYUNITS)))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits(accessToken);
+        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits();
         assertThat(surveyUnits).isEmpty();
         mockServer.verify();
     }
@@ -244,14 +225,12 @@ class PilotageHttpRepositoryTest {
                 .andExpect(queryParam("campaign", campaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(habilitationResponse)
                 );
 
-        boolean hasHabilitation = pilotageRepository.hasHabilitation(surveyUnit, role, idep, accessToken);
+        boolean hasHabilitation = pilotageRepository.hasHabilitation(surveyUnit, role, idep);
         mockServer.verify();
         assertThat(hasHabilitation).isEqualTo(Boolean.parseBoolean(status));
     }
@@ -274,14 +253,12 @@ class PilotageHttpRepositoryTest {
                 .andExpect(queryParam("campaign", matchedRegexCampaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(habilitationResponse)
                 );
 
-        boolean hasHabilitation = pilotageRepository.hasHabilitation(surveyUnit, role, idep, accessToken);
+        boolean hasHabilitation = pilotageRepository.hasHabilitation(surveyUnit, role, idep);
         mockServer.verify();
         assertThat(hasHabilitation).isTrue();
     }
@@ -303,13 +280,11 @@ class PilotageHttpRepositoryTest {
                 .andExpect(queryParam("campaign", campaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.hasHabilitation(surveyUnit, role, idep, accessToken))
+        assertThatThrownBy(() -> pilotageRepository.hasHabilitation(surveyUnit, role, idep))
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
@@ -331,13 +306,11 @@ class PilotageHttpRepositoryTest {
                 .andExpect(queryParam("campaign", campaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        boolean hasHabilitation = pilotageRepository.hasHabilitation(surveyUnit, role, idep, accessToken);
+        boolean hasHabilitation = pilotageRepository.hasHabilitation(surveyUnit, role, idep);
         mockServer.verify();
         assertThat(hasHabilitation).isFalse();
     }
@@ -359,13 +332,11 @@ class PilotageHttpRepositoryTest {
                 .andExpect(queryParam("campaign", campaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header("Authorization", "Bearer "+ accessToken))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.hasHabilitation(surveyUnit, role, idep, accessToken))
+        assertThatThrownBy(() -> pilotageRepository.hasHabilitation(surveyUnit, role, idep))
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }

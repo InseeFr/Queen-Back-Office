@@ -29,28 +29,24 @@ public class PilotageApiComponent implements PilotageComponent {
 
     @Override
     public boolean isClosed(String campaignId) {
-        String userToken = authHelper.getUserToken();
-        return pilotageService.isClosed(campaignId, userToken);
+        return pilotageService.isClosed(campaignId);
     }
 
     @Override
     public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId) {
-        String authToken = authHelper.getUserToken();
-        return pilotageService.getSurveyUnitsByCampaign(campaignId, authToken);
+        return pilotageService.getSurveyUnitsByCampaign(campaignId);
     }
 
     @Override
     public List<PilotageCampaign> getInterviewerCampaigns() {
-        String authToken = authHelper.getUserToken();
-        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns(authToken);
+        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
         log.info("{} campaign(s) found", campaigns.size());
         return campaigns;
     }
 
     @Override
     public List<SurveyUnit> getInterviewerSurveyUnits() {
-        String authToken = authHelper.getUserToken();
-        return pilotageService.getInterviewerSurveyUnits(authToken);
+        return pilotageService.getInterviewerSurveyUnits();
     }
 
     @Override
@@ -73,10 +69,8 @@ public class PilotageApiComponent implements PilotageComponent {
             return;
         }
 
-
-        String userToken = authHelper.getUserToken();
         for (PilotageRole roleToCheck : rolesToCheck) {
-            if (pilotageService.hasHabilitation(surveyUnit, roleToCheck, userId, userToken)) {
+            if (pilotageService.hasHabilitation(surveyUnit, roleToCheck, userId)) {
                 log.info("Habilitation granted: user {} has access to survey-unit {} with role {}", userId, surveyUnit.id(), roleToCheck);
                 return;
             }

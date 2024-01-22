@@ -33,7 +33,7 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On check if campaign closed, check campaign existence")
     void testCampaignIsClosed() {
-        pilotageService.isClosed("11", "auth-token");
+        pilotageService.isClosed("11");
         assertThat(campaignExistenceService.isCheckCampaignExist()).isTrue();
         assertThat(pilotageRepository.isWentThroughIsClosedCampaign()).isTrue();
     }
@@ -42,14 +42,14 @@ class PilotageServiceTest {
     @DisplayName("On retrieving interviewer campaigns throw exception if campaigns are null")
     void testGetInterviewerCampaigns01() {
         pilotageRepository.setNullInterviewerCampaigns(true);
-        assertThatThrownBy(() -> pilotageService.getInterviewerCampaigns("auth-token"))
+        assertThatThrownBy(() -> pilotageService.getInterviewerCampaigns())
                 .isInstanceOf(PilotageApiException.class);
     }
 
     @Test
     @DisplayName("On retrieving interviewer campaigns return campaigns")
     void testGetInterviewerCampaigns02() {
-        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns("auth-token");
+        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
         assertThat(campaigns).hasSize(2);
         assertThat(campaigns.get(0).id()).isEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
     }
@@ -58,7 +58,7 @@ class PilotageServiceTest {
     @DisplayName("On check habilitation, when role == INTERVIEWER return true")
     void testHasHabilitation_01() {
         SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", "campaign-id");
-        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.INTERVIEWER, "idep", "auth-token");
+        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.INTERVIEWER, "idep");
         assertThat(hasHabilitation).isTrue();
     }
 
@@ -66,7 +66,7 @@ class PilotageServiceTest {
     @DisplayName("On check habilitation, when role == REVIEWER return true")
     void testHasHabilitation_02() {
         SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", "campaign-id");
-        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.REVIEWER, "idep", "auth-token");
+        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.REVIEWER, "idep");
         assertThat(hasHabilitation).isTrue();
     }
 
@@ -74,7 +74,7 @@ class PilotageServiceTest {
     @DisplayName("On retrieving survey units by campaign, when current survey unit is null return empty collection")
     void testGetSurveyUnitsByCampaign_01() {
         pilotageRepository.setNullCurrentSurveyUnit(true);
-        List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign("campaign-id", "auth-token");
+        List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign("campaign-id");
         assertThat(surveyUnits).isEmpty();
     }
 
@@ -82,14 +82,14 @@ class PilotageServiceTest {
     @DisplayName("On retrieving survey units by campaign check campaign existence")
     void testGetSurveyUnitsByCampaign_02() {
         pilotageRepository.setNullCurrentSurveyUnit(true);
-        pilotageService.getSurveyUnitsByCampaign("campaign-id", "auth-token");
+        pilotageService.getSurveyUnitsByCampaign("campaign-id");
         assertThat(campaignExistenceService.isCheckCampaignExist()).isTrue();
     }
 
     @Test
     @DisplayName("On retrieving survey units by campaign, return survey units for a campaign")
     void testGetSurveyUnitsByCampaign_03() {
-        List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign(PilotageFakeRepository.CURRENT_SU_CAMPAIGN1_ID, "auth-token");
+        List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign(PilotageFakeRepository.CURRENT_SU_CAMPAIGN1_ID);
         assertThat(surveyUnits).hasSize(2);
         assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeRepository.SURVEY_UNIT1_ID);
         assertThat(surveyUnits.get(1).id()).isEqualTo(PilotageFakeRepository.SURVEY_UNIT2_ID);

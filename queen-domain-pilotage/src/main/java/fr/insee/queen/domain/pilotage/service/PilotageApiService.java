@@ -31,17 +31,17 @@ public class PilotageApiService implements PilotageService {
     private final QuestionnaireModelService questionnaireModelService;
 
     @Override
-    public boolean isClosed(String campaignId, String authToken) {
+    public boolean isClosed(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-        return pilotageRepository.isClosed(campaignId, authToken);
+        return pilotageRepository.isClosed(campaignId);
     }
 
     @Override
-    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId, String authToken) {
+    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         Map<String, SurveyUnitSummary> surveyUnitMap = new HashMap<>();
 
-        List<String> surveyUnitIds = getSurveyUnitIds(campaignId, authToken);
+        List<String> surveyUnitIds = getSurveyUnitIds(campaignId);
 
         surveyUnitService.findSummariesByIds(surveyUnitIds)
                 .forEach(surveyUnitSummary ->
@@ -51,9 +51,9 @@ public class PilotageApiService implements PilotageService {
     }
 
     @Override
-    public List<SurveyUnit> getInterviewerSurveyUnits(String authToken) {
+    public List<SurveyUnit> getInterviewerSurveyUnits() {
         Map<String, SurveyUnit> surveyUnitMap = new HashMap<>();
-        List<String> surveyUnitIds = getSurveyUnitIds(authToken);
+        List<String> surveyUnitIds = getSurveyUnitIds();
 
         surveyUnitService.findByIds(surveyUnitIds)
                 .forEach(surveyUnit ->
@@ -66,11 +66,10 @@ public class PilotageApiService implements PilotageService {
      * Retrieve survey unit ids for the current interviewer for a campaign
      *
      * @param campaignId campaign id
-     * @param authToken auth token of current user
      * @return List of survey unit ids
      */
-    private List<String> getSurveyUnitIds(String campaignId, String authToken) {
-        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits(authToken);
+    private List<String> getSurveyUnitIds(String campaignId) {
+        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits();
 
         if (surveyUnits == null || surveyUnits.isEmpty()) {
             return Collections.emptyList();
@@ -89,11 +88,10 @@ public class PilotageApiService implements PilotageService {
     /**
      * Retrieve survey unit ids for the current interviewer
      *
-     * @param authToken auth token of current user
      * @return List of survey unit ids
      */
-    private List<String> getSurveyUnitIds(String authToken) {
-        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits(authToken);
+    private List<String> getSurveyUnitIds() {
+        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits();
 
         if (surveyUnits == null || surveyUnits.isEmpty()) {
             return Collections.emptyList();
@@ -128,8 +126,8 @@ public class PilotageApiService implements PilotageService {
     }
 
     @Override
-    public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
-        List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns(authToken);
+    public List<PilotageCampaign> getInterviewerCampaigns() {
+        List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns();
         if (campaigns == null) {
             log.error("Pilotage API does not have a body (was expecting a campaign list)");
             throw new PilotageApiException();
@@ -143,7 +141,7 @@ public class PilotageApiService implements PilotageService {
 
     @Override
     @Cacheable(value = CacheName.HABILITATION, key = "{#surveyUnit.id, #surveyUnit.campaignId, #role, #idep}")
-    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken) {
-        return pilotageRepository.hasHabilitation(surveyUnit, role, idep, authToken);
+    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
+        return pilotageRepository.hasHabilitation(surveyUnit, role, idep);
     }
 }

@@ -29,13 +29,13 @@ public class PilotageFakeRepository implements PilotageRepository {
     private boolean nullCurrentSurveyUnit = false;
 
     @Override
-    public boolean isClosed(String campaignId, String authToken) {
+    public boolean isClosed(String campaignId) {
         wentThroughIsClosedCampaign = true;
         return false;
     }
 
     @Override
-    public List<PilotageSurveyUnit> getSurveyUnits(String authToken) {
+    public List<PilotageSurveyUnit> getSurveyUnits() {
         if (nullCurrentSurveyUnit) {
             return null;
         }
@@ -47,7 +47,7 @@ public class PilotageFakeRepository implements PilotageRepository {
     }
 
     @Override
-    public List<PilotageCampaign> getInterviewerCampaigns(String authToken) {
+    public List<PilotageCampaign> getInterviewerCampaigns() {
         if (nullInterviewerCampaigns) {
             return null;
         }
@@ -58,7 +58,7 @@ public class PilotageFakeRepository implements PilotageRepository {
     }
 
     @Override
-    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken) {
+    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
         this.wentThroughHasHabilitation = true;
         return true;
     }
