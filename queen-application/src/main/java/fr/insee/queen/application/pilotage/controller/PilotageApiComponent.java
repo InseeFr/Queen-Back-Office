@@ -54,11 +54,6 @@ public class PilotageApiComponent implements PilotageComponent {
         SurveyUnitSummary surveyUnit = surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
         Authentication auth = authHelper.getAuthenticationPrincipal();
 
-        if (!auth.isAuthenticated()) {
-            // anonymous user cannot have habilitation
-            throw new HabilitationException("Habilitation denied: user is not authenticated");
-        }
-
         List<String> userRoles = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
