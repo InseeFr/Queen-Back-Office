@@ -1,7 +1,6 @@
-package fr.insee.queen.application.utils;
+package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.campaign.service.dummy.CampaignFakeService;
-import fr.insee.queen.application.pilotage.controller.NoPilotageComponent;
 import fr.insee.queen.application.surveyunit.service.dummy.SurveyUnitFakeService;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
