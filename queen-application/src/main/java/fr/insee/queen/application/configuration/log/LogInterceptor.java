@@ -1,15 +1,13 @@
 package fr.insee.queen.application.configuration.log;
 
-import fr.insee.queen.application.configuration.auth.AuthConstants;
-import fr.insee.queen.application.configuration.properties.OidcProperties;
+import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,14 +15,10 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class LogInterceptor implements HandlerInterceptor {
-
-    private final OidcProperties oidcProperties;
-
-    public LogInterceptor(OidcProperties oidcProperties) {
-        this.oidcProperties = oidcProperties;
-    }
+    private final AuthenticationHelper authenticationHelper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) {
@@ -32,13 +26,9 @@ public class LogInterceptor implements HandlerInterceptor {
         String method = request.getMethod();
         String operationPath = request.getRequestURI();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = authenticationHelper.getAuthenticationPrincipal();
 
-        String userId = AuthConstants.GUEST;
-        if (oidcProperties.enabled()
-                && authentication.getCredentials() instanceof Jwt jwt) {
-            userId = jwt.getClaims().get("preferred_username").toString();
-        }
+        String userId = authentication.getName();
 
         MDC.put("id", fishTag);
         MDC.put("path", operationPath);

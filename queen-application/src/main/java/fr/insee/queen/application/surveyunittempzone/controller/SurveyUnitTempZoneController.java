@@ -3,16 +3,17 @@ package fr.insee.queen.application.surveyunittempzone.controller;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityRole;
 import fr.insee.queen.application.surveyunittempzone.dto.output.SurveyUnitTempZoneDto;
-import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.surveyunittempzone.service.SurveyUnitTempZoneService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,6 @@ import java.util.List;
 @Validated
 public class SurveyUnitTempZoneController {
     private final SurveyUnitTempZoneService surveyUnitTempZoneService;
-    private final AuthenticationHelper authHelper;
 
     /**
      * Create a survey unit to the temp zone area
@@ -38,12 +38,13 @@ public class SurveyUnitTempZoneController {
      * @param surveyUnit   survey unit json
      */
     @Operation(summary = "Create survey-unit to temp-zone")
+    @Parameter(name = "userId", hidden = true)
     @PostMapping(path = "/survey-unit/{id}/temp-zone")
     @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                             @NotNull @RequestBody ObjectNode surveyUnit) {
-        String userId = authHelper.getUserId();
+                                             @NotNull @RequestBody ObjectNode surveyUnit,
+                                             @CurrentSecurityContext(expression = "authentication.name") String userId) {
         surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit.toString());
     }
 

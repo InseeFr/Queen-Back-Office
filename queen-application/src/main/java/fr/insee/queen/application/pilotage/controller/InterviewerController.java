@@ -4,18 +4,19 @@ import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
 import fr.insee.queen.application.configuration.auth.AuthorityRole;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitByCampaignDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
-import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +32,6 @@ import java.util.List;
 @Validated
 @ConditionalOnProperty(name = "feature.interviewer-mode.enabled", havingValue="true")
 public class InterviewerController {
-    private final AuthenticationHelper authHelper;
     private final PilotageComponent pilotageComponent;
 
     /**
@@ -40,12 +40,13 @@ public class InterviewerController {
      * @return List of {@link CampaignSummaryDto}
      */
     @Operation(summary = "Get campaign list for the current user")
+    @Parameter(name = "userId", hidden = true)
     @Tag(name = "02. Campaigns")
     @GetMapping(path = "/campaigns")
     @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
-    public List<CampaignSummaryDto> getInterviewerCampaignList() {
+    public List<CampaignSummaryDto> getInterviewerCampaignList(@CurrentSecurityContext(expression = "authentication.name")
+                                                                   String userId) {
 
-        String userId = authHelper.getUserId();
         List<PilotageCampaign> campaigns = pilotageComponent.getInterviewerCampaigns();
         log.info("{} campaign(s) found for {}", campaigns.size(), userId);
 

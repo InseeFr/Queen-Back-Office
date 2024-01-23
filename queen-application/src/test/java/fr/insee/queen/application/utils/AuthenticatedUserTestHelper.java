@@ -30,7 +30,7 @@ public class AuthenticatedUserTestHelper {
         Map<String, Object> claims = Map.of("preferred_username", "dupont-identifier", "name", "Jean Dupont");
 
         Jwt jwt = new Jwt("token-value", Instant.MIN, Instant.MAX, headers, claims);
-        return new JwtAuthenticationToken(jwt, authorities, "Jean Dupont");
+        return new JwtAuthenticationToken(jwt, authorities, "dupont-identifier");
     }
 
     public AnonymousAuthenticationToken getNotAuthenticatedUser() {

@@ -63,7 +63,7 @@ public class PilotageApiComponent implements PilotageComponent {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        String userId = authHelper.getUserId();
+        String userId = auth.getName();
         if (userRoles.contains("ROLE_ADMIN") || userRoles.contains("ROLE_WEBCLIENT")) {
             log.info("Habilitation granted: user {} is admin", userId);
             return;
