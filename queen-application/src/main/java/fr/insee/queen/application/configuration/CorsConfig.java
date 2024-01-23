@@ -16,7 +16,7 @@ public class CorsConfig {
     @Bean
     protected CorsConfigurationSource corsConfigurationSource(ApplicationProperties applicationProperties) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(applicationProperties.corsOrigins());
+        configuration.setAllowedOriginPatterns(applicationProperties.corsOrigins());
         configuration.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.addExposedHeader("Content-Disposition");
