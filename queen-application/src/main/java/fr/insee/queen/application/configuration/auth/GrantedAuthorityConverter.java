@@ -21,9 +21,14 @@ public class GrantedAuthorityConverter implements Converter<Jwt, Collection<Gran
     public Collection<GrantedAuthority> convert(Jwt jwt) {
         Map<String, Object> claims = jwt.getClaims();
         List<String> roles = (List<String>) claims.get(oidcProperties.roleClaim());
-
         return roles.stream()
                 .map(role -> {
+                    if(role == null || role.isEmpty()) {
+                        return null;
+                    }
+                    if (role.equals(roleProperties.surveyUnit())) {
+                        return new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.SURVEY_UNIT);
+                    }
                     if (role.equals(roleProperties.reviewer())) {
                         return new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.REVIEWER);
                     }

@@ -1,6 +1,6 @@
 package fr.insee.queen.application.depositproof.controller;
 
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.depositproof.model.PdfDepositProof;
@@ -47,7 +47,7 @@ public class DepositProofController {
     @Operation(summary = "Get deposit proof for a survey unit")
     @Parameter(name = "userId", hidden = true)
     @GetMapping(value = "/survey-unit/{id}/deposit-proof")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public void generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      @CurrentSecurityContext(expression = "authentication.name")
                                      String userId,

@@ -1,7 +1,7 @@
 package fr.insee.queen.application.surveyunit.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
@@ -40,7 +40,7 @@ public class CommentController {
      */
     @Operation(summary = "Get comment for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/comment")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public String getCommentBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return commentService.getComment(surveyUnitId);
@@ -54,7 +54,7 @@ public class CommentController {
      */
     @Operation(summary = "Update comment for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/comment")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public void setComment(@NotNull @RequestBody ObjectNode commentValue,
                            @IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);

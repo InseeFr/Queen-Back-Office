@@ -39,7 +39,7 @@ public class PilotageFakeService implements PilotageService {
     );
 
     @Getter
-    private final List<PilotageCampaign> interviewerCampaigns = List.of(
+    private final List<PilotageCampaign> campaignsForInterviewer = List.of(
             new PilotageCampaign(CAMPAIGN1_ID, new ArrayList<>()),
             new PilotageCampaign("interviewerCampaign2", new ArrayList<>())
     );
@@ -75,7 +75,7 @@ public class PilotageFakeService implements PilotageService {
     @Override
     public List<PilotageCampaign> getInterviewerCampaigns() {
         wentThroughInterviewerCampaigns = true;
-        return interviewerCampaigns;
+        return campaignsForInterviewer;
     }
 
     @Override

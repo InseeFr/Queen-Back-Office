@@ -16,8 +16,36 @@ import java.util.Map;
 
 public class AuthenticatedUserTestHelper {
 
-    public JwtAuthenticationToken getAuthenticatedUser() {
-        return getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER);
+    public JwtAuthenticationToken getAdminUser() {
+        return getAuthenticatedUser(
+                AuthorityRoleEnum.ADMIN,
+                AuthorityRoleEnum.WEBCLIENT);
+    }
+
+    public JwtAuthenticationToken getNonAdminUser() {
+        return getAuthenticatedUser(
+                AuthorityRoleEnum.REVIEWER,
+                AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+                AuthorityRoleEnum.INTERVIEWER,
+                AuthorityRoleEnum.SURVEY_UNIT);
+    }
+
+    public JwtAuthenticationToken getManagerUser() {
+        return getAuthenticatedUser(
+                AuthorityRoleEnum.REVIEWER,
+                AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+                AuthorityRoleEnum.INTERVIEWER);
+    }
+
+    public JwtAuthenticationToken getNonInterviewerUser() {
+        return getAuthenticatedUser(
+                AuthorityRoleEnum.REVIEWER,
+                AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+                AuthorityRoleEnum.SURVEY_UNIT);
+    }
+
+    public JwtAuthenticationToken getSurveyUnitUser() {
+        return getAuthenticatedUser(AuthorityRoleEnum.SURVEY_UNIT);
     }
 
     public JwtAuthenticationToken getAuthenticatedUser(AuthorityRoleEnum... roles) {

@@ -75,7 +75,7 @@ class PilotageApiComponentTest {
     @ValueSource(booleans = {true, false})
     @DisplayName("On check if campaign closed return result from pilotage service")
     void testIsClosed(boolean pilotageServiceResult) {
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
+        Authentication authenticatedUser = authenticatedUserTestHelper.getAdminUser();
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageService.setCampaignClosed(pilotageServiceResult);
         pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
@@ -96,7 +96,7 @@ class PilotageApiComponentTest {
     @Test
     @DisplayName("On retrieving campaigns for current interviewer, return campaigns")
     void testInterviewerCampaigns() {
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
+        Authentication authenticatedUser = authenticatedUserTestHelper.getManagerUser();
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
         assertThat(pilotageComponent.getInterviewerCampaigns()).isEqualTo(pilotageService.getInterviewerCampaigns());

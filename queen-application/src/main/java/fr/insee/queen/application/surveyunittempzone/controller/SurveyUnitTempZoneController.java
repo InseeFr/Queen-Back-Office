@@ -1,7 +1,7 @@
 package fr.insee.queen.application.surveyunittempzone.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.surveyunittempzone.dto.output.SurveyUnitTempZoneDto;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.surveyunittempzone.service.SurveyUnitTempZoneService;
@@ -40,7 +40,7 @@ public class SurveyUnitTempZoneController {
     @Operation(summary = "Create survey-unit to temp-zone")
     @Parameter(name = "userId", hidden = true)
     @PostMapping(path = "/survey-unit/{id}/temp-zone")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
+    @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                              @NotNull @RequestBody ObjectNode surveyUnit,
@@ -55,7 +55,7 @@ public class SurveyUnitTempZoneController {
      */
     @Operation(summary = "GET all survey-units in temp-zone")
     @GetMapping(path = "/survey-units/temp-zone")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
     public List<SurveyUnitTempZoneDto> getSurveyUnitsInTempZone() {
         return surveyUnitTempZoneService.getAllSurveyUnitTempZone()
                 .stream().map(SurveyUnitTempZoneDto::fromModel)

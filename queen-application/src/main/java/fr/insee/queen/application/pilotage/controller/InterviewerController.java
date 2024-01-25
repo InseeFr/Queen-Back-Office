@@ -1,7 +1,7 @@
 package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitByCampaignDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
 import fr.insee.queen.application.web.validation.IdValid;
@@ -43,7 +43,7 @@ public class InterviewerController {
     @Parameter(name = "userId", hidden = true)
     @Tag(name = "02. Campaigns")
     @GetMapping(path = "/campaigns")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
     public List<CampaignSummaryDto> getInterviewerCampaignList(@CurrentSecurityContext(expression = "authentication.name")
                                                                    String userId) {
 
@@ -63,7 +63,7 @@ public class InterviewerController {
     @Operation(summary = "Get list of survey units linked to the current interviewer")
     @Tag(name = "06. Survey units")
     @GetMapping(path = "/survey-units/interviewer")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
+    @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     public List<SurveyUnitDto> getInterviewerSurveyUnits() {
         // get survey units for the interviewer
         List<SurveyUnit> surveyUnits = pilotageComponent.getInterviewerSurveyUnits();
@@ -82,7 +82,7 @@ public class InterviewerController {
     @Operation(summary = "Get list of survey units for a campaign")
     @Tag(name = "06. Survey units")
     @GetMapping(path = "/campaign/{id}/survey-units")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
     public List<SurveyUnitByCampaignDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
         // get survey units of a campaign from the pilotage api
         List<SurveyUnitSummary> surveyUnits = pilotageComponent.getSurveyUnitsByCampaign(campaignId);

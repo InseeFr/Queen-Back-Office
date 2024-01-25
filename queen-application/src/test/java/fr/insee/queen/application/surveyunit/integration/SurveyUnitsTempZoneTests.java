@@ -1,7 +1,6 @@
 package fr.insee.queen.application.surveyunit.integration;
 
 import fr.insee.queen.application.configuration.ScriptConstants;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -39,17 +37,6 @@ class SurveyUnitsTempZoneTests {
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-
-    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER,
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
-            AuthorityRoleEnum.INTERVIEWER);
-
-    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
-
     @Test
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_survey_unit_then_survey_unit_created() throws Exception {
@@ -71,14 +58,14 @@ class SurveyUnitsTempZoneTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tempZoneInput)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
                 .andExpect(status().isCreated());
 
         String expressionFilter = "$[?(@.surveyUnitId == '" + surveyUnitId + "')]";
         MvcResult result = mockMvc.perform(get("/api/survey-units/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
@@ -103,7 +90,7 @@ class SurveyUnitsTempZoneTests {
     void on_get_survey_units_return_survey_units() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/survey-units/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
@@ -151,14 +138,14 @@ class SurveyUnitsTempZoneTests {
     }
 
     @Test
-    void on_create_survey_unit_when_not_interviewer_then_return_403() throws Exception {
+    void on_create_survey_unit_when_non_interviewer_then_return_403() throws Exception {
         // no control on questionnaire id ...
         String tempZoneInput = "{}";
         mockMvc.perform(post("/api/survey-unit/11/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tempZoneInput)
-                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER_ALTERNATIVE, AuthorityRoleEnum.REVIEWER)))
+                        .with(authentication(authenticatedUserTestHelper.getNonInterviewerUser()))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -171,7 +158,7 @@ class SurveyUnitsTempZoneTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tempZoneInput)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -181,8 +168,18 @@ class SurveyUnitsTempZoneTests {
         // no control on questionnaire id ...
         mockMvc.perform(get("/api/survey-units/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void on_get_survey_units_when_surveyUnitUser_then_return_403() throws Exception {
+        // no control on questionnaire id ...
+        mockMvc.perform(get("/api/survey-units/temp-zone")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isForbidden());
     }
 }

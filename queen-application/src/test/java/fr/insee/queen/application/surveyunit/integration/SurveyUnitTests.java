@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -38,18 +37,6 @@ class SurveyUnitTests {
     private MockMvc mockMvc;
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
-
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-
-    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER,
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
-            AuthorityRoleEnum.INTERVIEWER);
-
-    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
-
     private final String surveyUnitData = """
             {
                 "id":"test-surveyunit",
@@ -64,7 +51,7 @@ class SurveyUnitTests {
     void on_get_survey_units_by_campaign_return_survey_units() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -84,7 +71,7 @@ class SurveyUnitTests {
     void on_get_survey_unit_ids_return_ids() throws Exception {
         mockMvc.perform(get("/api/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(14)));
@@ -97,7 +84,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isCreated());
 
@@ -119,7 +106,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitDataUpdated)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk());
 
@@ -141,7 +128,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitDataUpdated)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER)))
                 )
                 .andExpect(status().isOk());
 
@@ -169,7 +156,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitDataWithoutState)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isCreated());
         on_get_survey_unit_return_survey_unit("test-surveyunit2", surveyUnitDataResponseWithoutState);
@@ -178,7 +165,7 @@ class SurveyUnitTests {
     private void on_get_survey_unit_return_survey_unit(String surveyUnitId, String expectedResult) throws Exception {
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -192,12 +179,12 @@ class SurveyUnitTests {
         String surveyUnitId = "11";
         mockMvc.perform(delete("/api/survey-unit/" + surveyUnitId)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isNoContent());
         mockMvc.perform(get("/api/survey-unit/" + surveyUnitId)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -206,7 +193,7 @@ class SurveyUnitTests {
     void on_get_survey_units_by_campaign_when_campaign_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/campaign/not-exist/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -215,7 +202,7 @@ class SurveyUnitTests {
     void on_get_survey_units_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/campaign/invalid!identifier/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -226,7 +213,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -237,7 +224,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -246,7 +233,7 @@ class SurveyUnitTests {
     void on_get_survey_unit_when_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/survey-unit/invalid%identifier")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -255,7 +242,7 @@ class SurveyUnitTests {
     void on_get_survey_unit_when_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/survey-unit/not-exist")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -264,7 +251,7 @@ class SurveyUnitTests {
     void on_delete_survey_unit_when_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(delete("/api/survey-unit/invalid!identifier")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -273,7 +260,7 @@ class SurveyUnitTests {
     void on_delete_survey_unit_when_not_exist_return_404() throws Exception {
         mockMvc.perform(delete("/api/survey-unit/not-exist")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -282,7 +269,7 @@ class SurveyUnitTests {
     void on_get_deposit_proof_return_200() throws Exception {
         mockMvc.perform(get("/api/survey-unit/11/deposit-proof")
                         .accept(MediaType.APPLICATION_PDF)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk());
     }
@@ -291,7 +278,7 @@ class SurveyUnitTests {
     void on_get_deposit_proof_when_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/survey-unit/not-exist/deposit-proof")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -300,7 +287,7 @@ class SurveyUnitTests {
     void when_authenticated_non_admin_user_access_admin_endpoints_return_403() throws Exception {
         mockMvc.perform(get("/api/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
 
@@ -308,13 +295,13 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
 
         mockMvc.perform(delete("/api/survey-unit/11")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -325,7 +312,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
-                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE)))
+                        .with(authentication(authenticatedUserTestHelper.getNonInterviewerUser()))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -335,7 +322,7 @@ class SurveyUnitTests {
         mockMvc.perform(get("/api/survey-units/interviewer")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE)))
+                        .with(authentication(authenticatedUserTestHelper.getNonInterviewerUser()))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -360,16 +347,16 @@ class SurveyUnitTests {
 
     @Test
     void when_anonymous_user_access_authenticated_endpoints_return_401() throws Exception {
-        List<String> getEdnPoints = List.of(
+        List<String> getEndPoints = List.of(
                 "/api/survey-units",
                 "/api/survey-unit/11",
                 "/api/survey-unit/11/deposit-proof",
                 "/api/campaign/VQS2021X00/survey-units",
                 "/api/survey-units/interviewer");
-        for (String getEndPoint : getEdnPoints) {
+        for (String getEndPoint : getEndPoints) {
             mockMvc.perform(get(getEndPoint)
                             .accept(MediaType.APPLICATION_JSON)
-                            .with(authentication(anonymousUser))
+                            .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                     )
                     .andExpect(status().isUnauthorized());
         }
@@ -378,7 +365,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
 
@@ -386,13 +373,13 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
 
         mockMvc.perform(delete("/api/survey-unit/11")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }

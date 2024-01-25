@@ -1,7 +1,7 @@
 package fr.insee.queen.application.campaign.controller;
 
 import fr.insee.queen.application.campaign.dto.input.NomenclatureCreationData;
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.service.NomenclatureService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get all nomenclatures Ids ")
     @GetMapping(path = "/nomenclatures")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
     public List<String> getNomenclaturesId() {
         return nomenclatureService.getAllNomenclatureIds();
     }
@@ -50,7 +50,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get Nomenclature")
     @GetMapping(path = "/nomenclature/{id}")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public String getNomenclatureById(@IdValid @PathVariable(value = "id") String nomenclatureId) {
         return nomenclatureService.getNomenclature(nomenclatureId).value();
 
@@ -63,7 +63,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Create/update a nomenclature ")
     @PostMapping(path = "/nomenclature")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)
     public void postNomenclature(@Valid @RequestBody NomenclatureCreationData nomenclatureCreationDto) {
         nomenclatureService.saveNomenclature(NomenclatureCreationData.toModel(nomenclatureCreationDto));
@@ -77,7 +77,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get list of required nomenclatures for a campaign")
     @GetMapping(path = "/campaign/{id}/required-nomenclatures")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public List<String> getListRequiredNomenclature(@IdValid @PathVariable(value = "id") String campaignId) {
         return nomenclatureService.findRequiredNomenclatureByCampaign(campaignId);
     }
@@ -90,7 +90,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get list of required nomenclature for a questionnaire")
     @GetMapping(path = "/questionnaire/{id}/required-nomenclatures")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public List<String> getListRequiredNomenclatureByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
         return nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
     }

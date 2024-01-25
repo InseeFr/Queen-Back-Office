@@ -1,6 +1,6 @@
 package fr.insee.queen.application.campaign.controller;
 
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.service.MetadataService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +35,7 @@ public class MetadataController {
      */
     @Operation(summary = "Get metadata for a campaign ")
     @GetMapping(path = "/campaign/{id}/metadata")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public String getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId) {
         return metadataService.getMetadata(campaignId);
     }
@@ -48,7 +48,7 @@ public class MetadataController {
      */
     @Operation(summary = "Get metadata for a questionnaire ")
     @GetMapping(path = "/questionnaire/{id}/metadata")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public String getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
         return metadataService.getMetadataByQuestionnaireId(questionnaireId);
     }

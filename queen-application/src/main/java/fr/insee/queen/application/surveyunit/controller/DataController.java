@@ -1,7 +1,7 @@
 package fr.insee.queen.application.surveyunit.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
@@ -36,7 +36,7 @@ public class DataController {
      */
     @Operation(summary = "Get data for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/data")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public String getDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return dataService.getData(surveyUnitId);
@@ -51,7 +51,7 @@ public class DataController {
      */
     @Operation(summary = "Update data for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/data")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public void updateData(@NotNull @RequestBody ObjectNode dataValue,
                            @IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
