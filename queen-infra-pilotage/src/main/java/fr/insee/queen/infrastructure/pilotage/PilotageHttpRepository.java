@@ -47,7 +47,7 @@ public class PilotageHttpRepository implements PilotageRepository {
         try {
             ResponseEntity<PilotageCampaignEnabled> response =
                     restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
-                            null,
+                            HttpEntity.EMPTY,
                             PilotageCampaignEnabled.class);
             PilotageCampaignEnabled campaignEnabled = response.getBody();
             if (campaignEnabled == null) {
@@ -67,7 +67,7 @@ public class PilotageHttpRepository implements PilotageRepository {
             final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_SURVEYUNITS;
             ResponseEntity<List<PilotageSurveyUnit>> response =
                     restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
-                            null,
+                            HttpEntity.EMPTY,
                             new ParameterizedTypeReference<List<PilotageSurveyUnit>>() {});
             log.debug("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
             return response.getBody();
@@ -88,7 +88,7 @@ public class PilotageHttpRepository implements PilotageRepository {
 
             ResponseEntity<List<PilotageCampaign>> response =
                     restTemplate.exchange(uriPilotageInterviewerCampaigns, HttpMethod.GET,
-                            null,
+                            HttpEntity.EMPTY,
                             new ParameterizedTypeReference<List<PilotageCampaign>>() {});
             log.debug("Pilotage API call returned {}", response.getStatusCode().value());
             return response.getBody();
@@ -121,7 +121,7 @@ public class PilotageHttpRepository implements PilotageRepository {
         try {
             ResponseEntity<PilotageHabilitation> response =
                     restTemplate.exchange(uriPilotageFilter.toString(), HttpMethod.GET,
-                            null,
+                            HttpEntity.EMPTY,
                             PilotageHabilitation.class);
 
             PilotageHabilitation habilitation = response.getBody();
