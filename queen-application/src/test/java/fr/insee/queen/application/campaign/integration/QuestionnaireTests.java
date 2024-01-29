@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.campaign.dto.input.QuestionnaireModelCreationData;
 import fr.insee.queen.application.configuration.ScriptConstants;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -46,22 +44,11 @@ class QuestionnaireTests {
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-
-    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER,
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
-            AuthorityRoleEnum.INTERVIEWER);
-
-    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
-
     @Test
     void on_get_questionnaires_by_campaign_return_questionnaires() throws Exception {
         mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/questionnaires")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)));
@@ -71,7 +58,7 @@ class QuestionnaireTests {
     void on_get_questionnaires_by_campaign_when_campaign_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/campaign/not-exist/questionnaires")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -80,7 +67,7 @@ class QuestionnaireTests {
     void on_get_questionnaires_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/campaign/invalid%identifier/questionnaires")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -89,7 +76,7 @@ class QuestionnaireTests {
     void on_get_questionnaire_ids_by_campaign_return_questionnaires() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/questionnaire-id")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -106,7 +93,7 @@ class QuestionnaireTests {
     void on_get_questionnaire_ids_by_campaign_when_campaign_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/campaign/not-exist/questionnaire-id")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -115,7 +102,7 @@ class QuestionnaireTests {
     void on_get_questionnaire_ids_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/campaign/invalid%identifier/questionnaire-id")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -124,7 +111,7 @@ class QuestionnaireTests {
     void on_get_questionnaire_when_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/questionnaire/invalid%identifier")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -133,7 +120,7 @@ class QuestionnaireTests {
     void on_get_questionnaire_when_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/questionnaire/not-exist")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -142,7 +129,7 @@ class QuestionnaireTests {
     void on_get_questionnaire_return_correct_questionnaire() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/questionnaire/simpsons")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -163,12 +150,12 @@ class QuestionnaireTests {
                         .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isCreated());
 
         MvcResult result = mockMvc.perform(get("/api/questionnaire/" + questionnaireId)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
@@ -194,7 +181,7 @@ class QuestionnaireTests {
                         .content(surveyUnitIdsInput)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -221,21 +208,43 @@ class QuestionnaireTests {
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/campaign/1/questionnaires",
-            "/questionnaire/1",
-            "/campaign/1/questionnaire-id",
-            "/survey-units/questionnaire-model-id"
+    @ValueSource(strings = {"/api/campaign/1/questionnaires",
+            "/api/campaign/1/questionnaire-id"})
+    void on_get_questionnaires_when_surveyUnitUser_return_403(String url) throws Exception {
+        mockMvc.perform(get(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void on_find_questionnaire_model_ids_when_surveyUnitUser_return_403() throws Exception {
+        mockMvc.perform(post("/api/survey-units/questionnaire-model-id")
+                        .content("[]")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/api/campaign/1/questionnaires",
+            "/api/questionnaire/1",
+            "/api/campaign/1/questionnaire-id",
+            "/api/survey-units/questionnaire-model-id"
     })
     void on_get_questionnaires_when_anonymous_return_401(String url) throws Exception {
         mockMvc.perform(get(url)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -247,7 +256,7 @@ class QuestionnaireTests {
                         .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -259,7 +268,7 @@ class QuestionnaireTests {
                         .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
     }

@@ -1,6 +1,6 @@
 package fr.insee.queen.application.surveyunit.controller;
 
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitCreationData;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitUpdateData;
@@ -43,7 +43,7 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Get all survey-units ids")
     @GetMapping(path = "/survey-units")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public List<String> getSurveyUnitIds() {
         return surveyUnitService.findAllSurveyUnitIds();
     }
@@ -56,7 +56,7 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Get survey-unit")
     @GetMapping(path = "/survey-unit/{id}")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public SurveyUnitDto getSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
         return SurveyUnitDto.fromModel(surveyUnitService.getSurveyUnit(surveyUnitId));
@@ -70,7 +70,7 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Update survey-unit")
     @PutMapping(path = {"/survey-unit/{id}"})
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
+    @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      @Valid @RequestBody SurveyUnitUpdateData surveyUnitUpdateData) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
@@ -86,7 +86,7 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Create/Update a survey unit")
     @PostMapping(path = "/campaign/{id}/survey-unit")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public ResponseEntity<Void> createUpdateSurveyUnit(@IdValid @PathVariable(value = "id") String campaignId,
                                                        @Valid @RequestBody SurveyUnitCreationData surveyUnitCreationData) throws StateDataInvalidDateException {
         SurveyUnit surveyUnit = SurveyUnitCreationData.toModel(surveyUnitCreationData, campaignId);
@@ -108,7 +108,7 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Delete a survey unit")
     @DeleteMapping(path = "/survey-unit/{id}")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         surveyUnitService.delete(surveyUnitId);

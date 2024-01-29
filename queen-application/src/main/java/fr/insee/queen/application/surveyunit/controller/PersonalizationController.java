@@ -1,7 +1,7 @@
 package fr.insee.queen.application.surveyunit.controller;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
@@ -36,7 +36,7 @@ public class PersonalizationController {
      */
     @Operation(summary = "Get personalization for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/personalization")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public String getPersonalizationBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return personalizationService.getPersonalization(surveyUnitId);
@@ -50,7 +50,7 @@ public class PersonalizationController {
      */
     @Operation(summary = "Update personalization for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/personalization")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public void setPersonalization(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                    @NotNull @RequestBody ArrayNode personalizationValues) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);

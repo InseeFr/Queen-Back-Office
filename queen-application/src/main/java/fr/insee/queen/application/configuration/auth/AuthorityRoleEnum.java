@@ -5,5 +5,6 @@ public enum AuthorityRoleEnum {
     WEBCLIENT,
     REVIEWER,
     REVIEWER_ALTERNATIVE,
-    INTERVIEWER
+    INTERVIEWER,
+    SURVEY_UNIT
 }

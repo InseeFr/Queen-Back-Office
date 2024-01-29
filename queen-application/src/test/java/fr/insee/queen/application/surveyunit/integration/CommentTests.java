@@ -1,7 +1,6 @@
 package fr.insee.queen.application.surveyunit.integration;
 
 import fr.insee.queen.application.configuration.ScriptConstants;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -36,18 +34,11 @@ class CommentTests {
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER,
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
-            AuthorityRoleEnum.INTERVIEWER);
-
-    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
-
     @Test
     void on_get_comment_return_comment() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/survey-unit/11/comment")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -61,7 +52,7 @@ class CommentTests {
     void on_get_comment_when_su_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/survey-unit/plop/comment")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -70,7 +61,7 @@ class CommentTests {
     void on_get_comment_when_su_id_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/survey-unit/pl!op/comment")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -79,7 +70,7 @@ class CommentTests {
     void on_get_comment_when_anonymousUser_return_401() throws Exception {
         mockMvc.perform(get("/api/survey-unit/plop/comment")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -91,7 +82,7 @@ class CommentTests {
         String commentJson = JsonTestHelper.getResourceFileAsString("surveyunit/comment.json");
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/comment")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -103,13 +94,13 @@ class CommentTests {
                         .content(commentJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk());
 
         result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/comment")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -124,7 +115,7 @@ class CommentTests {
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -135,7 +126,7 @@ class CommentTests {
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -146,7 +137,7 @@ class CommentTests {
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -156,7 +147,7 @@ class CommentTests {
         mockMvc.perform(put("/api/survey-unit/12/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isBadRequest());
     }

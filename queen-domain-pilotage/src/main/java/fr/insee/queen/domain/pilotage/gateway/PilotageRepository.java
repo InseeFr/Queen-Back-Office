@@ -11,25 +11,22 @@ public interface PilotageRepository {
     /**
      * Check if the campaign is closed
      * @param campaignId campaign id
-     * @param authToken user token
      * @return true if closed, false otherwise
      */
-    boolean isClosed(String campaignId, String authToken);
+    boolean isClosed(String campaignId);
 
     /**
      * Retrieve survey units linked to a user
      *
-     * @param authToken user token
      * @return List of survey units
      */
-    List<PilotageSurveyUnit> getSurveyUnits(String authToken);
+    List<PilotageSurveyUnit> getSurveyUnits();
 
     /**
      * Retrieve campaigns where user is interviewer
-     * @param authToken user token
      * @return List of {@link PilotageCampaign} campaigns
      */
-    List<PilotageCampaign> getInterviewerCampaigns(String authToken);
+    List<PilotageCampaign> getInterviewerCampaigns();
 
-    boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep, String authToken);
+    boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep);
 }

@@ -6,11 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.client.RestTemplate;
 
 
 @SpringBootApplication(scanBasePackages = "fr.insee.queen")
@@ -25,11 +22,6 @@ public class QueenApplication {
 
     protected static SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(QueenApplication.class).listeners(new PropertiesLogger());
-    }
-
-    @Bean
-    protected RestTemplate restTemplate() {
-        return new RestTemplate();
     }
 
     @EventListener

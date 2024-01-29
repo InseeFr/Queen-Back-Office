@@ -1,9 +1,9 @@
-package fr.insee.queen.application.utils;
+package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
-import fr.insee.queen.application.pilotage.controller.PilotageApiComponent;
 import fr.insee.queen.application.pilotage.service.dummy.PilotageFakeService;
 import fr.insee.queen.application.surveyunit.service.dummy.SurveyUnitFakeService;
+import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.dummy.AuthenticationFakeHelper;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
@@ -29,15 +29,6 @@ class PilotageApiComponentTest {
         authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
         pilotageService = new PilotageFakeService();
         surveyUnitService = new SurveyUnitFakeService();
-    }
-
-    @Test
-    @DisplayName("On check habilitations when non authenticated user throw exception")
-    void testCheckHabilitations01() {
-        authHelper = new AuthenticationFakeHelper(authenticatedUserTestHelper.getNotAuthenticatedUser());
-        pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
-        assertThatThrownBy(() -> pilotageComponent.checkHabilitations("11", PilotageRole.INTERVIEWER))
-                .isInstanceOf(HabilitationException.class);
     }
 
     @Test
@@ -84,7 +75,7 @@ class PilotageApiComponentTest {
     @ValueSource(booleans = {true, false})
     @DisplayName("On check if campaign closed return result from pilotage service")
     void testIsClosed(boolean pilotageServiceResult) {
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
+        Authentication authenticatedUser = authenticatedUserTestHelper.getAdminUser();
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageService.setCampaignClosed(pilotageServiceResult);
         pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
@@ -105,7 +96,7 @@ class PilotageApiComponentTest {
     @Test
     @DisplayName("On retrieving campaigns for current interviewer, return campaigns")
     void testInterviewerCampaigns() {
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
+        Authentication authenticatedUser = authenticatedUserTestHelper.getManagerUser();
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
         assertThat(pilotageComponent.getInterviewerCampaigns()).isEqualTo(pilotageService.getInterviewerCampaigns());

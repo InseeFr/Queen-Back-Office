@@ -1,5 +1,6 @@
 package fr.insee.queen.application.configuration.springdoc;
 
+import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.configuration.swagger.role.DisplayRolesOnSwaggerUI;
 import fr.insee.queen.application.configuration.swagger.role.RoleUIMapper;
 import io.swagger.v3.oas.models.Operation;
@@ -38,37 +39,49 @@ class DisplayRolesOnSwaggerUITest {
     @Test
     @DisplayName("on generate operation, when preauthorize annotation is set return roles in operation description")
     void testOperation02() throws NoSuchMethodException {
-        Method method = controller.getClass().getMethod("testMethodHasAnyRole");
+        Method method = controller.getClass().getMethod("testMethodHasUserPrivileges");
         HandlerMethod handlerMethod = new HandlerMethod(controller, method);
         Operation resultOperation = operationCustomizer.customize(operation, handlerMethod);
 
-        assertThat(resultOperation.getDescription())
-                .isEqualTo(DisplayRolesOnSwaggerUI.AUTHORIZED_ROLES + RoleUIMapper.AUTHENTICATED + " / ");
-
+        for(AuthorityRoleEnum role : RoleUIMapper.ADMIN.getRoles()) {
+            assertThat(resultOperation.getDescription())
+                    .contains(role.name());
+        }
     }
 
     @Test
-    @DisplayName("on generate operation, when description is set return it before roles")
+    @DisplayName("on generate operation, when multiple privileges, return unique roles in operation description")
     void testOperation03() throws NoSuchMethodException {
         String description = "description";
         operation.setDescription(description);
-        Method method = controller.getClass().getMethod("testMethodHasAnyRole");
+        Method method = controller.getClass().getMethod("testMethodMultiplePrivileges");
         HandlerMethod handlerMethod = new HandlerMethod(controller, method);
         Operation resultOperation = operationCustomizer.customize(operation, handlerMethod);
 
         assertThat(resultOperation.getDescription())
                 .startsWith(description +"\n");
+
+        for(AuthorityRoleEnum role : RoleUIMapper.ADMIN.getRoles()) {
+            assertThat(resultOperation.getDescription())
+                    .containsOnlyOnce(role.name());
+        }
+
+        for(AuthorityRoleEnum role : RoleUIMapper.INTERVIEWER.getRoles()) {
+            assertThat(resultOperation.getDescription())
+                    .containsOnlyOnce(role.name());
+        }
     }
 
     @Test
-    @DisplayName("on generate operation, when preauthorize annotation with multiples roles is set return roles in operation description")
+    @DisplayName("on generate operation, when description is set return it before roles")
     void testOperation04() throws NoSuchMethodException {
-        Method method = controller.getClass().getMethod("testMethodAdminOrInterviewer");
+        String description = "description";
+        operation.setDescription(description);
+        Method method = controller.getClass().getMethod("testMethodMultiplePrivileges");
         HandlerMethod handlerMethod = new HandlerMethod(controller, method);
         Operation resultOperation = operationCustomizer.customize(operation, handlerMethod);
 
         assertThat(resultOperation.getDescription())
-                .isEqualTo(DisplayRolesOnSwaggerUI.AUTHORIZED_ROLES + RoleUIMapper.ADMIN + " / " + RoleUIMapper.INTERVIEWER + " / ");
-
+                .startsWith(description +"\n");
     }
 }

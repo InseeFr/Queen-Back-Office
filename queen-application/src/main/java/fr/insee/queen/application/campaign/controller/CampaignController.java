@@ -2,7 +2,7 @@ package fr.insee.queen.application.campaign.controller;
 
 import fr.insee.queen.application.campaign.dto.input.CampaignCreationData;
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.service.CampaignService;
@@ -39,7 +39,7 @@ public class CampaignController {
      */
     @Operation(summary = "Get list of all campaigns")
     @GetMapping(path = "/admin/campaigns")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public List<CampaignSummaryDto> getListCampaign() {
         return campaignService.getAllCampaigns()
                 .stream().map(CampaignSummaryDto::fromModel)
@@ -53,7 +53,7 @@ public class CampaignController {
      */
     @Operation(summary = "Create a campaign")
     @PostMapping(path = "/campaigns")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createCampaign(@Valid @RequestBody CampaignCreationData campaignInputDto) {
         campaignService.createCampaign(CampaignCreationData.toModel(campaignInputDto));
@@ -69,7 +69,7 @@ public class CampaignController {
      */
     @Operation(summary = "Delete a campaign")
     @DeleteMapping(path = "/campaign/{id}")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)
     public void deleteCampaignById(@RequestParam("force") boolean force,
                                    @IdValid @PathVariable(value = "id") String campaignId) {

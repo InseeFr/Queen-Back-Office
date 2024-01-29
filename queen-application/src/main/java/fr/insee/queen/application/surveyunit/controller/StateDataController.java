@@ -1,6 +1,6 @@
 package fr.insee.queen.application.surveyunit.controller;
 
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInputData;
 import fr.insee.queen.application.surveyunit.dto.output.StateDataDto;
@@ -46,7 +46,7 @@ public class StateDataController {
      */
     @Operation(summary = "Get state-data for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/state-data")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public StateDataDto getStateDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return StateDataDto.fromModel(stateDataService.getStateData(surveyUnitId));
@@ -60,7 +60,7 @@ public class StateDataController {
      */
     @Operation(summary = "Update state-data for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/state-data")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
                              @Valid @RequestBody StateDataInputData stateDataInputDto) throws StateDataInvalidDateException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
@@ -75,7 +75,7 @@ public class StateDataController {
      */
     @Operation(summary = "Get state-data for all survey-units defined in request body ")
     @PostMapping(path = "survey-units/state-data")
-    @PreAuthorize(AuthorityRole.HAS_ANY_ROLE)
+    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
     public SurveyUnitOkNokDto getStateDataBySurveyUnits(@NotEmpty @RequestBody List<String> surveyUnitIdsToSearch) {
         List<SurveyUnitState> surveyUnitsFound = surveyUnitService.findWithStateByIds(surveyUnitIdsToSearch);
         List<String> surveyUnitIdsFound = surveyUnitsFound.stream().map(SurveyUnitState::id).toList();

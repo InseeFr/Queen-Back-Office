@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.campaign.dto.input.NomenclatureCreationData;
 import fr.insee.queen.application.configuration.ScriptConstants;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -45,17 +43,6 @@ class NomenclatureTests {
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-
-    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER,
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
-            AuthorityRoleEnum.INTERVIEWER);
-
-    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
-
     @Test
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_post_nomenclature_json_nomenclature_created() throws Exception {
@@ -68,7 +55,7 @@ class NomenclatureTests {
                         .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk());
         on_get_nomenclature_return_json_nomenclature(nomenclatureName, nomenclatureJsonFile);
@@ -78,7 +65,7 @@ class NomenclatureTests {
     @CsvSource(value = {"regions2019,nomenclature/regions-2019.json"})
     void on_get_nomenclature_return_json_nomenclature(String nomenclatureName, String nomenclatureJsonFile) throws Exception {
         MvcResult result = mockMvc.perform(get("/api/nomenclature/" + nomenclatureName)
-                        .with(authentication(nonAdminUser)))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
@@ -97,7 +84,7 @@ class NomenclatureTests {
                         .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk());
         on_get_nomenclature_return_json_nomenclature(nomenclatureName, nomenclatureJsonFile);
@@ -106,7 +93,7 @@ class NomenclatureTests {
     @Test
     void on_get_nomenclatures_return_all_nomenclatures() throws Exception {
         mockMvc.perform(get("/api/nomenclatures")
-                        .with(authentication(nonAdminUser)))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(6)))
                 .andExpect(jsonPath("$[*]").value(containsInAnyOrder("cities2019", "regions2019", "L_DEPNAIS", "L_NATIONETR", "L_PAYSNAIS", "cog-communes")));
@@ -116,7 +103,7 @@ class NomenclatureTests {
     @ValueSource(strings = {"sqqghk"})
     void on_get_nomenclature_when_nomenclature_not_exists_return_404(String nomenclatureName) throws Exception {
         mockMvc.perform(get("/api/nomenclature/" + nomenclatureName)
-                        .with(authentication(nonAdminUser)))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isNotFound())
                 .andReturn();
     }
@@ -124,7 +111,7 @@ class NomenclatureTests {
     @Test
     void on_get_nomenclature_when_nomenclature_id_not_valid_return_400() throws Exception {
         mockMvc.perform(get("/api/nomenclature/s4-%")
-                        .with(authentication(nonAdminUser)))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
@@ -132,7 +119,7 @@ class NomenclatureTests {
     @Test
     void on_get_required_nomenclatures_return_nomenclatures_for_campaign() throws Exception {
         mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/required-nomenclatures")
-                        .with(authentication(nonAdminUser)))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
                 .andExpect(jsonPath("$[*]").value(containsInAnyOrder("cities2019", "regions2019")));
@@ -141,7 +128,7 @@ class NomenclatureTests {
     @Test
     void on_get_required_nomenclatures_return_nomenclatures_for_questionnaire() throws Exception {
         mockMvc.perform(get("/api/questionnaire/simpsons/required-nomenclatures")
-                        .with(authentication(nonAdminUser)))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
                 .andExpect(jsonPath("$[*]").value(containsInAnyOrder("cities2019", "regions2019")));
@@ -150,14 +137,14 @@ class NomenclatureTests {
     @Test
     void on_get_required_nomenclatures_when_campaign_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/campaign/QSHL/required-nomenclatures")
-                        .with(authentication(nonAdminUser)))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void on_get_required_nomenclatures_when_campaign_id_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/campaign/%plop/required-nomenclatures")
-                        .with(authentication(nonAdminUser)))
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isBadRequest());
     }
 
@@ -169,7 +156,7 @@ class NomenclatureTests {
     })
     void on_get_nomenclatures_when_anonymous_return_401(String url) throws Exception {
         mockMvc.perform(get(url)
-                        .with(authentication(anonymousUser)))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser())))
                 .andExpect(status().isUnauthorized());
 
     }
@@ -181,7 +168,7 @@ class NomenclatureTests {
                         .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -193,8 +180,15 @@ class NomenclatureTests {
                         .content(JsonTestHelper.getObjectAsJsonString(nomenclature))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void on_get_nomenclatures_when_surveyUnitUser_return_403() throws Exception {
+        mockMvc.perform(get("/api/nomenclatures")
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isForbidden());
     }
 }

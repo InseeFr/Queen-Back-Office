@@ -6,7 +6,6 @@ import fr.insee.queen.application.campaign.dto.input.CampaignCreationData;
 import fr.insee.queen.application.campaign.dto.input.MetadataCreationData;
 import fr.insee.queen.application.campaign.dto.input.QuestionnaireModelCreationData;
 import fr.insee.queen.application.configuration.ScriptConstants;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -43,21 +41,10 @@ class CampaignTests {
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-
-    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER,
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
-            AuthorityRoleEnum.INTERVIEWER);
-
-    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
-
     @Test
     void on_get_campaigns_return_json_campaigns() throws Exception {
         mockMvc.perform(get("/api/admin/campaigns")
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.id == 'SIMPSONS2020X00')].questionnaireIds[*]").value(containsInAnyOrder("simpsons", "simpsonsV2")))
@@ -77,7 +64,7 @@ class CampaignTests {
                         .content(JsonTestHelper.getObjectAsJsonString(questionnaire))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
 
                 )
                 .andExpect(status().isCreated());
@@ -91,13 +78,13 @@ class CampaignTests {
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isCreated());
 
         String expressionFilter = "$[?(@.id == '" + campaignName + "')].questionnaireIds[*]";
         mockMvc.perform(get("/api/admin/campaigns")
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath(expressionFilter).value(containsInAnyOrder(questionnaireIds.toArray())));
@@ -110,11 +97,11 @@ class CampaignTests {
         mockMvc.perform(delete("/api/campaign/" + campaignName)
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk());
         mockMvc.perform(get("/api/admin/campaigns")
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*]").value(not(containsInAnyOrder(campaignName))));
@@ -128,7 +115,7 @@ class CampaignTests {
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -141,7 +128,7 @@ class CampaignTests {
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -157,7 +144,7 @@ class CampaignTests {
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -167,7 +154,7 @@ class CampaignTests {
         mockMvc.perform(delete("/api/campaign/invalid!identifier")
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -177,7 +164,7 @@ class CampaignTests {
         mockMvc.perform(delete("/api/campaign/non-existing-campaign")
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -187,7 +174,7 @@ class CampaignTests {
         mockMvc.perform(delete("/api/campaign/non-existing-campaign")
                         .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -200,7 +187,7 @@ class CampaignTests {
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -208,7 +195,7 @@ class CampaignTests {
     @Test
     void on_get_campaigns_when_user_not_authorized_return_403() throws Exception {
         mockMvc.perform(get("/api/admin/campaigns")
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }

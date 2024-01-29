@@ -1,7 +1,6 @@
 package fr.insee.queen.application.dataset.integration;
 
 import fr.insee.queen.application.configuration.ScriptConstants;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -31,19 +29,7 @@ class DataSetTests {
 
     @Autowired
     private MockMvc mockMvc;
-
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
-
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-
-    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER,
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
-            AuthorityRoleEnum.INTERVIEWER);
-
-    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
     @DisplayName("on creating dataset, create the dataset")
@@ -52,7 +38,7 @@ class DataSetTests {
     void createDataset01() throws Exception {
         mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isCreated());
     }
@@ -61,7 +47,7 @@ class DataSetTests {
     void createDataset02() throws Exception {
         mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -70,7 +56,7 @@ class DataSetTests {
     void createDataset03() throws Exception {
         mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }

@@ -3,7 +3,6 @@ package fr.insee.queen.application.utils;
 import fr.insee.queen.application.configuration.auth.AuthConstants;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -17,11 +16,39 @@ import java.util.Map;
 
 public class AuthenticatedUserTestHelper {
 
-    public Authentication getAuthenticatedUser() {
-        return getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER);
+    public JwtAuthenticationToken getAdminUser() {
+        return getAuthenticatedUser(
+                AuthorityRoleEnum.ADMIN,
+                AuthorityRoleEnum.WEBCLIENT);
     }
 
-    public Authentication getAuthenticatedUser(AuthorityRoleEnum... roles) {
+    public JwtAuthenticationToken getNonAdminUser() {
+        return getAuthenticatedUser(
+                AuthorityRoleEnum.REVIEWER,
+                AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+                AuthorityRoleEnum.INTERVIEWER,
+                AuthorityRoleEnum.SURVEY_UNIT);
+    }
+
+    public JwtAuthenticationToken getManagerUser() {
+        return getAuthenticatedUser(
+                AuthorityRoleEnum.REVIEWER,
+                AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+                AuthorityRoleEnum.INTERVIEWER);
+    }
+
+    public JwtAuthenticationToken getNonInterviewerUser() {
+        return getAuthenticatedUser(
+                AuthorityRoleEnum.REVIEWER,
+                AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
+                AuthorityRoleEnum.SURVEY_UNIT);
+    }
+
+    public JwtAuthenticationToken getSurveyUnitUser() {
+        return getAuthenticatedUser(AuthorityRoleEnum.SURVEY_UNIT);
+    }
+
+    public JwtAuthenticationToken getAuthenticatedUser(AuthorityRoleEnum... roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (AuthorityRoleEnum role : roles) {
             authorities.add(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + role.name()));
@@ -31,12 +58,12 @@ public class AuthenticatedUserTestHelper {
         Map<String, Object> claims = Map.of("preferred_username", "dupont-identifier", "name", "Jean Dupont");
 
         Jwt jwt = new Jwt("token-value", Instant.MIN, Instant.MAX, headers, claims);
-        return new JwtAuthenticationToken(jwt, authorities, "Jean Dupont");
+        return new JwtAuthenticationToken(jwt, authorities, "dupont-identifier");
     }
 
-    public Authentication getNotAuthenticatedUser() {
+    public AnonymousAuthenticationToken getNotAuthenticatedUser() {
         Map<String, String> principal = new HashMap<>();
-        Authentication auth = new AnonymousAuthenticationToken("id", principal, List.of(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + "ANONYMOUS")));
+        AnonymousAuthenticationToken auth = new AnonymousAuthenticationToken("id", principal, List.of(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + "ANONYMOUS")));
         auth.setAuthenticated(false);
         return auth;
     }

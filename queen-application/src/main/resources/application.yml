@@ -10,6 +10,7 @@ application:
     admin:
     webclient:
     reviewer-alternative:
+    survey-unit:
   corsOrigins:
   # Folder where to store temp files.
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.

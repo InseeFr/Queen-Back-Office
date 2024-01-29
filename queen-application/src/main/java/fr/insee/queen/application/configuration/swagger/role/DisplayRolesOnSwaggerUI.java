@@ -1,10 +1,15 @@
 package fr.insee.queen.application.configuration.swagger.role;
 
+import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import io.swagger.v3.oas.models.Operation;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @Component
 public class DisplayRolesOnSwaggerUI implements OperationCustomizer {
@@ -30,12 +35,17 @@ public class DisplayRolesOnSwaggerUI implements OperationCustomizer {
         }
         description.append(AUTHORIZED_ROLES);
         String roles = preAuthorizeAnnotation.value();
-        for(RoleUIMapper roleUIMapper : RoleUIMapper.values()) {
-            if(roles.contains(roleUIMapper.getRoleExpression())) {
-                description
-                        .append(roleUIMapper.name())
-                        .append(" / ");
-            }
+        List<AuthorityRoleEnum> rolesAuthority = Arrays.stream(RoleUIMapper.values())
+                .filter(roleUIMapper -> roles.contains(roleUIMapper.getRoleExpression()))
+                .map(RoleUIMapper::getRoles)
+                .flatMap(Collection::stream)
+                .distinct()
+                .toList();
+
+        for(AuthorityRoleEnum roleAuthority : rolesAuthority) {
+            description
+                    .append(roleAuthority.name())
+                    .append(" / ");
         }
         operation.setDescription(description.toString());
         return operation;

@@ -1,6 +1,6 @@
 package fr.insee.queen.application.integration.controller;
 
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.integration.component.IntegrationComponent;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultsDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class IntegrationController {
      */
     @Operation(summary = "Integrates the context of a campaign (JSON version)")
     @PostMapping(path = "/campaign/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public IntegrationResultsDto integrateContext(@RequestParam("file") MultipartFile file) {
         return integrationComponent.integrateContext(file, false);
     }
@@ -54,7 +54,7 @@ public class IntegrationController {
      */
     @Operation(summary = "Integrates the context of a campaign (XML Version - will be removed in a future version)")
     @PostMapping(path = "/campaign/xml/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @Deprecated(since = "4.0.0")
     public IntegrationResultsDto integrateXmlContext(@RequestParam("file") MultipartFile file) {
         return integrationComponent.integrateContext(file, true);

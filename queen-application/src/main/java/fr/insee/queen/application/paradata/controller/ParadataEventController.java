@@ -2,7 +2,7 @@ package fr.insee.queen.application.paradata.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.application.configuration.auth.AuthorityRole;
+import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.paradata.service.ParadataEventService;
@@ -38,7 +38,7 @@ public class ParadataEventController {
      */
     @Operation(summary = "Create paradata event for a survey unit")
     @PostMapping(path = "/paradata")
-    @PreAuthorize(AuthorityRole.HAS_ADMIN_PRIVILEGES + "||" + AuthorityRole.HAS_ROLE_INTERVIEWER)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)
     public void addParadata(@NotNull @RequestBody ObjectNode paradataValue) {
         String paradataSurveyUnitIdParameter = "idSU";

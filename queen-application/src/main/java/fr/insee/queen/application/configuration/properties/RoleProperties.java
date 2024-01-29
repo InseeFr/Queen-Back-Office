@@ -8,6 +8,7 @@ public record RoleProperties(
         String reviewer,
         String admin,
         String webclient,
-        String reviewerAlternative
+        String reviewerAlternative,
+        String surveyUnit
 ) {
 }

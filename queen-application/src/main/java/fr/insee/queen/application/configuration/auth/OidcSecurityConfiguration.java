@@ -3,6 +3,9 @@ package fr.insee.queen.application.configuration.auth;
 import fr.insee.queen.application.configuration.properties.ApplicationProperties;
 import fr.insee.queen.application.configuration.properties.OidcProperties;
 import fr.insee.queen.application.configuration.properties.RoleProperties;
+import fr.insee.queen.application.configuration.rest.RestTemplateAddJsonHeaderInterceptor;
+import fr.insee.queen.application.configuration.rest.RestTemplateTokenInterceptor;
+import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +24,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 
@@ -87,6 +91,14 @@ public class OidcSecurityConfiguration {
 
     Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter(OidcProperties oidcProperties, RoleProperties roleProperties) {
         return new GrantedAuthorityConverter(oidcProperties, roleProperties);
+    }
+
+    @Bean
+    protected RestTemplate restTemplatePilotage(AuthenticationHelper authenticationHelper) {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add(new RestTemplateAddJsonHeaderInterceptor());
+        restTemplate.getInterceptors().add(new RestTemplateTokenInterceptor(authenticationHelper));
+        return restTemplate;
     }
 }
 

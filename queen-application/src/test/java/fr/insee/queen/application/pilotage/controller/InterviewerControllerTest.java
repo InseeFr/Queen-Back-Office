@@ -4,13 +4,10 @@ import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitByCampaignDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
-import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
-import fr.insee.queen.application.utils.dummy.AuthenticationFakeHelper;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -23,17 +20,14 @@ class InterviewerControllerTest {
 
     @BeforeEach
     void init() {
-        AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
-        Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser();
-        AuthenticationFakeHelper authenticationHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageComponent = new PilotageFakeComponent();
-        interviewerController = new InterviewerController(authenticationHelper, pilotageComponent);
+        interviewerController = new InterviewerController(pilotageComponent);
     }
 
     @Test
     @DisplayName("On retrieving interviewer campaigns, all interviewer campaigns are retrieved")
     void testGetInterviewerCampaigns01() {
-        List<CampaignSummaryDto> campaigns = interviewerController.getInterviewerCampaignList();
+        List<CampaignSummaryDto> campaigns = interviewerController.getInterviewerCampaignList("userId");
         assertThat(pilotageComponent.isWentThroughInterviewerCampaigns()).isTrue();
         assertThat(campaigns).hasSize(2);
         assertThat(campaigns.get(0).getId()).isEqualTo(PilotageFakeComponent.CAMPAIGN1_ID);

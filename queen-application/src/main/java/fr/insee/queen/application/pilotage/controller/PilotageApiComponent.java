@@ -29,28 +29,24 @@ public class PilotageApiComponent implements PilotageComponent {
 
     @Override
     public boolean isClosed(String campaignId) {
-        String userToken = authHelper.getUserToken();
-        return pilotageService.isClosed(campaignId, userToken);
+        return pilotageService.isClosed(campaignId);
     }
 
     @Override
     public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId) {
-        String authToken = authHelper.getUserToken();
-        return pilotageService.getSurveyUnitsByCampaign(campaignId, authToken);
+        return pilotageService.getSurveyUnitsByCampaign(campaignId);
     }
 
     @Override
     public List<PilotageCampaign> getInterviewerCampaigns() {
-        String authToken = authHelper.getUserToken();
-        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns(authToken);
+        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
         log.info("{} campaign(s) found", campaigns.size());
         return campaigns;
     }
 
     @Override
     public List<SurveyUnit> getInterviewerSurveyUnits() {
-        String authToken = authHelper.getUserToken();
-        return pilotageService.getInterviewerSurveyUnits(authToken);
+        return pilotageService.getInterviewerSurveyUnits();
     }
 
     @Override
@@ -58,25 +54,18 @@ public class PilotageApiComponent implements PilotageComponent {
         SurveyUnitSummary surveyUnit = surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
         Authentication auth = authHelper.getAuthenticationPrincipal();
 
-        if (!auth.isAuthenticated()) {
-            // anonymous user cannot have habilitation
-            throw new HabilitationException("Habilitation denied: user is not authenticated");
-        }
-
         List<String> userRoles = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        String userId = authHelper.getUserId();
+        String userId = auth.getName();
         if (userRoles.contains("ROLE_ADMIN") || userRoles.contains("ROLE_WEBCLIENT")) {
             log.info("Habilitation granted: user {} is admin", userId);
             return;
         }
 
-
-        String userToken = authHelper.getUserToken();
         for (PilotageRole roleToCheck : rolesToCheck) {
-            if (pilotageService.hasHabilitation(surveyUnit, roleToCheck, userId, userToken)) {
+            if (pilotageService.hasHabilitation(surveyUnit, roleToCheck, userId)) {
                 log.info("Habilitation granted: user {} has access to survey-unit {} with role {}", userId, surveyUnit.id(), roleToCheck);
                 return;
             }

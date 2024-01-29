@@ -1,9 +1,7 @@
 package fr.insee.queen.application.surveyunit.integration;
 
 import fr.insee.queen.application.configuration.ScriptConstants;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
-import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -42,14 +39,6 @@ class IntegrationTests {
     @Autowired
     private MockMvc mockMvc;
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
-    private final Authentication adminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.ADMIN,
-            AuthorityRoleEnum.WEBCLIENT);
-    private final Authentication nonAdminUser = authenticatedUserTestHelper.getAuthenticatedUser(
-            AuthorityRoleEnum.REVIEWER,
-            AuthorityRoleEnum.REVIEWER_ALTERNATIVE,
-            AuthorityRoleEnum.INTERVIEWER);
-    private final Authentication anonymousUser = authenticatedUserTestHelper.getNotAuthenticatedUser();
 
     @Test
     @DisplayName("on integrate context, when non admin user return 403")
@@ -59,7 +48,7 @@ class IntegrationTests {
 
         mockMvc.perform(multipart("/api/campaign/context")
                         .file(uploadedFile)
-                        .with(authentication(nonAdminUser))
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -72,7 +61,7 @@ class IntegrationTests {
 
         mockMvc.perform(multipart("/api/campaign/context")
                         .file(uploadedFile)
-                        .with(authentication(anonymousUser))
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -88,7 +77,7 @@ class IntegrationTests {
 
         MvcResult result = mockMvc.perform(multipart("/api/campaign" + urlPath + "/context")
                         .file(uploadedFile)
-                        .with(authentication(adminUser))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
