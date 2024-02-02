@@ -94,7 +94,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
 
     private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {
         try {
-            schemaComponent.throwExceptionIfDataFileNotExist(zf, NOMENCLATURES_JSON);
+            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, NOMENCLATURES_JSON, "nomenclatures_integration.json");
         } catch (IntegrationValidationException ex) {
             return List.of(ex.getResultError());
         }

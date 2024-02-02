@@ -19,6 +19,11 @@ public class SchemaFakeComponent implements SchemaComponent {
     }
 
     @Override
+    public void throwExceptionIfJsonDataFileNotValid(ZipFile zipFile, String fileName, String schemaFileName) throws IntegrationValidationException {
+
+    }
+
+    @Override
     public Document buildDocument(InputStream xmlFileStream) {
         return null;
     }

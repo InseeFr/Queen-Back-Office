@@ -31,6 +31,16 @@ public interface SchemaComponent {
     void throwExceptionIfDataFileNotExist(ZipFile zipFile, String fileName) throws IntegrationValidationException;
 
     /**
+     * Check if the json file in zip is valid
+     *
+     * @param zipFile the zip file
+     * @param fileName the name of the json file to check
+     * @param schemaFileName json schema used to check the json file
+     * @throws IntegrationValidationException integration validation exception
+     */
+    void throwExceptionIfJsonDataFileNotValid(ZipFile zipFile, String fileName, String schemaFileName) throws IntegrationValidationException;
+
+    /**
      * Build a document from an xml input stream
      *
      * @param xmlFileStream xml file input stream

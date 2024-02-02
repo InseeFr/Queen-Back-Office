@@ -35,7 +35,7 @@ class QuestionnaireBuilderTest {
         Locale.setDefault(Locale.of("en", "US"));
         ObjectMapper objectMapper = new ObjectMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent();
+        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper);
         IntegrationFakeService integrationService = new IntegrationFakeService();
         questionnaireBuilder = new IntegrationQuestionnaireBuilder(schemaComponent, validator, integrationService, objectMapper);
     }
@@ -128,7 +128,7 @@ class QuestionnaireBuilderTest {
         assertThat(questionnaireResult.getId()).isNull();
         assertThat(questionnaireResult.getCause())
                 .containsAnyOf(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML, ""),
-                        String.format(IntegrationResultLabel.JSON_PARSING_ERROR, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_JSON));
+                        String.format(IntegrationResultLabel.FILE_INVALID, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_JSON, ""));
     }
 
     @Test

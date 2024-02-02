@@ -35,7 +35,7 @@ class NomenclatureBuilderTest {
         Locale.setDefault(Locale.of("en", "US"));
         ObjectMapper objectMapper = new ObjectMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent();
+        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper);
         IntegrationFakeService integrationService = new IntegrationFakeService();
         nomenclatureBuilder = new IntegrationNomenclatureBuilder(schemaComponent, validator, objectMapper, integrationService);
     }
@@ -133,7 +133,7 @@ class NomenclatureBuilderTest {
         IntegrationResultUnitDto nomenclatureResult = results.get(0);
         assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(nomenclatureResult.getId()).isNull();
-        assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.JSON_PARSING_ERROR, IntegrationNomenclatureBuilder.NOMENCLATURES_JSON));
+        assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationNomenclatureBuilder.NOMENCLATURES_JSON, ""));
     }
 
     private static Stream<Arguments> xmlIntegrationWithPaths() {

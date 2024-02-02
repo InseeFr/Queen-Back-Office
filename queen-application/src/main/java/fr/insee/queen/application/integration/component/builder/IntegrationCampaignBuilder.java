@@ -117,7 +117,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
 
     private IntegrationResultUnitDto buildCampaign(ZipFile zf) {
         try {
-            schemaComponent.throwExceptionIfDataFileNotExist(zf, CAMPAIGN_JSON);
+            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, CAMPAIGN_JSON, "campaign_integration.json");
             ZipEntry zipCampaignFile = zf.getEntry(CAMPAIGN_JSON);
             CampaignIntegrationData campaign = mapper.readValue(zf.getInputStream(zipCampaignFile), CampaignIntegrationData.class);
             return buildCampaign(campaign);
