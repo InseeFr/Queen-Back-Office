@@ -19,6 +19,7 @@
 		<commons-io.version>2.11.0</commons-io.version>
 		<org-json.version>20231013</org-json.version>
 		<guava.version>33.0.0-jre</guava.version>
+		<json-schema-validator.version>1.0.87</json-schema-validator.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -148,6 +149,12 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.networknt</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>${json-schema-validator.version}</version>
 		</dependency>
 
 		<dependency>

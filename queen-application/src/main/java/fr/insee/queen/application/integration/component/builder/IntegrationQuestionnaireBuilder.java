@@ -89,7 +89,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
 
     private List<IntegrationResultUnitDto> buildQuestionnaireModels(String campaignId, ZipFile zf) {
         try {
-            schemaComponent.throwExceptionIfDataFileNotExist(zf, QUESTIONNAIRE_MODELS_JSON);
+            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, QUESTIONNAIRE_MODELS_JSON, "questionnaireModels_integration.json");
         } catch (IntegrationValidationException ex) {
             return List.of(ex.getResultError());
         }

@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json-schema.org/draft/2020-12/schema",
+    "type": "array",
+    "additionalProperties": false,
+    "items": {"$ref": "#/$defs/nomenclature"},
+    "minItems": 0,
+    "$defs": {
+        "nomenclature": {
+            "type": "object",
+            "required": [
+                "id",
+                "label",
+                "filename"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "id": {"type": "string"},
+                "label": {"type": "string"},
+                "filename": {"type": "string"}
+            }
+        }
+    }
+}

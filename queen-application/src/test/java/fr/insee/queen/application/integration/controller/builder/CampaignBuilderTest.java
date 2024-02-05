@@ -34,7 +34,7 @@ class CampaignBuilderTest {
         Locale.setDefault(Locale.of("en", "US"));
         ObjectMapper objectMapper = new ObjectMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent();
+        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper);
         IntegrationFakeService integrationService = new IntegrationFakeService();
         campaignBuilder = new IntegrationCampaignBuilder(schemaComponent, validator, integrationService, objectMapper);
     }
@@ -85,8 +85,7 @@ class CampaignBuilderTest {
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isNull();
         assertThat(campaignResult.getCause())
-                .contains("id: The identifier is invalid.")
-                .contains("label: must not be blank.");
+                .contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationCampaignBuilder.CAMPAIGN_JSON, ""));
     }
 
     @ParameterizedTest

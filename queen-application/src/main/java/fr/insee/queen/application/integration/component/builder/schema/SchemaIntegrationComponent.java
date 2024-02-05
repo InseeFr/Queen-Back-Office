@@ -1,8 +1,15 @@
 package fr.insee.queen.application.integration.component.builder.schema;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -18,12 +25,16 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 
 @Component
+@RequiredArgsConstructor
 public class SchemaIntegrationComponent implements SchemaComponent {
+
+    private final ObjectMapper mapper;
 
     @Override
     public void throwExceptionIfXmlDataFileNotValid(ZipFile zipFile, String xmlFileName, String xsdSchemaFileName) throws IntegrationValidationException {
@@ -55,6 +66,41 @@ public class SchemaIntegrationComponent implements SchemaComponent {
                     String.format(IntegrationResultLabel.FILE_NOT_FOUND, fileName));
             throw new IntegrationValidationException(resultError);
         }
+    }
+
+    @Override
+    public void throwExceptionIfJsonDataFileNotValid(ZipFile zipFile, String fileName, String schemaFileName) throws IntegrationValidationException {
+        throwExceptionIfDataFileNotExist(zipFile, fileName);
+        ZipEntry zipJsonFile = zipFile.getEntry(fileName);
+
+        InputStream templateStream = getClass().getClassLoader().getResourceAsStream("schema/" + schemaFileName);
+
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
+        JsonSchema jsonSchema = factory.getSchema(templateStream);
+        JsonNode jsonNode;
+        try {
+            jsonNode = mapper.readTree(zipFile.getInputStream(zipJsonFile));
+        } catch (IOException ex) {
+            IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(null,
+                    String.format(IntegrationResultLabel.FILE_INVALID, fileName, ex.getMessage()));
+            throw new IntegrationValidationException(resultError);
+        }
+
+        Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
+        if(errors.isEmpty()) {
+            return;
+        }
+
+        StringBuilder messageBuilder = new StringBuilder();
+        for(ValidationMessage errorMessage : errors) {
+            messageBuilder.append(errorMessage.getMessage());
+            messageBuilder.append(". ");
+        }
+
+        IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(null,
+                String.format(IntegrationResultLabel.FILE_INVALID, fileName, messageBuilder));
+        throw new IntegrationValidationException(resultError);
+
     }
 
     @Override
