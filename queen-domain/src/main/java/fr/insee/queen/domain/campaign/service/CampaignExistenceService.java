@@ -5,5 +5,7 @@ public interface CampaignExistenceService {
 
     void throwExceptionIfCampaignAlreadyExist(String campaignId);
 
+    void throwExceptionIfCampaignNotLinkedToQuestionnaire(String campaignId, String questionnaireId);
+
     boolean existsById(String campaignId);
 }

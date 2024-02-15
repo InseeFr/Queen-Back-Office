@@ -219,6 +219,24 @@ class SurveyUnitTests {
     }
 
     @Test
+    void on_create_survey_unit_when_campaign_not_linked_to_questionnaire_return_400() throws Exception {
+        String surveyUnitData = """
+                {
+                    "id":"test-surveyunit2",
+                    "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                    "questionnaireId":"simpsons"
+                }""";
+        mockMvc.perform(post("/api/campaign/VQS2021X00/survey-unit")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitData)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void on_create_survey_unit_when_campaign_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(post("/api/campaign/invalid!identifier/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)

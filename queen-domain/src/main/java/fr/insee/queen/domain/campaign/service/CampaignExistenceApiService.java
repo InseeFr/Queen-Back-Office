@@ -1,6 +1,8 @@
 package fr.insee.queen.domain.campaign.service;
 
 import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
+import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuestionnaireException;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -29,6 +31,15 @@ public class CampaignExistenceApiService implements CampaignExistenceService {
     public void throwExceptionIfCampaignAlreadyExist(String campaignId) {
         if (existsById(campaignId)) {
             throw new EntityAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, campaignId));
+        }
+    }
+
+    @Override
+    public void throwExceptionIfCampaignNotLinkedToQuestionnaire(String campaignId, String questionnaireId) {
+        CampaignSummary campaign = campaignRepository.findWithQuestionnaireIds(campaignId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, campaignId)));
+        if(!campaign.getQuestionnaireIds().contains(questionnaireId)) {
+            throw new CampaignNotLinkedToQuestionnaireException(campaignId, questionnaireId);
         }
     }
 

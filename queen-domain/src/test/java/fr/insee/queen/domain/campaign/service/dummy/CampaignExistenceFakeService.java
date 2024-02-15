@@ -12,6 +12,8 @@ public class CampaignExistenceFakeService implements CampaignExistenceService {
     private boolean checkCampaignNotExist = false;
     @Getter
     private boolean checkCampaignExist = false;
+    @Getter
+    private boolean checkCampaignLinkedToQuestionnaire = false;
 
     @Override
     public void throwExceptionIfCampaignNotExist(String campaignId) {
@@ -21,6 +23,11 @@ public class CampaignExistenceFakeService implements CampaignExistenceService {
     @Override
     public void throwExceptionIfCampaignAlreadyExist(String campaignId) {
         checkCampaignNotExist = true;
+    }
+
+    @Override
+    public void throwExceptionIfCampaignNotLinkedToQuestionnaire(String campaignId, String questionnaireId) {
+        checkCampaignLinkedToQuestionnaire = true;
     }
 
     @Override

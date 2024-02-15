@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.application.web.authentication.AuthenticationTokenException;
 import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
+import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuestionnaireException;
 import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -143,6 +144,12 @@ public class ExceptionControllerAdvice {
     public ResponseEntity<ApiError> campaignDeletionException(CampaignDeletionException e, WebRequest request) {
         log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
+
+    @ExceptionHandler(CampaignNotLinkedToQuestionnaireException.class)
+    public ResponseEntity<ApiError> campaignDeletionException(CampaignNotLinkedToQuestionnaireException e, WebRequest request) {
+        log.error(e.getMessage(), e);
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(EntityAlreadyExistException.class)
