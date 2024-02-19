@@ -1,7 +1,6 @@
 package fr.insee.queen.domain.surveyunit.service;
 
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
-import fr.insee.queen.domain.campaign.service.dummy.QuestionnaireModelExistenceFakeService;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.surveyunit.infrastructure.dummy.SurveyUnitFakeDao;
@@ -24,7 +23,6 @@ class SurveyUnitApiServiceTest {
     private SurveyUnitApiService surveyUnitApiService;
     private StateDataFakeService stateDataFakeService;
     private CampaignExistenceFakeService campaignExistenceFakeService;
-    private QuestionnaireModelExistenceFakeService questionnaireModelExistenceFakeService;
     private SurveyUnitFakeDao surveyUnitFakeDao;
 
     @BeforeEach
@@ -33,31 +31,19 @@ class SurveyUnitApiServiceTest {
         surveyUnitFakeDao = new SurveyUnitFakeDao();
         stateDataFakeService = new StateDataFakeService();
         campaignExistenceFakeService = new CampaignExistenceFakeService();
-        questionnaireModelExistenceFakeService = new QuestionnaireModelExistenceFakeService();
         surveyUnitApiService = new SurveyUnitApiService(surveyUnitFakeDao, stateDataFakeService,
-                campaignExistenceFakeService, questionnaireModelExistenceFakeService, cacheManager);
+                campaignExistenceFakeService, cacheManager);
     }
 
     @Test
-    @DisplayName("On creating survey unit, check campaign existence")
-    void testCreate01() throws StateDataInvalidDateException {
-        StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
-        surveyUnitFakeDao.setSurveyUnitExist(false);
-        surveyUnitApiService.createSurveyUnit(surveyUnit);
-
-        assertThat(campaignExistenceFakeService.isCheckCampaignExist()).isTrue();
-    }
-
-    @Test
-    @DisplayName("On creating survey unit, check questionnaire existence")
+    @DisplayName("On creating survey unit, check questionnaire is linked to campaign")
     void testCreate02() throws StateDataInvalidDateException {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
         SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         surveyUnitApiService.createSurveyUnit(surveyUnit);
 
-        assertThat(questionnaireModelExistenceFakeService.isCheckQuestionnaireExist()).isTrue();
+        assertThat(campaignExistenceFakeService.isCheckCampaignLinkedToQuestionnaire()).isTrue();
     }
 
     @Test

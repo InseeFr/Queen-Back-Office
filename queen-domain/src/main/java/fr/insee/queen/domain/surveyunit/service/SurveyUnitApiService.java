@@ -1,7 +1,6 @@
 package fr.insee.queen.domain.surveyunit.service;
 
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
-import fr.insee.queen.domain.campaign.service.QuestionnaireModelExistenceService;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -27,7 +26,6 @@ public class SurveyUnitApiService implements SurveyUnitService {
     private final SurveyUnitRepository surveyUnitRepository;
     private final StateDataService stateDataService;
     private final CampaignExistenceService campaignExistenceService;
-    private final QuestionnaireModelExistenceService questionnaireModelExistenceService;
     private final CacheManager cacheManager;
     public static final String NOT_FOUND_MESSAGE = "Survey unit %s was not found";
     public static final String ALREADY_EXIST_MESSAGE = "Survey unit %s already exists";
@@ -111,8 +109,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
     @CacheEvict(value = CacheName.SURVEY_UNIT_EXIST, key = "#surveyUnit.id")
     public void createSurveyUnit(SurveyUnit surveyUnit) throws StateDataInvalidDateException {
         throwExceptionIfSurveyUnitExist(surveyUnit.id());
-        campaignExistenceService.throwExceptionIfCampaignNotExist(surveyUnit.campaignId());
-        questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(surveyUnit.questionnaireId());
+        campaignExistenceService.throwExceptionIfCampaignNotLinkedToQuestionnaire(surveyUnit.campaignId(), surveyUnit.questionnaireId());
         surveyUnitRepository.create(surveyUnit);
         StateData stateData = surveyUnit.stateData();
         if(stateData != null) {
