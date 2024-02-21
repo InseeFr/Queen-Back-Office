@@ -7,6 +7,7 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.springframework.stereotype.Component;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -39,6 +40,8 @@ public class FoToPDF {
             fopFactory.getFontManager().setCacheFile(Path.of(tempFolder + "/fop.cache").toUri());
             Fop fop = fopFactory.newFop(MIME_PDF, out);
             TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Transformer transformer = factory.newTransformer();
             Source src = new StreamSource(foFile);
             Result res = new SAXResult(fop.getDefaultHandler());
