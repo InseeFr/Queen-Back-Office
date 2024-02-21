@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.springframework.stereotype.Component;
+import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -47,6 +48,8 @@ public class FOGeneration {
                                String userId) throws TransformerException {
         TransformerFactory tFactory = new TransformerFactoryImpl();
         tFactory.setURIResolver(new ClasspathURIResolver());
+        tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         Transformer transformer = tFactory.newTransformer(new StreamSource(xslSheet));
         transformer.setURIResolver(new ClasspathURIResolver());
         transformer.setParameter(UNITE, userId);
