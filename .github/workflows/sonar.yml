@@ -3,8 +3,9 @@ name: Sonar Analysis
 on:
   push:
     branches:
-      - master
-      - v4-develop
+      - main
+      - v4-develop #temp branch
+      - develop
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -21,13 +22,13 @@ jobs:
           java-version: 21
           distribution: 'temurin'
       - name: Cache SonarCloud packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
