@@ -11,10 +11,6 @@
 	<name>queen-infra-db</name>
 	<description>DAO for Queen/Stromae</description>
 
-	<properties>
-		<postgresql.version>42.5.4</postgresql.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>fr.insee.queen</groupId>
@@ -31,7 +27,6 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>${postgresql.version}</version>
 		</dependency>
 
 		<dependency>
