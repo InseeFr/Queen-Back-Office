@@ -8,7 +8,7 @@ import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-public record SurveyUnitCreationData(
+public record SurveyUnitCreationInput(
         @IdValid
         String id,
         @NotNull
@@ -20,15 +20,15 @@ public record SurveyUnitCreationData(
         @NotNull
         ObjectNode comment,
         @Valid
-        StateDataInputData stateData) {
+        StateDataInput stateData) {
 
-    public static SurveyUnit toModel(SurveyUnitCreationData surveyUnit, String campaignId) {
+    public static SurveyUnit toModel(SurveyUnitCreationInput surveyUnit, String campaignId) {
         return new SurveyUnit(surveyUnit.id,
                 campaignId,
                 surveyUnit.questionnaireId(),
                 surveyUnit.personalization().toString(),
                 surveyUnit.data().toString(),
                 surveyUnit.comment().toString(),
-                StateDataInputData.toModel(surveyUnit.stateData()));
+                StateDataInput.toModel(surveyUnit.stateData()));
     }
 }

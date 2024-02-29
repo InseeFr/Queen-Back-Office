@@ -4,15 +4,15 @@ import fr.insee.queen.domain.surveyunit.model.StateData;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record StateDataInputData(
+public record StateDataInput(
         @NotNull
-        StateDataTypeData state,
+        StateDataTypeInput state,
         @NotNull
         Long date,
         @NotBlank
         String currentPage) {
 
-    public static StateData toModel(StateDataInputData stateDataInputDto) {
+    public static StateData toModel(StateDataInput stateDataInputDto) {
         if (stateDataInputDto == null) {
             return null;
         }
