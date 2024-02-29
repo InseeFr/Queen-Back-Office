@@ -1,9 +1,7 @@
 package fr.insee.queen.domain.surveyunit.service.dummy;
 
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,6 +62,11 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public void updateSurveyUnit(SurveyUnit surveyUnit) {
+
+    }
+
+    @Override
+    public void updateSurveyUnit(String surveyUnitId, ObjectNode data, StateData stateData) {
 
     }
 

@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.surveyunit.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
@@ -25,6 +26,7 @@ import java.util.Optional;
 public class SurveyUnitApiService implements SurveyUnitService {
     private final SurveyUnitRepository surveyUnitRepository;
     private final StateDataService stateDataService;
+    private final DataService dataService;
     private final CampaignExistenceService campaignExistenceService;
     private final CacheManager cacheManager;
     public static final String NOT_FOUND_MESSAGE = "Survey unit %s was not found";
@@ -101,6 +103,19 @@ public class SurveyUnitApiService implements SurveyUnitService {
             // in the case of survey unit update, a problem with state data does not require to
             // rollback the other updates on survey unit
             log.warn(String.format("%s - %s", surveyUnit.id(), ex.getMessage()));
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateSurveyUnit(String surveyUnitId, ObjectNode data, StateData stateData) {
+        dataService.updateData(surveyUnitId, data);
+        try {
+            stateDataService.saveStateData(surveyUnitId, stateData);
+        } catch (StateDataInvalidDateException ex) {
+            // in the case of survey unit update, a problem with state data does not require to
+            // rollback the other updates on survey unit
+            log.warn(String.format("%s - %s", surveyUnitId, ex.getMessage()));
         }
     }
 

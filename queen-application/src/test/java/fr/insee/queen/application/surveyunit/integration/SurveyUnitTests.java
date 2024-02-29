@@ -336,6 +336,69 @@ class SurveyUnitTests {
     }
 
     @Test
+    void when_user_update_surveyunit_data_state_data_return_200() throws Exception {
+        String surveyUnitDataStateData = """
+            {
+                "data":""" + surveyUnitData + ", " +
+                """
+                    "stateData": {
+                        "state": "EXTRACTED",
+                        "date": 1111111111,
+                        "currentPage": "2.3#5"
+                    }
+                }""";
+        mockMvc.perform(patch("/api/survey-unit/11")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitDataStateData)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void when_user_update_surveyunit_with_incorrect_state_data_return_400() throws Exception {
+        String surveyUnitDataStateData = """
+            {
+                "data":""" + surveyUnitData + ", " +
+                """
+                    "stateData": {
+                        "state": "EACTED",
+                        "date": 1111111111,
+                        "currentPage": "2.3#5"
+                    }
+                }""";
+        mockMvc.perform(patch("/api/survey-unit/11")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitDataStateData)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void when_user_update_surveyunit_with_incorrect_identifier_return_400() throws Exception {
+        String surveyUnitDataStateData = """
+            {
+                "data":""" + surveyUnitData + ", " +
+                """
+                    "stateData": {
+                        "state": "EXTRACTED",
+                        "date": 1111111111,
+                        "currentPage": "2.3#5"
+                    }
+                }""";
+        mockMvc.perform(patch("/api/survey-unit/invalid!identifier")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitDataStateData)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void when_non_interviewer_get_surveyunits_return_403() throws Exception {
         mockMvc.perform(get("/api/survey-units/interviewer")
                         .accept(MediaType.APPLICATION_JSON)
@@ -388,6 +451,14 @@ class SurveyUnitTests {
                 .andExpect(status().isUnauthorized());
 
         mockMvc.perform(put("/api/survey-unit/11")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitData)
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                )
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(patch("/api/survey-unit/11")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitData)
