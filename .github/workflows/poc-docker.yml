@@ -52,5 +52,5 @@ jobs:
           name: inseefr/queen-back-office
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          tags: "poc-protools:latest"
+          tags: "poc-protools"
           workdir: queen-application
