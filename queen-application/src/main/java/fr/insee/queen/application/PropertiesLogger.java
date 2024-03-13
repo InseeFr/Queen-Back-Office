@@ -9,6 +9,7 @@ import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -24,14 +25,23 @@ public class PropertiesLogger implements ApplicationListener<ApplicationEnvironm
         log.info("===============================================================================================");
         log.info("                                     Properties                                                ");
 
+        List<String> propertyObjects = List.of("application", "spring", "feature", "logging");
         ((AbstractEnvironment) environment).getPropertySources().stream()
                 .filter(EnumerablePropertySource.class::isInstance)
                 .map(ps -> ((EnumerablePropertySource<?>) ps).getPropertyNames())
                 .flatMap(Arrays::stream)
                 .distinct()
                 .filter(Objects::nonNull)
-                .filter(ps -> ps.startsWith("fr.insee") || ps.startsWith("spring")).forEach(key -> log
-                        .info("{} = {}", key, hideProperties(key, environment)));
+                .sorted()
+                .filter(ps -> {
+                    for(String propertyObject : propertyObjects) {
+                        if(ps.startsWith(propertyObject)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .forEach(key -> log.info("{} = {}", key, hideProperties(key, environment)));
         log.info("===============================================================================================");
 
     }
