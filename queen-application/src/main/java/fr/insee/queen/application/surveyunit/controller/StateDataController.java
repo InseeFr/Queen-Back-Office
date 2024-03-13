@@ -2,7 +2,7 @@ package fr.insee.queen.application.surveyunit.controller;
 
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.application.surveyunit.dto.input.StateDataInputData;
+import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.output.StateDataDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitOkNokDto;
@@ -62,9 +62,9 @@ public class StateDataController {
     @PutMapping(path = "/survey-unit/{id}/state-data")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                             @Valid @RequestBody StateDataInputData stateDataInputDto) throws StateDataInvalidDateException {
+                             @Valid @RequestBody StateDataInput stateDataInputDto) throws StateDataInvalidDateException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
-        stateDataService.saveStateData(surveyUnitId, StateDataInputData.toModel(stateDataInputDto));
+        stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
     }
 
     /**

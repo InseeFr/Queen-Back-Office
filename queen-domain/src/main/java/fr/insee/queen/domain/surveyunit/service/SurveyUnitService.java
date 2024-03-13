@@ -1,10 +1,8 @@
 package fr.insee.queen.domain.surveyunit.service;
 
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +21,8 @@ public interface SurveyUnitService {
     List<String> findAllSurveyUnitIds();
 
     void updateSurveyUnit(SurveyUnit surveyUnit);
+
+    void updateSurveyUnit(String surveyUnitId, ObjectNode data, StateData stateData);
 
     void createSurveyUnit(SurveyUnit surveyUnit) throws StateDataInvalidDateException;
 

@@ -2,7 +2,7 @@ package fr.insee.queen.application.surveyunit.dto.input;
 
 import fr.insee.queen.domain.surveyunit.model.StateDataType;
 
-public enum StateDataTypeData {
+public enum StateDataTypeInput {
     INIT(StateDataType.INIT),
     COMPLETED(StateDataType.COMPLETED),
     VALIDATED(StateDataType.VALIDATED),
@@ -11,7 +11,7 @@ public enum StateDataTypeData {
 
     private final StateDataType stateDataType;
 
-    StateDataTypeData(StateDataType stateDataType) {
+    StateDataTypeInput(StateDataType stateDataType) {
         this.stateDataType = stateDataType;
     }
 

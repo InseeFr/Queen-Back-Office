@@ -1,9 +1,7 @@
 package fr.insee.queen.application.surveyunit.service.dummy;
 
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,9 +19,10 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     private boolean surveyUnitExist = true;
     @Getter
     private boolean checkSurveyUnitExist = false;
-
     @Getter
     private boolean checkSurveyUnitNotExist = false;
+    @Getter
+    private boolean checkSurveyUnitUpdate = false;
 
     @Getter
     private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
@@ -64,7 +63,12 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public void updateSurveyUnit(SurveyUnit surveyUnit) {
+        checkSurveyUnitUpdate = true;
+    }
 
+    @Override
+    public void updateSurveyUnit(String surveyUnitId, ObjectNode data, StateData stateData) {
+        checkSurveyUnitUpdate = true;
     }
 
     @Override

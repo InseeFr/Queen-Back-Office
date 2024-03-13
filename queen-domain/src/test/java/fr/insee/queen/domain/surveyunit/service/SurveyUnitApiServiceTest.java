@@ -1,10 +1,13 @@
 package fr.insee.queen.domain.surveyunit.service;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.surveyunit.infrastructure.dummy.SurveyUnitFakeDao;
 import fr.insee.queen.domain.surveyunit.model.StateDataType;
+import fr.insee.queen.domain.surveyunit.service.dummy.DataFakeService;
 import fr.insee.queen.domain.surveyunit.service.dummy.StateDataFakeService;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.domain.surveyunit.model.StateData;
@@ -22,6 +25,7 @@ class SurveyUnitApiServiceTest {
 
     private SurveyUnitApiService surveyUnitApiService;
     private StateDataFakeService stateDataFakeService;
+    private DataFakeService dataFakeService;
     private CampaignExistenceFakeService campaignExistenceFakeService;
     private SurveyUnitFakeDao surveyUnitFakeDao;
 
@@ -31,7 +35,8 @@ class SurveyUnitApiServiceTest {
         surveyUnitFakeDao = new SurveyUnitFakeDao();
         stateDataFakeService = new StateDataFakeService();
         campaignExistenceFakeService = new CampaignExistenceFakeService();
-        surveyUnitApiService = new SurveyUnitApiService(surveyUnitFakeDao, stateDataFakeService,
+        dataFakeService = new DataFakeService();
+        surveyUnitApiService = new SurveyUnitApiService(surveyUnitFakeDao, stateDataFakeService, dataFakeService,
                 campaignExistenceFakeService, cacheManager);
     }
 
@@ -118,5 +123,27 @@ class SurveyUnitApiServiceTest {
         surveyUnitApiService.updateSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitUpdated()).isEqualTo(surveyUnit);
         assertThat(stateDataFakeService.getStateDataSaved()).isNull();
+    }
+
+    @Test
+    @DisplayName("On updating survey unit, when state data is not null, save it")
+    void testUpdateDataStateData02() {
+        StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
+        ObjectNode data = JsonNodeFactory.instance.objectNode();
+        String surveyUnitId = "11";
+        surveyUnitApiService.updateSurveyUnit(surveyUnitId, data, stateData);
+        assertThat(stateDataFakeService.getStateDataSaved()).isEqualTo(stateData);
+        assertThat(dataFakeService.getDataSaved()).isEqualTo(data);
+    }
+
+    @Test
+    @DisplayName("On updating survey unit, when state data update throws an invalid date exception, check data is saved ")
+    void testUpdateDataStateData03() {
+        StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
+        ObjectNode data = JsonNodeFactory.instance.objectNode();
+        String surveyUnitId = "11";
+        stateDataFakeService.setDateInvalid(true);
+        surveyUnitApiService.updateSurveyUnit(surveyUnitId, data, stateData);
+        assertThat(dataFakeService.getDataSaved()).isEqualTo(data);
     }
 }
