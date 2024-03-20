@@ -11,11 +11,11 @@ application:
     webclient:
     reviewer-alternative:
     survey-unit:
-  corsOrigins:
+  corsOrigins: https://test.com
   # Folder where to store temp files.
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
   # Use a folder with permissions for the app only
-  temp-folder:
+  temp-folder: /opt/app/app-temp
 
 feature:
   oidc:
@@ -50,6 +50,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
+    url: jdbc:postgresql://localhost:5432/protools
+    username: insee
+    password: lille
+    driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 2
       maximum-pool-size: 2

@@ -34,6 +34,7 @@
 
     <modules>
         <module>queen-application</module>
+        <module>queen-listener-jms</module>
         <module>queen-domain</module>
         <module>queen-infra-db</module>
         <module>queen-domain-depositproof</module>
