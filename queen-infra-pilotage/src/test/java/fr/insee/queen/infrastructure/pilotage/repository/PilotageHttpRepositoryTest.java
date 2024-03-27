@@ -18,6 +18,7 @@ import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withException;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 class PilotageHttpRepositoryTest {
@@ -100,6 +102,19 @@ class PilotageHttpRepositoryTest {
         mockServer.verify();
     }
 
+    @DisplayName("Given the server not responding, when retrieving campaings, throw exception")
+    @Test
+    void testInterviewerCampaignsNetworkError() throws URISyntaxException {
+        mockServer.expect(ExpectedCount.once(),
+                        requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_INTERVIEWER_CAMPAIGNS)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withException(new IOException("message")));
+
+        assertThatThrownBy(() -> pilotageRepository.getInterviewerCampaigns())
+                .isInstanceOf(PilotageApiException.class);
+        mockServer.verify();
+    }
+
     @DisplayName("On checking if campaign closed, return campaign status")
     @ParameterizedTest
     @ValueSource(strings = { "true", "false"})
@@ -116,6 +131,18 @@ class PilotageHttpRepositoryTest {
         boolean isClosed = pilotageRepository.isClosed(campaignId);
         mockServer.verify();
         assertThat(isClosed).isEqualTo(!Boolean.parseBoolean(status));
+    }
+
+    @DisplayName("Given the server not responding, when checking if campaign closed, throw exception")
+    @Test
+    void testCampaignIsClosedNetworkError() throws URISyntaxException {
+        mockServer.expect(ExpectedCount.once(),
+                        requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_CAMPAIGNS.formatted(campaignId))))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withException(new IOException("message")));
+
+        assertThatThrownBy(() -> pilotageRepository.isClosed(campaignId))
+                .isInstanceOf(PilotageApiException.class);
     }
 
     @DisplayName("On checking campaign closed, when response is null throw exception")
@@ -203,6 +230,19 @@ class PilotageHttpRepositoryTest {
 
         List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits();
         assertThat(surveyUnits).isEmpty();
+        mockServer.verify();
+    }
+
+    @DisplayName("Given the server not responding, when retrieving survey units, throw exception")
+    @Test
+    void testSurveyUnitsNetworkError() throws URISyntaxException {
+        mockServer.expect(ExpectedCount.once(),
+                        requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_SURVEYUNITS)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withException(new IOException("message")));
+
+        assertThatThrownBy(() -> pilotageRepository.getSurveyUnits())
+                .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
 
@@ -335,6 +375,22 @@ class PilotageHttpRepositoryTest {
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
+
+        assertThatThrownBy(() -> pilotageRepository.hasHabilitation(surveyUnit, role, idep))
+                .isInstanceOf(PilotageApiException.class);
+        mockServer.verify();
+    }
+
+    @DisplayName("Given the server not responding, when checking habilitation, throw exception")
+    @Test
+    void testHabilitationNetworkError() {
+        String idSu = "id-su";
+        String idep = "idep";
+        PilotageRole role = PilotageRole.INTERVIEWER;
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", campaignId);
+
+        mockServer.expect(method(HttpMethod.GET))
+                .andRespond(withException(new IOException("message")));
 
         assertThatThrownBy(() -> pilotageRepository.hasHabilitation(surveyUnit, role, idep))
                 .isInstanceOf(PilotageApiException.class);

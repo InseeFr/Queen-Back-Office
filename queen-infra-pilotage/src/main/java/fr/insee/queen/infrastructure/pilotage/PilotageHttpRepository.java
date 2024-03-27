@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +75,9 @@ public class PilotageHttpRepository implements PilotageRepository {
             }
             log.error(ex.getMessage(), ex);
             throw new PilotageApiException();
+        } catch(RestClientException ex) {
+            log.error(ex.getMessage(), ex);
+            throw new PilotageApiException();
         }
     }
 
@@ -97,6 +97,9 @@ public class PilotageHttpRepository implements PilotageRepository {
                 log.debug("Got a 404 status code, 0 campaigns returned");
                 return new ArrayList<>();
             }
+            log.error(ex.getMessage(), ex);
+            throw new PilotageApiException();
+        } catch(RestClientException ex) {
             log.error(ex.getMessage(), ex);
             throw new PilotageApiException();
         }
@@ -142,6 +145,9 @@ public class PilotageHttpRepository implements PilotageRepository {
                         idep, role.name(), surveyUnit.id());
                 return false;
             }
+            log.error(ex.getMessage(), ex);
+            throw new PilotageApiException();
+        } catch(RestClientException ex) {
             log.error(ex.getMessage(), ex);
             throw new PilotageApiException();
         }
