@@ -1,0 +1,64 @@
+server:
+  port: 8084
+
+Spring:
+  application:
+    name: queen-listener-jms
+  datasource:
+#    url: jdbc:postgresql://localhost:5432/protools
+    url: $URL_JDBC
+    username: insee
+    password: lille
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 2
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      id:
+        new_generator_mappings: true
+      cache:
+        use_second_level_cache: false
+        use_query_cache: false
+      generate_statistics: false
+      hbm2ddl:
+        auto: validate
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    contexts: prod
+    defaultSchema: public
+    change-log: classpath:db/master.xml
+  profiles:
+    group:
+      cache-testing: test,test-cache
+  activemq:
+    broker-url: failover:(tcp://activemq-artemis-service:61616)?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
+    user: insee
+    password: lille
+    # Propriete FIX : This class is not trusted to be serialized as ObjectMessage payload. Please take a look at http://activemq.apache.org/objectmessage.html for more information on how to configure trusted classes.
+    # https://stackoverflow.com/questions/36619432/springboot-activemq-how-to-set-trusted-packages
+    packages:
+      trust-all: true
+  jms:
+    listener:
+      session:
+        acknowledge-mode: auto
+      auto-startup: true
+      min-concurrency: 2
+      max-concurrency: 10
+    pub-sub-domain: false
+    template:
+      default-destination: empty
+      priority: 100
+      qos-enabled: true
+      receive-timeout: 1000
+      time-to-live: 36000
+

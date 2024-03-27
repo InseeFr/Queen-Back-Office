@@ -10,11 +10,34 @@
         <version>${revision}${changelist}</version>
     </parent>
 
-    <groupId>fr.insee.queen</groupId>
     <artifactId>queen-listener-jms</artifactId>
     <version>4.0.10</version>
 
 <dependencies>
+    <dependency>
+        <groupId>fr.insee.queen</groupId>
+        <artifactId>queen-domain</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.insee.queen</groupId>
+        <artifactId>queen-infra-db</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+
+    <!-- Cache -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-cache</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>${caffeine.version}</version>
+    </dependency>
+
     <!-- https://mvnrepository.com/artifact/org.apache.activemq/artemis-jms-server -->
     <dependency>
         <groupId>org.apache.activemq</groupId>

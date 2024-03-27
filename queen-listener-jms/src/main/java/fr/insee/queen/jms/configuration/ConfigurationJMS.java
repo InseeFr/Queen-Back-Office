@@ -47,55 +47,6 @@ public class ConfigurationJMS {
     @Value("${spring.activemq.password}")
     private String password;
 
-//    @Bean
-//    public MessageConverter jacksonJmsMessageConverter() {
-//        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-//        converter.setTargetType(MessageType.TEXT);
-//        converter.setTypeIdPropertyName("_type");
-//        return converter;
-//    }
-
-//    @Bean
-//    public MessageConverter jacksonJmsMessageConverter() {
-//        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-//        converter.setTypeIdPropertyName("ue");
-////        Map<String, Class<?>> typeIdMappings = new HashMap<String, Class<?>>();
-////        typeIdMappings.put("JMS_TYPE", UniteEnquetee.class);
-////        converter.setTypeIdPropertyName("_type");
-////        converter.setTypeIdMappings(typeIdMappings);
-//        converter.setTargetType(MessageType.TEXT);
-////        converter.setTypeIdPropertyName("JMS_TYPE");
-//
-//        return converter;
-//    }
-
-//    @Bean
-//    public MessageConverter jacksonJmsMessageConverter(){
-////        MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-//////        messageConverter.setObjectMapper(objectMapper);
-////        messageConverter.setTargetType(MessageType.TEXT);
-////
-////        messageConverter.setTypeIdPropertyName("ichihedge.queue.json.classname");
-////        //now set idMappings for serialization/deserialization
-////        HashMap<String, Class<?>> idMapping = new HashMap<String, Class<?>>();
-////        idMapping.put(UniteEnquetee.class.getName(), UniteEnquetee.class);
-////        messageConverter.setTypeIdMappings(idMapping);
-////
-////        return messageConverter;
-//        // Convert from POJO to json String
-//
-//        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-//        converter.setTargetType(MessageType.TEXT);
-//        converter.setTypeIdPropertyName("UniteEnquetee");
-//
-//        // Set up a map to convert our friendly message types to Java classes.
-//        Map<String, Class<?>> typeIdMap = new HashMap<>();
-//        typeIdMap.put("UniteEnquetee", UniteEnquetee.class);
-//        converter.setTypeIdMappings(typeIdMap);
-//
-//        return converter;
-//    }
-
     @Bean
     @Qualifier("queueConnectionFactory")
     public ConnectionFactory connectionFactory() {

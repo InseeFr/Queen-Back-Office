@@ -12,6 +12,8 @@ import java.util.Objects;
 public class UniteEnquetee implements Serializable {
 
   private Long externalId;
+  private String campagneId;
+  private String questionnaireId;
   private String firstName;
   private String lastName;
   private String correlationID;
@@ -23,6 +25,8 @@ public class UniteEnquetee implements Serializable {
   public String toString() {
     return "UniteEnquetee{" +
             "externalId=" + externalId +
+            ", campagneId='" + campagneId + '\'' +
+            ", questionnaireId='" + questionnaireId + '\'' +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", correlationID='" + correlationID + '\'' +
@@ -37,12 +41,12 @@ public class UniteEnquetee implements Serializable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     UniteEnquetee that = (UniteEnquetee) o;
-    return inProgress == that.inProgress && done == that.done && Objects.equals(externalId, that.externalId) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(correlationID, that.correlationID) && Objects.equals(replyTo, that.replyTo);
+    return inProgress == that.inProgress && done == that.done && Objects.equals(externalId, that.externalId) && Objects.equals(campagneId, that.campagneId) && Objects.equals(questionnaireId, that.questionnaireId) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(correlationID, that.correlationID) && Objects.equals(replyTo, that.replyTo);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(externalId, firstName, lastName, correlationID, replyTo, inProgress, done);
+    return Objects.hash(externalId, campagneId, questionnaireId, firstName, lastName, correlationID, replyTo, inProgress, done);
   }
 }
 
