@@ -53,8 +53,7 @@ public class PilotageHttpRepository implements PilotageRepository {
             }
             return !campaignEnabled.ongoing();
         } catch (RestClientException e) {
-            log.error(e.getMessage(), e);
-            throw new PilotageApiException();
+            throw generateException(e);
         }
     }
 
@@ -68,16 +67,14 @@ public class PilotageHttpRepository implements PilotageRepository {
                             new ParameterizedTypeReference<List<PilotageSurveyUnit>>() {});
             log.debug("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
             return response.getBody();
-        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+        } catch (HttpClientErrorException ex) {
             if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
                 log.debug("Got a 404 status code, 0 survey units returned");
                 return new ArrayList<>();
             }
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
         } catch(RestClientException ex) {
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
         }
     }
 
@@ -92,16 +89,14 @@ public class PilotageHttpRepository implements PilotageRepository {
                             new ParameterizedTypeReference<List<PilotageCampaign>>() {});
             log.debug("Pilotage API call returned {}", response.getStatusCode().value());
             return response.getBody();
-        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+        } catch (HttpClientErrorException ex) {
             if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
                 log.debug("Got a 404 status code, 0 campaigns returned");
                 return new ArrayList<>();
             }
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
         } catch(RestClientException ex) {
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
         }
     }
 
@@ -138,18 +133,21 @@ public class PilotageHttpRepository implements PilotageRepository {
             log.debug("Habilitation of user {} with role {} to access survey-unit {} : {}", idep, role.name(),
                     surveyUnit.id(), habilitation.habilitated() ? "granted" : "denied");
             return habilitation.habilitated();
-        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+        } catch (HttpClientErrorException ex) {
             HttpStatusCode status = ex.getStatusCode();
             if (status.equals(HttpStatus.UNAUTHORIZED)) {
                 log.debug("Habilitation of user {} with role {} to access survey-unit {} denied.",
                         idep, role.name(), surveyUnit.id());
                 return false;
             }
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
         } catch(RestClientException ex) {
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
         }
+    }
+
+    private PilotageApiException generateException(Exception ex) {
+        log.error(ex.getMessage(), ex);
+        return new PilotageApiException();
     }
 }
