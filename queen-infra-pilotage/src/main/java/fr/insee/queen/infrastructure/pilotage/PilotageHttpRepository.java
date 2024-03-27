@@ -67,7 +67,7 @@ public class PilotageHttpRepository implements PilotageRepository {
                             new ParameterizedTypeReference<List<PilotageSurveyUnit>>() {});
             log.debug("GET survey-units from PearlJam API resulting in {}", response.getStatusCode());
             return response.getBody();
-        } catch (HttpClientErrorException ex) {
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
             if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
                 log.debug("Got a 404 status code, 0 survey units returned");
                 return new ArrayList<>();
@@ -89,7 +89,7 @@ public class PilotageHttpRepository implements PilotageRepository {
                             new ParameterizedTypeReference<List<PilotageCampaign>>() {});
             log.debug("Pilotage API call returned {}", response.getStatusCode().value());
             return response.getBody();
-        } catch (HttpClientErrorException ex) {
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
             if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
                 log.debug("Got a 404 status code, 0 campaigns returned");
                 return new ArrayList<>();
@@ -133,7 +133,7 @@ public class PilotageHttpRepository implements PilotageRepository {
             log.debug("Habilitation of user {} with role {} to access survey-unit {} : {}", idep, role.name(),
                     surveyUnit.id(), habilitation.habilitated() ? "granted" : "denied");
             return habilitation.habilitated();
-        } catch (HttpClientErrorException ex) {
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
             HttpStatusCode status = ex.getStatusCode();
             if (status.equals(HttpStatus.UNAUTHORIZED)) {
                 log.debug("Habilitation of user {} with role {} to access survey-unit {} denied.",
