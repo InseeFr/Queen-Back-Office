@@ -25,7 +25,8 @@ jobs:
           java-version: "21"
 
       - name: Build API
-        run: mvn package -Dchangelist=-SNAPSHOT --no-transfer-progress
+#        run: mvn package -Dchangelist=-SNAPSHOT --no-transfer-progress
+        run: mvn package --no-transfer-progress
 
       - name: Upload API jar
         uses: actions/upload-artifact@v4
