@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +53,7 @@ public class PilotageHttpRepository implements PilotageRepository {
             }
             return !campaignEnabled.ongoing();
         } catch (RestClientException e) {
-            log.error(e.getMessage(), e);
-            throw new PilotageApiException();
+            throw generateException(e);
         }
     }
 
@@ -76,8 +72,9 @@ public class PilotageHttpRepository implements PilotageRepository {
                 log.debug("Got a 404 status code, 0 survey units returned");
                 return new ArrayList<>();
             }
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
+        } catch(RestClientException ex) {
+            throw generateException(ex);
         }
     }
 
@@ -97,8 +94,9 @@ public class PilotageHttpRepository implements PilotageRepository {
                 log.debug("Got a 404 status code, 0 campaigns returned");
                 return new ArrayList<>();
             }
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
+        } catch(RestClientException ex) {
+            throw generateException(ex);
         }
     }
 
@@ -142,8 +140,14 @@ public class PilotageHttpRepository implements PilotageRepository {
                         idep, role.name(), surveyUnit.id());
                 return false;
             }
-            log.error(ex.getMessage(), ex);
-            throw new PilotageApiException();
+            throw generateException(ex);
+        } catch(RestClientException ex) {
+            throw generateException(ex);
         }
+    }
+
+    private PilotageApiException generateException(Exception ex) {
+        log.error(ex.getMessage(), ex);
+        return new PilotageApiException();
     }
 }
