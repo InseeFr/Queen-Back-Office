@@ -5,10 +5,9 @@ Spring:
   application:
     name: queen-listener-jms
   datasource:
-#    url: jdbc:postgresql://localhost:5432/protools
     url: ${URL_JDBC}
-    username: insee
-    password: lille
+    username: ${USERNAME}
+    password: ${PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 2
@@ -40,9 +39,9 @@ Spring:
     group:
       cache-testing: test,test-cache
   activemq:
-    broker-url: failover:(tcp://activemq-artemis-service:61616)?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
-    user: insee
-    password: lille
+    broker-url: failover:(tcp://${ARTEMIS_BROKER_URL}:${ARTEMIS_BROKER_PORT})?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
+    user: ${ARTEMIS_USER}
+    password: ${ARTEMIS_PASSWORD}
     # Propriete FIX : This class is not trusted to be serialized as ObjectMessage payload. Please take a look at http://activemq.apache.org/objectmessage.html for more information on how to configure trusted classes.
     # https://stackoverflow.com/questions/36619432/springboot-activemq-how-to-set-trusted-packages
     packages:
