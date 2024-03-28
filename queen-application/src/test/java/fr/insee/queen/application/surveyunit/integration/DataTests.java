@@ -19,8 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -145,7 +144,80 @@ class DataTests {
     @Test
     void on_update_data_when_anonymous_user_return_401() throws Exception {
         mockMvc.perform(put("/api/survey-unit/12/data")
+                        .content("{}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void on_update_collected_data_data_is_updated() throws Exception {
+        String surveyUnitId = "12";
+        String collectedDataJson = """
+            {
+                "hey": "ho",
+                "obj": {"plip": "plop"},
+                "numb": 2
+            }""";
+        MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        JSONAssert.assertNotEquals(collectedDataJson, content, JSONCompareMode.NON_EXTENSIBLE);
+
+        mockMvc.perform(patch("/api/survey-unit/" + surveyUnitId + "/data")
+                        .content(collectedDataJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk());
+
+        result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        content = result.getResponse().getContentAsString();
+        String expectedResult = "{}";
+        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    void on_update_collected_data_when_su_id_invalid_return_400() throws Exception {
+        mockMvc.perform(patch("/api/survey-unit/invalid$identifier/data")
+                        .content("{}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_update_collected_data_when_data_not_json_object_node_return_400() throws Exception {
+        mockMvc.perform(patch("/api/survey-unit/12/data")
                         .content("[]")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_update_collected_data_when_anonymous_user_return_401() throws Exception {
+        mockMvc.perform(patch("/api/survey-unit/12/data")
+                        .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))

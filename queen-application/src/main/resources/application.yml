@@ -45,6 +45,10 @@ feature:
     enabled: false
   interviewer-mode:
     enabled: false
+  perfdata:
+    enabled: false
+    collected:
+      native-insert: false
 
 spring:
   main:

@@ -55,6 +55,6 @@ public class DataController {
     public void updateData(@NotNull @RequestBody ObjectNode dataValue,
                            @IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
-        dataService.updateData(surveyUnitId, dataValue);
+        dataService.saveData(surveyUnitId, dataValue);
     }
 }

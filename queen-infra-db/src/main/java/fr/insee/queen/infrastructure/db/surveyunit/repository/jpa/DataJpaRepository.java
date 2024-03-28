@@ -42,6 +42,26 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
     int updateData(String surveyUnitId, String data);
 
     /**
+     * Update data for a survey unit
+     *
+     * @param surveyUnitId survey unit id
+     * @param collectedUpdateData partial collected data to set on current collected data
+     * @return number of updated rows
+     */
+    @Transactional
+    @Modifying
+    @Query(value = """
+        update data 
+        set value=jsonb_set(cast(value as jsonb), '{COLLECTED}', aggregate_query.updated_collected_data)
+        from(
+            select value->'COLLECTED' || cast(:collectedUpdateData as jsonb) as updated_collected_data
+            from data where survey_unit_id=:surveyUnitId
+        ) as aggregate_query
+        where survey_unit_id=:surveyUnitId
+    """, nativeQuery = true)
+    void updateCollectedData(String surveyUnitId, String collectedUpdateData);
+
+    /**
      * Find the data of a survey unit
      *
      * @param surveyUnitId survey unit id
@@ -49,6 +69,15 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
      */
     @Query("select s.data.value from SurveyUnitDB s where s.id=:surveyUnitId")
     Optional<String> findData(String surveyUnitId);
+
+    /**
+     * Find the data of a survey unit
+     *
+     * @param surveyUnitId survey unit id
+     * @return an optional of the data (json format)
+     */
+    @Query("select s.data.value from SurveyUnitDB s where s.id=:surveyUnitId")
+    String getData(String surveyUnitId);
 
     /**
      * Delete data of a survey unit

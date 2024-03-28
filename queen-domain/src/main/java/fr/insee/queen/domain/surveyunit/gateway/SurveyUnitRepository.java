@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.surveyunit.gateway;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
@@ -111,6 +112,13 @@ public interface SurveyUnitRepository {
      * @param data data value
      */
     void saveData(String surveyUnitId, String data);
+
+    /**
+     * Save partial collected data for a survey unit
+     * @param surveyUnitId survey unit id
+     * @param partialCollectedDataNode partial data value
+     */
+    void updateCollectedData(String surveyUnitId, ObjectNode partialCollectedDataNode);
 
     /**
      * Find the comment of a survey unit
