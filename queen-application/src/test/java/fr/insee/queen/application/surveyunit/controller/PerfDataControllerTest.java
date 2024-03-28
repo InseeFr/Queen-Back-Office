@@ -41,13 +41,11 @@ class PerfDataControllerTest {
     }
 
     @Test
-    @DisplayName("When updating collected data, verify habilitation")
+    @DisplayName("When updating collected data, then verify habilitation")
     void testSurveyUnitUpdateColllectedData01() {
         String surveyUnitId = "11";
-        ObjectNode data = JsonNodeFactory.instance.objectNode();
-        StateDataInput stateData = new StateDataInput(StateDataTypeInput.INIT, 0L, "2.3");
-        SurveyUnitDataStateDataUpdateInput su = new SurveyUnitDataStateDataUpdateInput(data, stateData);
-        perfDataController.updateSurveyUnitDataStateDataById(surveyUnitId, su);
+        ObjectNode collectedData = JsonNodeFactory.instance.objectNode();
+        perfDataController.updateCollectedData(collectedData, surveyUnitId);
         assertThat(pilotageFakeComponent.isChecked()).isTrue();
         assertThat(dataFakeService.isCheckUpdateCollectedData()).isTrue();
     }

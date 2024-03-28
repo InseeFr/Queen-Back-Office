@@ -155,12 +155,17 @@ class DataTests {
     @Test
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_collected_data_data_is_updated() throws Exception {
-        String surveyUnitId = "12";
+        String surveyUnitId = "11";
         String collectedDataJson = """
             {
                 "hey": "ho",
                 "obj": {"plip": "plop"},
-                "numb": 2
+                "numb": 2,
+                "READY": {
+                     "EDITED": true,
+                     "COLLECTED":false
+                },
+                "COMMENT": null
             }""";
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
@@ -188,7 +193,32 @@ class DataTests {
                 .andReturn();
 
         content = result.getResponse().getContentAsString();
-        String expectedResult = "{}";
+        String expectedResult = """
+            {
+               "EXTERNAL":{
+                  "LAST_BROADCAST":"12/07/1998"
+               },
+               "COLLECTED":{
+                  "hey":"ho",
+                  "obj":{
+                     "plip":"plop"
+                  },
+                  "numb":2,
+                  "READY":{
+                     "EDITED":true,
+                     "COLLECTED":false
+                  },
+                  "COMMENT": null,
+                  "PRODUCER":{
+                     "EDITED":null,
+                     "FORCED":null,
+                     "INPUTED":null,
+                     "PREVIOUS":null,
+                     "COLLECTED":"Matt Groening"
+                  }
+               }
+            }
+        """;
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 
