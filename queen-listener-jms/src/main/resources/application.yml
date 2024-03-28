@@ -6,7 +6,7 @@ Spring:
     name: queen-listener-jms
   datasource:
 #    url: jdbc:postgresql://localhost:5432/protools
-    url: $URL_JDBC
+    url: ${URL_JDBC}
     username: insee
     password: lille
     driver-class-name: org.postgresql.Driver
