@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21.0.2_13-jre-alpine
 
 WORKDIR /opt/app/
 COPY ./target/*.jar /opt/app/app.jar
