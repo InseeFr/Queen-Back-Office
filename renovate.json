@@ -21,14 +21,6 @@
       "matchUpdateTypes": ["minor", "patch"],
       "bumpVersion": "patch",
       "dependencyDashboardApproval": false
-    },
-    {
-      "groupName": "spring minor dependencies",
-      "groupSlug": "spring-minor-patch",
-      "matchPackagePatterns": ["org.springframework.*"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "bumpVersion": "patch",
-      "dependencyDashboardApproval": false
     }
   ],
   "vulnerabilityAlerts": {
