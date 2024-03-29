@@ -4,6 +4,7 @@ import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -17,10 +18,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -145,7 +146,135 @@ class DataTests {
     @Test
     void on_update_data_when_anonymous_user_return_401() throws Exception {
         mockMvc.perform(put("/api/survey-unit/12/data")
+                        .content("{}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("Given survey unit data with collected data, when inserting partial collected data, then merge collected datas")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void updateCollectedData01() throws Exception {
+        String surveyUnitId = "11";
+        String collectedDataJson = """
+            {
+                "hey": "ho",
+                "obj": {"plip": "plop"},
+                "numb": 2,
+                "READY": {
+                     "EDITED": true,
+                     "COLLECTED":false
+                },
+                "COMMENT": null
+            }""";
+
+        mockMvc.perform(patch("/api/survey-unit/" + surveyUnitId + "/data")
+                        .content(collectedDataJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk());
+
+        MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        String expectedResult = """
+            {
+               "EXTERNAL":{
+                  "LAST_BROADCAST":"12/07/1998"
+               },
+               "COLLECTED":{
+                  "hey":"ho",
+                  "obj":{
+                     "plip":"plop"
+                  },
+                  "numb":2,
+                  "READY":{
+                     "EDITED":true,
+                     "COLLECTED":false
+                  },
+                  "COMMENT": null,
+                  "PRODUCER":{
+                     "EDITED":null,
+                     "FORCED":null,
+                     "INPUTED":null,
+                     "PREVIOUS":null,
+                     "COLLECTED":"Matt Groening"
+                  }
+               }
+            }
+        """;
+        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    @DisplayName("Given survey unit with no collected json data, when updating data then insert partial data as collected data")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void updateCollectedData02() throws Exception {
+        String surveyUnitId = "21";
+        String collectedDataJson = """
+            {
+                "COMMENT": null
+            }""";
+
+        mockMvc.perform(patch("/api/survey-unit/" + surveyUnitId + "/data")
+                        .content(collectedDataJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk());
+
+        MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        String expectedResult = "{\"COLLECTED\":" + collectedDataJson + "}";
+        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    @DisplayName("Given invalid survey unit id, when updating collected data then throw bad request")
+    void updateCollectedDataError02() throws Exception {
+        mockMvc.perform(patch("/api/survey-unit/invalid$identifier/data")
+                        .content("{}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Given invalid json collected input data, when updating collected data then throw bad request")
+    void updateCollectedDataError03() throws Exception {
+        mockMvc.perform(patch("/api/survey-unit/12/data")
                         .content("[]")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Given an anoymous user, when updating collected data then return unauthenticated error")
+    void updateCollectedDataError04() throws Exception {
+        mockMvc.perform(patch("/api/survey-unit/12/data")
+                        .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))

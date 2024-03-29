@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.surveyunit.infrastructure.dummy;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
@@ -84,6 +85,11 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
 
     @Override
     public void saveData(String surveyUnitId, String data) {
+
+    }
+
+    @Override
+    public void updateCollectedData(String surveyUnitId, ObjectNode partialCollectedDataNode) {
 
     }
 

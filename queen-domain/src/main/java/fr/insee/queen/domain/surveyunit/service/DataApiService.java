@@ -1,6 +1,7 @@
 package fr.insee.queen.domain.surveyunit.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,12 @@ public class DataApiService implements DataService {
     }
 
     @Override
-    public void updateData(String surveyUnitId, JsonNode dataValue) {
+    public void saveData(String surveyUnitId, JsonNode dataValue) {
         surveyUnitRepository.saveData(surveyUnitId, dataValue.toString());
+    }
+
+    @Override
+    public void updateCollectedData(String surveyUnitId, ObjectNode collectedData) {
+        surveyUnitRepository.updateCollectedData(surveyUnitId, collectedData);
     }
 }

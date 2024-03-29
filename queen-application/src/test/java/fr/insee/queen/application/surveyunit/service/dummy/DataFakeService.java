@@ -1,4 +1,4 @@
-package fr.insee.queen.domain.surveyunit.service.dummy;
+package fr.insee.queen.application.surveyunit.service.dummy;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -7,7 +7,7 @@ import lombok.Getter;
 
 public class DataFakeService implements DataService {
     @Getter
-    private JsonNode dataSaved = null;
+    private boolean checkUpdateCollectedData = false;
 
     @Override
     public String getData(String surveyUnitId) {
@@ -16,11 +16,11 @@ public class DataFakeService implements DataService {
 
     @Override
     public void saveData(String surveyUnitId, JsonNode dataValue) {
-        dataSaved = dataValue;
+
     }
 
     @Override
     public void updateCollectedData(String surveyUnitId, ObjectNode collectedData) {
-
+        checkUpdateCollectedData = true;
     }
 }
