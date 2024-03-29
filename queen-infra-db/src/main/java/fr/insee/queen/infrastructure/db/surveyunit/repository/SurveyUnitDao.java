@@ -1,5 +1,9 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
@@ -10,6 +14,7 @@ import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireModelJpaRepository;
 import fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection;
+import fr.insee.queen.infrastructure.db.surveyunit.repository.exception.UpdateCollectedDataException;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.DataJpaRepository;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.PersonalizationJpaRepository;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.SurveyUnitJpaRepository;
@@ -21,9 +26,13 @@ import fr.insee.queen.infrastructure.db.surveyunit.entity.PersonalizationDB;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.CommentJpaRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -31,6 +40,7 @@ import java.util.Optional;
  */
 @Repository
 @AllArgsConstructor
+@Slf4j
 public class SurveyUnitDao implements SurveyUnitRepository {
 
     private final SurveyUnitJpaRepository crudRepository;
@@ -42,6 +52,11 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
     private final ParadataEventJpaRepository paradataEventRepository;
+    private static final String COLLECTED_DATA_ATTRIBUTE = "COLLECTED";
+    @Value("${feature.perfdata.collected.native-insert}")
+    private boolean isNativeInsert;
+
+    private final ObjectMapper mapper;
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
@@ -155,6 +170,36 @@ public class SurveyUnitDao implements SurveyUnitRepository {
             DataDB dataDB = new DataDB(data, surveyUnit);
             dataRepository.save(dataDB);
         }
+    }
+
+    @Override
+    public void updateCollectedData(String surveyUnitId, ObjectNode partialCollectedDataNode) {
+        if(isNativeInsert) {
+            dataRepository.updateCollectedData(surveyUnitId, partialCollectedDataNode.toString());
+            return;
+        }
+
+        String dataValue = dataRepository.getData(surveyUnitId);
+        ObjectNode dataNode;
+        try {
+            dataNode = mapper.readValue(dataValue, ObjectNode.class);
+        } catch (JsonProcessingException ex) {
+            log.error("Error when deserializing data from DB", ex);
+            throw new UpdateCollectedDataException();
+        }
+
+        if(!dataNode.has(COLLECTED_DATA_ATTRIBUTE)) {
+            dataNode.set(COLLECTED_DATA_ATTRIBUTE, partialCollectedDataNode);
+            dataRepository.updateData(surveyUnitId, dataNode.toString());
+            return;
+        }
+
+        ObjectNode collectedNode = (ObjectNode) dataNode.get(COLLECTED_DATA_ATTRIBUTE);
+        for (Iterator<Map.Entry<String, JsonNode>> it = partialCollectedDataNode.fields(); it.hasNext(); ) {
+            Map.Entry<String, JsonNode> field = it.next();
+            collectedNode.set(field.getKey(), field.getValue());
+        }
+        dataRepository.updateData(surveyUnitId, dataNode.toString());
     }
 
     @Override

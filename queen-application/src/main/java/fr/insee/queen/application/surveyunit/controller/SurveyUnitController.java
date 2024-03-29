@@ -2,14 +2,11 @@ package fr.insee.queen.application.surveyunit.controller;
 
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitCreationInput;
-import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitDataStateDataUpdateInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitUpdateInput;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
-import fr.insee.queen.domain.surveyunit.model.StateData;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
@@ -79,22 +76,6 @@ public class SurveyUnitController {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         SurveyUnit surveyUnit = SurveyUnitUpdateInput.toModel(surveyUnitId, surveyUnitUpdateInput);
         surveyUnitService.updateSurveyUnit(surveyUnit);
-    }
-
-    /**
-     * Update a survey unit data/state-data
-     *
-     * @param surveyUnitId         survey unit id
-     * @param surveyUnitUpdateInput survey unit form data/state data
-     */
-    @Operation(summary = "Update survey-unit data/state-data")
-    @PatchMapping(path = {"/survey-unit/{id}"})
-    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public void updateSurveyUnitDataStateDataById(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                                  @Valid @RequestBody SurveyUnitDataStateDataUpdateInput surveyUnitUpdateInput) {
-        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
-        StateData stateData = StateDataInput.toModel(surveyUnitUpdateInput.stateData());
-        surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitUpdateInput.data(), stateData);
     }
 
     /**

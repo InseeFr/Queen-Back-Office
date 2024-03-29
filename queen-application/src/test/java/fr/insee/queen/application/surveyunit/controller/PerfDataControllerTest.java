@@ -6,6 +6,7 @@ import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponen
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataTypeInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitDataStateDataUpdateInput;
+import fr.insee.queen.application.surveyunit.service.dummy.DataFakeService;
 import fr.insee.queen.application.surveyunit.service.dummy.SurveyUnitFakeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,27 +14,39 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SurveyUnitControllerTest {
+class PerfDataControllerTest {
     private PilotageFakeComponent pilotageFakeComponent;
-    private SurveyUnitController surveyUnitController;
+    private PerfDataController perfDataController;
     private SurveyUnitFakeService surveyUnitFakeService;
+    private DataFakeService dataFakeService;
 
     @BeforeEach
     void init() {
         surveyUnitFakeService = new SurveyUnitFakeService();
         pilotageFakeComponent = new PilotageFakeComponent();
-        surveyUnitController = new SurveyUnitController(surveyUnitFakeService, pilotageFakeComponent);
+        dataFakeService = new DataFakeService();
+        perfDataController = new PerfDataController(surveyUnitFakeService, pilotageFakeComponent, dataFakeService);
     }
 
     @Test
-    @DisplayName("when updating data/state data, verify habilitation")
+    @DisplayName("When updating data/state data, then verify habilitation")
     void testSurveyUnitUpdateDataStateData01() {
         String surveyUnitId = "11";
         ObjectNode data = JsonNodeFactory.instance.objectNode();
         StateDataInput stateData = new StateDataInput(StateDataTypeInput.INIT, 0L, "2.3");
         SurveyUnitDataStateDataUpdateInput su = new SurveyUnitDataStateDataUpdateInput(data, stateData);
-        surveyUnitController.updateSurveyUnitDataStateDataById(surveyUnitId, su);
+        perfDataController.updateSurveyUnitDataStateDataById(surveyUnitId, su);
         assertThat(pilotageFakeComponent.isChecked()).isTrue();
         assertThat(surveyUnitFakeService.isCheckSurveyUnitUpdate()).isTrue();
+    }
+
+    @Test
+    @DisplayName("When updating collected data, then verify habilitation")
+    void testSurveyUnitUpdateColllectedData01() {
+        String surveyUnitId = "11";
+        ObjectNode collectedData = JsonNodeFactory.instance.objectNode();
+        perfDataController.updateCollectedData(collectedData, surveyUnitId);
+        assertThat(pilotageFakeComponent.isChecked()).isTrue();
+        assertThat(dataFakeService.isCheckUpdateCollectedData()).isTrue();
     }
 }
