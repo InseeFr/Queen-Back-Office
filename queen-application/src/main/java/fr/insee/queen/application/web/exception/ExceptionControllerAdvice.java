@@ -107,7 +107,7 @@ public class ExceptionControllerAdvice {
         String errorMessage = "Error when deserializing JSON";
         if (rootCause instanceof JsonParseException parseException) {
             String location = parseException.getLocation() != null ? "[line: " + parseException.getLocation().getLineNr() + ", column: " + parseException.getLocation().getColumnNr() + "]" : "";
-            errorMessage = "Error with JSON syntax. Check that your json is well formatted: " + parseException.getOriginalMessage() + " " + location;
+            errorMessage = "Error with JSON syntax. Check that your json is well formatted: " + location;
         }
         if (rootCause instanceof JsonMappingException mappingException) {
             String location = mappingException.getLocation() != null ? "[line: " + mappingException.getLocation().getLineNr() + ", column: " + mappingException.getLocation().getColumnNr() + "]" : "";
