@@ -128,7 +128,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitDataUpdated)
-                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER)))
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.SURVEY_UNIT)))
                 )
                 .andExpect(status().isOk());
 
@@ -320,17 +320,6 @@ class SurveyUnitTests {
         mockMvc.perform(delete("/api/survey-unit/11")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
-                )
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void when_non_interviewer_update_surveyunit_return_403() throws Exception {
-        mockMvc.perform(put("/api/survey-unit/11")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(surveyUnitData)
-                        .with(authentication(authenticatedUserTestHelper.getNonInterviewerUser()))
                 )
                 .andExpect(status().isForbidden());
     }

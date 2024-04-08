@@ -70,10 +70,10 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Update survey-unit")
     @PutMapping(path = {"/survey-unit/{id}"})
-    @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      @Valid @RequestBody SurveyUnitUpdateInput surveyUnitUpdateInput) {
-        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
         SurveyUnit surveyUnit = SurveyUnitUpdateInput.toModel(surveyUnitId, surveyUnitUpdateInput);
         surveyUnitService.updateSurveyUnit(surveyUnit);
     }
