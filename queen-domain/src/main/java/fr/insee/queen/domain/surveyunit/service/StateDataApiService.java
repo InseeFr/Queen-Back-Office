@@ -37,7 +37,8 @@ public class StateDataApiService implements StateDataService {
         // update only if incoming state-data is newer
         Long previousDate = previousStateData.get().date();
         Long newDate = stateData.date();
-        if (newDate.compareTo(previousDate) < 0) {
+
+        if (newDate != null && newDate.compareTo(previousDate) < 0) {
             throw new StateDataInvalidDateException(INVALID_DATE_MESSAGE);
         }
         stateDataRepository.save(surveyUnitId, stateData);
