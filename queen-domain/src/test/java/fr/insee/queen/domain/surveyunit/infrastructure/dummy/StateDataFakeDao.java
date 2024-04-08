@@ -16,14 +16,16 @@ public class StateDataFakeDao implements StateDataRepository {
     @Getter
     private StateData stateDataSaved = null;
 
-    public static final StateData STATE_DATA = new StateData(StateDataType.INIT, 90000000L, "2");
+    @Setter
+    @Getter
+    public StateData stateDataReturned = new StateData(StateDataType.INIT, 90000000L, "2");
 
     @Override
     public Optional<StateData> find(String surveyUnitId) {
         if(hasEmptyStateData) {
             return Optional.empty();
         }
-        return Optional.of(STATE_DATA);
+        return Optional.of(stateDataReturned);
     }
 
     @Override
