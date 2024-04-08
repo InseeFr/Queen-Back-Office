@@ -17,7 +17,7 @@ public class CorsConfig {
     protected CorsConfigurationSource corsConfigurationSource(ApplicationProperties applicationProperties) {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(applicationProperties.corsOrigins());
-        configuration.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.addExposedHeader("Content-Disposition");
         configuration.setMaxAge(3600L);
