@@ -28,7 +28,7 @@ class StateDataApiServiceTest {
     @DisplayName("On retrieving state data, get correct state data")
     void testGet01() {
         StateData stateData = stateDataService.getStateData(surveyUnitId);
-        assertThat(stateData).isEqualTo(StateDataFakeDao.STATE_DATA);
+        assertThat(stateData).isEqualTo(stateDataDao.getStateDataReturned());
     }
 
     @Test
@@ -53,7 +53,16 @@ class StateDataApiServiceTest {
     @DisplayName("On saving new state data, when previous state data is older, save new state data")
     void testSave02() throws StateDataInvalidDateException {
         StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 100000000L, "5");
-        assertThat(stateDataUpdate.date()).isGreaterThan(StateDataFakeDao.STATE_DATA.date());
+        assertThat(stateDataUpdate.date()).isGreaterThan(stateDataDao.getStateDataReturned().date());
+        stateDataService.saveStateData(surveyUnitId, stateDataUpdate);
+        assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
+    }
+
+    @Test
+    @DisplayName("On saving new state data, when previous state data is null, save new state data")
+    void testSave02bis() throws StateDataInvalidDateException {
+        StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 100000000L, "5");
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.INIT, null, "2"));
         stateDataService.saveStateData(surveyUnitId, stateDataUpdate);
         assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
     }
@@ -62,7 +71,7 @@ class StateDataApiServiceTest {
     @DisplayName("On saving new state data, when previous state data is newer, throw exception")
     void testSave03() {
         StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        assertThat(stateDataUpdate.date()).isLessThanOrEqualTo(StateDataFakeDao.STATE_DATA.date());
+        assertThat(stateDataUpdate.date()).isLessThanOrEqualTo(stateDataDao.getStateDataReturned().date());
         assertThatThrownBy(() -> stateDataService.saveStateData(surveyUnitId, stateDataUpdate))
                 .isInstanceOf(StateDataInvalidDateException.class)
                 .hasMessage(StateDataApiService.INVALID_DATE_MESSAGE);
