@@ -1,7 +1,5 @@
 package fr.insee.queen.jms.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.insee.queen.jms.bean.UniteEnquetee;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSException;
 import jakarta.jms.Session;
@@ -19,13 +17,7 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
-import org.springframework.jms.support.converter.MessageConverter;
-import org.springframework.jms.support.converter.MessageType;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @EnableJms
