@@ -1,5 +1,6 @@
 package fr.insee.queen.application.campaign.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.service.MetadataService;
@@ -36,7 +37,7 @@ public class MetadataController {
     @Operation(summary = "Get metadata for a campaign ")
     @GetMapping(path = "/campaign/{id}/metadata")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId) {
+    public ObjectNode getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId) {
         return metadataService.getMetadata(campaignId);
     }
 
@@ -49,7 +50,7 @@ public class MetadataController {
     @Operation(summary = "Get metadata for a questionnaire ")
     @GetMapping(path = "/questionnaire/{id}/metadata")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
+    public ObjectNode getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
         return metadataService.getMetadataByQuestionnaireId(questionnaireId);
     }
 }

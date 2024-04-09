@@ -1,5 +1,7 @@
 package fr.insee.queen.infrastructure.db.surveyunit.projection;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.model.StateData;
 import fr.insee.queen.domain.surveyunit.model.StateDataType;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
@@ -8,9 +10,9 @@ public record SurveyUnitProjection(
         String id,
         String campaignId,
         String questionnaireId,
-        String personalization,
-        String data,
-        String comment,
+        ArrayNode personalization,
+        ObjectNode data,
+        ObjectNode comment,
         StateDataType state,
         Long date,
         String currentPage) {

@@ -28,9 +28,9 @@ public record SurveyUnitCreationInput(
         return new SurveyUnit(surveyUnit.id,
                 campaignId,
                 surveyUnit.questionnaireId(),
-                surveyUnit.personalization().toString(),
-                surveyUnit.data().toString(),
-                surveyUnit.comment().toString(),
+                surveyUnit.personalization(),
+                surveyUnit.data(),
+                surveyUnit.comment(),
                 StateDataInput.toModel(surveyUnit.stateData()));
     }
 }

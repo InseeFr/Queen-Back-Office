@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.campaign.gateway;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 
@@ -60,7 +61,7 @@ public interface CampaignRepository {
      * @param campaignId campaign id
      * @return {@link String} json metadata value
      */
-    Optional<String> findMetadataByCampaignId(String campaignId);
+    Optional<ObjectNode> findMetadataByCampaignId(String campaignId);
 
     /**
      * Retrieve the metadata json value of a campaign byt the questionnaire id
@@ -68,5 +69,5 @@ public interface CampaignRepository {
      * @param questionnaireId questionnaire id
      * @return {@link String} json metadata value
      */
-    Optional<String> findMetadataByQuestionnaireId(String questionnaireId);
+    Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
 }

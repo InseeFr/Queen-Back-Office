@@ -53,6 +53,6 @@ public class ParadataEventController {
 
         String surveyUnitId = surveyUnitNode.textValue();
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
-        paradataEventService.createParadataEvent(surveyUnitId, paradataValue.toString());
+        paradataEventService.createParadataEvent(surveyUnitId, paradataValue);
     }
 }

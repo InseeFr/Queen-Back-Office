@@ -45,7 +45,7 @@ public class SurveyUnitTempZoneController {
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                              @NotNull @RequestBody ObjectNode surveyUnit,
                                              @CurrentSecurityContext(expression = "authentication.name") String userId) {
-        surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit.toString());
+        surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
     }
 
     /**

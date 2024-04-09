@@ -37,7 +37,7 @@ public record QuestionnaireModelCreationData(
         return QuestionnaireModel.createQuestionnaireWithoutCampaign(
                 questionnaire.idQuestionnaireModel,
                 questionnaire.label,
-                questionnaire.value.toString(),
+                questionnaire.value,
                 nomenclatureIds);
     }
 }

@@ -18,6 +18,6 @@ public record NomenclatureIntegrationData(
         @NotNull
         ArrayNode value) {
     public static Nomenclature toModel(NomenclatureIntegrationData nomenclatureCreationDto) {
-        return new Nomenclature(nomenclatureCreationDto.id(), nomenclatureCreationDto.label(), nomenclatureCreationDto.value().toString());
+        return new Nomenclature(nomenclatureCreationDto.id(), nomenclatureCreationDto.label(), nomenclatureCreationDto.value());
     }
 }

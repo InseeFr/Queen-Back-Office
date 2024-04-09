@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.paradata.repository.jpa;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.paradata.entity.ParadataEventDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -27,7 +28,7 @@ public interface ParadataEventJpaRepository extends JpaRepository<ParadataEventD
     @Query(value = """
             INSERT INTO paradata_event (id, value, survey_unit_id)
             VALUES (:id, :paradataValue\\:\\:jsonb, :surveyUnitId)""", nativeQuery = true)
-    void createParadataEvent(UUID id, String paradataValue, String surveyUnitId);
+    void createParadataEvent(UUID id, ObjectNode paradataValue, String surveyUnitId);
 
     /**
      * Delete all survey unit's paradatas for a campaign

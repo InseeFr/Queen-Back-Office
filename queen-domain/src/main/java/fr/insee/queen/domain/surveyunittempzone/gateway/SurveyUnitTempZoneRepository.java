@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.surveyunittempzone.gateway;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunittempzone.model.SurveyUnitTempZone;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface SurveyUnitTempZoneRepository {
 
     List<SurveyUnitTempZone> getAllSurveyUnits();
 
-    void save(String surveyUnitId, String userId, Long date, String surveyUnit);
+    void save(String surveyUnitId, String userId, Long date, ObjectNode surveyUnit);
 }

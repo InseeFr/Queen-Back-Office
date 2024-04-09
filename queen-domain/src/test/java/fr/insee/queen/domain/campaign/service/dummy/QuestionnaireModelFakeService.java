@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.campaign.service.dummy;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.service.QuestionnaireModelService;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class QuestionnaireModelFakeService implements QuestionnaireModelService 
     }
 
     @Override
-    public String getQuestionnaireData(String id) {
+    public ObjectNode getQuestionnaireData(String id) {
         return null;
     }
 
@@ -36,7 +37,7 @@ public class QuestionnaireModelFakeService implements QuestionnaireModelService 
     }
 
     @Override
-    public List<String> getQuestionnaireDatas(String campaignId) {
+    public List<ObjectNode> getQuestionnaireDatas(String campaignId) {
         return null;
     }
 }

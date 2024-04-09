@@ -1,7 +1,9 @@
 package fr.insee.queen.domain.campaign.service;
 
-public interface MetadataService {
-    String getMetadata(String campaignId);
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-    String getMetadataByQuestionnaireId(String questionnaireId);
+public interface MetadataService {
+    ObjectNode getMetadata(String campaignId);
+
+    ObjectNode getMetadataByQuestionnaireId(String questionnaireId);
 }

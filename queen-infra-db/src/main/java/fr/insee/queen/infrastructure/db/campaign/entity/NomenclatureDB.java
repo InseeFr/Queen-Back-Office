@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.entity;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -38,5 +39,5 @@ public class NomenclatureDB {
      */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String value;
+    private ArrayNode value;
 }

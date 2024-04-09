@@ -32,12 +32,12 @@ public class PersonalizationController {
      * Retrieve the personalization data of a survey unit
      *
      * @param surveyUnitId the id of the survey unit
-     * @return {@link String} the personalization linked to the survey unit
+     * @return {@link ArrayNode} the personalization linked to the survey unit
      */
     @Operation(summary = "Get personalization for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/personalization")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getPersonalizationBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
+    public ArrayNode getPersonalizationBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return personalizationService.getPersonalization(surveyUnitId);
     }

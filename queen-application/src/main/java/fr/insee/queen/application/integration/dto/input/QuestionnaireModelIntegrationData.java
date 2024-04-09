@@ -31,7 +31,7 @@ public record QuestionnaireModelIntegrationData(
         return QuestionnaireModel.createQuestionnaireWithCampaign(
                 questionnaire.idQuestionnaireModel,
                 questionnaire.label,
-                questionnaire.value.toString(),
+                questionnaire.value,
                 nomenclatureIds,
                 questionnaire.campaignId());
     }

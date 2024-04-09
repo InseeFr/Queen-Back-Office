@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.DataDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -39,7 +40,7 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
     @Transactional
     @Modifying
     @Query("update DataDB d set d.value = :data where d.surveyUnit.id = :surveyUnitId")
-    int updateData(String surveyUnitId, String data);
+    int updateData(String surveyUnitId, ObjectNode data);
 
     /**
      * Update data for a survey unit
@@ -54,17 +55,7 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
         set value=jsonb_set(value, '{COLLECTED}',  cast(:collectedUpdateData as jsonb), true)
         where survey_unit_id=:surveyUnitId
     """, nativeQuery = true)
-    void updateCollectedData(String surveyUnitId, String collectedUpdateData);
-
-
-    /**
-     * Find the data of a survey unit
-     *
-     * @param surveyUnitId survey unit id
-     * @return an optional of the data (json format)
-     */
-    @Query("select s.data.value from SurveyUnitDB s where s.id=:surveyUnitId")
-    Optional<String> findData(String surveyUnitId);
+    void updateCollectedData(String surveyUnitId, ObjectNode collectedUpdateData);
 
     /**
      * Find the data of a survey unit
@@ -73,7 +64,16 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
      * @return an optional of the data (json format)
      */
     @Query("select s.data.value from SurveyUnitDB s where s.id=:surveyUnitId")
-    String getData(String surveyUnitId);
+    Optional<ObjectNode> findData(String surveyUnitId);
+
+    /**
+     * Find the data of a survey unit
+     *
+     * @param surveyUnitId survey unit id
+     * @return an optional of the data (json format)
+     */
+    @Query("select s.data.value from SurveyUnitDB s where s.id=:surveyUnitId")
+    ObjectNode getData(String surveyUnitId);
 
     /**
      * Delete data of a survey unit

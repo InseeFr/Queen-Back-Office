@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.surveyunittempzone.entity;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,9 +51,9 @@ public class SurveyUnitTempZoneDB {
      */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String surveyUnit;
+    private ObjectNode surveyUnit;
 
-    public SurveyUnitTempZoneDB(String surveyUnitId, String userId, Long date, String surveyUnit) {
+    public SurveyUnitTempZoneDB(String surveyUnitId, String userId, Long date, ObjectNode surveyUnit) {
         this.surveyUnitId = surveyUnitId;
         this.userId = userId;
         this.date = date;
