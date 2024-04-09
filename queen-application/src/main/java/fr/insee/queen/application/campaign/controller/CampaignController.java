@@ -8,6 +8,10 @@ import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +41,19 @@ public class CampaignController {
      *
      * @return List of all {@link CampaignSummaryDto}
      */
-    @Operation(summary = "Get list of all campaigns")
+    @Operation(
+            summary = "Get list of all campaigns",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Response for campaigns",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = CampaignSummaryDto.class))
+                            )
+                    })
+            }
+    )
     @GetMapping(path = "/admin/campaigns")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public List<CampaignSummaryDto> getListCampaign() {

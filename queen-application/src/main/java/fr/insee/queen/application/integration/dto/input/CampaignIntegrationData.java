@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.model.Campaign;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(name = "CampaignIntegration")
 public record CampaignIntegrationData(
         @IdValid
         String id,

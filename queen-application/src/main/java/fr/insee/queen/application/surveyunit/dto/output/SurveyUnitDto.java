@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import fr.insee.queen.domain.surveyunit.model.StateData;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(name = "SurveyUnit")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SurveyUnitDto(
         String id,
