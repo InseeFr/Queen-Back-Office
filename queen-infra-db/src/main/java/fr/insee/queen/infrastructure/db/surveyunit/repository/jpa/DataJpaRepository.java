@@ -51,11 +51,16 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-        update data 
-        set value=jsonb_set(cast(value as jsonb), '{COLLECTED}', aggregate_query.updated_collected_data)
+        update data
+        set value=jsonb_set(cast(value as jsonb), '{COLLECTED}', aggregate_query.updated_collected_data, true)
         from(
-            select value->'COLLECTED' || cast(:collectedUpdateData as jsonb) as updated_collected_data
-            from data where survey_unit_id=:surveyUnitId
+            select
+                case
+                    when(value->>'COLLECTED') IS NULL then cast(:collectedUpdateData as jsonb)
+                    else (value->'COLLECTED' || cast(:collectedUpdateData as jsonb))
+                end as updated_collected_data
+            from data
+            where survey_unit_id=:surveyUnitId
         ) as aggregate_query
         where survey_unit_id=:surveyUnitId
     """, nativeQuery = true)
