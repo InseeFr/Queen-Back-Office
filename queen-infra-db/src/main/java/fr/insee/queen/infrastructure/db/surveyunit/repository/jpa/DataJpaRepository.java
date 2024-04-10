@@ -46,25 +46,16 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
      *
      * @param surveyUnitId survey unit id
      * @param collectedUpdateData partial collected data to set on current collected data
-     * @return number of updated rows
      */
     @Transactional
     @Modifying
     @Query(value = """
         update data
-        set value=jsonb_set(cast(value as jsonb), '{COLLECTED}', aggregate_query.updated_collected_data, true)
-        from(
-            select
-                case
-                    when(value->>'COLLECTED') IS NULL then cast(:collectedUpdateData as jsonb)
-                    else (value->'COLLECTED' || cast(:collectedUpdateData as jsonb))
-                end as updated_collected_data
-            from data
-            where survey_unit_id=:surveyUnitId
-        ) as aggregate_query
+        set value=jsonb_set(value, '{COLLECTED}',  cast(:collectedUpdateData as jsonb), true)
         where survey_unit_id=:surveyUnitId
     """, nativeQuery = true)
     void updateCollectedData(String surveyUnitId, String collectedUpdateData);
+
 
     /**
      * Find the data of a survey unit
