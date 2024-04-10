@@ -60,4 +60,9 @@ Spring:
       qos-enabled: true
       receive-timeout: 1000
       time-to-live: 36000
-
+logging:
+  level:
+    fr:
+      insee:
+        queen:
+          jms: INFO

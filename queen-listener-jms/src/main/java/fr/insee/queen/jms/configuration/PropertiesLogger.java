@@ -102,7 +102,7 @@ public class PropertiesLogger implements ApplicationListener<ApplicationEnvironm
                 %s                                        
                 ===============================================================================================
                 """.formatted(this.propertySourceNames.stream().reduce("",(l, e)->l+System.lineSeparator()+"- "+e )));
-        log.info(props.toString());
+        log.debug(props.toString());
 
     }
 

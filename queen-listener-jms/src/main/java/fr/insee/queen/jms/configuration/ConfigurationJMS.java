@@ -42,7 +42,7 @@ public class ConfigurationJMS {
     @Bean
     @Qualifier("queueConnectionFactory")
     public ConnectionFactory connectionFactory() {
-        log.info("queueConnectionFactory");
+        log.debug("queueConnectionFactory");
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(this.getUser(),this.getPassword(),this.getBrokerUrl());
 //        connectionFactory.setTrustedPackages(Arrays.asList("fr.insee.sndil"));
         connectionFactory.setTrustAllPackages(true);
@@ -53,7 +53,7 @@ public class ConfigurationJMS {
     @Bean
     @Qualifier("topicConnectionFactory")
     public ConnectionFactory topicConnectionFactory() {
-        log.info("topicConnectionFactory");
+        log.debug("topicConnectionFactory");
         ActiveMQConnectionFactory  connectionFactory = new ActiveMQConnectionFactory(this.getUser(),this.getPassword(),this.getBrokerUrl());
         connectionFactory.setTrustAllPackages(true);
 //        connectionFactory.setClientID(UUID.randomUUID().toString());
@@ -91,7 +91,7 @@ public class ConfigurationJMS {
     @Bean("JmsTemplateTopic")
     @Qualifier
     public JmsTemplate JmsTemplateTopic() throws JMSException {
-        log.info("JmsTemplateTopic");
+        log.debug("JmsTemplateTopic");
         JmsTemplate jmsTemplate = new JmsTemplate(this.topicConnectionFactory());
         jmsTemplate.setPubSubDomain(true);
         return jmsTemplate;
@@ -108,7 +108,7 @@ public class ConfigurationJMS {
     @Bean
     public JmsListenerContainerFactory<?> queueTemporarJmsListenerContainerFactory(@Qualifier("queueConnectionFactory") ConnectionFactory connectionFactory,
                                                                           DefaultJmsListenerContainerFactoryConfigurer configurer) {
-        log.info("queueTemporarJmsListenerContainerFactory");
+        log.debug("queueTemporarJmsListenerContainerFactory");
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         configurer.configure(factory, connectionFactory);
         factory.setConnectionFactory(connectionFactory());
@@ -124,7 +124,7 @@ public class ConfigurationJMS {
     @Bean
     public JmsListenerContainerFactory<?> queueJmsListenerContainerFactory(@Qualifier("queueConnectionFactory") ConnectionFactory connectionFactory,
                                                                  DefaultJmsListenerContainerFactoryConfigurer configurer) {
-        log.info("queueJmsListenerContainerFactory");
+        log.debug("queueJmsListenerContainerFactory");
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         configurer.configure(factory, connectionFactory);
         factory.setConnectionFactory(connectionFactory());
@@ -141,7 +141,7 @@ public class ConfigurationJMS {
     @Bean
     public JmsListenerContainerFactory<?> topicJmsListenerContainerFactory(@Qualifier("topicConnectionFactory") ConnectionFactory connectionFactory,
                                                                            DefaultJmsListenerContainerFactoryConfigurer configurer) {
-        log.info("topicJmsListenerContainerFactory");
+        log.debug("topicJmsListenerContainerFactory");
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(topicConnectionFactory());
         factory.setPubSubDomain(true); // Set to true fo
@@ -152,7 +152,7 @@ public class ConfigurationJMS {
 //    @Bean
 //    public JmsListenerContainerFactory<?> topicJmsListenerContainerFactory2(@Qualifier("topicConnectionFactory") ConnectionFactory connectionFactory,
 //                                                                          DefaultJmsListenerContainerFactoryConfigurer configurer) {
-//        log.info("topicJmsListenerContainerFactory");
+//        log.debug("topicJmsListenerContainerFactory");
 //        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
 //        configurer.configure(factory, connectionFactory);
 //        factory.setConnectionFactory(topicConnectionFactory());

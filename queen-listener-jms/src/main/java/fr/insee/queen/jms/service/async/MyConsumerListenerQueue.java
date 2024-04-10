@@ -67,7 +67,7 @@ public class MyConsumerListenerQueue {
     @JmsListener(destination = UE_QUEUE, containerFactory = "queueJmsListenerContainerFactory")
     public void queueConnectionFactory(Message message, Session session) throws JMSException, JsonProcessingException {
         JsonNode mySurveyUnit = objectMapper.readTree(message.getBody(String.class));
-//        log.info("ddd :"+ mySurveyUnit.path("payload").path("_children").path("questionnaireId").get("_value").textValue());
+//        log.debug("ddd :"+ mySurveyUnit.path("payload").path("_children").path("questionnaireId").get("_value").textValue());
 
         String campagneId = "BBC2023A00";
         String questionnaireId = mySurveyUnit.path("payload").path("_children").path("questionnaireId").get("_value").textValue();
@@ -112,7 +112,7 @@ public class MyConsumerListenerQueue {
         objectMessage.setJMSCorrelationID(ue.get("correlationID").textValue());
         objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
 
-        log.info("sendWithReplyQueue - Launch to convertAndSend()");
+        log.debug("sendWithReplyQueue - Launch to convertAndSend()");
 
         jmsMessagingTemplate.convertAndSend(ue.get("replyTo").textValue(), objectMessage); //this operation seems to be blocking + sync
 
