@@ -97,7 +97,26 @@ public class MyConsumerListenerQueue {
         }
     }
 
-    public JsonNode sendWithReplyQueue(JsonNode ue) throws JMSException, JsonProcessingException {
+    public void sendWithReplyQueue(JsonNode ue) {
+        log.debug("UPDATE to MongoDB - sendWithReplyQueue - "+ue.get("replyTo").textValue()+" - "+ue.toString());
+        JmsTemplateQueue.send(ue.get("replyTo").textValue(), session -> {
+            try {
+                // Convert from POJO to json String
+                String ueAsString = objectMapper.writeValueAsString(ue);
+
+                ObjectMessage objectMessage = session.createObjectMessage(ueAsString);
+                objectMessage.setJMSCorrelationID(ue.get("correlationID").textValue());
+                objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
+
+                log.debug("sendWithReplyQueue - Launch to send()");
+                return objectMessage;
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public JsonNode sendWithReplyQueue2(JsonNode ue) throws JMSException, JsonProcessingException {
         long timeOut = 3600000;
         jmsMessagingTemplate.setJmsTemplate(JmsTemplateQueue);
 
