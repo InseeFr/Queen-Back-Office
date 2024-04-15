@@ -22,6 +22,6 @@ public record CampaignIntegrationData(
         if(campaign.metadata() == null) {
             metadata = JsonNodeFactory.instance.objectNode();
         }
-        return new Campaign(campaign.id.toUpperCase(), campaign.label, metadata.toString());
+        return new Campaign(campaign.id.toUpperCase(), campaign.label, metadata);
     }
 }

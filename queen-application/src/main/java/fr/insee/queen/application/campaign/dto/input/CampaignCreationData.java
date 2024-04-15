@@ -37,6 +37,6 @@ public record CampaignCreationData(
         if (campaign.metadata() != null) {
             metadataValue = campaign.metadata.value();
         }
-        return new Campaign(campaign.id, campaign.label, campaign.questionnaireIds, metadataValue.toString());
+        return new Campaign(campaign.id, campaign.label, campaign.questionnaireIds, metadataValue);
     }
 }

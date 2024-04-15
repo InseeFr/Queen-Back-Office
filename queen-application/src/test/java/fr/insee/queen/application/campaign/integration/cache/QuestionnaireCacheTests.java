@@ -1,6 +1,7 @@
 package fr.insee.queen.application.campaign.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
@@ -63,7 +64,7 @@ class QuestionnaireCacheTests {
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache01() {
         String questionnaireId = "questionnaire-cache-id";
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode().toString(), Set.of("cities2019", "regions2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("cities2019", "regions2019")));
     }
 
     @Test
@@ -73,24 +74,24 @@ class QuestionnaireCacheTests {
         String questionnaireId = "questionnaire-cache-id";
         String campaignId = "campaign-cache-id";
 
-        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode().toString()));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode().toString(), Set.of("regions2019")));
+        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode()));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("regions2019")));
 
         // when updating questionnaire, cache is evicted
-        questionnaireModelService.updateQuestionnaire(QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label2", JsonNodeFactory.instance.objectNode().toString(), Set.of("regions2019", "cities2019"), campaignId));
+        questionnaireModelService.updateQuestionnaire(QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019"), campaignId));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
 
-        String questionnaire = questionnaireModelService.getQuestionnaireData(questionnaireId);
+        ObjectNode questionnaire = questionnaireModelService.getQuestionnaireData(questionnaireId);
         List<String> requiredNomenclatures = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
-        String metadata = metadataService.getMetadataByQuestionnaireId(questionnaireId);
+        ObjectNode metadata = metadataService.getMetadataByQuestionnaireId(questionnaireId);
 
         // when retrieving questionnaire, cache does contain the updated questionnaire
-        String questionnaireCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId, String.class));
+        ObjectNode questionnaireCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId, ObjectNode.class));
         @SuppressWarnings("unchecked")
         List<String> requiredNomenclaturesCache = (List<String>) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES).get(questionnaireId).get());
-        String metadataCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA).get(questionnaireId, String.class));
+        ObjectNode metadataCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA).get(questionnaireId, ObjectNode.class));
 
 
         assertThat(questionnaire).isEqualTo(questionnaireCache);
@@ -105,11 +106,11 @@ class QuestionnaireCacheTests {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
 
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode().toString(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode().toString(), Set.of("cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("cities2019")));
 
         String campaignId = "campaign-with-questionnaires-cache-id";
-        campaignService.createCampaign(new Campaign(campaignId, "label", Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode().toString()));
+        campaignService.createCampaign(new Campaign(campaignId, "label", Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
 
         // when deleting campaign, associated questionnaires are evicted from cache
         campaignService.delete(campaignId);
@@ -131,17 +132,17 @@ class QuestionnaireCacheTests {
         String questionnaireId3 = "questionnaire-cache-id3";
         String questionnaireId4 = "questionnaire-cache-id4";
 
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode().toString(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode().toString(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId3, "label3", JsonNodeFactory.instance.objectNode().toString(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId4, "label4", JsonNodeFactory.instance.objectNode().toString(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId3, "label3", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId4, "label4", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
 
         // create campaign and associate questionnaireId1 & questionnaireId2
         String campaignId = "campaign-with-questionnaires-cache-id";
-        Campaign campaign = new Campaign(campaignId, "label", Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode().toString());
+        Campaign campaign = new Campaign(campaignId, "label", Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode());
         campaignService.createCampaign(campaign);
 
-        campaign = new Campaign(campaignId, "labelUpdated", Set.of(questionnaireId2), JsonNodeFactory.instance.objectNode().toString());
+        campaign = new Campaign(campaignId, "labelUpdated", Set.of(questionnaireId2), JsonNodeFactory.instance.objectNode());
         // when deleting campaign, associated questionnaires are evicted from cache
         campaignService.updateCampaign(campaign);
 
@@ -160,11 +161,11 @@ class QuestionnaireCacheTests {
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
 
         questionnaireModelService.createQuestionnaire(questionnaireData);
-        String questionnaire = questionnaireModelService.getQuestionnaireData(questionnaireId);
+        ObjectNode questionnaire = questionnaireModelService.getQuestionnaireData(questionnaireId);
         List<String> requiredNomenclatures = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
 
         // when retrieving questionnaire, cache does contain the questionnaire now
-        String questionnaireCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId, String.class));
+        ObjectNode questionnaireCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId, ObjectNode.class));
         @SuppressWarnings("unchecked")
         List<String> requiredNomenclaturesCache = (List<String>) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES).get(questionnaireId).get());
 

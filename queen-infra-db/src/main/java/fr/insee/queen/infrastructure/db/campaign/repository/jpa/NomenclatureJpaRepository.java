@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.repository.jpa;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.domain.campaign.model.Nomenclature;
 import fr.insee.queen.infrastructure.db.campaign.entity.NomenclatureDB;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,14 +28,14 @@ public interface NomenclatureJpaRepository extends JpaRepository<NomenclatureDB,
     @Transactional
     @Modifying
     @Query("update NomenclatureDB n set n.label=:label, n.value=:value where n.id = :id")
-    void updateNomenclature(String id, String label, String value);
+    void updateNomenclature(String id, String label, ArrayNode value);
 
     @Transactional
     @Modifying
     @Query(value = """
             INSERT INTO nomenclature (id, label, value)
             VALUES (:id, :label, :value\\:\\:jsonb)""", nativeQuery = true)
-    void createNomenclature(String id, String label, String value);
+    void createNomenclature(String id, String label, ArrayNode value);
 
     @Query("""
                 select distinct n.id from QuestionnaireModelDB qm inner join qm.nomenclatures n where qm.campaign.id=:campaignId

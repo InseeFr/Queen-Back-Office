@@ -21,6 +21,6 @@ public record NomenclatureCreationData(
         @NotNull
         ArrayNode value) {
     public static Nomenclature toModel(NomenclatureCreationData nomenclatureCreationDto) {
-        return new Nomenclature(nomenclatureCreationDto.id(), nomenclatureCreationDto.label(), nomenclatureCreationDto.value().toString());
+        return new Nomenclature(nomenclatureCreationDto.id(), nomenclatureCreationDto.label(), nomenclatureCreationDto.value());
     }
 }

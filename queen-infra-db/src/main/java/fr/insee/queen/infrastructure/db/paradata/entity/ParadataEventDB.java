@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.paradata.entity;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class ParadataEventDB {
      */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String value;
+    private ObjectNode value;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SurveyUnitDB surveyUnit;

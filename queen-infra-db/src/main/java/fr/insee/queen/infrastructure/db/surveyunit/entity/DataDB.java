@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.surveyunit.entity;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class DataDB {
      */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String value;
+    private ObjectNode value;
 
     /**
      * The SurveyUnit associated
@@ -37,7 +38,7 @@ public class DataDB {
     @JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
     private SurveyUnitDB surveyUnit;
 
-    public DataDB(String value, SurveyUnitDB surveyUnit) {
+    public DataDB(ObjectNode value, SurveyUnitDB surveyUnit) {
         this.value = value;
         this.surveyUnit = surveyUnit;
     }

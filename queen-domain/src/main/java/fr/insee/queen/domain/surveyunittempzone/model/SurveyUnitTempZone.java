@@ -1,5 +1,7 @@
 package fr.insee.queen.domain.surveyunittempzone.model;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.UUID;
 
 public record SurveyUnitTempZone(
@@ -7,5 +9,5 @@ public record SurveyUnitTempZone(
         String surveyUnitId,
         String userId,
         Long date,
-        String surveyUnit) {
+        ObjectNode surveyUnit) {
 }

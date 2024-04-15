@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.repository;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
@@ -29,7 +30,7 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
     }
 
     @Override
-    public Optional<String> findQuestionnaireData(String questionnaireId) {
+    public Optional<ObjectNode> findQuestionnaireData(String questionnaireId) {
         return jpaRepository.findQuestionnaireData(questionnaireId);
     }
 
@@ -74,7 +75,7 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
     }
 
     @Override
-    public List<String> findAllQuestionnaireDatas(String campaignId) {
+    public List<ObjectNode> findAllQuestionnaireDatas(String campaignId) {
         return jpaRepository.findAllValueByCampaignId(campaignId);
     }
 }

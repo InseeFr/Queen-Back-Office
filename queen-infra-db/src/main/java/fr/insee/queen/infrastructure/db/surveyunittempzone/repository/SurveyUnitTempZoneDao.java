@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.surveyunittempzone.repository;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunittempzone.gateway.SurveyUnitTempZoneRepository;
 import fr.insee.queen.domain.surveyunittempzone.model.SurveyUnitTempZone;
 import fr.insee.queen.infrastructure.db.surveyunittempzone.repository.jpa.SurveyUnitTempZoneJpaRepository;
@@ -33,7 +34,7 @@ public class SurveyUnitTempZoneDao implements SurveyUnitTempZoneRepository {
     }
 
     @Override
-    public void save(String surveyUnitId, String userId, Long date, String surveyUnit) {
+    public void save(String surveyUnitId, String userId, Long date, ObjectNode surveyUnit) {
         SurveyUnitTempZoneDB surveyUnitTempZone = new SurveyUnitTempZoneDB(surveyUnitId, userId, date, surveyUnit);
         jpaRepository.save(surveyUnitTempZone);
     }

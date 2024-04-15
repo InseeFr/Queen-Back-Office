@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.surveyunit.gateway;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
@@ -95,7 +96,7 @@ public interface SurveyUnitRepository {
      * @param surveyUnitId survey unit id
      * @param personalization personalization value
      */
-    void savePersonalization(String surveyUnitId, String personalization);
+    void savePersonalization(String surveyUnitId, ArrayNode personalization);
 
     /**
      * Save comment of a survey unit
@@ -103,7 +104,7 @@ public interface SurveyUnitRepository {
      * @param surveyUnitId survey unit id
      * @param comment comment value
      */
-    void saveComment(String surveyUnitId, String comment);
+    void saveComment(String surveyUnitId, ObjectNode comment);
 
     /**
      * Save data of a survey unit
@@ -111,7 +112,7 @@ public interface SurveyUnitRepository {
      * @param surveyUnitId survey unit id
      * @param data data value
      */
-    void saveData(String surveyUnitId, String data);
+    void saveData(String surveyUnitId, ObjectNode data);
 
     /**
      * Save partial collected data for a survey unit
@@ -126,7 +127,7 @@ public interface SurveyUnitRepository {
      * @param surveyUnitId survey unit id
      * @return the comment value
      */
-    Optional<String> findComment(String surveyUnitId);
+    Optional<ObjectNode> findComment(String surveyUnitId);
 
     /**
      * Find the data of a survey unit
@@ -134,7 +135,7 @@ public interface SurveyUnitRepository {
      * @param surveyUnitId survey unit id
      * @return the data value
      */
-    Optional<String> findData(String surveyUnitId);
+    Optional<ObjectNode> findData(String surveyUnitId);
 
     /**
      * Find the personalization of a survey unit
@@ -142,7 +143,7 @@ public interface SurveyUnitRepository {
      * @param surveyUnitId survey unit id
      * @return the personalization value
      */
-    Optional<String> findPersonalization(String surveyUnitId);
+    Optional<ArrayNode> findPersonalization(String surveyUnitId);
 
     /**
      * Check if survey unit exists

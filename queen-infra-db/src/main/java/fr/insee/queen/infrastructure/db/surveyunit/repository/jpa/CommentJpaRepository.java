@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.CommentDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -39,7 +40,7 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
     @Transactional
     @Modifying
     @Query("update CommentDB c set c.value = :comment where c.surveyUnit.id = :surveyUnitId")
-    int updateComment(String surveyUnitId, String comment);
+    int updateComment(String surveyUnitId, ObjectNode comment);
 
     /**
      * Find the comment of a survey unit
@@ -48,7 +49,7 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
      * @return an optional of the comment (json format)
      */
     @Query("select s.comment.value from SurveyUnitDB s where s.id=:surveyUnitId")
-    Optional<String> findComment(String surveyUnitId);
+    Optional<ObjectNode> findComment(String surveyUnitId);
 
     /**
      * Delete comment of a survey unit

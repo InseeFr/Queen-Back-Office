@@ -15,9 +15,9 @@ public record SurveyUnitUpdateInput(
         @Valid
         StateDataInput stateData) {
     public static SurveyUnit toModel(String surveyUnitId, SurveyUnitUpdateInput surveyUnit) {
-        String personalization = surveyUnit.personalization() == null ? null : surveyUnit.personalization().toString();
-        String comment = surveyUnit.comment() == null ? null : surveyUnit.comment().toString();
-        String data = surveyUnit.data() == null ? null : surveyUnit.data().toString();
+        ArrayNode personalization = surveyUnit.personalization();
+        ObjectNode comment = surveyUnit.comment();
+        ObjectNode data = surveyUnit.data();
         return SurveyUnit.createForUpdate(surveyUnitId, personalization, comment, data, StateDataInput.toModel(surveyUnit.stateData()));
     }
 }

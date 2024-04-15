@@ -1,5 +1,6 @@
 package fr.insee.queen.application.campaign.controller;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.application.campaign.dto.input.NomenclatureCreationData;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.web.validation.IdValid;
@@ -46,12 +47,12 @@ public class NomenclatureController {
      * Retrieve a nomenclature
      *
      * @param nomenclatureId the id of nomenclature
-     * @return {@link String} the nomenclature in json format
+     * @return {@link ArrayNode} the nomenclature in json format
      */
     @Operation(summary = "Get Nomenclature")
     @GetMapping(path = "/nomenclature/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getNomenclatureById(@IdValid @PathVariable(value = "id") String nomenclatureId) {
+    public ArrayNode getNomenclatureById(@IdValid @PathVariable(value = "id") String nomenclatureId) {
         return nomenclatureService.getNomenclature(nomenclatureId).value();
 
     }

@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.repository;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
@@ -33,7 +34,7 @@ public class CampaignDao implements CampaignRepository {
         questionnaireModels.parallelStream()
                 .forEach(questionnaireModel -> questionnaireModel.setCampaign(campaignDB));
 
-        String metadataValue = campaign.getMetadata();
+        ObjectNode metadataValue = campaign.getMetadata();
         if (metadataValue != null) {
             MetadataDB m = new MetadataDB(metadataValue, campaignDB);
             campaignDB.setMetadata(m);
@@ -89,7 +90,7 @@ public class CampaignDao implements CampaignRepository {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaign.getId())));
         campaignDB.setLabel(campaign.getLabel());
 
-        String metadataValue = campaign.getMetadata();
+        ObjectNode metadataValue = campaign.getMetadata();
         MetadataDB metadata = campaignDB.getMetadata();
         if (metadata == null) {
             metadata = new MetadataDB(metadataValue, campaignDB);
@@ -104,12 +105,12 @@ public class CampaignDao implements CampaignRepository {
     }
 
     @Override
-    public Optional<String> findMetadataByCampaignId(String campaignId) {
+    public Optional<ObjectNode> findMetadataByCampaignId(String campaignId) {
         return jpaRepository.findMetadataByCampaignId(campaignId);
     }
 
     @Override
-    public Optional<String> findMetadataByQuestionnaireId(String questionnaireId) {
+    public Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId) {
         return jpaRepository.findMetadataByQuestionnaireId(questionnaireId);
     }
 }

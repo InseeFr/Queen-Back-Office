@@ -1,5 +1,6 @@
 package fr.insee.queen.application.pilotage.service.dummy;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.PilotageService;
@@ -64,10 +65,14 @@ public class PilotageFakeService implements PilotageService {
         }
         return List.of(
                 new SurveyUnit(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id",
-                        "[]", "{}", "{}",
+                        JsonNodeFactory.instance.arrayNode(),
+                        JsonNodeFactory.instance.objectNode(),
+                        JsonNodeFactory.instance.objectNode(),
                         new StateData(StateDataType.INIT, 0L, "2#3")),
                 new SurveyUnit(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id",
-                        "[]", "{}", "{}",
+                        JsonNodeFactory.instance.arrayNode(),
+                        JsonNodeFactory.instance.objectNode(),
+                        JsonNodeFactory.instance.objectNode(),
                         new StateData(StateDataType.INIT, 0L, "2#3"))
         );
     }

@@ -37,7 +37,7 @@ public class DataController {
     @Operation(summary = "Get data for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/data")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
+    public ObjectNode getDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return dataService.getData(surveyUnitId);
     }

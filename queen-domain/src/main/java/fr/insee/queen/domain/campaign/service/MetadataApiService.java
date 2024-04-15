@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.campaign.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -14,14 +15,14 @@ public class MetadataApiService implements MetadataService {
     private final CampaignRepository campaignRepository;
 
     @Override
-    public String getMetadata(String campaignId) {
+    public ObjectNode getMetadata(String campaignId) {
         return campaignRepository.findMetadataByCampaignId(campaignId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for campaign %s was not found", campaignId)));
     }
 
     @Override
     @Cacheable(CacheName.QUESTIONNAIRE_METADATA)
-    public String getMetadataByQuestionnaireId(String questionnaireId) {
+    public ObjectNode getMetadataByQuestionnaireId(String questionnaireId) {
         return campaignRepository.findMetadataByQuestionnaireId(questionnaireId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for questionnaire %s was not found", questionnaireId)));
     }

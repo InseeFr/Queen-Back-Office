@@ -29,6 +29,9 @@ class SurveyUnitApiServiceTest {
     private CampaignExistenceFakeService campaignExistenceFakeService;
     private SurveyUnitFakeDao surveyUnitFakeDao;
 
+    private static final String QUESTIONNAIRE_ID = "questionnaire-id";
+    private static final String CAMPAIGN_ID = "campaign-id";
+
     @BeforeEach
     void init() {
         CacheManager cacheManager = new NoOpCacheManager();
@@ -44,7 +47,11 @@ class SurveyUnitApiServiceTest {
     @DisplayName("On creating survey unit, check questionnaire is linked to campaign")
     void testCreate02() throws StateDataInvalidDateException {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
+        SurveyUnit surveyUnit = new SurveyUnit("11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                stateData);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         surveyUnitApiService.createSurveyUnit(surveyUnit);
 
@@ -55,7 +62,11 @@ class SurveyUnitApiServiceTest {
     @DisplayName("On creating survey unit, when survey unit exists, throw exception")
     void testCreate03() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
+        SurveyUnit surveyUnit = new SurveyUnit("11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                stateData);
         assertThatThrownBy(() -> surveyUnitApiService.createSurveyUnit(surveyUnit))
                 .isInstanceOf(EntityAlreadyExistException.class)
                 .hasMessage(String.format(SurveyUnitApiService.ALREADY_EXIST_MESSAGE, surveyUnit.id()));
@@ -64,7 +75,11 @@ class SurveyUnitApiServiceTest {
     @Test
     @DisplayName("On creating survey unit, when state data is null, don't save it")
     void testCreate04() throws StateDataInvalidDateException {
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", null);
+        SurveyUnit surveyUnit = new SurveyUnit("11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                null);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         surveyUnitApiService.createSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitCreated()).isEqualTo(surveyUnit);
@@ -75,7 +90,11 @@ class SurveyUnitApiServiceTest {
     @DisplayName("On creating survey unit, when state data is not null, save it")
     void testCreate05() throws StateDataInvalidDateException {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
+        SurveyUnit surveyUnit = new SurveyUnit("11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                stateData);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         surveyUnitApiService.createSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitCreated()).isEqualTo(surveyUnit);
@@ -86,7 +105,11 @@ class SurveyUnitApiServiceTest {
     @DisplayName("On updating survey unit, when survey unit not exist, throw exception")
     void testUpdate01() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
+        SurveyUnit surveyUnit = new SurveyUnit("11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                stateData);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         assertThatThrownBy(() -> surveyUnitApiService.updateSurveyUnit(surveyUnit))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -98,7 +121,11 @@ class SurveyUnitApiServiceTest {
     @Test
     @DisplayName("On updating survey unit, when state data is null, don't save it")
     void testUpdate02() {
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", null);
+        SurveyUnit surveyUnit = new SurveyUnit("11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                null);
         surveyUnitApiService.updateSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitUpdated()).isEqualTo(surveyUnit);
         assertThat(stateDataFakeService.getStateDataSaved()).isNull();
@@ -108,7 +135,11 @@ class SurveyUnitApiServiceTest {
     @DisplayName("On updating survey unit, when state data is not null, save it")
     void testUpdate03() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
+        SurveyUnit surveyUnit = new SurveyUnit("11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                stateData);
         surveyUnitApiService.updateSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitUpdated()).isEqualTo(surveyUnit);
         assertThat(stateDataFakeService.getStateDataSaved()).isEqualTo(stateData);
@@ -118,7 +149,11 @@ class SurveyUnitApiServiceTest {
     @DisplayName("On updating survey unit, when date is invalid on state data, ignore the error")
     void testUpdate04() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        SurveyUnit surveyUnit = new SurveyUnit("11", "campaign-id", "questionnaire-id", "[]", "{}", "{}", stateData);
+        SurveyUnit surveyUnit = new SurveyUnit("11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                stateData);
         stateDataFakeService.setDateInvalid(true);
         surveyUnitApiService.updateSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitUpdated()).isEqualTo(surveyUnit);
