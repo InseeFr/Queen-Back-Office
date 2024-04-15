@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.insee.queen.domain.integration.model.IntegrationResult;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.io.Serial;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @ToString
 @Getter
+@Schema(name = "IntegrationResultUnit")
 public class IntegrationResultUnitDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1905122041950251207L;

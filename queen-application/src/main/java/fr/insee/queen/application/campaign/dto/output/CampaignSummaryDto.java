@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @AllArgsConstructor
+@Schema(name = "CampaignSummary")
 public class CampaignSummaryDto {
     @JsonProperty
     private String id;

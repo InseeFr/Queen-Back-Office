@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.model.Campaign;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,6 +21,7 @@ import java.util.Set;
  * @param metadata campaign metadata
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(name = "CampaignCreation")
 public record CampaignCreationData(
         @IdValid
         String id,
