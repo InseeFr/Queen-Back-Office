@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+//TODO
 @ConditionalOnExpression(value = "${feature.oidc.enabled:false} == false or ${feature.pilotage.enabled:false} == false")
 @RequiredArgsConstructor
 @Component

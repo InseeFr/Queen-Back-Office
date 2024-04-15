@@ -84,7 +84,8 @@ public class ConfigurationJMS {
     public JmsTemplate JmsTemplateQueue() throws JMSException {
         JmsTemplate jmsTemplate = new JmsTemplate(this.connectionFactory());
         jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
-        jmsTemplate.setSessionTransacted(true);
+//        jmsTemplate.setSessionTransacted(true);
+        jmsTemplate.setSessionTransacted(false);
         return jmsTemplate;
     }
 

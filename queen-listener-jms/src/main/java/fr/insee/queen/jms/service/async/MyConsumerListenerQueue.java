@@ -106,7 +106,8 @@ public class MyConsumerListenerQueue {
 
                 ObjectMessage objectMessage = session.createObjectMessage(ueAsString);
                 objectMessage.setJMSCorrelationID(ue.get("correlationID").textValue());
-                objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
+//                objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
+                objectMessage.setJMSDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
                 log.debug("sendWithReplyQueue - Launch to send()");
                 return objectMessage;
