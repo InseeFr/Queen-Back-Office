@@ -47,8 +47,6 @@ feature:
     enabled: false
   perfdata:
     enabled: false
-    collected:
-      native-insert: false
 
 spring:
   main:

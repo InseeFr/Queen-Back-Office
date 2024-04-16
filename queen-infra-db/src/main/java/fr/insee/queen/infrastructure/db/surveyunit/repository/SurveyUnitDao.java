@@ -1,6 +1,5 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
@@ -19,12 +18,9 @@ import fr.insee.queen.infrastructure.db.surveyunittempzone.repository.jpa.Survey
 import fr.insee.queen.infrastructure.db.paradata.repository.jpa.ParadataEventJpaRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -44,10 +40,6 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
     private final ParadataEventJpaRepository paradataEventRepository;
-    private static final String COLLECTED_DATA_ATTRIBUTE = "COLLECTED";
-
-    @Value("${feature.perfdata.collected.native-insert}")
-    private boolean isNativeInsert;
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
@@ -165,25 +157,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
 
     @Override
     public void updateCollectedData(String surveyUnitId, ObjectNode partialCollectedDataNode) {
-        if(isNativeInsert) {
-            dataRepository.updateCollectedData(surveyUnitId, partialCollectedDataNode);
-            return;
-        }
-
-        ObjectNode dataNode = dataRepository.getData(surveyUnitId);
-
-        if(!dataNode.has(COLLECTED_DATA_ATTRIBUTE)) {
-            dataNode.set(COLLECTED_DATA_ATTRIBUTE, partialCollectedDataNode);
-            dataRepository.updateData(surveyUnitId, dataNode);
-            return;
-        }
-
-        ObjectNode collectedNode = (ObjectNode) dataNode.get(COLLECTED_DATA_ATTRIBUTE);
-        for (Iterator<Map.Entry<String, JsonNode>> it = partialCollectedDataNode.fields(); it.hasNext(); ) {
-            Map.Entry<String, JsonNode> field = it.next();
-            collectedNode.set(field.getKey(), field.getValue());
-        }
-        dataRepository.updateData(surveyUnitId, dataNode);
+        dataRepository.updateCollectedData(surveyUnitId, partialCollectedDataNode);
     }
 
     @Override
