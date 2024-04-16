@@ -52,8 +52,10 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID> {
     @Modifying
     @Query(value = """
         update data
-        set value=jsonb_set(value, '{COLLECTED}',  cast(:collectedUpdateData as jsonb), true)
-        where survey_unit_id=:surveyUnitId
+            set value = jsonb_set(coalesce(value, '{}'),
+                        '{COLLECTED}',
+                        coalesce(value->'COLLECTED', '{}') || :collectedUpdateData)
+            where survey_unit_id=:surveyUnitId
     """, nativeQuery = true)
     void updateCollectedData(String surveyUnitId, ObjectNode collectedUpdateData);
 
