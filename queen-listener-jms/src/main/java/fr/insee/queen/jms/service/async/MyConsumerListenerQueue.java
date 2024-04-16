@@ -87,11 +87,10 @@ public class MyConsumerListenerQueue {
                 QuestionnaireModel qm = QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, questionnaireId, "{}", new HashSet<String>(), campagneId);
                 questionnaireModelService.createQuestionnaire(qm);
             }
-
-            surveyUnitService.createSurveyUnit(new SurveyUnit(mySurveyUnitId, campagneId, questionnaireId, "{\"p1\": \"p1\"}", message.getBody(String.class), "{\"comment1\": \"comment1\"}", new StateData(StateDataType.INIT, new Date().getTime(), "P1")));
-
-            this.sendWithReplyQueue(mySurveyUnit);
-
+            if(!surveyUnitService.existsById(mySurveyUnitId)) {
+                surveyUnitService.createSurveyUnit(new SurveyUnit(mySurveyUnitId, campagneId, questionnaireId, "{\"p1\": \"p1\"}", message.getBody(String.class), "{\"comment1\": \"comment1\"}", new StateData(StateDataType.INIT, new Date().getTime(), "P1")));
+                this.sendWithReplyQueue(mySurveyUnit);
+            }
         } catch (StateDataInvalidDateException e) {
             throw new RuntimeException(e);
         }
@@ -106,8 +105,8 @@ public class MyConsumerListenerQueue {
 
                 ObjectMessage objectMessage = session.createObjectMessage(ueAsString);
                 objectMessage.setJMSCorrelationID(ue.get("correlationID").textValue());
-//                objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
-                objectMessage.setJMSDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
+//                objectMessage.setJMSDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
                 log.debug("sendWithReplyQueue - Launch to send()");
                 return objectMessage;
