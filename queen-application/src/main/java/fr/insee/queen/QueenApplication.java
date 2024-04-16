@@ -2,16 +2,24 @@ package fr.insee.queen;
 
 import fr.insee.queen.application.PropertiesLogger;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-
-@SpringBootApplication(scanBasePackages = "fr.insee.queen")
+@Configuration
+@ComponentScan(excludeFilters =
+    @ComponentScan.Filter(type = FilterType.REGEX, pattern = "fr.insee.queen.infrastructure.mongo.*")
+)
+@EnableAutoConfiguration
 @EnableTransactionManagement
+@EnableJpaRepositories(basePackages = {"fr.insee.queen.infrastructure.db"})
 @ConfigurationPropertiesScan
 @Slf4j
 public class QueenApplication {

@@ -31,8 +31,12 @@ feature:
     enabled: true
   interviewer-mode:
     enabled: true
+  mongo:
+    enabled: true
 
 spring:
+  autoconfigure:
+    exclude:
   liquibase:
     enabled: true
     contexts: test

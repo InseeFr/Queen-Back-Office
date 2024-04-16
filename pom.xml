@@ -42,6 +42,7 @@
         <module>queen-domain-pilotage</module>
         <module>queen-infra-pilotage</module>
         <module>queen-infra-depositproof</module>
+        <module>queen-infra-mongo</module>
     </modules>
 
     <dependencies>
