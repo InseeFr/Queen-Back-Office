@@ -59,7 +59,6 @@
             <!--            <version>5.18.3</version>-->
         </dependency>
 
-<!--        TODO pom.xml parent ?-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
