@@ -3,7 +3,7 @@ name: Build release candidate
 on:
   push:
     branches:
-      - feat/poc-protools
+      - feat/poc-protools-rev
 
 jobs:
   build-poc:
