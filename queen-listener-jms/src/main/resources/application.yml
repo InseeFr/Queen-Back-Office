@@ -38,28 +38,14 @@ Spring:
   profiles:
     group:
       cache-testing: test,test-cache
-  activemq:
-    broker-url: failover:(tcp://${ARTEMIS_BROKER_URL}:${ARTEMIS_BROKER_PORT})?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
+  artemis:
+    mode: native
+    broker-url: (tcp://${ARTEMIS_BROKER_URL}:${ARTEMIS_BROKER_PORT})?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
     user: ${ARTEMIS_USER}
     password: ${ARTEMIS_PASSWORD}
-    # Propriete FIX : This class is not trusted to be serialized as ObjectMessage payload. Please take a look at http://activemq.apache.org/objectmessage.html for more information on how to configure trusted classes.
-    # https://stackoverflow.com/questions/36619432/springboot-activemq-how-to-set-trusted-packages
-    packages:
-      trust-all: true
-  jms:
-    listener:
-      session:
-        acknowledge-mode: auto
-      auto-startup: true
-      min-concurrency: 2
-      max-concurrency: 10
-    pub-sub-domain: false
-    template:
-      default-destination: empty
-      priority: 100
-      qos-enabled: true
-      receive-timeout: 1000
-      time-to-live: 36000
+    pool:
+      enabled: true
+      max-connections: 50
 logging:
   level:
     fr:
