@@ -18,7 +18,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -157,99 +156,159 @@ class DataTests {
     @Test
     @DisplayName("Given survey unit data with collected data, when inserting partial collected data, then merge collected datas")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void updateCollectedData01() throws Exception {
-        String surveyUnitId = "11";
-        String collectedDataJson = """
-            {
-                "hey": "ho",
-                "obj": {"plip": "plop"},
-                "numb": 2,
-                "READY": {
-                     "EDITED": true,
-                     "COLLECTED":false
-                },
-                "COMMENT": null
-            }""";
+    void updateCollectedData02() throws Exception {
+        String surveyUnitId = "su-test-diff-data";
+        String externalData = """
+           "EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}""";
+        String stateData = """
+                {
+                    "state": "EXTRACTED",
+                    "date": 1111111111,
+                    "currentPage": "2.3#5"
+                }""";
 
-        mockMvc.perform(patch("/api/survey-unit/" + surveyUnitId + "/data")
-                        .content(collectedDataJson)
-                        .contentType(MediaType.APPLICATION_JSON)
+        String newCollectedVar = """
+                "DTA": {
+                            "EDITED": null,
+                            "FORCED": null,
+                            "INPUTED": null,
+                            "PREVIOUS": null,
+                            "COLLECTED": "updated"
+                      }
+                """;
+
+        String collectedVarToUpdate = """
+                "READY": {
+                            "EDITED": null,
+                            "FORCED": null,
+                            "INPUTED": null,
+                            "PREVIOUS": null,
+                            "COLLECTED": "plop"
+                      }
+                """;
+        String collectedVarNotTouched = """
+                "PRODUCER": {
+                    "EDITED": null,
+                    "FORCED": null,
+                    "INPUTED": null,
+                    "PREVIOUS": null,
+                    "COLLECTED": "Matt Groening"
+                }
+                """;
+        String surveyUnitDataStateData = String.format("""
+            {
+                "data": {
+                      %s,
+                      %s
+                },
+                "stateData": %s
+            }""", collectedVarToUpdate, newCollectedVar, stateData);
+
+        // check it works when already collected data
+        mockMvc.perform(patch("/api/survey-unit/" + surveyUnitId)
                         .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitDataStateData)
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk());
 
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = """
-            {
-               "EXTERNAL":{
-                  "LAST_BROADCAST":"12/07/1998"
-               },
-               "COLLECTED":{
-                  "hey":"ho",
-                  "obj":{
-                     "plip":"plop"
-                  },
-                  "numb":2,
-                  "READY":{
-                     "EDITED":true,
-                     "COLLECTED":false
-                  },
-                  "COMMENT": null,
-                  "PRODUCER":{
-                     "EDITED":null,
-                     "FORCED":null,
-                     "INPUTED":null,
-                     "PREVIOUS":null,
-                     "COLLECTED":"Matt Groening"
-                  }
-               }
-            }
-        """;
+        String expectedResult = String.format("""
+                {
+                    %s,
+                    "COLLECTED": {
+                        %s,
+                        %s,
+                        %s,
+                    }
+                }""", externalData, collectedVarNotTouched, collectedVarToUpdate, newCollectedVar);
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 
     @Test
     @DisplayName("Given survey unit with no collected json data, when updating data then insert partial data as collected data")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void updateCollectedData02() throws Exception {
-        String surveyUnitId = "21";
-        String collectedDataJson = """
-            {
-                "COMMENT": null
-            }""";
+    void updateCollectedData01() throws Exception {
+        String surveyUnitId = "su-test-diff-without-collected-data";
+        String externalData = """
+           "EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}""";
+        String stateData = """
+                {
+                    "state": "EXTRACTED",
+                    "date": 1111111111,
+                    "currentPage": "2.3#5"
+                }""";
 
-        mockMvc.perform(patch("/api/survey-unit/" + surveyUnitId + "/data")
-                        .content(collectedDataJson)
-                        .contentType(MediaType.APPLICATION_JSON)
+        String collectedVar1 = """
+                "DAG": {
+                            "EDITED": null,
+                            "FORCED": null,
+                            "INPUTED": null,
+                            "PREVIOUS": null,
+                            "COLLECTED": "3"
+                      }
+                """;
+
+        String collectedVar2 = """
+                "DTA": {
+                            "EDITED": null,
+                            "FORCED": null,
+                            "INPUTED": null,
+                            "PREVIOUS": null,
+                            "COLLECTED": "4"
+                      }
+                """;
+
+        String surveyUnitDataStateData = String.format("""
+            {
+                "data": {
+                      %s,
+                      %s
+                },
+                "stateData": %s
+            }""", collectedVar1, collectedVar2, stateData);
+
+        mockMvc.perform(patch("/api/survey-unit/" + surveyUnitId)
                         .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitDataStateData)
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk());
 
         MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        String expectedResult = "{\"COLLECTED\":" + collectedDataJson + "}";
+        String expectedResult = String.format("""
+                {
+                    %s,
+                    "COLLECTED": {
+                        %s,
+                        %s
+                    }
+                }""", externalData, collectedVar1, collectedVar2);
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
     }
 
     @Test
     @DisplayName("Given invalid survey unit id, when updating collected data then throw bad request")
     void updateCollectedDataError02() throws Exception {
-        mockMvc.perform(patch("/api/survey-unit/invalid$identifier/data")
+        mockMvc.perform(patch("/api/survey-unit/invalid$identifier")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -261,7 +320,7 @@ class DataTests {
     @Test
     @DisplayName("Given invalid json collected input data, when updating collected data then throw bad request")
     void updateCollectedDataError03() throws Exception {
-        mockMvc.perform(patch("/api/survey-unit/12/data")
+        mockMvc.perform(patch("/api/survey-unit/12")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -273,7 +332,7 @@ class DataTests {
     @Test
     @DisplayName("Given an anoymous user, when updating collected data then return unauthenticated error")
     void updateCollectedDataError04() throws Exception {
-        mockMvc.perform(patch("/api/survey-unit/12/data")
+        mockMvc.perform(patch("/api/survey-unit/12")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

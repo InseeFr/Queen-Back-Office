@@ -105,6 +105,8 @@ INSERT INTO public.survey_unit VALUES ('LOG2021X11Web-03', 'LOG2021X11Web', 'LOG
 INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_01', 'LOG2021X11Tel', 'LOG2021X11Tel');
 INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_02', 'LOG2021X11Tel', 'LOG2021X11Tel');
 INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_03', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.survey_unit VALUES ('su-test-diff-data', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.survey_unit VALUES ('su-test-diff-without-collected-data', 'LOG2021X11Tel', 'LOG2021X11Tel');
 
 --
 -- TOC entry 3399 (class 0 OID 16396)
@@ -126,6 +128,8 @@ INSERT INTO public.comment VALUES ('d8b683e0-850e-487f-bc8d-6f3c9440e32b', '{}',
 INSERT INTO public.comment VALUES ('d6f92b88-0b80-41dc-a1b3-e69b2fb71846', '{}', 'LOG2021X11Tel_01');
 INSERT INTO public.comment VALUES ('70ee3af3-fd2c-4745-b0bb-73124fa016b8', '{}', 'LOG2021X11Tel_02');
 INSERT INTO public.comment VALUES ('833b5a5d-845e-4b3e-a725-d444907ee476', '{}', 'LOG2021X11Tel_03');
+INSERT INTO public.comment VALUES ('692a1749-e293-4bcf-8456-4fb8edc9a5a8', '{}', 'su-test-diff-data');
+INSERT INTO public.comment VALUES ('692a1749-e293-4bcf-8456-4fb8edc9a5a9', '{}', 'su-test-diff-without-collected-data');
 
 
 --
@@ -142,6 +146,8 @@ INSERT INTO public.data VALUES ('e9e97450-ef9c-4f49-9375-adf11b6a158b', '{}', '2
 INSERT INTO public.data VALUES ('42dc1400-0a36-4c20-8742-115e22c42369', '{}', '21');
 INSERT INTO public.data VALUES ('4540afba-ee51-42e4-bf74-d2346d813e89', '{}', '22');
 INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e416', '{}', '23');
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e417', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}, "READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}}}', 'su-test-diff-data');
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e418', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}}', 'su-test-diff-without-collected-data');
 INSERT INTO public.data VALUES ('27abfaed-187a-44ab-8287-af08f3bd7158', '{}', 'LOG2021X11Web-01');
 INSERT INTO public.data VALUES ('c118114a-c0be-462d-9fe9-604436bea20a', '{}', 'LOG2021X11Web-02');
 INSERT INTO public.data VALUES ('df044ba3-9abb-451e-9e4d-75ba98ace5e6', '{}', 'LOG2021X11Web-03');
@@ -191,6 +197,8 @@ INSERT INTO public.personalization VALUES ('65ec0765-4a5e-4518-be79-bc2be6b882b8
 INSERT INTO public.personalization VALUES ('fc73766c-ffb7-4443-9135-1e39939320a0', '[]', '21');
 INSERT INTO public.personalization VALUES ('d14499b0-93f2-4722-a624-47d7cafc26a6', '[]', '22');
 INSERT INTO public.personalization VALUES ('a7e878fa-d12a-4a25-bc17-08a583b0127d', '[]', '23');
+INSERT INTO public.personalization VALUES ('a7e878fa-d12a-4a25-bc17-08a583b0127e', '[]', 'su-test-diff-data');
+INSERT INTO public.personalization VALUES ('a7e878fa-d12a-4a25-bc17-08a583b0127f', '[]', 'su-test-diff-without-collected-data');
 INSERT INTO public.personalization VALUES ('eec3ae3f-ad9e-45d6-b2f8-191e19f2a571', '[]', 'LOG2021X11Web-01');
 INSERT INTO public.personalization VALUES ('3cf06171-2f86-4724-8c86-fb9b2f40286a', '[]', 'LOG2021X11Web-02');
 INSERT INTO public.personalization VALUES ('1683a6ff-3c40-47c8-8862-9c685c6f5e88', '[]', 'LOG2021X11Web-03');

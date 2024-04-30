@@ -31,8 +31,6 @@ feature:
     enabled: true
   interviewer-mode:
     enabled: true
-  perfdata:
-    enabled: true
 
 spring:
   liquibase:

@@ -74,7 +74,7 @@ class SurveyUnitTests {
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(14)));
+                .andExpect(jsonPath("$.size()", is(16)));
     }
 
     @Test
@@ -325,48 +325,6 @@ class SurveyUnitTests {
     }
 
     @Test
-    void when_user_update_surveyunit_data_state_data_return_200() throws Exception {
-        String surveyUnitDataStateData = """
-            {
-                "data":""" + surveyUnitData + ", " +
-                """
-                    "stateData": {
-                        "state": "EXTRACTED",
-                        "date": 1111111111,
-                        "currentPage": "2.3#5"
-                    }
-                }""";
-        mockMvc.perform(patch("/api/survey-unit/11")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(surveyUnitDataStateData)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
-                )
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void when_user_update_surveyunit_with_incorrect_state_data_return_400() throws Exception {
-        String surveyUnitDataStateData = """
-            {
-                "data":""" + surveyUnitData + ", " +
-                """
-                    "stateData": {
-                        "state": "EACTED",
-                        "date": 1111111111,
-                        "currentPage": "2.3#5"
-                    }
-                }""";
-        mockMvc.perform(patch("/api/survey-unit/11")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(surveyUnitDataStateData)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
-                )
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void when_user_update_surveyunit_with_incorrect_identifier_return_400() throws Exception {
         String surveyUnitDataStateData = """
             {
@@ -405,7 +363,7 @@ class SurveyUnitTests {
                         .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER)))
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(14)))
+                .andExpect(jsonPath("$.size()", is(16)))
                 .andExpect(jsonPath("$[0].id").value("11"))
                 .andExpect(jsonPath("$[0].questionnaireId").value("simpsons"))
                 .andExpect(jsonPath("$[0].personalization.size()", is(2)))

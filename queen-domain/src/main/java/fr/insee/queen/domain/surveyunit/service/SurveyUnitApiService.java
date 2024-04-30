@@ -108,12 +108,12 @@ public class SurveyUnitApiService implements SurveyUnitService {
 
     @Transactional
     @Override
-    public void updateSurveyUnit(String surveyUnitId, ObjectNode data, StateData stateData) {
-        dataService.saveData(surveyUnitId, data);
+    public void updateSurveyUnit(String surveyUnitId, ObjectNode collectedDataToUpdate, StateData stateData) {
+        dataService.updateCollectedData(surveyUnitId, collectedDataToUpdate);
         try {
             stateDataService.saveStateData(surveyUnitId, stateData);
         } catch (StateDataInvalidDateException ex) {
-            // in the case of survey unit update, a problem with state data does not require to
+            // in the case of survey unit update, a problem with state collectedDataToUpdate does not require to
             // rollback the other updates on survey unit
             log.warn(String.format("%s - %s", surveyUnitId, ex.getMessage()));
         }
