@@ -59,7 +59,7 @@ public interface QuestionnaireMongoRepository extends MongoRepository<Questionna
      * @param campaignId campaign id
      * @return a campaign summary
      */
-    @Query(value = "{ 'campaign.id' : ?0 }", fields = "{ '_id' : 1, 'label' : 1, 'campaign._id' : 1, 'campaign.label' : 1, 'nomenclatures._id' : 1 }")
+    @Query(value = "{ 'campaign._id' : ?0 }", fields = "{ '_id' : 1, 'label' : 1, 'campaign._id' : 1, 'campaign.label' : 1, 'nomenclatures._id' : 1 }")
     List<QuestionnaireModelDocument> findQuestionnairesSummaryByCampaignId(String campaignId);
 
     /**

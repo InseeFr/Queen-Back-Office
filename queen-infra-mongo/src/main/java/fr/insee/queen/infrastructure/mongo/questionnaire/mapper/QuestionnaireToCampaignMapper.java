@@ -33,8 +33,8 @@ public class QuestionnaireToCampaignMapper {
 
     public static CampaignSummary toCampaignSummary(@NonNull String campaignId, List<QuestionnaireModelDocument> questionnaires) {
         Set<String> questionnairesId = questionnaires.stream()
+                .filter(questionnaire -> campaignId.equals(questionnaire.getCampaign().getId()))
                 .map(QuestionnaireModelDocument::getId)
-                .filter(campaignId::equals)
                 .collect(Collectors.toSet());
         return new CampaignSummary(campaignId, null, questionnairesId);
     }

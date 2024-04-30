@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository to handle survey units in temp zone.
@@ -38,6 +39,7 @@ public class SurveyUnitTempZoneMongoDao implements SurveyUnitTempZoneRepository 
     @Override
     public void save(String surveyUnitId, String userId, Long date, ObjectNode surveyUnit) {
         SurveyUnitTempZoneDocument surveyUnitTempZone = SurveyUnitTempZoneDocument.fromModel(surveyUnitId, userId, date, surveyUnit);
+        surveyUnitTempZone.setId(UUID.randomUUID());
         repository.save(surveyUnitTempZone);
     }
 }
