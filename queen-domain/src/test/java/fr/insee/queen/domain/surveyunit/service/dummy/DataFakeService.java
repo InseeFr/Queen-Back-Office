@@ -21,6 +21,6 @@ public class DataFakeService implements DataService {
 
     @Override
     public void updateCollectedData(String surveyUnitId, ObjectNode collectedData) {
-        // not used at this moment
+        dataSaved = collectedData;
     }
 }

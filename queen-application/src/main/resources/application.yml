@@ -45,8 +45,6 @@ feature:
     enabled: false
   interviewer-mode:
     enabled: false
-  perfdata:
-    enabled: false
 
 spring:
   main:
