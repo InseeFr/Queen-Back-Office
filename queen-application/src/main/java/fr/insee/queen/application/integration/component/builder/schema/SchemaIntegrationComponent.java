@@ -2,12 +2,11 @@ package fr.insee.queen.application.integration.component.builder.schema;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.application.web.validation.json.JsonValidatorComponent;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -35,6 +34,7 @@ import java.util.zip.ZipFile;
 public class SchemaIntegrationComponent implements SchemaComponent {
 
     private final ObjectMapper mapper;
+    private final JsonValidatorComponent jsonValidator;
 
     @Override
     public void throwExceptionIfXmlDataFileNotValid(ZipFile zipFile, String xmlFileName, String xsdSchemaFileName) throws IntegrationValidationException {
@@ -69,14 +69,10 @@ public class SchemaIntegrationComponent implements SchemaComponent {
     }
 
     @Override
-    public void throwExceptionIfJsonDataFileNotValid(ZipFile zipFile, String fileName, String schemaFileName) throws IntegrationValidationException {
+    public void throwExceptionIfJsonDataFileNotValid(ZipFile zipFile, String fileName, SchemaType schemaType) throws IntegrationValidationException {
         throwExceptionIfDataFileNotExist(zipFile, fileName);
         ZipEntry zipJsonFile = zipFile.getEntry(fileName);
 
-        InputStream templateStream = getClass().getClassLoader().getResourceAsStream("schema/" + schemaFileName);
-
-        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
-        JsonSchema jsonSchema = factory.getSchema(templateStream);
         JsonNode jsonNode;
         try {
             jsonNode = mapper.readTree(zipFile.getInputStream(zipJsonFile));
@@ -86,7 +82,7 @@ public class SchemaIntegrationComponent implements SchemaComponent {
             throw new IntegrationValidationException(resultError);
         }
 
-        Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
+        Set<ValidationMessage> errors = jsonValidator.validate(schemaType, jsonNode);
         if(errors.isEmpty()) {
             return;
         }

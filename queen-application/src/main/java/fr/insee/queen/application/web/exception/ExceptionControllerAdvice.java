@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.application.web.authentication.AuthenticationTokenException;
+import fr.insee.queen.application.web.validation.exception.JsonValidatorComponentInitializationException;
 import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
 import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuestionnaireException;
 import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
@@ -40,6 +41,8 @@ public class ExceptionControllerAdvice {
     private final ApiExceptionComponent errorComponent;
 
     private static final String ERROR_OCCURRED_LABEL = "An error has occurred";
+
+    private static final String ERROR_INVALID_DATA = "Data is invalid";
 
     /**
      * Global method to process the catched exception
@@ -168,6 +171,12 @@ public class ExceptionControllerAdvice {
     public ResponseEntity<ApiError> integrationComponentException(IntegrationComponentException e, WebRequest request) {
         log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(JsonValidatorComponentInitializationException.class)
+    public ResponseEntity<ApiError> integrationComponentException(JsonValidatorComponentInitializationException e, WebRequest request) {
+        log.error(e.getMessage(), e);
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request, ERROR_INVALID_DATA);
     }
 
     @ExceptionHandler(PilotageApiException.class)

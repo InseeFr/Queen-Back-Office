@@ -1,0 +1,15 @@
+[
+  {
+    "reg": "02",
+    "tncc": 4,
+    "nccenr": "Guadeloupee",
+    "cheflieu": 971055
+  },
+  {
+    "id": 1,
+    "reg": "02",
+    "tncc": 3,
+    "nccenr": "Martinique",
+    "label": true
+  }
+]

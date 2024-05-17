@@ -72,7 +72,8 @@ class CampaignTests {
         String campaignName = "CAMPAIGN-12345";
         Set<String> questionnaireIds = Set.of(questionnaireId);
 
-        MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
+        ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("campaign/metadata/metadata.json");
+        MetadataCreationData metadata = new MetadataCreationData(metadataNode);
         CampaignCreationData campaign = new CampaignCreationData(campaignName, "label campaign", questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
@@ -181,8 +182,7 @@ class CampaignTests {
 
     @Test
     void on_create_campaign_when_user_not_authorized_return_403() throws Exception {
-        MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
-        CampaignCreationData campaign = new CampaignCreationData("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), metadata);
+        CampaignCreationData campaign = new CampaignCreationData("VQS2021X00", "label campaign", Set.of("simpsons", "simpsonsV2"), null);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)

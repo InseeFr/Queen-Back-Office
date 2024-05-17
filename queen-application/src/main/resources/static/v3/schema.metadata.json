@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://insee.fr/schema.metadata.json",
+  "type": "object",
+  "required": ["inseeContext"],
+  "additionalProperties": true,
+  "properties": {
+    "inseeContext": {
+      "type": "string",
+      "pattern": "^(household|business)$",
+      "message": {
+        "pattern": "Correct value is household or business"
+      }
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/variable"
+      },
+      "minItems": 0
+    }
+  },
+  "$defs": {
+    "variable": {
+      "type": "object",
+      "required": ["name", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": ["string", "boolean"]
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import fr.insee.queen.application.integration.component.builder.IntegrationNomen
 import fr.insee.queen.application.integration.component.builder.schema.SchemaIntegrationComponent;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.integration.service.dummy.IntegrationFakeService;
+import fr.insee.queen.application.web.validation.json.JsonValidatorComponent;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import jakarta.validation.Validation;
@@ -35,7 +36,7 @@ class NomenclatureBuilderTest {
         Locale.setDefault(Locale.of("en", "US"));
         ObjectMapper objectMapper = new ObjectMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper);
+        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper, new JsonValidatorComponent());
         IntegrationFakeService integrationService = new IntegrationFakeService();
         nomenclatureBuilder = new IntegrationNomenclatureBuilder(schemaComponent, validator, objectMapper, integrationService);
     }
@@ -69,7 +70,7 @@ class NomenclatureBuilderTest {
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
-        IntegrationResultUnitDto errorResult = resultErrors.get(0);
+        IntegrationResultUnitDto errorResult = resultErrors.getFirst();
         assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.getId()).isEqualTo(nomenclatureId);
         assertThat(errorResult.getCause()).contains("id: The identifier is invalid.");
@@ -88,7 +89,7 @@ class NomenclatureBuilderTest {
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
-        IntegrationResultUnitDto errorResult = resultErrors.get(0);
+        IntegrationResultUnitDto errorResult = resultErrors.getFirst();
         assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.getId()).isEqualTo("cities2023");
         assertThat(errorResult.getCause()).contains(String.format(IntegrationResultLabel.NOMENCLATURE_FILE_NOT_FOUND, "cities2023.json"));
@@ -102,7 +103,7 @@ class NomenclatureBuilderTest {
 
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, isXmlIntegration);
         assertThat(results).hasSize(1);
-        IntegrationResultUnitDto nomenclatureResult = results.get(0);
+        IntegrationResultUnitDto nomenclatureResult = results.getFirst();
         assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(nomenclatureResult.getId()).isNull();
         assertThat(nomenclatureResult.getCause())
@@ -117,7 +118,7 @@ class NomenclatureBuilderTest {
 
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, true);
         assertThat(results).hasSize(1);
-        IntegrationResultUnitDto nomenclatureResult = results.get(0);
+        IntegrationResultUnitDto nomenclatureResult = results.getFirst();
         assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(nomenclatureResult.getId()).isNull();
         assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationNomenclatureBuilder.NOMENCLATURES_XML, ""));
@@ -130,7 +131,7 @@ class NomenclatureBuilderTest {
 
         List<IntegrationResultUnitDto> results = nomenclatureBuilder.build(zipFile, false);
         assertThat(results).hasSize(1);
-        IntegrationResultUnitDto nomenclatureResult = results.get(0);
+        IntegrationResultUnitDto nomenclatureResult = results.getFirst();
         assertThat(nomenclatureResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(nomenclatureResult.getId()).isNull();
         assertThat(nomenclatureResult.getCause()).contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationNomenclatureBuilder.NOMENCLATURES_JSON, ""));

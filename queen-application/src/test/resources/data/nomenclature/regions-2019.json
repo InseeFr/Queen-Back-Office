@@ -1,18 +1,18 @@
 [
   {
-    "ncc": "GUADELOUPE",
+    "id": "GUADELOUPE",
     "reg": "01",
-    "tncc": 3,
+    "tncc": "3",
     "nccenr": "Guadeloupe",
-    "libelle": "Guadeloupe",
-    "cheflieu": 97105
+    "label": "Guadeloupe",
+    "cheflieu": "97105"
   },
   {
-    "ncc": "MARTINIQUE",
+    "id": "MARTINIQUE",
     "reg": "02",
-    "tncc": 3,
+    "tncc": "3",
     "nccenr": "Martinique",
-    "libelle": "Martinique",
-    "cheflieu": 97209
+    "label": "Martinique",
+    "cheflieu": "97209"
   }
 ]

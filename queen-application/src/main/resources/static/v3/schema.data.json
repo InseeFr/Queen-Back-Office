@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://insee.fr/schema.data.json",
+  "title": "Data schema",
+  "description": "Validation of survey unit data",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "CALCULATED": {
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "schema.variable-type.json#"
+        }
+      },
+      "additionalProperties": false
+    },
+    "EXTERNAL": {
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "schema.variable-type.json#"
+        }
+      },
+      "additionalProperties": false
+    },
+    "COLLECTED": {
+      "$ref": "schema.collected-data.json#"
+    }
+  }
+}

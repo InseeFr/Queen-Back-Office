@@ -7,6 +7,7 @@ import fr.insee.queen.application.integration.component.builder.schema.SchemaCom
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.application.integration.dto.input.QuestionnaireModelIntegrationData;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.integration.model.IntegrationResult;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.service.IntegrationService;
@@ -89,7 +90,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
 
     private List<IntegrationResultUnitDto> buildQuestionnaireModels(String campaignId, ZipFile zf) {
         try {
-            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, QUESTIONNAIRE_MODELS_JSON, "questionnaireModels_integration.json");
+            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, QUESTIONNAIRE_MODELS_JSON, SchemaType.QUESTIONNAIRE_INTEGRATION);
         } catch (IntegrationValidationException ex) {
             return List.of(ex.getResultError());
         }

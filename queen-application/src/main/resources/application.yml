@@ -2,6 +2,7 @@ application:
   public-urls:
     - /swagger-ui/**
     - /v3/api-docs/**
+    - /v3/*.json
     - /api/healthcheck
     - /
   roles:
