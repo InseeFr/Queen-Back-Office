@@ -13,7 +13,7 @@ import static java.lang.annotation.ElementType.*;
 /**
  * Annotation used to validate identifiers
  */
-@Target({FIELD, PARAMETER, METHOD})
+@Target({FIELD, PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = IdValidator.class)

@@ -1,6 +1,7 @@
 package fr.insee.queen.application.integration.component.builder.schema;
 
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -35,10 +36,10 @@ public interface SchemaComponent {
      *
      * @param zipFile the zip file
      * @param fileName the name of the json file to check
-     * @param schemaFileName json schema used to check the json file
+     * @param schemaType type of schema used to validate file
      * @throws IntegrationValidationException integration validation exception
      */
-    void throwExceptionIfJsonDataFileNotValid(ZipFile zipFile, String fileName, String schemaFileName) throws IntegrationValidationException;
+    void throwExceptionIfJsonDataFileNotValid(ZipFile zipFile, String fileName, SchemaType schemaType) throws IntegrationValidationException;
 
     /**
      * Build a document from an xml input stream
