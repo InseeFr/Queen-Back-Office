@@ -26,7 +26,7 @@ feature:
     client-id: my-client-id
     realm: my-realm
     principal-attribute: id-claim
-    role-claim: role-claim
+    role-claim:
   dataset:
     # create demo dataset on startup
     load-on-start: false
@@ -99,6 +99,8 @@ springdoc:
       activated: false
     tagsSorter: alpha
     doc-expansion: none
+  api-docs:
+    version: OPENAPI_3_1
 #Actuator Metrics
 management:
   endpoints:
