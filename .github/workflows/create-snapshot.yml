@@ -1,10 +1,8 @@
 name: Build release candidate
 
 on:
-  push:
-    branches:
-      - v4-develop #temp branch
-      - develop
+  workflow_dispatch:
+    branches: [ develop ]
 
 jobs:
   check-version:
