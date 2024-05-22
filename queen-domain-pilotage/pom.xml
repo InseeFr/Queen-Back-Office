@@ -37,4 +37,36 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <!-- will only display a warning but does not fail the build. -->
+                                    <level>ERROR</level>
+                                    <excludes>
+                                        <exclude>fr.insee.queen:*</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>fr.insee.queen:queen-domain</include>
+                                    </includes>
+                                    <message>Queen domain module should not use another queen modules</message>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
