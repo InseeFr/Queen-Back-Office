@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://insee.fr/schema.metadata.json",
   "type": "object",
   "additionalProperties": true,
   "properties": {

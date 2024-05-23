@@ -55,11 +55,13 @@ public class PersonalizationController {
      * @param personalizationValues the value to update
      * @param surveyUnitId          the id of the survey unit
      */
-    @Operation(summary = "Update personalization for a survey unit")
+    @Operation(summary = "Update personalization for a survey unit",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+                    schema = @Schema(ref = SchemaType.Names.PERSONALIZATION))))
     @PutMapping(path = "/survey-unit/{id}/personalization")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public void setPersonalization(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                   @NotNull @RequestBody @Schema(ref = SchemaType.Names.PERSONALIZATION) @JsonValid(SchemaType.PERSONALIZATION) ArrayNode personalizationValues) {
+                                   @NotNull @RequestBody @JsonValid(SchemaType.PERSONALIZATION) ArrayNode personalizationValues) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         personalizationService.updatePersonalization(surveyUnitId, personalizationValues);
     }

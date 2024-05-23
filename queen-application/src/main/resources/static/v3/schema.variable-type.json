@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://insee.fr/schema.variable-type.json",
   "title": "Variable type schema use in external/calculated/collected data",
   "description": "Validation of variables values in survey unit data",
   "anyOf": [

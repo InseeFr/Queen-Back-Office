@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://insee.fr/schema.nomenclature.json",
   "title": "Nomenclature schema",
   "description": "Validation of nomenclatures for a survey unit",
   "type": "array",

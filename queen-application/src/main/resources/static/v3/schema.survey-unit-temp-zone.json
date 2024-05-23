@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://insee.fr/schema.survey-unit-temp-zone.json",
   "title": "Survey unit temp zone schema",
   "description": "Validation of survey unit temp zone",
   "type": "object",
