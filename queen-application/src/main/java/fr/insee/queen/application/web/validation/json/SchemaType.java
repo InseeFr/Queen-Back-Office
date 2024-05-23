@@ -12,7 +12,8 @@ public enum SchemaType {
     METADATA(Names.METADATA),
     PERSONALIZATION(Names.PERSONALIZATION),
     NOMENCLATURE(Names.NOMENCLATURE),
-    VARIABLE_TYPE(Names.VARIABLE_TYPE);
+    VARIABLE_TYPE(Names.VARIABLE_TYPE),
+    SURVEY_UNIT_TEMP_ZONE(Names.SURVEY_UNIT_TEMP_ZONE);
 
     public static class Names {
         public static final String CAMPAIGN_INTEGRATION = "schema.campaign-integration.json";
@@ -24,6 +25,7 @@ public enum SchemaType {
         public static final String PERSONALIZATION = "schema.personalization.json";
         public static final String NOMENCLATURE = "schema.nomenclature.json";
         public static final String VARIABLE_TYPE = "schema.variable-type.json";
+        public static final String SURVEY_UNIT_TEMP_ZONE = "schema.survey-unit-temp-zone.json";
 
         private Names() {
 

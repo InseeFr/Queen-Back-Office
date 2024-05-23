@@ -2,6 +2,7 @@ package fr.insee.queen.application.web.validation.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.networknt.schema.ValidationMessage;
 import com.networknt.schema.ValidatorTypeCode;
 import fr.insee.queen.application.utils.JsonTestHelper;
@@ -182,6 +183,102 @@ class JsonValidatorComponentTest {
         assertForbiddenProperty(error, "$.variables[2]", "forbidden-property");
     }
 
+    @Test
+    @DisplayName("when validating valid survey unit temp zone, no errors returned")
+    void testTempZone01() throws IOException {
+        String surveyUnitTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/surveyunittempzone/valid-tempzone.json");
+        JsonNode surveyUnitTempZoneNode = mapper.readValue(surveyUnitTempZoneJson, JsonNode.class);
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, surveyUnitTempZoneNode);
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    @DisplayName("when validating survey unit temp zone with missing attributes, return json schema errors")
+    void testTempZone02() {
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, JsonNodeFactory.instance.objectNode());
+        assertThat(errors).hasSize(3);
+
+        ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
+
+        ValidationMessage error = messages[0];
+        assertRequiredProperty(error, "$", "data");
+
+        error = messages[1];
+        assertRequiredProperty(error, "$", "stateData");
+
+        error = messages[2];
+        assertRequiredProperty(error, "$", "questionnaireId");
+    }
+
+    @Test
+    @DisplayName("when validating survey unit temp zone with missing stateData attributes, return json schema errors")
+    void testTempZone03() throws IOException {
+        String surveyUnitTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/surveyunittempzone/invalid-missing-statedata-attributes-tempzone.json");
+        JsonNode surveyUnitTempZoneNode = mapper.readValue(surveyUnitTempZoneJson, JsonNode.class);
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, surveyUnitTempZoneNode);
+        assertThat(errors).hasSize(3);
+
+        ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
+
+        ValidationMessage error = messages[0];
+        assertRequiredProperty(error, "$.stateData", "date");
+
+        error = messages[1];
+        assertRequiredProperty(error, "$.stateData", "state");
+
+        error = messages[2];
+        assertRequiredProperty(error, "$.stateData", "currentPage");
+    }
+
+    @Test
+    @DisplayName("when validating survey unit temp zone with incorrect types, return json schema errors")
+    void testTempZone04() throws IOException {
+        String surveyUnitTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/surveyunittempzone/invalid-types.json");
+        JsonNode surveyUnitTempZoneNode = mapper.readValue(surveyUnitTempZoneJson, JsonNode.class);
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, surveyUnitTempZoneNode);
+        assertThat(errors).hasSize(7);
+
+        ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
+
+        ValidationMessage error = messages[0];
+        assertBadType(error, "$.comment");
+
+        error = messages[1];
+        assertBadType(error, "$.questionnaireId");
+
+        error = messages[2];
+        assertBadType(error, "$.stateData.date");
+
+        error = messages[3];
+        assertBadEnum(error, "$.stateData.state");
+
+        error = messages[4];
+        assertBadType(error, "$.stateData.currentPage");
+
+        error = messages[5];
+        assertForbiddenProperty(error, "$.stateData", "forbidden-property");
+
+        error = messages[6];
+        assertForbiddenProperty(error, "$", "forbidden-property");
+    }
+
+    @Test
+    @DisplayName("when validating survey unit temp zone with incorrect attributes length, return json schema errors")
+    void testTempZone05() throws IOException {
+        String surveyUnitTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/surveyunittempzone/invalid-lengths.json");
+        JsonNode surveyUnitTempZoneNode = mapper.readValue(surveyUnitTempZoneJson, JsonNode.class);
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, surveyUnitTempZoneNode);
+        assertThat(errors).hasSize(2);
+
+        ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
+
+        ValidationMessage error = messages[0];
+        assertBadLength(error, "$.questionnaireId");
+
+        error = messages[1];
+        assertBadLength(error, "$.stateData.currentPage");
+    }
+
     private void assertBadPattern(ValidationMessage error, String instanceLocation) {
         assertThat(error.getInstanceLocation()).hasToString(instanceLocation);
         ValidatorTypeCode typeCode = ValidatorTypeCode.fromValue(error.getType());
@@ -206,5 +303,17 @@ class JsonValidatorComponentTest {
         assertThat(error.getProperty()).isEqualTo(requiredProperty);
         ValidatorTypeCode typeCode = ValidatorTypeCode.fromValue(error.getType());
         assertThat(typeCode).isEqualTo(ValidatorTypeCode.REQUIRED);
+    }
+
+    private void assertBadEnum(ValidationMessage error, String instanceLocation) {
+        assertThat(error.getInstanceLocation()).hasToString(instanceLocation);
+        ValidatorTypeCode typeCode = ValidatorTypeCode.fromValue(error.getType());
+        assertThat(typeCode).isEqualTo(ValidatorTypeCode.ENUM);
+    }
+
+    private void assertBadLength(ValidationMessage error, String instanceLocation) {
+        assertThat(error.getInstanceLocation()).hasToString(instanceLocation);
+        ValidatorTypeCode typeCode = ValidatorTypeCode.fromValue(error.getType());
+        assertThat(typeCode).isEqualTo(ValidatorTypeCode.MIN_LENGTH);
     }
 }

@@ -12,5 +12,5 @@
       "forbidden-property": true
     }
   ],
-  "inseeContext":"forbidden-value"
+  "inseeContext": "forbidden-value"
 }
