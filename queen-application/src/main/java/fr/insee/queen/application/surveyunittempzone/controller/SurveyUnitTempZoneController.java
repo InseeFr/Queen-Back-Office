@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.surveyunittempzone.dto.output.SurveyUnitTempZoneDto;
 import fr.insee.queen.application.web.validation.IdValid;
+import fr.insee.queen.application.web.validation.json.JsonValid;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.surveyunittempzone.service.SurveyUnitTempZoneService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -43,7 +46,11 @@ public class SurveyUnitTempZoneController {
     @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                             @NotNull @RequestBody ObjectNode surveyUnit,
+                                             @NotNull
+                                             @RequestBody
+                                             @Schema(ref = SchemaType.Names.SURVEY_UNIT_TEMP_ZONE)
+                                             @JsonValid(SchemaType.SURVEY_UNIT_TEMP_ZONE)
+                                             ObjectNode surveyUnit,
                                              @CurrentSecurityContext(expression = "authentication.name") String userId) {
         surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
     }

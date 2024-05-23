@@ -1,6 +1,7 @@
 package fr.insee.queen.application.surveyunittempzone.dto.output;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.surveyunittempzone.model.SurveyUnitTempZone;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -12,6 +13,7 @@ public record SurveyUnitTempZoneDto(
         String surveyUnitId,
         String userId,
         Long date,
+        @Schema(ref = SchemaType.Names.SURVEY_UNIT_TEMP_ZONE)
         ObjectNode surveyUnit) {
 
     public static SurveyUnitTempZoneDto fromModel(SurveyUnitTempZone surveyUnit) {
