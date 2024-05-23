@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://insee.fr/schema.collected-data.json",
   "title": "Collected data schema",
   "description": "Validation of survey unit collected data",
   "type": "object",

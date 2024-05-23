@@ -55,13 +55,14 @@ public class DataController {
      * @param dataValue    the questionnaire form data to update
      * @param surveyUnitId the id of the survey unit
      */
-    @Operation(summary = "Update data for a survey unit")
+    @Operation(summary = "Update data for a survey unit",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+                    schema = @Schema(ref = SchemaType.Names.DATA))))
     @PutMapping(path = "/survey-unit/{id}/data")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public void updateData(
             @NotNull
             @RequestBody
-            @Schema(ref = SchemaType.Names.DATA)
             @JsonValid(SchemaType.DATA)
             ObjectNode dataValue,
             @IdValid

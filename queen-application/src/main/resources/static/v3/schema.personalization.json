@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://insee.fr/schema.personalization.json",
   "title": "Personalization schema",
   "description": "Validation of personalizations for a survey unit",
   "type": "array",
