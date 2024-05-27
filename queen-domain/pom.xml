@@ -56,7 +56,6 @@
 						<configuration>
 							<rules>
 								<bannedDependencies>
-									<!-- will only display a warning but does not fail the build. -->
 									<level>ERROR</level>
 									<excludes>
 										<exclude>fr.insee.queen:*</exclude>
