@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotNull;
 
 @Schema(name = "SurveyUnitDataStateDataUpdate")
 public record SurveyUnitDataStateDataUpdateInput(
-        @NotNull
         @Schema(ref = SchemaType.Names.COLLECTED_DATA)
         @JsonValid(SchemaType.COLLECTED_DATA)
         ObjectNode data,

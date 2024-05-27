@@ -15,8 +15,12 @@ import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.NoOpCacheManager;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -159,12 +163,24 @@ class SurveyUnitApiServiceTest {
         assertThat(surveyUnitFakeDao.getSurveyUnitUpdated()).isEqualTo(surveyUnit);
         assertThat(stateDataFakeService.getStateDataSaved()).isNull();
     }
+    @ParameterizedTest
+    @MethodSource("nullOrEmpTyData")
+    @DisplayName("On updating survey unit, when data is null or empty, don't update data")
+    void testUpdateDataStateData02(ObjectNode data) {
+        StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
+        String surveyUnitId = "11";
+        surveyUnitApiService.updateSurveyUnit(surveyUnitId, data, stateData);
+        assertThat(stateDataFakeService.getStateDataSaved()).isEqualTo(stateData);
+        assertThat(dataFakeService.getDataSaved()).isNull();
+    }
+
 
     @Test
     @DisplayName("On updating survey unit, when state data is not null, save it")
-    void testUpdateDataStateData02() {
+    void testUpdateDataStateData03() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
         ObjectNode data = JsonNodeFactory.instance.objectNode();
+        data.put("field1", 5);
         String surveyUnitId = "11";
         surveyUnitApiService.updateSurveyUnit(surveyUnitId, data, stateData);
         assertThat(stateDataFakeService.getStateDataSaved()).isEqualTo(stateData);
@@ -173,12 +189,17 @@ class SurveyUnitApiServiceTest {
 
     @Test
     @DisplayName("On updating survey unit, when state data update throws an invalid date exception, check data is saved ")
-    void testUpdateDataStateData03() {
+    void testUpdateDataStateData04() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
         ObjectNode data = JsonNodeFactory.instance.objectNode();
+        data.put("field1", 5);
         String surveyUnitId = "11";
         stateDataFakeService.setDateInvalid(true);
         surveyUnitApiService.updateSurveyUnit(surveyUnitId, data, stateData);
         assertThat(dataFakeService.getDataSaved()).isEqualTo(data);
+    }
+
+    static Stream<ObjectNode> nullOrEmpTyData() {
+        return Stream.of(null, JsonNodeFactory.instance.objectNode());
     }
 }
