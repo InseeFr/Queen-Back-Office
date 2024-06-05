@@ -165,7 +165,7 @@ class JsonValidatorComponentTest {
         ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
 
         ValidationMessage error = messages[0];
-        assertBadPattern(error, "$.inseeContext");
+        assertBadEnum(error, "$.inseeContext");
 
         error = messages[1];
         assertBadType(error, "$.variables[1].name");

@@ -26,7 +26,6 @@ public enum SchemaType {
         public static final String NOMENCLATURE = "schema.nomenclature.json";
         public static final String VARIABLE_TYPE = "schema.variable-type.json";
         public static final String SURVEY_UNIT_TEMP_ZONE = "schema.survey-unit-temp-zone.json";
-
         private Names() {
 
         }

@@ -1,17 +1,17 @@
 package fr.insee.queen.domain.surveyunit.service;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.surveyunit.infrastructure.dummy.SurveyUnitFakeDao;
-import fr.insee.queen.domain.surveyunit.model.StateDataType;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.dummy.DataFakeService;
+import fr.insee.queen.domain.surveyunit.service.dummy.MetadataFakeService;
 import fr.insee.queen.domain.surveyunit.service.dummy.StateDataFakeService;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
-import fr.insee.queen.domain.surveyunit.model.StateData;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +31,7 @@ class SurveyUnitApiServiceTest {
     private StateDataFakeService stateDataFakeService;
     private DataFakeService dataFakeService;
     private CampaignExistenceFakeService campaignExistenceFakeService;
+    private MetadataFakeService metadataFakeService;
     private SurveyUnitFakeDao surveyUnitFakeDao;
 
     private static final String QUESTIONNAIRE_ID = "questionnaire-id";
@@ -43,8 +44,9 @@ class SurveyUnitApiServiceTest {
         stateDataFakeService = new StateDataFakeService();
         campaignExistenceFakeService = new CampaignExistenceFakeService();
         dataFakeService = new DataFakeService();
+        metadataFakeService = new MetadataFakeService();
         surveyUnitApiService = new SurveyUnitApiService(surveyUnitFakeDao, stateDataFakeService, dataFakeService,
-                campaignExistenceFakeService, cacheManager);
+                campaignExistenceFakeService, metadataFakeService, cacheManager);
     }
 
     @Test
@@ -197,6 +199,24 @@ class SurveyUnitApiServiceTest {
         stateDataFakeService.setDateInvalid(true);
         surveyUnitApiService.updateSurveyUnit(surveyUnitId, data, stateData);
         assertThat(dataFakeService.getDataSaved()).isEqualTo(data);
+    }
+
+    @Test
+    @DisplayName("Retrieve survey unit metadata")
+    void testRetrieveMetaData01() {
+        String surveyUnitId = "11";
+
+        ObjectNode metadata = JsonNodeFactory.instance.objectNode();
+        metadataFakeService.setMetadata(metadata);
+
+        ArrayNode personalization = JsonNodeFactory.instance.arrayNode();
+        SurveyUnitPersonalization surveyUnitPersonalization = new SurveyUnitPersonalization(
+                surveyUnitId, "questionnaire-id", personalization);
+        surveyUnitFakeDao.setSurveyUnitPersonalization(surveyUnitPersonalization);
+
+        SurveyUnitMetadata surveyUnitMetadata = surveyUnitApiService.getSurveyUnitMetadata(surveyUnitId);
+        assertThat(surveyUnitMetadata.metadata()).isEqualTo(metadata);
+        assertThat(surveyUnitMetadata.surveyUnitPersonalization()).isEqualTo(surveyUnitPersonalization);
     }
 
     static Stream<ObjectNode> nullOrEmpTyData() {

@@ -2,10 +2,7 @@ package fr.insee.queen.domain.surveyunit.gateway;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.surveyunit.model.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -138,12 +135,21 @@ public interface SurveyUnitRepository {
     Optional<ObjectNode> findData(String surveyUnitId);
 
     /**
-     * Find the personalization of a survey unit
+     * Get the personalization of a survey unit
+     *
+     * @param surveyUnitId survey unit id
+     * @return the personalization value
+     */
+    SurveyUnitPersonalization getSurveyUnitPersonalization(String surveyUnitId);
+
+    /**
+     * Get the personalization of a survey unit
      *
      * @param surveyUnitId survey unit id
      * @return the personalization value
      */
     Optional<ArrayNode> findPersonalization(String surveyUnitId);
+
 
     /**
      * Check if survey unit exists

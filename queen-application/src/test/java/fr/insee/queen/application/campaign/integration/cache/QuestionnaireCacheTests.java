@@ -3,6 +3,7 @@ package fr.insee.queen.application.campaign.integration.cache;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.ScriptConstants;
+import fr.insee.queen.application.utils.JsonTestHelper;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import fr.insee.queen.domain.campaign.service.CampaignService;
@@ -22,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -70,11 +72,12 @@ class QuestionnaireCacheTests {
     @Test
     @DisplayName("When updating questionnaire, cache is handled")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void check_questionnaire_cache02() {
+    void check_questionnaire_cache02() throws IOException {
         String questionnaireId = "questionnaire-cache-id";
         String campaignId = "campaign-cache-id";
 
-        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode()));
+        ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("campaign/metadata/metadata.json");
+        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), metadataNode));
         check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("regions2019")));
 
         // when updating questionnaire, cache is evicted
@@ -92,7 +95,6 @@ class QuestionnaireCacheTests {
         @SuppressWarnings("unchecked")
         List<String> requiredNomenclaturesCache = (List<String>) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES).get(questionnaireId).get());
         ObjectNode metadataCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA).get(questionnaireId, ObjectNode.class));
-
 
         assertThat(questionnaire).isEqualTo(questionnaireCache);
         assertThat(requiredNomenclatures).isEqualTo(requiredNomenclaturesCache);

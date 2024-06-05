@@ -1,5 +1,6 @@
 package fr.insee.queen.application.surveyunit.controller;
 
+import fr.insee.queen.application.campaign.component.MetadataComponentConverter;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
@@ -7,10 +8,12 @@ import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitCreationInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitDataStateDataUpdateInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitUpdateInput;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
+import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitMetadataDto;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.surveyunit.model.StateData;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
+import fr.insee.queen.domain.surveyunit.model.SurveyUnitMetadata;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +41,7 @@ import java.util.List;
 public class SurveyUnitController {
     private final SurveyUnitService surveyUnitService;
     private final PilotageComponent pilotageComponent;
+    private final MetadataComponentConverter metadataConverter;
 
     /**
      * Retrieve all survey units id
@@ -63,6 +67,21 @@ public class SurveyUnitController {
     public SurveyUnitDto getSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
         return SurveyUnitDto.fromModel(surveyUnitService.getSurveyUnit(surveyUnitId));
+    }
+
+    /**
+     * Retrieve the survey unit metadata
+     *
+     * @param surveyUnitId survey unit id
+     * @return {@link SurveyUnitMetadataDto} the survey unit
+     */
+    @Operation(summary = "Get survey-unit metadata")
+    @GetMapping(path = "/survey-unit/{id}/metadata")
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
+    public SurveyUnitMetadataDto getSurveyUnitMetadataById(@IdValid @PathVariable(value = "id") String surveyUnitId) {
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        SurveyUnitMetadata surveyUnitMetadata = surveyUnitService.getSurveyUnitMetadata(surveyUnitId);
+        return SurveyUnitMetadataDto.fromModel(surveyUnitMetadata, metadataConverter);
     }
 
     /**

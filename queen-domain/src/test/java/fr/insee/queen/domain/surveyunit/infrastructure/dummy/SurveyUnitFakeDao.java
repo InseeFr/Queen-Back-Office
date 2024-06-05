@@ -3,10 +3,7 @@ package fr.insee.queen.domain.surveyunit.infrastructure.dummy;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.surveyunit.model.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +17,9 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
 
     @Getter
     private SurveyUnit surveyUnitUpdated = null;
+
+    @Setter
+    private SurveyUnitPersonalization surveyUnitPersonalization;
 
     @Setter
     private boolean surveyUnitExist = true;
@@ -102,6 +102,11 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
     @Override
     public Optional<ObjectNode> findData(String surveyUnitId) {
         return Optional.empty();
+    }
+
+    @Override
+    public SurveyUnitPersonalization getSurveyUnitPersonalization(String surveyUnitId) {
+        return surveyUnitPersonalization;
     }
 
     @Override

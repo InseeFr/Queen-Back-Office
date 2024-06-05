@@ -2,6 +2,7 @@ package fr.insee.queen.domain.surveyunit.service;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
+import fr.insee.queen.domain.campaign.service.MetadataService;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -24,13 +25,14 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class SurveyUnitApiService implements SurveyUnitService {
+    public static final String NOT_FOUND_MESSAGE = "Survey unit %s was not found";
+    public static final String ALREADY_EXIST_MESSAGE = "Survey unit %s already exists";
     private final SurveyUnitRepository surveyUnitRepository;
     private final StateDataService stateDataService;
     private final DataService dataService;
     private final CampaignExistenceService campaignExistenceService;
+    private final MetadataService metadataService;
     private final CacheManager cacheManager;
-    public static final String NOT_FOUND_MESSAGE = "Survey unit %s was not found";
-    public static final String ALREADY_EXIST_MESSAGE = "Survey unit %s already exists";
 
     @Override
     public boolean existsById(String surveyUnitId) {
@@ -176,6 +178,15 @@ public class SurveyUnitApiService implements SurveyUnitService {
         return surveyUnitRepository
                 .findWithCampaignAndStateById(surveyUnitId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, surveyUnitId)));
+    }
+
+    @Override
+    public SurveyUnitMetadata getSurveyUnitMetadata(String surveyUnitId) {
+        SurveyUnitPersonalization surveyUnitPersonalization =
+                surveyUnitRepository.getSurveyUnitPersonalization(surveyUnitId);
+        ObjectNode metadata = metadataService.getMetadataByQuestionnaireId(surveyUnitPersonalization.questionnaireId());
+
+        return SurveyUnitMetadata.create(surveyUnitPersonalization, metadata);
     }
 
     @Override
