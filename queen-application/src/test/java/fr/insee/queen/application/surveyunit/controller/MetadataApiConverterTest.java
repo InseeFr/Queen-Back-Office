@@ -75,9 +75,9 @@ class MetadataConverterTest {
             LogoDto logoDto = new LogoDto(logoUrl, logoUrl + LABEL_SUFFIX);
             if(cpt == 0) {
                 mainLogo = logoDto;
-            } else {
-                secondaryLogos.add(logoDto);
+                continue;
             }
+            secondaryLogos.add(logoDto);
         }
 
         LogoDtos logoDtos = new LogoDtos(mainLogo, secondaryLogos);

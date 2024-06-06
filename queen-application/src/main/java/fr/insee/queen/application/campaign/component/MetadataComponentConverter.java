@@ -71,9 +71,9 @@ public class MetadataComponentConverter implements MetadataConverter {
             LogoDto logo = new LogoDto(urlNode.textValue(), labelNode.textValue());
             if(mainLogo == null) {
                 mainLogo = logo;
-            } else {
-                secondaryLogos.add(logo);
+                continue;
             }
+            secondaryLogos.add(logo);
         }
         if(mainLogo == null) {
             return null;
