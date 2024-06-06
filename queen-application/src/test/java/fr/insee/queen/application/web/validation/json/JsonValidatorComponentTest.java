@@ -279,12 +279,6 @@ class JsonValidatorComponentTest {
         assertBadLength(error, "$.stateData.currentPage");
     }
 
-    private void assertBadPattern(ValidationMessage error, String instanceLocation) {
-        assertThat(error.getInstanceLocation()).hasToString(instanceLocation);
-        ValidatorTypeCode typeCode = ValidatorTypeCode.fromValue(error.getType());
-        assertThat(typeCode).isEqualTo(ValidatorTypeCode.PATTERN);
-    }
-
     private void assertBadType(ValidationMessage error, String instanceLocation) {
         assertThat(error.getInstanceLocation()).hasToString(instanceLocation);
         ValidatorTypeCode typeCode = ValidatorTypeCode.fromValue(error.getType());
