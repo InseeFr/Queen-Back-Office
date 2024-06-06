@@ -1,0 +1,20 @@
+package fr.insee.queen.application.surveyunit.dto.output;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.util.List;
+
+@Schema(name = "Logos")
+public record LogoDtos(
+        LogoDto main,
+        List<LogoDto> secondaries
+) {
+
+    public static LogoDtos createWithMainLogoOnly(LogoDto mainLogo) {
+        return new LogoDtos(mainLogo, null);
+    }
+
+    public static LogoDtos create(LogoDto mainLogo, List<LogoDto> secondaryLogos) {
+        return new LogoDtos(mainLogo, secondaryLogos);
+    }
+}

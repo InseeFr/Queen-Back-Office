@@ -3,10 +3,7 @@ package fr.insee.queen.infrastructure.db.surveyunit.repository;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
 import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
@@ -168,6 +165,11 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     @Override
     public Optional<ObjectNode> findData(String surveyUnitId) {
         return dataRepository.findData(surveyUnitId);
+    }
+
+    @Override
+    public SurveyUnitPersonalization getSurveyUnitPersonalization(String surveyUnitId) {
+        return crudRepository.getPersonalizationById(surveyUnitId);
     }
 
     @Override

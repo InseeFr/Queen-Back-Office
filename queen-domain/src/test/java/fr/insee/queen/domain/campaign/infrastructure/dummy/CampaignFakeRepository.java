@@ -15,6 +15,9 @@ public class CampaignFakeRepository implements CampaignRepository {
     @Setter
     private boolean campaignExists = true;
 
+    @Setter
+    private ObjectNode metadata;
+
     public static final String QUESTIONNAIRE_LINKED_ID = "id-questionnaire1";
 
     public static final String CAMPAIGN_ID = "id-campaign";
@@ -56,11 +59,17 @@ public class CampaignFakeRepository implements CampaignRepository {
 
     @Override
     public Optional<ObjectNode> findMetadataByCampaignId(String campaignId) {
+        if(metadata != null) {
+            return Optional.of(metadata);
+        }
         return Optional.empty();
     }
 
     @Override
     public Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId) {
+        if(metadata != null) {
+            return Optional.of(metadata);
+        }
         return Optional.empty();
     }
 }

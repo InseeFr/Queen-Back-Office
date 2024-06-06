@@ -1,4 +1,18 @@
 {
+  "logos": [
+    {
+      "url": "https://insee.fr/logo1.png",
+      "label": "logo1"
+    },
+    {
+      "url":"https://insee.fr/logo2.png",
+      "label":"logo2"
+    },
+    {
+      "url":"https://insee.fr/logo3.png",
+      "label":"logo3"
+    }
+  ],
   "variables":[
     {
       "name":"Enq_LibelleEnquete",
