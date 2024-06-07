@@ -53,11 +53,13 @@ public class DepositProofController {
     @Parameter(name = "userId", hidden = true)
     @GetMapping(value = "/survey-unit/{id}/deposit-proof")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    @ApiResponse(responseCode = "200", headers = {
-            @Header(name="Content-Disposition",
-                    schema = @Schema(format = "binary", type="string", example = "form-data; name=\"attachment\"; filename=\"deposit.pdf\"") ) },
-            content = {@Content(mediaType = "application/pdf")
-    })
+    @ApiResponse(responseCode = "200",
+            headers = {
+                @Header(name="Content-Disposition",
+                    schema = @Schema(type="string", example = "form-data; name=\"attachment\"; filename=\"deposit.pdf\"") )
+            },
+            content = {@Content(mediaType = "application/pdf", schema = @Schema(format = "binary", type="string"))}
+    )
     public ResponseEntity<FileSystemResource> generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                                                    @CurrentSecurityContext(expression = "authentication.name")
                                      String userId) {
