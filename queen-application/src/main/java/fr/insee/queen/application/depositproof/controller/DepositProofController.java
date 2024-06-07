@@ -8,10 +8,6 @@ import fr.insee.queen.domain.depositproof.service.DepositProofService;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.headers.Header;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,13 +49,6 @@ public class DepositProofController {
     @Parameter(name = "userId", hidden = true)
     @GetMapping(value = "/survey-unit/{id}/deposit-proof")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    @ApiResponse(responseCode = "200",
-            headers = {
-                @Header(name="Content-Disposition",
-                    schema = @Schema(type="string", example = "form-data; name=\"attachment\"; filename=\"deposit.pdf\"") )
-            },
-            content = {@Content(mediaType = "application/pdf", schema = @Schema(format = "binary", type="string"))}
-    )
     public ResponseEntity<FileSystemResource> generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                                                    @CurrentSecurityContext(expression = "authentication.name")
                                      String userId) {
