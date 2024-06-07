@@ -19,4 +19,5 @@
 	<!-- handle migrations of comments/datas/personalization sto surveyu_unit table -->
 	<include file="changelog/500_add_fields_to_paradataevent.xml" relativeToChangelogFile="true"/>
 	<include file="changelog/501_migrate_data_to_new_fields.sql" relativeToChangelogFile="true"/>
+	<include file="changelog/600_unique_constraints.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

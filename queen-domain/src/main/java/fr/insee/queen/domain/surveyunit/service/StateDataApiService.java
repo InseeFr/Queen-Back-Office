@@ -7,6 +7,7 @@ import fr.insee.queen.domain.surveyunit.model.StateData;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ public class StateDataApiService implements StateDataService {
     }
 
     @Override
+    @Transactional
     public void saveStateData(String surveyUnitId, StateData stateData) throws StateDataInvalidDateException {
         Optional<StateData> previousStateData = stateDataRepository.find(surveyUnitId);
         if (previousStateData.isEmpty()) {

@@ -5,6 +5,7 @@ import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +20,7 @@ public class CommentApiService implements CommentService {
     }
 
     @Override
+    @Transactional
     public void updateComment(String surveyUnitId, ObjectNode commentValue) {
         surveyUnitRepository.saveComment(surveyUnitId, commentValue);
     }
