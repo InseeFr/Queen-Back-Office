@@ -55,7 +55,7 @@ public class DepositProofController {
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     @ApiResponse(responseCode = "200", headers = {
             @Header(name="Content-Disposition",
-                    schema = @Schema(type="string", example = "form-data; name=\"attachment\"; filename=\"deposit.pdf\"") ) },
+                    schema = @Schema(format = "binary", type="string", example = "form-data; name=\"attachment\"; filename=\"deposit.pdf\"") ) },
             content = {@Content(mediaType = "application/pdf")
     })
     public ResponseEntity<FileSystemResource> generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
