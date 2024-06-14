@@ -51,8 +51,13 @@ class SurveyUnitsTempZoneTests {
                     }
                   },
                   "comment": {"plip": "plop"},
-                  "personalization": [{},{}],
-                  "questionnaireId":"questionnaire-11"
+                  "personalization": [{"name": "name", "value": "value"}],
+                  "questionnaireId":"questionnaire-11",
+                  "stateData": {
+                    "state": "EXTRACTED",
+                    "date": 123456789,
+                    "currentPage": "2.3"
+                  }
                 }""";
         mockMvc.perform(post("/api/survey-unit/" + surveyUnitId + "/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)

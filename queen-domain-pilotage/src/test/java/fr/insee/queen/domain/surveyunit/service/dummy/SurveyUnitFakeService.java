@@ -105,6 +105,11 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
+    public SurveyUnitMetadata getSurveyUnitMetadata(String surveyUnitId) {
+        return null;
+    }
+
+    @Override
     public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
         return new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id");
     }

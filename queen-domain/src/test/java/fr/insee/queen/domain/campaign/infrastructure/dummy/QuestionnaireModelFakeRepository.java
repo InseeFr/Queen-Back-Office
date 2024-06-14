@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.campaign.infrastructure.dummy;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import lombok.Setter;
@@ -19,7 +20,7 @@ public class QuestionnaireModelFakeRepository implements QuestionnaireModelRepos
     }
 
     @Override
-    public Optional<String> findQuestionnaireData(String questionnaireId) {
+    public Optional<ObjectNode> findQuestionnaireData(String questionnaireId) {
         return Optional.empty();
     }
 
@@ -30,12 +31,12 @@ public class QuestionnaireModelFakeRepository implements QuestionnaireModelRepos
 
     @Override
     public void create(QuestionnaireModel questionnaireData) {
-
+        // not used at this moment
     }
 
     @Override
     public void update(QuestionnaireModel questionnaireData) {
-
+        // not used at this moment
     }
 
     @Override
@@ -45,11 +46,11 @@ public class QuestionnaireModelFakeRepository implements QuestionnaireModelRepos
 
     @Override
     public void deleteAllFromCampaign(String campaignId) {
-
+        // not used at this moment
     }
 
     @Override
-    public List<String> findAllQuestionnaireDatas(String campaignId) {
+    public List<ObjectNode> findAllQuestionnaireDatas(String campaignId) {
         return null;
     }
 }

@@ -1,10 +1,15 @@
 package fr.insee.queen.application.campaign.controller;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.application.campaign.dto.input.NomenclatureCreationData;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.web.validation.IdValid;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.campaign.service.NomenclatureService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -46,14 +51,14 @@ public class NomenclatureController {
      * Retrieve a nomenclature
      *
      * @param nomenclatureId the id of nomenclature
-     * @return {@link String} the nomenclature in json format
+     * @return {@link ArrayNode} the nomenclature in json format
      */
     @Operation(summary = "Get Nomenclature")
     @GetMapping(path = "/nomenclature/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getNomenclatureById(@IdValid @PathVariable(value = "id") String nomenclatureId) {
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.NOMENCLATURE))})
+    public ArrayNode getNomenclatureById(@IdValid @PathVariable(value = "id") String nomenclatureId) {
         return nomenclatureService.getNomenclature(nomenclatureId).value();
-
     }
 
     /**

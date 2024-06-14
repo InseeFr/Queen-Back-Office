@@ -3,6 +3,7 @@ package fr.insee.queen.application.configuration.auth;
 import fr.insee.queen.application.configuration.properties.OidcProperties;
 import fr.insee.queen.application.configuration.properties.RoleProperties;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,14 +14,16 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class GrantedAuthorityConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
+    public static final String REALM_ACCESS = "realm_access";
+    public static final String ROLES = "roles";
+
     private final OidcProperties oidcProperties;
     private final RoleProperties roleProperties;
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Collection<GrantedAuthority> convert(Jwt jwt) {
-        Map<String, Object> claims = jwt.getClaims();
-        List<String> roles = (List<String>) claims.get(oidcProperties.roleClaim());
+    public Collection<GrantedAuthority> convert(@NonNull Jwt jwt) {
+        List<String> roles = getRoles(jwt);
+
         return roles.stream()
                 .map(role -> {
                     if(role == null || role.isEmpty()) {
@@ -48,5 +51,16 @@ public class GrantedAuthorityConverter implements Converter<Jwt, Collection<Gran
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> getRoles(Jwt jwt) {
+        Map<String, Object> claims = jwt.getClaims();
+
+        if(oidcProperties.roleClaim().isEmpty()) {
+            Map<String, Object> realmAccess = jwt.getClaim(REALM_ACCESS);
+            return (List<String>) realmAccess.get(ROLES);
+        }
+        return (List<String>) claims.get(oidcProperties.roleClaim());
     }
 }

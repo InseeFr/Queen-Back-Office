@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nomenclature schema",
+  "description": "Validation of nomenclatures for a survey unit",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/nomenclature"
+  },
+  "$defs": {
+    "nomenclature": {
+      "type": "object",
+      "properties" : {
+        "id" : {
+          "type": "string"
+        },
+        "label" : {
+          "type": "string"
+        }
+      },
+      "required": ["id", "label"],
+      "additionalProperties": true
+    }
+  }
+}

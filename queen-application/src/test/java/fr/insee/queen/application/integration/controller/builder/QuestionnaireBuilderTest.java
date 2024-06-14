@@ -5,6 +5,7 @@ import fr.insee.queen.application.integration.component.builder.IntegrationQuest
 import fr.insee.queen.application.integration.component.builder.schema.SchemaIntegrationComponent;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.integration.service.dummy.IntegrationFakeService;
+import fr.insee.queen.application.web.validation.json.JsonValidatorComponent;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import jakarta.validation.Validation;
@@ -35,7 +36,7 @@ class QuestionnaireBuilderTest {
         Locale.setDefault(Locale.of("en", "US"));
         ObjectMapper objectMapper = new ObjectMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper);
+        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper, new JsonValidatorComponent());
         IntegrationFakeService integrationService = new IntegrationFakeService();
         questionnaireBuilder = new IntegrationQuestionnaireBuilder(schemaComponent, validator, integrationService, objectMapper);
     }
@@ -71,7 +72,7 @@ class QuestionnaireBuilderTest {
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
-        IntegrationResultUnitDto errorResult = resultErrors.get(0);
+        IntegrationResultUnitDto errorResult = resultErrors.getFirst();
         assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.getId()).isEqualTo(questionnaireId);
         assertThat(errorResult.getCause()).contains("idQuestionnaireModel: The identifier is invalid.");
@@ -91,7 +92,7 @@ class QuestionnaireBuilderTest {
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
                 .toList();
         assertThat(resultErrors).hasSize(1);
-        IntegrationResultUnitDto errorResult = resultErrors.get(0);
+        IntegrationResultUnitDto errorResult = resultErrors.getFirst();
         assertThat(errorResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(errorResult.getId()).isEqualTo("simpson-v2");
         assertThat(errorResult.getCause()).contains(String.format(IntegrationResultLabel.QUESTIONNAIRE_FILE_NOT_FOUND, "simpsons-v2.json"));
@@ -106,7 +107,7 @@ class QuestionnaireBuilderTest {
 
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, isXmlIntegration);
         assertThat(results).hasSize(1);
-        IntegrationResultUnitDto questionnaireResult = results.get(0);
+        IntegrationResultUnitDto questionnaireResult = results.getFirst();
         assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(questionnaireResult.getId()).isNull();
         assertThat(questionnaireResult.getCause())
@@ -123,7 +124,7 @@ class QuestionnaireBuilderTest {
 
         List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, isXmlIntegration);
         assertThat(results).hasSize(1);
-        IntegrationResultUnitDto questionnaireResult = results.get(0);
+        IntegrationResultUnitDto questionnaireResult = results.getFirst();
         assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(questionnaireResult.getId()).isNull();
         assertThat(questionnaireResult.getCause())

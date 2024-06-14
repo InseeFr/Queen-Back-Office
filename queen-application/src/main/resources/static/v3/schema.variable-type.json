@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Variable type schema use in external/calculated/collected data",
+  "description": "Validation of variables values in survey unit data",
+  "anyOf": [
+    {
+      "type": "string"
+    },
+    {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    {
+      "type": "number"
+    },
+    {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    {
+      "type": "boolean"
+    },
+    {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      }
+    },
+    {
+      "type": "null"
+    },
+    {
+      "type": "array",
+      "items": {
+        "type": "null"
+      }
+    }
+  ]
+}

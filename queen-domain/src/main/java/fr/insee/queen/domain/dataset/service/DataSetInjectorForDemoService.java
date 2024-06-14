@@ -231,7 +231,7 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
         }
 
         log.info("Create Campaign {}", id);
-        Campaign campaign = new Campaign(id, label, new HashSet<>(questionnaireIds), jsonMetadata.toString());
+        Campaign campaign = new Campaign(id, label, new HashSet<>(questionnaireIds), jsonMetadata);
         campaignService.createCampaign(campaign);
     }
 
@@ -240,7 +240,7 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
             return;
         }
         log.info("Create Questionnaire {}", id);
-        QuestionnaireModel qm = QuestionnaireModel.createQuestionnaireWithoutCampaign(id, label, jsonQm.toString(), new HashSet<>(nomenclatureIds));
+        QuestionnaireModel qm = QuestionnaireModel.createQuestionnaireWithoutCampaign(id, label, jsonQm, new HashSet<>(nomenclatureIds));
         questionnaireModelService.createQuestionnaire(qm);
     }
 
@@ -249,7 +249,7 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
             return;
         }
         log.info("Create nomenclature {}", id);
-        Nomenclature nomenclature = new Nomenclature(id, label, jsonNomenclature.toString());
+        Nomenclature nomenclature = new Nomenclature(id, label, jsonNomenclature);
         nomenclatureService.saveNomenclature(nomenclature);
     }
 
@@ -282,9 +282,9 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
         SurveyUnit surveyunit = new SurveyUnit(surveyUnitId,
                 campaignId,
                 questionnaireModelId,
-                personalization.toString(),
-                data.toString(),
-                comment.toString(),
+                personalization,
+                data,
+                comment,
                 stateData);
         try {
             surveyUnitService.createSurveyUnit(surveyunit);
@@ -297,8 +297,8 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
         log.info("Create paradata for survey unit {}", surveyUnitId);
         ObjectNode rootNode = JsonNodeFactory.instance.objectNode();
         rootNode.set("idSU", JsonNodeFactory.instance.textNode(surveyUnitId));
-        paradataEventService.createParadataEvent(surveyUnitId, rootNode.toString());
-        paradataEventService.createParadataEvent(surveyUnitId, rootNode.toString());
+        paradataEventService.createParadataEvent(surveyUnitId, rootNode);
+        paradataEventService.createParadataEvent(surveyUnitId, rootNode);
     }
 
     private ArrayNode getPersonalizationValue() {

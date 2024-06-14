@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.campaign.infrastructure.dummy;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
@@ -14,13 +15,16 @@ public class CampaignFakeRepository implements CampaignRepository {
     @Setter
     private boolean campaignExists = true;
 
-    public final static String QUESTIONNAIRE_LINKED_ID = "id-questionnaire1";
+    @Setter
+    private ObjectNode metadata;
 
-    public final static String CAMPAIGN_ID = "id-campaign";
+    public static final String QUESTIONNAIRE_LINKED_ID = "id-questionnaire1";
+
+    public static final String CAMPAIGN_ID = "id-campaign";
 
     @Override
     public void create(Campaign campaign) {
-
+        // not used at this moment
     }
 
     @Override
@@ -35,7 +39,7 @@ public class CampaignFakeRepository implements CampaignRepository {
 
     @Override
     public void delete(String campaignId) {
-
+        // not used at this moment
     }
 
     @Override
@@ -50,16 +54,22 @@ public class CampaignFakeRepository implements CampaignRepository {
 
     @Override
     public void update(Campaign campaign) {
-
+        // not used at this moment
     }
 
     @Override
-    public Optional<String> findMetadataByCampaignId(String campaignId) {
+    public Optional<ObjectNode> findMetadataByCampaignId(String campaignId) {
+        if(metadata != null) {
+            return Optional.of(metadata);
+        }
         return Optional.empty();
     }
 
     @Override
-    public Optional<String> findMetadataByQuestionnaireId(String questionnaireId) {
+    public Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId) {
+        if(metadata != null) {
+            return Optional.of(metadata);
+        }
         return Optional.empty();
     }
 }

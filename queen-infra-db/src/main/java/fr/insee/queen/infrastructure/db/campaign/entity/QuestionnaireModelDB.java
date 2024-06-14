@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.entity;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,7 +41,7 @@ public class QuestionnaireModelDB {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String value;
+    private ObjectNode value;
 
     /**
      * required nomenclatures for the questionnaire
@@ -56,7 +57,7 @@ public class QuestionnaireModelDB {
     @ManyToOne
     private CampaignDB campaign;
 
-    public QuestionnaireModelDB(String id, String label, String value, Set<NomenclatureDB> nomenclatures) {
+    public QuestionnaireModelDB(String id, String label, ObjectNode value, Set<NomenclatureDB> nomenclatures) {
         this.id = id;
         this.label = label;
         this.value = value;

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Collected data schema",
+  "description": "Validation of survey unit collected data",
+  "type": "object",
+  "patternProperties": {
+    "^.*$": {
+      "$ref": "#/$defs/collected_values"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "collected_values": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "COLLECTED": {
+          "$ref": "schema.variable-type.json#"
+        },
+        "EDITED": {
+          "$ref": "schema.variable-type.json#"
+        },
+        "FORCED": {
+          "$ref": "schema.variable-type.json#"
+        },
+        "INPUTED": {
+          "$ref": "schema.variable-type.json#"
+        },
+        "INPUTTED": {
+          "$ref": "schema.variable-type.json#"
+        },
+        "PREVIOUS": {
+          "$ref": "schema.variable-type.json#"
+        }
+      }
+    }
+  }
+}

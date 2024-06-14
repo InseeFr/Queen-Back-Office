@@ -49,7 +49,7 @@ class NomenclatureCacheTests {
         String nomenclatureId = "nomenclature-cache-id";
 
         // create nomenclature
-        nomenclatureService.saveNomenclature(new Nomenclature(nomenclatureId, "label", JsonNodeFactory.instance.arrayNode().toString()));
+        nomenclatureService.saveNomenclature(new Nomenclature(nomenclatureId, "label", JsonNodeFactory.instance.arrayNode()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.NOMENCLATURE)).get(nomenclatureId)).isNull();
 
         // when retrieving nomenclature, cache is created
@@ -58,7 +58,7 @@ class NomenclatureCacheTests {
         assertThat(nomenclature).isEqualTo(nomenclatureCache);
 
         // when updating nomenclature, cache is evicted
-        nomenclatureService.saveNomenclature(new Nomenclature(nomenclatureId, "label2", JsonNodeFactory.instance.arrayNode().toString()));
+        nomenclatureService.saveNomenclature(new Nomenclature(nomenclatureId, "label2", JsonNodeFactory.instance.arrayNode()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.NOMENCLATURE)).get(nomenclatureId)).isNull();
 
         // when retrieving nomenclature, cache is created

@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.repository.jpa;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,7 +32,7 @@ public interface QuestionnaireModelJpaRepository extends JpaRepository<Questionn
      * @return all questionnaire values for a campaign
      */
     @Query(value = "select qm.value from QuestionnaireModelDB qm where qm.campaign.id=:campaignId")
-    List<String> findAllValueByCampaignId(String campaignId);
+    List<ObjectNode> findAllValueByCampaignId(String campaignId);
 
     /**
      * Find data structure for a questionnaire
@@ -40,7 +41,7 @@ public interface QuestionnaireModelJpaRepository extends JpaRepository<Questionn
      * @return questionnaire data for a campaign
      */
     @Query(value = "select qm.value from QuestionnaireModelDB qm where qm.id=:questionnaireId")
-    Optional<String> findQuestionnaireData(String questionnaireId);
+    Optional<ObjectNode> findQuestionnaireData(String questionnaireId);
 
     /**
      * Count valid questionnaires for a campaign

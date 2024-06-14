@@ -10,17 +10,17 @@ public class DataFakeService implements DataService {
     private JsonNode dataSaved = null;
 
     @Override
-    public String getData(String surveyUnitId) {
+    public ObjectNode getData(String surveyUnitId) {
         return null;
     }
 
     @Override
-    public void saveData(String surveyUnitId, JsonNode dataValue) {
+    public void saveData(String surveyUnitId, ObjectNode dataValue) {
         dataSaved = dataValue;
     }
 
     @Override
     public void updateCollectedData(String surveyUnitId, ObjectNode collectedData) {
-
+        dataSaved = collectedData;
     }
 }

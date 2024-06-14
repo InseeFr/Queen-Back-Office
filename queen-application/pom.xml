@@ -8,7 +8,7 @@
 		<version>${revision}${changelist}</version>
 	</parent>
 	<artifactId>queen-application</artifactId>
-	<name>queen-application</name>
+	<name>queen-api</name>
 	<description>API for Queen/Stromae</description>
 
 	<properties>

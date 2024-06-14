@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.repository.jpa;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,22 +32,22 @@ public interface CampaignJpaRepository extends JpaRepository<CampaignDB, String>
     /**
      * Retrieve the metadata json value of a campaign
      * @param campaignId campaign id
-     * @return {@link String} json metadata value
+     * @return {@link ObjectNode} json metadata value
      */
     @Query("""
             select c.metadata.value
             from CampaignDB c where c.id=:campaignId""")
-    Optional<String> findMetadataByCampaignId(String campaignId);
+    Optional<ObjectNode> findMetadataByCampaignId(String campaignId);
 
     /**
      * Retrieve the metadata json value of a campaign byt the questionnaire id
      *
      * @param questionnaireId questionnaire id
-     * @return {@link String} json metadata value
+     * @return {@link ObjectNode} json metadata value
      */
     @Query("""
             select c.metadata.value
             from CampaignDB c INNER JOIN c.questionnaireModels qm
             where qm.id=:questionnaireId""")
-    Optional<String> findMetadataByQuestionnaireId(String questionnaireId);
+    Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
 }

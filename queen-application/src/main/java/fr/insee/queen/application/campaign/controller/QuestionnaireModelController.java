@@ -1,5 +1,6 @@
 package fr.insee.queen.application.campaign.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.campaign.dto.input.QuestionnaireModelCreationData;
 import fr.insee.queen.application.campaign.dto.output.QuestionnaireModelIdDto;
 import fr.insee.queen.application.campaign.dto.output.QuestionnaireModelValueDto;
@@ -55,6 +56,7 @@ public class QuestionnaireModelController {
     }
 
     /**
+     * @deprecated
      * Retrieve the data structure of a questionnaire
      *
      * @param questionnaireModelId the id of questionnaire
@@ -63,8 +65,22 @@ public class QuestionnaireModelController {
     @Operation(summary = "Get questionnnaire")
     @GetMapping(path = "/questionnaire/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public QuestionnaireModelValueDto getQuestionnaireData(@IdValid @PathVariable(value = "id") String questionnaireModelId) {
-        return new QuestionnaireModelValueDto(questionnaireModelService.getQuestionnaireData(questionnaireModelId));
+    @Deprecated(since = "4.2.12")
+    public QuestionnaireModelValueDto getQuestionnaireValue(@IdValid @PathVariable(value = "id") String questionnaireModelId) {
+        return new QuestionnaireModelValueDto(getQuestionnaireData(questionnaireModelId));
+    }
+
+    /**
+     * Retrieve the data structure of a questionnaire
+     *
+     * @param questionnaireModelId the id of questionnaire
+     * @return the data linked to the questionnaire
+     */
+    @Operation(summary = "Get questionnnaire data")
+    @GetMapping(path = "/questionnaire/{id}/data")
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
+    public ObjectNode getQuestionnaireData(@IdValid @PathVariable(value = "id") String questionnaireModelId) {
+        return questionnaireModelService.getQuestionnaireData(questionnaireModelId);
     }
 
     /**

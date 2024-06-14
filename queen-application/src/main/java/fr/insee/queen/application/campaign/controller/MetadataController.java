@@ -1,9 +1,14 @@
 package fr.insee.queen.application.campaign.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.web.validation.IdValid;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.campaign.service.MetadataService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +41,8 @@ public class MetadataController {
     @Operation(summary = "Get metadata for a campaign ")
     @GetMapping(path = "/campaign/{id}/metadata")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId) {
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.METADATA))})
+    public ObjectNode getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId) {
         return metadataService.getMetadata(campaignId);
     }
 
@@ -49,7 +55,8 @@ public class MetadataController {
     @Operation(summary = "Get metadata for a questionnaire ")
     @GetMapping(path = "/questionnaire/{id}/metadata")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.METADATA))})
+    public ObjectNode getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
         return metadataService.getMetadataByQuestionnaireId(questionnaireId);
     }
 }

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Personalization schema",
+  "description": "Validation of personalizations for a survey unit",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/personalization"
+  },
+  "$defs": {
+    "personalization": {
+      "type": "object",
+      "properties" : {
+        "name" : {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "value"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -35,7 +35,7 @@ INSERT INTO public.campaign VALUES ('LOG2021X11Tel', 'Enquête Logement 2022 - S
 
 INSERT INTO public.metadata VALUES ('6ce93fc8-1abd-4da3-b251-805943948954', '{}', 'SIMPSONS2020X00');
 INSERT INTO public.metadata VALUES ('0fb58fa2-e26a-4a68-9ca7-6ec63bb2fb71', '{}', 'VQS2021X00');
-INSERT INTO public.metadata VALUES ('09a6cf03-2998-4451-9cc0-522b7c7f423a', '{"variables": [{"name": "Enq_LibelleEnquete", "value": "Enquête logement pour la recette technique"}, {"name": "Enq_ObjectifsCourts", "value": "Cette enquête permet de connaître votre logement mais surtout nos applis"}, {"name": "Enq_CaractereObligatoire", "value": true}, {"name": "Enq_NumeroVisa", "value": "2021A054EC"}, {"name": "Enq_MinistereTutelle", "value": "de l''Économie, des Finances et de la Relance"}, {"name": "Enq_ParutionJo", "value": true}, {"name": "Enq_DateParutionJo", "value": "23/11/2020"}, {"name": "Enq_RespOperationnel", "value": "L’Institut national de la statistique et des études économiques (Insee)"}, {"name": "Enq_RespTraitement", "value": "l''Insee"}, {"name": "Enq_AnneeVisa", "value": "2021"}, {"name": "Loi_statistique", "value": "https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000888573"}, {"name": "Loi_rgpd", "value": "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32016R0679"}, {"name": "Loi_informatique", "value": "https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000886460"}], "inseeContext": "household"}', 'LOG2021X11Web');
+INSERT INTO public.metadata VALUES ('09a6cf03-2998-4451-9cc0-522b7c7f423a', '{  "logos": [{"url": "https://insee.fr/logo1.png","label": "logo1"},{"url":"https://insee.fr/logo2.png","label":"logo2"},{"url":"https://insee.fr/logo3.png","label":"logo3"}],"variables": [{"name": "Enq_LibelleEnquete", "value": "Enquête logement pour la recette technique"}, {"name": "Enq_ObjectifsCourts", "value": "Cette enquête permet de connaître votre logement mais surtout nos applis"}, {"name": "Enq_CaractereObligatoire", "value": true}, {"name": "Enq_NumeroVisa", "value": "2021A054EC"}, {"name": "Enq_MinistereTutelle", "value": "de l''Économie, des Finances et de la Relance"}, {"name": "Enq_ParutionJo", "value": true}, {"name": "Enq_DateParutionJo", "value": "23/11/2020"}, {"name": "Enq_RespOperationnel", "value": "L’Institut national de la statistique et des études économiques (Insee)"}, {"name": "Enq_RespTraitement", "value": "l''Insee"}, {"name": "Enq_AnneeVisa", "value": "2021"}, {"name": "Loi_statistique", "value": "https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000888573"}, {"name": "Loi_rgpd", "value": "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32016R0679"}, {"name": "Loi_informatique", "value": "https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000886460"}], "inseeContext": "household"}', 'LOG2021X11Web');
 INSERT INTO public.metadata VALUES ('186d53db-a653-44f2-abda-f0f1d1cddfe2', '{}', 'LOG2021X11Tel');
 
 --
@@ -47,9 +47,9 @@ INSERT INTO public.metadata VALUES ('186d53db-a653-44f2-abda-f0f1d1cddfe2', '{}'
 INSERT INTO public.nomenclature VALUES ('L_PAYSNAIS', 'pays', '[{"id": "001", "label": "FRANCE", "codenum": "250", "codealpha": "FRA", "libelle_cog": "FRANCE"}, {"id": "002", "label": "BELGIQUE", "codenum": "056", "codealpha": "BEL", "libelle_cog": "BELGIQUE"}]');
 INSERT INTO public.nomenclature VALUES ('L_DEPNAIS', 'départements français', '[{"id": "01", "label": "AIN (01)"}, {"id": "02", "label": "AISNE (02)"}]');
 INSERT INTO public.nomenclature VALUES ('cog-communes', 'communes françaises', '[{"id": "10002", "label": "Ailleville", "nccenr": "Ailleville"}, {"id": "10003", "label": "Aix-en-Othe", "nccenr": "Aix-en-Othe"}]');
-INSERT INTO public.nomenclature VALUES ('cities2019', 'french cities 2019', '[{"arr": "012", "can": "0108", "com": "01001", "dep": "01", "ncc": "ABERGEMENT CLEMENCIAT", "reg": 84, "tncc": 5, "nccenr": "Abergement-Clémenciat", "libelle": "L''Abergement-Clémenciat", "typecom": "COM", "comparent": ""}, {"arr": "011", "can": "0101", "com": "01002", "dep": "01", "ncc": "ABERGEMENT DE VAREY", "reg": 84, "tncc": 5, "nccenr": "Abergement-de-Varey", "libelle": "L''Abergement-de-Varey", "typecom": "COM", "comparent": ""}]');
-INSERT INTO public.nomenclature VALUES ('regions2019', 'french regions 2019', '[{"ncc": "GUADELOUPE", "reg": "01", "tncc": 3, "nccenr": "Guadeloupe", "libelle": "Guadeloupe", "cheflieu": 97105}, {"ncc": "MARTINIQUE", "reg": "02", "tncc": 3, "nccenr": "Martinique", "libelle": "Martinique", "cheflieu": 97209}]');
-INSERT INTO public.nomenclature VALUES ('L_NATIONETR', 'nationalités', '[{"id": "001", "label": "FRANCAISE", "codenum": "250", "libelle": "FRANCAISE", "codealpha": "FRA"}, {"id": "002", "label": "BELGE", "codenum": "056", "libelle": "BELGE", "codealpha": "BEL"}, {"id": "003", "label": "NEERLANDAISE, HOLLANDAISE", "codenum": "528", "libelle": "NEERLANDAISE", "codealpha": "NLD"}, {"id": "004", "label": "ALLEMANDE", "codenum": "276", "libelle": "ALLEMANDE", "codealpha": "DEU"}]');
+INSERT INTO public.nomenclature VALUES ('cities2019', 'french cities 2019', '[{"id": "012", "can": "0108", "com": "01001", "dep": "01", "ncc": "ABERGEMENT CLEMENCIAT", "reg": 84, "tncc": "5", "nccenr": "Abergement-Clémenciat", "label": "L''Abergement-Clémenciat", "typecom": "COM", "comparent": ""}, {"id": "011", "can": "0101", "com": "01002", "dep": "01", "ncc": "ABERGEMENT DE VAREY", "reg": 84, "tncc": "5", "nccenr": "Abergement-de-Varey", "label": "L''Abergement-de-Varey", "typecom": "COM", "comparent": ""}]');
+INSERT INTO public.nomenclature VALUES ('regions2019', 'french regions 2019', '[{"id": "GUADELOUPE", "reg": "01", "tncc": "3", "nccenr": "Guadeloupe", "label": "Guadeloupe", "cheflieu": "97105"}, {"id": "MARTINIQUE", "reg": "02", "tncc": "3", "nccenr": "Martinique", "label": "Martinique", "cheflieu": "97209"}]');
+INSERT INTO public.nomenclature VALUES ('L_NATIONETR', 'nationalités', '[{"id": "001", "label": "FRANCAISE", "codenum": "250", "label": "FRANCAISE", "codealpha": "FRA"}, {"id": "002", "label": "BELGE", "codenum": "056", "label": "BELGE", "codealpha": "BEL"}, {"id": "003", "label": "NEERLANDAISE, HOLLANDAISE", "codenum": "528", "label": "NEERLANDAISE", "codealpha": "NLD"}, {"id": "004", "label": "ALLEMANDE", "codenum": "276", "label": "ALLEMANDE", "codealpha": "DEU"}]');
 
 --
 -- TOC entry 3403 (class 0 OID 16419)
@@ -105,6 +105,8 @@ INSERT INTO public.survey_unit VALUES ('LOG2021X11Web-03', 'LOG2021X11Web', 'LOG
 INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_01', 'LOG2021X11Tel', 'LOG2021X11Tel');
 INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_02', 'LOG2021X11Tel', 'LOG2021X11Tel');
 INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_03', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.survey_unit VALUES ('su-test-diff-data', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.survey_unit VALUES ('su-test-diff-without-collected-data', 'LOG2021X11Tel', 'LOG2021X11Tel');
 
 --
 -- TOC entry 3399 (class 0 OID 16396)
@@ -126,6 +128,8 @@ INSERT INTO public.comment VALUES ('d8b683e0-850e-487f-bc8d-6f3c9440e32b', '{}',
 INSERT INTO public.comment VALUES ('d6f92b88-0b80-41dc-a1b3-e69b2fb71846', '{}', 'LOG2021X11Tel_01');
 INSERT INTO public.comment VALUES ('70ee3af3-fd2c-4745-b0bb-73124fa016b8', '{}', 'LOG2021X11Tel_02');
 INSERT INTO public.comment VALUES ('833b5a5d-845e-4b3e-a725-d444907ee476', '{}', 'LOG2021X11Tel_03');
+INSERT INTO public.comment VALUES ('692a1749-e293-4bcf-8456-4fb8edc9a5a8', '{}', 'su-test-diff-data');
+INSERT INTO public.comment VALUES ('692a1749-e293-4bcf-8456-4fb8edc9a5a9', '{}', 'su-test-diff-without-collected-data');
 
 
 --
@@ -142,6 +146,8 @@ INSERT INTO public.data VALUES ('e9e97450-ef9c-4f49-9375-adf11b6a158b', '{}', '2
 INSERT INTO public.data VALUES ('42dc1400-0a36-4c20-8742-115e22c42369', '{}', '21');
 INSERT INTO public.data VALUES ('4540afba-ee51-42e4-bf74-d2346d813e89', '{}', '22');
 INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e416', '{}', '23');
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e417', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}, "READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}}}', 'su-test-diff-data');
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e418', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}}', 'su-test-diff-without-collected-data');
 INSERT INTO public.data VALUES ('27abfaed-187a-44ab-8287-af08f3bd7158', '{}', 'LOG2021X11Web-01');
 INSERT INTO public.data VALUES ('c118114a-c0be-462d-9fe9-604436bea20a', '{}', 'LOG2021X11Web-02');
 INSERT INTO public.data VALUES ('df044ba3-9abb-451e-9e4d-75ba98ace5e6', '{}', 'LOG2021X11Web-03');
@@ -191,6 +197,8 @@ INSERT INTO public.personalization VALUES ('65ec0765-4a5e-4518-be79-bc2be6b882b8
 INSERT INTO public.personalization VALUES ('fc73766c-ffb7-4443-9135-1e39939320a0', '[]', '21');
 INSERT INTO public.personalization VALUES ('d14499b0-93f2-4722-a624-47d7cafc26a6', '[]', '22');
 INSERT INTO public.personalization VALUES ('a7e878fa-d12a-4a25-bc17-08a583b0127d', '[]', '23');
+INSERT INTO public.personalization VALUES ('a7e878fa-d12a-4a25-bc17-08a583b0127e', '[]', 'su-test-diff-data');
+INSERT INTO public.personalization VALUES ('a7e878fa-d12a-4a25-bc17-08a583b0127f', '[]', 'su-test-diff-without-collected-data');
 INSERT INTO public.personalization VALUES ('eec3ae3f-ad9e-45d6-b2f8-191e19f2a571', '[]', 'LOG2021X11Web-01');
 INSERT INTO public.personalization VALUES ('3cf06171-2f86-4724-8c86-fb9b2f40286a', '[]', 'LOG2021X11Web-02');
 INSERT INTO public.personalization VALUES ('1683a6ff-3c40-47c8-8862-9c685c6f5e88', '[]', 'LOG2021X11Web-03');

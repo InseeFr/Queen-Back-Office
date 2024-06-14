@@ -58,9 +58,9 @@ class SurveyUnitCacheTests {
         SurveyUnit surveyUnit = new SurveyUnit(surveyUnitId,
                 "LOG2021X11Tel",
                 "LOG2021X11Tel",
-                JsonNodeFactory.instance.arrayNode().toString(),
-                JsonNodeFactory.instance.objectNode().toString(),
-                JsonNodeFactory.instance.objectNode().toString(),
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
                 null);
         surveyUnitService.createSurveyUnit(surveyUnit);
 
@@ -90,9 +90,9 @@ class SurveyUnitCacheTests {
         SurveyUnit surveyUnit = new SurveyUnit(surveyUnitId,
                 "LOG2021X11Tel",
                 "LOG2021X11Tel",
-                JsonNodeFactory.instance.arrayNode().toString(),
-                JsonNodeFactory.instance.objectNode().toString(),
-                JsonNodeFactory.instance.objectNode().toString(),
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
                 null);
         surveyUnitService.createSurveyUnit(surveyUnit);
 

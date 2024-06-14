@@ -174,6 +174,65 @@ class StateDataTests {
     }
 
     @Test
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void when_user_update_surveyunit_data_state_data_return_updated_state_data() throws Exception {
+        String stateData = """
+                {
+                    "state": "EXTRACTED",
+                    "date": 1111111111,
+                    "currentPage": "2.3#5"
+                }""";
+
+        String surveyUnitDataStateData = String.format("""
+            {
+                "data": {
+                    "COLLECTED": {
+                    }
+                },
+                "stateData": %s
+            }""", stateData);
+        mockMvc.perform(patch("/api/survey-unit/su-test-diff-data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitDataStateData)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk());
+
+        MvcResult result = mockMvc.perform(get("/api/survey-unit/11/state-data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitDataStateData)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        JSONAssert.assertEquals(stateData, content, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    void when_user_update_surveyunit_with_incorrect_state_data_return_400() throws Exception {
+        String surveyUnitDataStateData = """
+            {
+                "data":{},
+                    "stateData": {
+                        "state": "EACTED",
+                        "date": 1111111111,
+                        "currentPage": "2.3#5"
+                    }
+                }""";
+        mockMvc.perform(patch("/api/survey-unit/11")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(surveyUnitDataStateData)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void on_update_state_data_when_su_not_exist_return_404() throws Exception {
         String stateDataJson = JsonTestHelper.getResourceFileAsString("surveyunit/state_data.json");
         mockMvc.perform(put("/api/survey-unit/not-exist/state-data")

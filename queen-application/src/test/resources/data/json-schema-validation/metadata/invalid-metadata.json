@@ -1,0 +1,16 @@
+{
+  "variables":[
+    {
+      "name":"Enq_LibelleEnquete",
+      "value":"Enquête logement pour la recette technique"
+    },
+    {
+      "name": 1,
+      "value": 5
+    },
+    {
+      "forbidden-property": true
+    }
+  ],
+  "inseeContext": "forbidden-value"
+}

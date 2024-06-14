@@ -1,38 +1,23 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
 import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireModelJpaRepository;
+import fr.insee.queen.infrastructure.db.surveyunit.entity.*;
 import fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection;
-import fr.insee.queen.infrastructure.db.surveyunit.repository.exception.UpdateCollectedDataException;
-import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.DataJpaRepository;
-import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.PersonalizationJpaRepository;
-import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.SurveyUnitJpaRepository;
+import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.*;
 import fr.insee.queen.infrastructure.db.surveyunittempzone.repository.jpa.SurveyUnitTempZoneJpaRepository;
 import fr.insee.queen.infrastructure.db.paradata.repository.jpa.ParadataEventJpaRepository;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.CommentDB;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.DataDB;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.PersonalizationDB;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
-import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.CommentJpaRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -52,11 +37,6 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
     private final ParadataEventJpaRepository paradataEventRepository;
-    private static final String COLLECTED_DATA_ATTRIBUTE = "COLLECTED";
-    @Value("${feature.perfdata.collected.native-insert}")
-    private boolean isNativeInsert;
-
-    private final ObjectMapper mapper;
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
@@ -131,7 +111,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     }
 
     @Override
-    public void savePersonalization(String surveyUnitId, String personalization) {
+    public void savePersonalization(String surveyUnitId, ArrayNode personalization) {
         if (personalization == null) {
             return;
         }
@@ -145,7 +125,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     }
 
     @Override
-    public void saveComment(String surveyUnitId, String comment) {
+    public void saveComment(String surveyUnitId, ObjectNode comment) {
         if (comment == null) {
             return;
         }
@@ -159,7 +139,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     }
 
     @Override
-    public void saveData(String surveyUnitId, String data) {
+    public void saveData(String surveyUnitId, ObjectNode data) {
         if (data == null) {
             return;
         }
@@ -174,46 +154,26 @@ public class SurveyUnitDao implements SurveyUnitRepository {
 
     @Override
     public void updateCollectedData(String surveyUnitId, ObjectNode partialCollectedDataNode) {
-        if(isNativeInsert) {
-            dataRepository.updateCollectedData(surveyUnitId, partialCollectedDataNode.toString());
-            return;
-        }
-
-        String dataValue = dataRepository.getData(surveyUnitId);
-        ObjectNode dataNode;
-        try {
-            dataNode = mapper.readValue(dataValue, ObjectNode.class);
-        } catch (JsonProcessingException ex) {
-            log.error("Error when deserializing data from DB", ex);
-            throw new UpdateCollectedDataException();
-        }
-
-        if(!dataNode.has(COLLECTED_DATA_ATTRIBUTE)) {
-            dataNode.set(COLLECTED_DATA_ATTRIBUTE, partialCollectedDataNode);
-            dataRepository.updateData(surveyUnitId, dataNode.toString());
-            return;
-        }
-
-        ObjectNode collectedNode = (ObjectNode) dataNode.get(COLLECTED_DATA_ATTRIBUTE);
-        for (Iterator<Map.Entry<String, JsonNode>> it = partialCollectedDataNode.fields(); it.hasNext(); ) {
-            Map.Entry<String, JsonNode> field = it.next();
-            collectedNode.set(field.getKey(), field.getValue());
-        }
-        dataRepository.updateData(surveyUnitId, dataNode.toString());
+        dataRepository.updateCollectedData(surveyUnitId, partialCollectedDataNode);
     }
 
     @Override
-    public Optional<String> findComment(String surveyUnitId) {
+    public Optional<ObjectNode> findComment(String surveyUnitId) {
         return commentRepository.findComment(surveyUnitId);
     }
 
     @Override
-    public Optional<String> findData(String surveyUnitId) {
+    public Optional<ObjectNode> findData(String surveyUnitId) {
         return dataRepository.findData(surveyUnitId);
     }
 
     @Override
-    public Optional<String> findPersonalization(String surveyUnitId) {
+    public SurveyUnitPersonalization getSurveyUnitPersonalization(String surveyUnitId) {
+        return crudRepository.getPersonalizationById(surveyUnitId);
+    }
+
+    @Override
+    public Optional<ArrayNode> findPersonalization(String surveyUnitId) {
         return personalizationRepository.findPersonalization(surveyUnitId);
     }
 

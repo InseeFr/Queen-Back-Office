@@ -1,9 +1,6 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa;
 
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
 import fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,6 +32,21 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             )
             from SurveyUnitDB s where s.id=:surveyUnitId""")
     Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId);
+
+    /**
+     * Find personalization of survey unit by id
+     *
+     * @param surveyUnitId survey unit id
+     * @return {@link SurveyUnitPersonalization} survey unit summary
+     */
+    @Query("""
+            select new fr.insee.queen.domain.surveyunit.model.SurveyUnitPersonalization(
+                s.id,
+                s.questionnaireModel.id,
+                s.personalization.value
+            )
+            from SurveyUnitDB s left join s.personalization where s.id=:surveyUnitId""")
+    SurveyUnitPersonalization getPersonalizationById(String surveyUnitId);
 
     /**
      * Find all survey unit summary by campaign
