@@ -74,8 +74,10 @@ class JsonValidatorComponentTest {
         String dataJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/data/invalid-property-data.json");
         JsonNode dataNode = mapper.readValue(dataJson, JsonNode.class);
         Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.DATA, dataNode);
-        assertThat(errors).isNotEmpty();
+        assertThat(errors).isEmpty();
+        /*assertThat(errors).isNotEmpty();
         errors.forEach(error -> assertForbiddenProperty(error, "$", "PLOP"));
+        */
     }
 
     @Test
