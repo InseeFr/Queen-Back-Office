@@ -22,7 +22,7 @@ import java.util.Set;
  * @param metadata campaign metadata
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(name = "CampaignCreation")
+@Schema(name = "CampaignCreationV2")
 public record CampaignCreationDataV2(
         @IdValid
         String id,
