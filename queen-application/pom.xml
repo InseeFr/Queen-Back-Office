@@ -18,7 +18,7 @@
 		<springdoc.version>2.5.0</springdoc.version>
 		<commons-io.version>2.16.1</commons-io.version>
 		<org-json.version>20240303</org-json.version>
-		<guava.version>33.2.0-jre</guava.version>
+		<guava.version>33.2.1-jre</guava.version>
 		<json-schema-validator.version>1.4.0</json-schema-validator.version>
 	</properties>
 	<dependencyManagement>
