@@ -53,6 +53,9 @@ public class MetadataComponentConverter implements MetadataConverter {
         while(iteratorVariables.hasNext()) {
             JsonNode variableNode = iteratorVariables.next();
             JsonNode nameNode = variableNode.get(METADATA_VARIABLE_NAME);
+            if(METADATA_OBJECTIVES.equals(nameNode.textValue()) || METADATA_LABEL.equals(nameNode.textValue())) {
+                continue;
+            }
             JsonNode valueNode = variableNode.get(METADATA_VARIABLE_VALUE);
             variables.add(new MetadataVariableDto(nameNode.textValue(), mapper.convertValue(valueNode, Object.class)));
         }
@@ -87,10 +90,10 @@ public class MetadataComponentConverter implements MetadataConverter {
 
     private QuestionnaireContextDto extractMetadataContext(ObjectNode metadata) {
         JsonNode metadataValue = metadata.get(METADATA_CONTEXT);
+
         if(metadataValue == null || !metadataValue.isTextual()) {
             throw new MetadataValueNotFoundException(METADATA_CONTEXT);
         }
-        metadata.remove(METADATA_CONTEXT);
         return QuestionnaireContextDto.getQuestionnaireContext(metadataValue.textValue());
     }
 
@@ -111,7 +114,6 @@ public class MetadataComponentConverter implements MetadataConverter {
             if(!value.isTextual()) {
                 throw new MetadataValueNotFoundException(metadataKey);
             }
-            iteratorVariables.remove();
             return value.textValue();
         }
         throw new MetadataValueNotFoundException(metadataKey);
