@@ -1,6 +1,7 @@
 package fr.insee.queen.application.surveyunit.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -12,6 +13,7 @@ public enum QuestionnaireContextDto {
     BUSINESS("business");
 
     @JsonValue
+    @NotNull
     private final String label;
 
     QuestionnaireContextDto(String label) {

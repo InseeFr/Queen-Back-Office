@@ -1,11 +1,13 @@
 package fr.insee.queen.application.surveyunit.dto.output;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
 @Schema(name = "Logos")
 public record LogoDtos(
+        @NotNull
         LogoDto main,
         List<LogoDto> secondaries
 ) {
