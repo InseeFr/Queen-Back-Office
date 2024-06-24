@@ -41,7 +41,7 @@ public class NomenclatureController {
      */
     @Operation(summary = "Get all nomenclatures Ids ")
     @GetMapping(path = "/nomenclatures")
-    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<String> getNomenclaturesId() {
         return nomenclatureService.getAllNomenclatureIds();
     }

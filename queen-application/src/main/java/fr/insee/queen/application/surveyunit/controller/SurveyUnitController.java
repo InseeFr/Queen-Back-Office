@@ -92,10 +92,10 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Update survey-unit")
     @PutMapping(path = {"/survey-unit/{id}"})
-    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      @Valid @RequestBody SurveyUnitUpdateInput surveyUnitUpdateInput) {
-        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         SurveyUnit surveyUnit = SurveyUnitUpdateInput.toModel(surveyUnitId, surveyUnitUpdateInput);
         surveyUnitService.updateSurveyUnit(surveyUnit);
     }
@@ -124,10 +124,10 @@ public class SurveyUnitController {
 
     @Operation(summary = "Update survey-unit updated data/state-data")
     @PatchMapping(path = {"/survey-unit/{id}"})
-    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void updateSurveyUnitDataStateDataById(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                                   @Valid @RequestBody SurveyUnitDataStateDataUpdateInput surveyUnitUpdateInput) {
-        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         StateData stateData = StateDataInput.toModel(surveyUnitUpdateInput.stateData());
         surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitUpdateInput.data(), stateData);
     }

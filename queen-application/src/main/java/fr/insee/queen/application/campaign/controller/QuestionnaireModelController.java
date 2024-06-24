@@ -46,7 +46,7 @@ public class QuestionnaireModelController {
      */
     @Operation(summary = "Get questionnaire list for a campaign ")
     @GetMapping(path = "/campaign/{id}/questionnaires")
-    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<QuestionnaireModelValueDto> getQuestionnaireDatasByCampaignId(
             @IdValid @PathVariable(value = "id") String campaignId) {
         return questionnaireModelService
@@ -91,7 +91,7 @@ public class QuestionnaireModelController {
      */
     @Operation(summary = "Get list of questionnaire ids for a campaign")
     @GetMapping(path = "/campaign/{id}/questionnaire-id")
-    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<QuestionnaireModelIdDto> getQuestionnaireIdsByCampaignId(
             @IdValid @PathVariable(value = "id") String campaignId) {
         return questionnaireModelService
@@ -122,7 +122,7 @@ public class QuestionnaireModelController {
      */
     @Operation(summary = "Search questionnaire ids linked to survey units")
     @PostMapping(path = "/survey-units/questionnaire-model-id")
-    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public ResponseEntity<SurveyUnitOkNokDto> getQuestionnaireModelIdBySurveyUnits(
             @NotEmpty @RequestBody List<String> surveyUnitIdsToSearch) {
         List<SurveyUnitSummary> surveyUnitsFound = surveyUnitService.findSummariesByIds(surveyUnitIdsToSearch);
