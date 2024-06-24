@@ -35,7 +35,11 @@ public class CampaignApiService implements CampaignService {
     }
 
     @Transactional
-    @CacheEvict(CacheName.CAMPAIGN_EXIST)
+    @Caching(evict = {
+            @CacheEvict(CacheName.CAMPAIGN_EXIST),
+            @CacheEvict(value = CacheName.SURVEY_UNIT_EXIST, allEntries = true),
+            @CacheEvict(value = CacheName.SURVEY_UNIT_SUMMARY, allEntries = true)
+    })
     @Override
     public void delete(String campaignId) {
         surveyUnitRepository.deleteSurveyUnits(campaignId);
