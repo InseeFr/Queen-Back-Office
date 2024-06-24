@@ -62,7 +62,7 @@ public class SurveyUnitTempZoneController {
      */
     @Operation(summary = "GET all survey-units in temp-zone")
     @GetMapping(path = "/survey-units/temp-zone")
-    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<SurveyUnitTempZoneDto> getSurveyUnitsInTempZone() {
         return surveyUnitTempZoneService.getAllSurveyUnitTempZone()
                 .stream().map(SurveyUnitTempZoneDto::fromModel)

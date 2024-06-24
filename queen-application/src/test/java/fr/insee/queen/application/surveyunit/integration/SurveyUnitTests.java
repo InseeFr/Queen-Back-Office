@@ -128,7 +128,7 @@ class SurveyUnitTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitDataUpdated)
-                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.SURVEY_UNIT)))
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER)))
                 )
                 .andExpect(status().isOk());
 
@@ -220,7 +220,7 @@ class SurveyUnitTests {
 
     @Test
     void on_create_survey_unit_when_campaign_not_linked_to_questionnaire_return_400() throws Exception {
-        String surveyUnitData = """
+        String suData = """
                 {
                     "id":"test-surveyunit2",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
@@ -230,7 +230,7 @@ class SurveyUnitTests {
         mockMvc.perform(post("/api/campaign/VQS2021X00/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(surveyUnitData)
+                        .content(suData)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());

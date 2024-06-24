@@ -59,7 +59,7 @@ public class DataController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                     schema = @Schema(ref = SchemaType.Names.DATA))))
     @PutMapping(path = "/survey-unit/{id}/data")
-    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void updateData(
             @NotNull
             @RequestBody
