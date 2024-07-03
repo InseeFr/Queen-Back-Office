@@ -23,6 +23,8 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     private boolean checkSurveyUnitNotExist = false;
     @Getter
     private boolean checkSurveyUnitUpdate = false;
+    @Getter
+    private SurveyUnit surveyUnitUpdated;
 
     @Getter
     private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
@@ -63,6 +65,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public void updateSurveyUnit(SurveyUnit surveyUnit) {
+        surveyUnitUpdated = surveyUnit;
         checkSurveyUnitUpdate = true;
     }
 

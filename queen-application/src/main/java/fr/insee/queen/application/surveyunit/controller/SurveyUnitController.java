@@ -1,6 +1,6 @@
 package fr.insee.queen.application.surveyunit.controller;
 
-import fr.insee.queen.application.campaign.component.MetadataComponentConverter;
+import fr.insee.queen.application.campaign.component.MetadataConverter;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
@@ -41,7 +41,7 @@ import java.util.List;
 public class SurveyUnitController {
     private final SurveyUnitService surveyUnitService;
     private final PilotageComponent pilotageComponent;
-    private final MetadataComponentConverter metadataConverter;
+    private final MetadataConverter metadataConverter;
 
     /**
      * Retrieve all survey units id

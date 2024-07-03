@@ -19,11 +19,12 @@ public record SurveyUnitUpdateInput(
         ObjectNode data,
         ObjectNode comment,
         @Valid
-        StateDataInput stateData) {
+        StateDataForSurveyUnitUpdateInput stateData) {
     public static SurveyUnit toModel(String surveyUnitId, SurveyUnitUpdateInput surveyUnit) {
         ArrayNode personalization = surveyUnit.personalization();
         ObjectNode comment = surveyUnit.comment();
         ObjectNode data = surveyUnit.data();
-        return SurveyUnit.createForUpdate(surveyUnitId, personalization, comment, data, StateDataInput.toModel(surveyUnit.stateData()));
+        return SurveyUnit.createForUpdate(surveyUnitId, personalization, comment, data,
+                StateDataForSurveyUnitUpdateInput.toModel(surveyUnit.stateData()));
     }
 }
