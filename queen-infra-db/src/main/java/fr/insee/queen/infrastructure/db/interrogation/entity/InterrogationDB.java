@@ -55,6 +55,9 @@ public class InterrogationDB {
     @OneToOne(mappedBy = "interrogation", cascade = CascadeType.ALL)
     private CommentDB comment;
 
+    @Column
+    private String correlationId;
+
     public InterrogationDB(String id, String surveyUnitId, CampaignDB campaign, QuestionnaireModelDB questionnaireModel) {
         this.id = id;
         this.surveyUnitId = surveyUnitId;

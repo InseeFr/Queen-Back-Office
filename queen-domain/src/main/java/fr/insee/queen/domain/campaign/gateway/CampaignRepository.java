@@ -84,4 +84,12 @@ public interface CampaignRepository {
      * @return List of {@link String} campaigns ids
      */
     List<String> getAllCampaignIds();
+
+
+    /**
+     * return the campaign from the questionnaire id
+     * @param questionnaireId questionnaire id
+     * @return the campaign id if found
+     */
+    Optional<String> findCampaignIdByQuestionnaireId(String questionnaireId);
 }
