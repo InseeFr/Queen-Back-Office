@@ -30,6 +30,7 @@ public record InterrogationProjection(
                 projection.personalization(),
                 projection.data(),
                 projection.comment(),
-                stateDataModel);
+                stateDataModel,
+                null);
     }
 }
