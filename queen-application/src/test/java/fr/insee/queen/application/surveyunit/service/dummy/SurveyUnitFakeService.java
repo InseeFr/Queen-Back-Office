@@ -24,6 +24,10 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     @Getter
     private boolean checkSurveyUnitUpdate = false;
     @Getter
+    private boolean checkSurveyUnitCreated = false;
+    @Getter
+    private boolean checkSurveyUnitDeleted = false;
+    @Getter
     private SurveyUnit surveyUnitUpdated;
 
     @Getter
@@ -76,7 +80,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public void createSurveyUnit(SurveyUnit surveyUnit) {
-
+        checkSurveyUnitCreated = true;
     }
 
     @Override
@@ -100,7 +104,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public void delete(String surveyUnitId) {
-
+        checkSurveyUnitDeleted = true;
     }
 
     @Override
