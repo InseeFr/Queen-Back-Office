@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -85,6 +86,12 @@ public class CampaignApiService implements CampaignService {
         campaignExistenceService.throwExceptionIfCampaignAlreadyExist(campaignId);
         throwExceptionIfInvalidQuestionnairesBeforeSave(campaign.getId(), campaign.getQuestionnaireIds());
         campaignRepository.create(campaign);
+    }
+
+    @Transactional
+    @Override
+    public Optional<String> findCampaignIdFromQuestionnaireId(String questionnaireId) {
+        return campaignRepository.findCampaignIdByQuestionnaireId(questionnaireId);
     }
 
     @Caching(evict = {

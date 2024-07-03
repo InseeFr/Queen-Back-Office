@@ -62,22 +62,22 @@ public class InterrogationFakeService implements InterrogationService {
         interrogations = List.of(
                 new Interrogation(INTERROGATION1_ID, "survey-unit-id1", normalCampaign.getId(), "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(), data,
-                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION1_ID)),
+                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION1_ID), null),
                 new Interrogation(INTERROGATION2_ID, "survey-unit-id2", normalCampaign.getId(), "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(), data,
-                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION2_ID)),
+                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION2_ID), null),
                 new Interrogation(INTERROGATION3_ID, "survey-unit-id3", sensitiveCampaign.getId(), "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(), data,
-                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION3_ID)),
+                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION3_ID), null),
                 new Interrogation(INTERROGATION4_ID, "survey-unit-id4", sensitiveCampaign.getId(), "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(), data,
-                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION4_ID)),
+                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION4_ID), null),
                 new Interrogation(INTERROGATION5_ID, "survey-unit-id5", sensitiveCampaign.getId(), "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(), data,
-                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION5_ID)),
+                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION5_ID), null),
                 new Interrogation(INTERROGATION6_ID, "survey-unit-id6", sensitiveCampaign.getId(), "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(), data,
-                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION6_ID))
+                        JsonNodeFactory.instance.objectNode(), stateDataFakeService.getStateData(INTERROGATION6_ID), null)
         );
     }
 
@@ -130,7 +130,7 @@ public class InterrogationFakeService implements InterrogationService {
     @Override
     public void updateInterrogation(String interrogationId, ObjectNode data, StateData stateData) {
         checkInterrogationUpdate = true;
-        interrogationUpdated = new Interrogation(interrogationId, "survey-unit-id", null, null, null, data, null, stateData);
+        interrogationUpdated = new Interrogation(interrogationId, "survey-unit-id", null, null, null, data, null, stateData, null);
     }
 
     @Override
@@ -191,8 +191,8 @@ public class InterrogationFakeService implements InterrogationService {
     @Override
     public List<Interrogation> findAllInterrogations() {
         return List.of(
-                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "campaign-id", "questionnaire-id", null, null, null, null),
-                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "campaign-id", "questionnaire-id", null, null, null, null)
+                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "campaign-id", "questionnaire-id", null, null, null, null, null),
+                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "campaign-id", "questionnaire-id", null, null, null, null, null)
         );
     }
 

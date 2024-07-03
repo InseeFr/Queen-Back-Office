@@ -128,6 +128,7 @@ public class InterrogationDao implements InterrogationRepository {
         }
         interrogationDB.setComment(commentDB);
         interrogationDB.setData(dataDB);
+        interrogationDB.setCorrelationId(interrogation.correlationId());
         crudRepository.save(interrogationDB);
     }
 

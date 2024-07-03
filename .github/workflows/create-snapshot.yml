@@ -26,6 +26,15 @@ jobs:
           distribution: "temurin"
           java-version: "21"
 
+      - name: Pre-install modelefiliere in local Maven repo
+        run: |
+          mvn -q install:install-file \
+            -Dfile=queen-listener-jms/libs/modelefiliere-1.1.0.jar \
+            -DgroupId=fr.insee \
+            -DartifactId=modelefiliere \
+            -Dversion=1.1.0 \
+            -Dpackaging=jar
+
       - name: Build API
         run: mvn package --no-transfer-progress
 
@@ -35,6 +44,12 @@ jobs:
           name: app-jar
           path: queen-application/target/*.jar
 
+      - name: Upload JMS jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jms-jar
+          path: queen-listener-jms/target/*.jar
+
   docker:
     needs:
       - build-snapshot
@@ -42,13 +57,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download uploaded jar
+      - name: Download uploaded API jar
         uses: actions/download-artifact@v4
         with:
           name: app-jar
           path: queen-application/target/
 
-      - name: Publish to Docker Hub
+      - name: Download uploaded JMS jar
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jms-jar
+          path: queen-listener-jms/target/
+
+      - name: Publish API to Docker Hub
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: inseefr/queen-back-office
@@ -56,3 +77,12 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           tags: "snapshot-${{ needs.build-snapshot.outputs.branch }}"
           workdir: queen-application
+
+      - name: Publish JMS to Docker Hub
+        uses: elgohr/Publish-Docker-Github-Action@v5
+        with:
+          name: inseefr/queen-back-office
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          tags: "poc-jms-listener"
+          workdir: queen-listener-jms

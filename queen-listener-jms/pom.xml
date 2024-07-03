@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>fr.insee.queen</groupId>
+        <artifactId>queen-parent</artifactId>
+        <version>${revision}${changelist}</version>
+    </parent>
+    <artifactId>queen-listener-jms</artifactId>
+    <name>queen-listener-jms</name>
+    <description>JMS Consumer for Queen</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-infra-db</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Cache -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-artemis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.messaginghub</groupId>
+            <artifactId>pooled-jms</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee</groupId>
+            <artifactId>modelefiliere</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jms-server</artifactId>
+            <version>2.33.0</version>
+        </dependency>
+    </dependencies>
+
+     <build>
+         <plugins>
+             <!-- Installe le JAR local dans le repo Maven (~/.m2) au début du build -->
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-install-plugin</artifactId>
+                 <version>3.1.1</version>
+                 <executions>
+                     <execution>
+                         <id>install-local-jar</id>
+                         <phase>validate</phase>
+                         <goals>
+                             <goal>install-file</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.basedir}/libs/modelefiliere-1.1.0.jar</file>
+                             <groupId>fr.insee</groupId>
+                             <artifactId>modelefiliere</artifactId>
+                             <version>1.1.0</version>
+                             <packaging>jar</packaging>
+                         </configuration>
+                     </execution>
+                 </executions>
+             </plugin>
+             <plugin>
+                 <groupId>org.springframework.boot</groupId>
+                 <artifactId>spring-boot-maven-plugin</artifactId>
+                 <executions>
+                     <execution>
+                         <goals>
+                             <goal>build-info</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+             </plugin>
+         </plugins>
+     </build>
+</project>
