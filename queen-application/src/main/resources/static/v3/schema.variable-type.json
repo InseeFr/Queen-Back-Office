@@ -7,28 +7,10 @@
       "type": "string"
     },
     {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    {
       "type": "number"
     },
     {
-      "type": "array",
-      "items": {
-        "type": "number"
-      }
-    },
-    {
       "type": "boolean"
-    },
-    {
-      "type": "array",
-      "items": {
-        "type": "boolean"
-      }
     },
     {
       "type": "null"
@@ -36,7 +18,20 @@
     {
       "type": "array",
       "items": {
-        "type": "null"
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
       }
     }
   ]

@@ -6,16 +6,20 @@ import fr.insee.queen.application.campaign.component.MetadataComponentConverter;
 import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitMetadata;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
 @Schema(name = "SurveyUnitMetadata")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SurveyUnitMetadataDto(
+        @NotNull
         QuestionnaireContextDto context,
         @Schema(ref = SchemaType.Names.PERSONALIZATION)
         ArrayNode personalization,
+        @NotNull
         String label,
+        @NotNull
         String objectives,
         List<MetadataVariableDto> variables,
         LogoDtos logos

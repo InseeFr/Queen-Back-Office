@@ -3,7 +3,7 @@
   "title": "Data schema",
   "description": "Validation of survey unit data",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "CALCULATED": {
       "patternProperties": {

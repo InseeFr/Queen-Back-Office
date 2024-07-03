@@ -60,7 +60,7 @@ public class StateDataController {
      */
     @Operation(summary = "Update state-data for a survey unit")
     @PutMapping(path = "/survey-unit/{id}/state-data")
-    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
                              @Valid @RequestBody StateDataInput stateDataInputDto) throws StateDataInvalidDateException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
@@ -75,7 +75,7 @@ public class StateDataController {
      */
     @Operation(summary = "Get state-data for all survey-units defined in request body ")
     @PostMapping(path = "survey-units/state-data")
-    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public SurveyUnitOkNokDto getStateDataBySurveyUnits(@NotEmpty @RequestBody List<String> surveyUnitIdsToSearch) {
         List<SurveyUnitState> surveyUnitsFound = surveyUnitService.findWithStateByIds(surveyUnitIdsToSearch);
         List<String> surveyUnitIdsFound = surveyUnitsFound.stream().map(SurveyUnitState::id).toList();
