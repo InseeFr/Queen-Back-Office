@@ -75,9 +75,6 @@ class JsonValidatorComponentTest {
         JsonNode dataNode = mapper.readValue(dataJson, JsonNode.class);
         Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.DATA, dataNode);
         assertThat(errors).isEmpty();
-        /*assertThat(errors).isNotEmpty();
-        errors.forEach(error -> assertForbiddenProperty(error, "$", "PLOP"));
-        */
     }
 
     @Test
