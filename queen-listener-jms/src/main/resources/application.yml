@@ -52,3 +52,7 @@ logging:
       insee:
         queen:
           jms: INFO
+fr:
+  insee:
+    mock:
+      mockcreatecampaignandquestionnaire: false
