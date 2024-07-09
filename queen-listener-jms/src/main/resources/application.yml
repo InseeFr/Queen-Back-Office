@@ -1,0 +1,54 @@
+server:
+  port: 8084
+
+Spring:
+  application:
+    name: queen-listener-jms
+  datasource:
+    url: jdbc:postgresql://<URL>:5432/queen
+    username: <USER>
+    password: <PASSWORD>
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 2
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      id:
+        new_generator_mappings: true
+      cache:
+        use_second_level_cache: false
+        use_query_cache: false
+      generate_statistics: false
+      hbm2ddl:
+        auto: validate
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    contexts: prod
+    defaultSchema: public
+    change-log: classpath:db/master.xml
+  profiles:
+    group:
+      cache-testing: test,test-cache
+  artemis:
+    mode: native
+    broker-url: (tcp://${ARTEMIS_BROKER_URL}:${ARTEMIS_BROKER_PORT})?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
+    user: ${ARTEMIS_USER}
+    password: ${ARTEMIS_PASSWORD}
+    pool:
+      enabled: true
+      max-connections: 50
+logging:
+  level:
+    fr:
+      insee:
+        queen:
+          jms: INFO
