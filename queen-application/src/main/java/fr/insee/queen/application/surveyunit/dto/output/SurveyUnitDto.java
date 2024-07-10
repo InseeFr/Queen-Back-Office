@@ -2,17 +2,23 @@ package fr.insee.queen.application.surveyunit.dto.output;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.surveyunit.model.StateData;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(name = "SurveyUnit")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SurveyUnitDto(
         String id,
         String questionnaireId,
-        @JsonRawValue String personalization,
-        @JsonRawValue String data,
-        @JsonRawValue String comment,
+        @Schema(ref = SchemaType.Names.PERSONALIZATION)
+        ArrayNode personalization,
+        @Schema(ref = SchemaType.Names.DATA)
+        ObjectNode data,
+        ObjectNode comment,
         StateDataDto stateData) {
 
     public static SurveyUnitDto createSurveyUnitNOKDto(String id) {

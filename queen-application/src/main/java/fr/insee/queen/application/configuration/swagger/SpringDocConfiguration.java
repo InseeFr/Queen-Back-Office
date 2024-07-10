@@ -4,7 +4,10 @@ import fr.insee.queen.application.configuration.properties.OidcProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.security.*;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +52,22 @@ public class SpringDocConfiguration {
                         .description(buildProperties.get("description"))
                         .version(buildProperties.getVersion())
         );
+    }
+
+    @Bean
+    public OpenApiCustomizer openApiCustomizer() {
+        return openApi -> {
+            var schemas = openApi.getComponents().getSchemas();
+            ArraySchema arrayNodeSchema = new ArraySchema();
+            arrayNodeSchema.items(new ObjectSchema());
+            arrayNodeSchema.name("ArrayNode");
+
+            ObjectSchema objectNodeSchema = new ObjectSchema();
+            objectNodeSchema.name("ObjectNode");
+
+            schemas.put(arrayNodeSchema.getName() , arrayNodeSchema);
+            schemas.put(objectNodeSchema.getName() , objectNodeSchema);
+        };
     }
 
     private OAuthFlows getFlows(String authUrl) {

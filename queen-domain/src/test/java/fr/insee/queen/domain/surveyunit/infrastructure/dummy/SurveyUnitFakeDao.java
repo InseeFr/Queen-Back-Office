@@ -1,11 +1,9 @@
 package fr.insee.queen.domain.surveyunit.infrastructure.dummy;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.surveyunit.model.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +17,9 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
 
     @Getter
     private SurveyUnit surveyUnitUpdated = null;
+
+    @Setter
+    private SurveyUnitPersonalization surveyUnitPersonalization;
 
     @Setter
     private boolean surveyUnitExist = true;
@@ -60,12 +61,12 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
 
     @Override
     public void deleteSurveyUnits(String campaignId) {
-
+        // not used at this moment for unit tests
     }
 
     @Override
     public void delete(String surveyUnitId) {
-
+        // not used at this moment for unit tests
     }
 
     @Override
@@ -74,37 +75,42 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
     }
 
     @Override
-    public void savePersonalization(String surveyUnitId, String personalization) {
-
+    public void savePersonalization(String surveyUnitId, ArrayNode personalization) {
+        // not used at this moment for unit tests
     }
 
     @Override
-    public void saveComment(String surveyUnitId, String comment) {
-
+    public void saveComment(String surveyUnitId, ObjectNode comment) {
+        // not used at this moment for unit tests
     }
 
     @Override
-    public void saveData(String surveyUnitId, String data) {
-
+    public void saveData(String surveyUnitId, ObjectNode data) {
+        // not used at this moment for unit tests
     }
 
     @Override
     public void updateCollectedData(String surveyUnitId, ObjectNode partialCollectedDataNode) {
-
+        // not used at this moment for unit tests
     }
 
     @Override
-    public Optional<String> findComment(String surveyUnitId) {
+    public Optional<ObjectNode> findComment(String surveyUnitId) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<String> findData(String surveyUnitId) {
+    public Optional<ObjectNode> findData(String surveyUnitId) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<String> findPersonalization(String surveyUnitId) {
+    public SurveyUnitPersonalization getSurveyUnitPersonalization(String surveyUnitId) {
+        return surveyUnitPersonalization;
+    }
+
+    @Override
+    public Optional<ArrayNode> findPersonalization(String surveyUnitId) {
         return Optional.empty();
     }
 

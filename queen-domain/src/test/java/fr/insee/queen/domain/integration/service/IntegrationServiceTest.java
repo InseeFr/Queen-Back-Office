@@ -25,6 +25,10 @@ class IntegrationServiceTest {
     private QuestionnaireModelExistenceFakeService questionnaireExistenceService;
     private QuestionnaireModelFakeService questionnaireService;
     private NomenclatureFakeService nomenclatureService;
+    
+    private static final String LABEL = "label";
+    private static final String QUESTIONNAIRE_ID = "id-questionnaire";
+    private static final String CAMPAIGN_ID = "id-campaign";
 
     @BeforeEach
     public void init() {
@@ -41,7 +45,7 @@ class IntegrationServiceTest {
     @DisplayName("On create nomenclature, when nomenclature exists, return integration error")
     void testIntegrationNomenclature01() {
         String nomenclatureId = "id";
-        Nomenclature nomenclature = new Nomenclature(nomenclatureId, "label", JsonNodeFactory.instance.arrayNode().toString());
+        Nomenclature nomenclature = new Nomenclature(nomenclatureId, LABEL, JsonNodeFactory.instance.arrayNode());
         IntegrationResult result = integrationService.create(nomenclature);
         assertThat(result.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(result.getId()).isEqualTo(nomenclatureId);
@@ -54,7 +58,7 @@ class IntegrationServiceTest {
     void testIntegrationNomenclature02() {
         String nomenclatureId = "id";
         nomenclatureService.setNonExistingNomenclatures(List.of(nomenclatureId));
-        Nomenclature nomenclature = new Nomenclature(nomenclatureId, "label", JsonNodeFactory.instance.arrayNode().toString());
+        Nomenclature nomenclature = new Nomenclature(nomenclatureId, LABEL, JsonNodeFactory.instance.arrayNode());
         IntegrationResult result = integrationService.create(nomenclature);
         assertThat(result.getStatus()).isEqualTo(IntegrationStatus.CREATED);
         assertThat(result.getId()).isEqualTo(nomenclatureId);
@@ -64,67 +68,61 @@ class IntegrationServiceTest {
     @Test
     @DisplayName("On save campaign, when campaign exists, update campaign")
     void testIntegrationCampaign01() {
-        String campaignId = "id";
         campaignExistenceService.setCampaignExist(true);
 
-        Campaign campaign = new Campaign(campaignId, "label", JsonNodeFactory.instance.objectNode().toString());
+        Campaign campaign = new Campaign(CAMPAIGN_ID, LABEL, JsonNodeFactory.instance.objectNode());
         IntegrationResult campaignResult = integrationService.create(campaign);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.UPDATED);
-        assertThat(campaignResult.getId()).isEqualTo(campaignId);
+        assertThat(campaignResult.getId()).isEqualTo(CAMPAIGN_ID);
         assertThat(campaignService.isUpdated()).isTrue();
     }
 
     @Test
     @DisplayName("On save campaign, when campaign does not exist, create campaign")
     void testIntegrationCampaign02() {
-        String campaignId = "id";
         campaignExistenceService.setCampaignExist(false);
 
-        Campaign campaign = new Campaign(campaignId, "label", JsonNodeFactory.instance.objectNode().toString());
+        Campaign campaign = new Campaign(CAMPAIGN_ID, LABEL, JsonNodeFactory.instance.objectNode());
         IntegrationResult campaignResult = integrationService.create(campaign);
 
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);
-        assertThat(campaignResult.getId()).isEqualTo(campaignId);
+        assertThat(campaignResult.getId()).isEqualTo(CAMPAIGN_ID);
         assertThat(campaignService.isCreated()).isTrue();
     }
 
     @Test
     @DisplayName("On save questionnaire, when campaign does not exist, return integration error")
     void testIntegrationQuestionnaire01() {
-        String questionnaireId = "id-questionnaire";
-        String campaignId = "id-campaign";
         campaignExistenceService.setCampaignExist(false);
-        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label",
-                JsonNodeFactory.instance.objectNode().toString(), new HashSet<>(), campaignId);
+        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(QUESTIONNAIRE_ID, LABEL,
+                JsonNodeFactory.instance.objectNode(), new HashSet<>(), CAMPAIGN_ID);
         List<IntegrationResult> results = integrationService.create(questionnaire);
         assertThat(results).hasSize(1);
         IntegrationResult result = results.get(0);
-        assertThat(result.getId()).isEqualTo(questionnaireId);
+        assertThat(result.getId()).isEqualTo(QUESTIONNAIRE_ID);
         assertThat(result.getStatus()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(result.getCause()).isEqualTo(String.format(IntegrationResultLabel.CAMPAIGN_DO_NOT_EXIST, campaignId));
+        assertThat(result.getCause()).isEqualTo(String.format(IntegrationResultLabel.CAMPAIGN_DO_NOT_EXIST, CAMPAIGN_ID));
     }
 
     @Test
     @DisplayName("On save questionnaire, when nomenclature does not exist, return integration error")
     void testIntegrationQuestionnaire04() {
-        String questionnaireId = "id-questionnaire";
-        String campaignId = "id-campaign";
         String nonExistingNomenclature1 = "non-exist-nomenclature1";
         String nonExistingNomenclature2 = "non-exist-nomenclature2";
         String existingNomenclature1 = "exist-nomenclature1";
         String existingNomenclature2 = "exist-nomenclature2";
 
         nomenclatureService.setNonExistingNomenclatures(List.of(nonExistingNomenclature1, nonExistingNomenclature2));
-        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label",
-                JsonNodeFactory.instance.objectNode().toString(), Set.of(existingNomenclature1, nonExistingNomenclature1, existingNomenclature2, nonExistingNomenclature2), campaignId);
+        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(QUESTIONNAIRE_ID, LABEL,
+                JsonNodeFactory.instance.objectNode(), Set.of(existingNomenclature1, nonExistingNomenclature1, existingNomenclature2, nonExistingNomenclature2), CAMPAIGN_ID);
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
         List<IntegrationResult> errorResults = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR)).toList();
         assertThat(errorResults).hasSize(2);
-        IntegrationResult errorResult1 = new IntegrationResult(questionnaireId, IntegrationStatus.ERROR,
+        IntegrationResult errorResult1 = new IntegrationResult(QUESTIONNAIRE_ID, IntegrationStatus.ERROR,
                 String.format(IntegrationResultLabel.NOMENCLATURE_DO_NOT_EXIST, nonExistingNomenclature1));
-        IntegrationResult errorResult2 = new IntegrationResult(questionnaireId, IntegrationStatus.ERROR,
+        IntegrationResult errorResult2 = new IntegrationResult(QUESTIONNAIRE_ID, IntegrationStatus.ERROR,
                 String.format(IntegrationResultLabel.NOMENCLATURE_DO_NOT_EXIST, nonExistingNomenclature2));
         assertThat(errorResults)
                 .contains(errorResult1)
@@ -134,33 +132,29 @@ class IntegrationServiceTest {
     @Test
     @DisplayName("On save questionnaire, when questionnaire exists, return integration update")
     void testIntegrationQuestionnaire02() {
-        String questionnaireId = "id-questionnaire";
-        String campaignId = "id-campaign";
-        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label",
-                JsonNodeFactory.instance.objectNode().toString(), new HashSet<>(), campaignId);
+        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(QUESTIONNAIRE_ID, LABEL,
+                JsonNodeFactory.instance.objectNode(), new HashSet<>(), CAMPAIGN_ID);
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
         assertThat(questionnaireService.isUpdated()).isTrue();
         assertThat(results).hasSize(1);
         IntegrationResult result = results.get(0);
-        assertThat(result.getId()).isEqualTo(questionnaireId);
+        assertThat(result.getId()).isEqualTo(QUESTIONNAIRE_ID);
         assertThat(result.getStatus()).isEqualTo(IntegrationStatus.UPDATED);
     }
 
     @Test
     @DisplayName("On save questionnaire, when questionnaire does not exist, return integration create")
     void testIntegrationQuestionnaire03() {
-        String questionnaireId = "id-questionnaire";
-        String campaignId = "id-campaign";
         questionnaireExistenceService.setQuestionnaireExist(false);
-        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(questionnaireId, "label",
-                JsonNodeFactory.instance.objectNode().toString(), new HashSet<>(), campaignId);
+        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithCampaign(QUESTIONNAIRE_ID, LABEL,
+                JsonNodeFactory.instance.objectNode(), new HashSet<>(), CAMPAIGN_ID);
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
         assertThat(questionnaireService.isCreated()).isTrue();
         assertThat(results).hasSize(1);
         IntegrationResult result = results.get(0);
-        assertThat(result.getId()).isEqualTo(questionnaireId);
+        assertThat(result.getId()).isEqualTo(QUESTIONNAIRE_ID);
         assertThat(result.getStatus()).isEqualTo(IntegrationStatus.CREATED);
     }
 }

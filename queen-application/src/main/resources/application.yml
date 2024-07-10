@@ -2,6 +2,7 @@ application:
   public-urls:
     - /swagger-ui/**
     - /v3/api-docs/**
+    - /v3/*.json
     - /api/healthcheck
     - /
   roles:
@@ -25,7 +26,7 @@ feature:
     client-id: my-client-id
     realm: my-realm
     principal-attribute: id-claim
-    role-claim: role-claim
+    role-claim:
   dataset:
     # create demo dataset on startup
     load-on-start: false
@@ -45,15 +46,15 @@ feature:
     enabled: false
   interviewer-mode:
     enabled: false
-  perfdata:
-    enabled: false
-    collected:
-      native-insert: false
 
 spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
+    url:
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 2
       maximum-pool-size: 2
@@ -102,6 +103,8 @@ springdoc:
       activated: false
     tagsSorter: alpha
     doc-expansion: none
+  api-docs:
+    version: OPENAPI_3_1
 #Actuator Metrics
 management:
   endpoints:

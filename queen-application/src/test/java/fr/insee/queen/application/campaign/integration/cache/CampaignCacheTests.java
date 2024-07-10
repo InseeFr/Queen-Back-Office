@@ -53,11 +53,12 @@ class CampaignCacheTests {
     void check_campaign_existence_cache() {
         String campaignId = "campaign-cache-id";
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
+
         campaignExistenceService.existsById(campaignId);
         Boolean campaignExist = Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId, Boolean.class));
         assertThat(campaignExist).isFalse();
 
-        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode().toString()));
+        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
 
         campaignExistenceService.existsById(campaignId);

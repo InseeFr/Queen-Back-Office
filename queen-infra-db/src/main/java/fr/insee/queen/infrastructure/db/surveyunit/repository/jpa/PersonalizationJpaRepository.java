@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.PersonalizationDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -39,7 +40,7 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
     @Transactional
     @Modifying
     @Query("update PersonalizationDB p set p.value = :personalization where p.surveyUnit.id = :surveyUnitId")
-    int updatePersonalization(String surveyUnitId, String personalization);
+    int updatePersonalization(String surveyUnitId, ArrayNode personalization);
 
     /**
      * Find the personalization of a survey unit
@@ -48,7 +49,7 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
      * @return an optional of the personalization (json format)
      */
     @Query("select s.personalization.value from SurveyUnitDB s where s.id=:surveyUnitId")
-    Optional<String> findPersonalization(String surveyUnitId);
+    Optional<ArrayNode> findPersonalization(String surveyUnitId);
 
     /**
      * Delete personalization of a survey unit

@@ -1,6 +1,7 @@
 package fr.insee.queen.application.campaign.controller;
 
 import fr.insee.queen.application.campaign.dto.input.CampaignCreationData;
+import fr.insee.queen.application.campaign.dto.input.CampaignCreationDataV2;
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
@@ -47,16 +48,31 @@ public class CampaignController {
     }
 
     /**
+     * @deprecated
      * Create a new campaign
      *
      * @param campaignInputDto the value to create
      */
+    @Deprecated(since = "4.3.0")
     @Operation(summary = "Create a campaign")
     @PostMapping(path = "/campaigns")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createCampaign(@Valid @RequestBody CampaignCreationData campaignInputDto) {
         campaignService.createCampaign(CampaignCreationData.toModel(campaignInputDto));
+    }
+
+    /**
+     * Create a new campaign
+     *
+     * @param campaignInputDto the value to create
+     */
+    @Operation(summary = "Create a campaign")
+    @PostMapping(path = "/campaign")
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createCampaignV2(@Valid @RequestBody CampaignCreationDataV2 campaignInputDto) {
+        campaignService.createCampaign(CampaignCreationDataV2.toModel(campaignInputDto));
     }
 
     /**

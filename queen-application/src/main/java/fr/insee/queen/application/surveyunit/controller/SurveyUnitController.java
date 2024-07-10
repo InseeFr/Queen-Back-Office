@@ -1,13 +1,19 @@
 package fr.insee.queen.application.surveyunit.controller;
 
+import fr.insee.queen.application.campaign.component.MetadataConverter;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
+import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitCreationInput;
+import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitDataStateDataUpdateInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitUpdateInput;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
+import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitMetadataDto;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
+import fr.insee.queen.domain.surveyunit.model.StateData;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
+import fr.insee.queen.domain.surveyunit.model.SurveyUnitMetadata;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +41,7 @@ import java.util.List;
 public class SurveyUnitController {
     private final SurveyUnitService surveyUnitService;
     private final PilotageComponent pilotageComponent;
+    private final MetadataConverter metadataConverter;
 
     /**
      * Retrieve all survey units id
@@ -63,6 +70,21 @@ public class SurveyUnitController {
     }
 
     /**
+     * Retrieve the survey unit metadata
+     *
+     * @param surveyUnitId survey unit id
+     * @return {@link SurveyUnitMetadataDto} the survey unit
+     */
+    @Operation(summary = "Get survey-unit metadata")
+    @GetMapping(path = "/survey-unit/{id}/metadata")
+    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
+    public SurveyUnitMetadataDto getSurveyUnitMetadataById(@IdValid @PathVariable(value = "id") String surveyUnitId) {
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        SurveyUnitMetadata surveyUnitMetadata = surveyUnitService.getSurveyUnitMetadata(surveyUnitId);
+        return SurveyUnitMetadataDto.fromModel(surveyUnitMetadata, metadataConverter);
+    }
+
+    /**
      * Update a survey unit
      *
      * @param surveyUnitId         survey unit id
@@ -70,10 +92,10 @@ public class SurveyUnitController {
      */
     @Operation(summary = "Update survey-unit")
     @PutMapping(path = {"/survey-unit/{id}"})
-    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                      @Valid @RequestBody SurveyUnitUpdateInput surveyUnitUpdateInput) {
-        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         SurveyUnit surveyUnit = SurveyUnitUpdateInput.toModel(surveyUnitId, surveyUnitUpdateInput);
         surveyUnitService.updateSurveyUnit(surveyUnit);
     }
@@ -98,6 +120,16 @@ public class SurveyUnitController {
         log.info("Create survey-unit with id {}", surveyUnitCreationInput.id());
         surveyUnitService.createSurveyUnit(surveyUnit);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Update survey-unit updated data/state-data")
+    @PatchMapping(path = {"/survey-unit/{id}"})
+    @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
+    public void updateSurveyUnitDataStateDataById(@IdValid @PathVariable(value = "id") String surveyUnitId,
+                                                  @Valid @RequestBody SurveyUnitDataStateDataUpdateInput surveyUnitUpdateInput) {
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
+        StateData stateData = StateDataInput.toModel(surveyUnitUpdateInput.stateData());
+        surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitUpdateInput.data(), stateData);
     }
 
 

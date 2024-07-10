@@ -1,5 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.entity;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class MetadataDB {
      */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String value;
+    private ObjectNode value;
 
     /**
      * The campaign linked to the Metadata
@@ -36,7 +37,7 @@ public class MetadataDB {
     @OneToOne
     private CampaignDB campaign;
 
-    public MetadataDB(String value, CampaignDB campaign) {
+    public MetadataDB(ObjectNode value, CampaignDB campaign) {
         this.value = value;
         this.campaign = campaign;
     }

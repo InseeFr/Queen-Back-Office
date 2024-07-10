@@ -7,6 +7,7 @@ import fr.insee.queen.application.integration.component.builder.schema.SchemaCom
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.application.integration.dto.input.NomenclatureIntegrationData;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.integration.model.IntegrationResult;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.service.IntegrationService;
@@ -94,7 +95,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
 
     private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {
         try {
-            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, NOMENCLATURES_JSON, "nomenclatures_integration.json");
+            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, NOMENCLATURES_JSON, SchemaType.NOMENCLATURE_INTEGRATION);
         } catch (IntegrationValidationException ex) {
             return List.of(ex.getResultError());
         }
@@ -144,6 +145,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     private ArrayNode readNomenclatureStream(String nomenclatureId, String nomenclatureFilename, ZipFile zipFile) throws IntegrationValidationException {
         try {
             InputStream questionnaireInputStream = getNomenclatureInputStream(zipFile, nomenclatureId, nomenclatureFilename);
+            schemaComponent.throwExceptionIfJsonDataFileNotValid(zipFile, "nomenclatures/"+nomenclatureFilename, SchemaType.NOMENCLATURE);
             return mapper.readValue(questionnaireInputStream, ArrayNode.class);
         } catch (IOException e) {
             log.info("Could not parse json in file {}", nomenclatureFilename);

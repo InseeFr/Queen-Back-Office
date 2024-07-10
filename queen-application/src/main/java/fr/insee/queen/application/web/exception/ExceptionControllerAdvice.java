@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.application.web.authentication.AuthenticationTokenException;
+import fr.insee.queen.application.web.validation.exception.JsonValidatorComponentInitializationException;
 import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
 import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuestionnaireException;
 import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
@@ -11,6 +12,7 @@ import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
+import fr.insee.queen.domain.surveyunit.service.exception.MetadataValueNotFoundException;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.exception.UpdateCollectedDataException;
 import fr.insee.queen.infrastructure.depositproof.exception.DepositProofException;
@@ -40,6 +42,8 @@ public class ExceptionControllerAdvice {
     private final ApiExceptionComponent errorComponent;
 
     private static final String ERROR_OCCURRED_LABEL = "An error has occurred";
+
+    private static final String ERROR_INVALID_DATA = "Data is invalid";
 
     /**
      * Global method to process the catched exception
@@ -170,6 +174,12 @@ public class ExceptionControllerAdvice {
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler(JsonValidatorComponentInitializationException.class)
+    public ResponseEntity<ApiError> integrationComponentException(JsonValidatorComponentInitializationException e, WebRequest request) {
+        log.error(e.getMessage(), e);
+        return generateResponseError(e, HttpStatus.BAD_REQUEST, request, ERROR_INVALID_DATA);
+    }
+
     @ExceptionHandler(PilotageApiException.class)
     public ResponseEntity<ApiError> pilotageApiException(PilotageApiException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
@@ -177,6 +187,12 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(DepositProofException.class)
     public ResponseEntity<ApiError> depositProofException(DepositProofException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    @ExceptionHandler(MetadataValueNotFoundException.class)
+    public ResponseEntity<ApiError> metadataValueNotFoundException(MetadataValueNotFoundException e, WebRequest request) {
+        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 

@@ -1,0 +1,45 @@
+{
+  "data": {
+    "EXTERNAL": {
+      "BOOLEAN_VAR": false,
+      "NULL_VAR": null,
+      "STRING_VAR": "string",
+      "NUM_VAR": 1,
+      "ARRAY_BOOLEAN": [true, false],
+      "ARRAY_NULL": [null, null],
+      "ARRAY_STRING": ["string", "string"],
+      "ARRAY_NUM": [1, 2]
+    },
+    "CALCULATED": {
+      "BOOLEAN_VAR": false,
+      "NULL_VAR": null,
+      "STRING_VAR": "string",
+      "NUM_VAR": 1,
+      "ARRAY_BOOLEAN": [true, false],
+      "ARRAY_NULL": [null, null],
+      "ARRAY_STRING": ["string", "string"],
+      "ARRAY_NUM": [1, 2]
+    },
+    "COLLECTED": {
+      "VALUE": {
+        "EDITED": false,
+        "FORCED": null,
+        "INPUTED": "string",
+        "COLLECTED": 1
+      },
+      "ARRAY": {
+        "EDITED": [true, false],
+        "FORCED": [null, null],
+        "INPUTED": ["string", "string"],
+        "PREVIOUS": [1, 2],
+        "INPUTTED": "string"
+      }
+    }
+  },
+  "comment": {
+    "commentaire": "hello"
+  },
+  "stateData": {
+  },
+  "questionnaireId": "QUESTIONNAIRE-1"
+}

@@ -1,5 +1,7 @@
 package fr.insee.queen.domain.paradata.gateway;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.UUID;
 
 public interface ParadataEventRepository {
@@ -10,5 +12,5 @@ public interface ParadataEventRepository {
      * @param paradataValue paradata value (json format)
      * @param surveyUnitId survey unit id
      */
-    void createParadataEvent(UUID id, String paradataValue, String surveyUnitId);
+    void createParadataEvent(UUID id, ObjectNode paradataValue, String surveyUnitId);
 }

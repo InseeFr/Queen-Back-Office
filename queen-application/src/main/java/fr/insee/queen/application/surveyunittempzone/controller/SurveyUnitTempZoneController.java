@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.surveyunittempzone.dto.output.SurveyUnitTempZoneDto;
 import fr.insee.queen.application.web.validation.IdValid;
+import fr.insee.queen.application.web.validation.json.JsonValid;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.surveyunittempzone.service.SurveyUnitTempZoneService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,15 +40,19 @@ public class SurveyUnitTempZoneController {
      * @param surveyUnitId survey unit id
      * @param surveyUnit   survey unit json
      */
-    @Operation(summary = "Create survey-unit to temp-zone")
+    @Operation(summary = "Create survey-unit to temp-zone",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+                    schema = @Schema(ref = SchemaType.Names.SURVEY_UNIT_TEMP_ZONE))))
     @Parameter(name = "userId", hidden = true)
     @PostMapping(path = "/survey-unit/{id}/temp-zone")
     @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                             @NotNull @RequestBody ObjectNode surveyUnit,
+                                             @RequestBody
+                                             @JsonValid(SchemaType.SURVEY_UNIT_TEMP_ZONE)
+                                             ObjectNode surveyUnit,
                                              @CurrentSecurityContext(expression = "authentication.name") String userId) {
-        surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit.toString());
+        surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
     }
 
     /**
@@ -55,7 +62,7 @@ public class SurveyUnitTempZoneController {
      */
     @Operation(summary = "GET all survey-units in temp-zone")
     @GetMapping(path = "/survey-units/temp-zone")
-    @PreAuthorize(AuthorityPrivileges.HAS_MANAGEMENT_PRIVILEGES)
+    @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<SurveyUnitTempZoneDto> getSurveyUnitsInTempZone() {
         return surveyUnitTempZoneService.getAllSurveyUnitTempZone()
                 .stream().map(SurveyUnitTempZoneDto::fromModel)

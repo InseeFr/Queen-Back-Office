@@ -36,6 +36,8 @@ public interface SurveyUnitService {
 
     SurveyUnitDepositProof getSurveyUnitDepositProof(String surveyUnitId);
 
+    SurveyUnitMetadata getSurveyUnitMetadata(String surveyUnitId);
+
     SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId);
 
     List<SurveyUnit> findByIds(List<String> surveyUnitIds);

@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.campaign.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.domain.campaign.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
@@ -31,7 +32,7 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
 
     @Override
     @Cacheable(CacheName.QUESTIONNAIRE)
-    public String getQuestionnaireData(String id) {
+    public ObjectNode getQuestionnaireData(String id) {
         return questionnaireModelRepository
                 .findQuestionnaireData(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Questionnaire data %s was not found", id)));
@@ -69,9 +70,9 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
     }
 
     @Override
-    public List<String> getQuestionnaireDatas(String campaignId) {
+    public List<ObjectNode> getQuestionnaireDatas(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
         return questionnaireModelRepository.findAllQuestionnaireDatas(campaignId).stream()
-                .map(String::new).toList();
+                .toList();
     }
 }

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - v4-develop #temp branch
       - develop
   pull_request:
     types: [opened, synchronize, reopened]

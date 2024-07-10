@@ -11,6 +11,7 @@ import fr.insee.queen.application.integration.component.builder.schema.SchemaCom
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.application.integration.dto.input.CampaignIntegrationData;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
+import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.integration.model.IntegrationResult;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.service.IntegrationService;
@@ -117,7 +118,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
 
     private IntegrationResultUnitDto buildCampaign(ZipFile zf) {
         try {
-            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, CAMPAIGN_JSON, "campaign_integration.json");
+            schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, CAMPAIGN_JSON, SchemaType.CAMPAIGN_INTEGRATION);
             ZipEntry zipCampaignFile = zf.getEntry(CAMPAIGN_JSON);
             CampaignIntegrationData campaign = mapper.readValue(zf.getInputStream(zipCampaignFile), CampaignIntegrationData.class);
             return buildCampaign(campaign);

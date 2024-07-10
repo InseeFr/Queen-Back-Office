@@ -1,10 +1,10 @@
 package fr.insee.queen.domain.surveyunit.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
 public interface CommentService {
-    String getComment(String surveyUnitId);
+    ObjectNode getComment(String surveyUnitId);
 
-    void updateComment(String surveyUnitId, JsonNode commentValue);
+    void updateComment(String surveyUnitId, ObjectNode commentValue);
 }

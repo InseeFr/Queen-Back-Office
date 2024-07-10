@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.campaign.gateway;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface QuestionnaireModelRepository {
      * @param questionnaireId questionnaire id
      * @return questionnaire data for a campaign
      */
-    Optional<String> findQuestionnaireData(String questionnaireId);
+    Optional<ObjectNode> findQuestionnaireData(String questionnaireId);
 
     /**
      * Check if questionnaire exists
@@ -68,5 +69,5 @@ public interface QuestionnaireModelRepository {
      * @param campaignId campaign id
      * @return {@link List<String>} all questionnaire values for a campaign
      */
-    List<String> findAllQuestionnaireDatas(String campaignId);
+    List<ObjectNode> findAllQuestionnaireDatas(String campaignId);
 }

@@ -41,7 +41,7 @@ public class CommentController {
     @Operation(summary = "Get comment for a survey unit")
     @GetMapping(path = "/survey-unit/{id}/comment")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public String getCommentBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
+    public ObjectNode getCommentBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         return commentService.getComment(surveyUnitId);
     }

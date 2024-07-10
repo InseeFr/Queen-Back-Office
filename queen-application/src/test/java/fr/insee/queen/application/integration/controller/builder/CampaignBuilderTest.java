@@ -5,6 +5,7 @@ import fr.insee.queen.application.integration.component.builder.IntegrationCampa
 import fr.insee.queen.application.integration.component.builder.schema.SchemaIntegrationComponent;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.integration.service.dummy.IntegrationFakeService;
+import fr.insee.queen.application.web.validation.json.JsonValidatorComponent;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import jakarta.validation.Validation;
@@ -34,7 +35,7 @@ class CampaignBuilderTest {
         Locale.setDefault(Locale.of("en", "US"));
         ObjectMapper objectMapper = new ObjectMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper);
+        SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper, new JsonValidatorComponent());
         IntegrationFakeService integrationService = new IntegrationFakeService();
         campaignBuilder = new IntegrationCampaignBuilder(schemaComponent, validator, integrationService, objectMapper);
     }
