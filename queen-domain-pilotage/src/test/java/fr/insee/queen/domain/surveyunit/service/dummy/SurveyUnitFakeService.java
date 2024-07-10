@@ -62,17 +62,17 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public void updateSurveyUnit(SurveyUnit surveyUnit) {
-
+        // not used for test at this moment
     }
 
     @Override
     public void updateSurveyUnit(String surveyUnitId, ObjectNode data, StateData stateData) {
-
+        // not used for test at this moment
     }
 
     @Override
     public void createSurveyUnit(SurveyUnit surveyUnit) {
-
+        // not used for test at this moment
     }
 
     @Override
@@ -96,7 +96,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public void delete(String surveyUnitId) {
-
+        // not used for test at this moment
     }
 
     @Override
