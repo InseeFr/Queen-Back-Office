@@ -3,6 +3,7 @@ package fr.insee.queen.domain.pilotage.service;
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
 import fr.insee.queen.domain.campaign.service.QuestionnaireModelService;
 import fr.insee.queen.domain.common.cache.CacheName;
+import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.domain.pilotage.gateway.PilotageRepository;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
@@ -15,10 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -135,7 +133,15 @@ public class PilotageApiService implements PilotageService {
 
         return campaigns.stream()
                 .map(PilotageCampaign::id)
-                .map(campaignId -> new PilotageCampaign(campaignId, questionnaireModelService.getQuestionnaireIds(campaignId)))
+                .map(campaignId -> {
+                    try {
+                        return new PilotageCampaign(campaignId, questionnaireModelService.getQuestionnaireIds(campaignId));
+                    } catch (EntityNotFoundException ex) {
+                        log.error("Campaign id {} from pilotage API was not found in the DB", campaignId);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
                 .toList();
     }
 
