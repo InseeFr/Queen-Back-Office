@@ -180,7 +180,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(MetadataValueNotFoundException.class)
     public ResponseEntity<ApiError> metadataValueNotFoundException(MetadataValueNotFoundException e, WebRequest request) {
-        return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return generateResponseError(e, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(StateDataInvalidDateException.class)

@@ -341,13 +341,13 @@ class SurveyUnitTests {
     }
 
     @Test
-    void on_get_survey_unit_metadata_when_invalid_metadata_return_500() throws Exception {
+    void on_get_survey_unit_metadata_when_invalid_metadata_return_404() throws Exception {
         String surveyUnitId = "11";
         mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/metadata")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
