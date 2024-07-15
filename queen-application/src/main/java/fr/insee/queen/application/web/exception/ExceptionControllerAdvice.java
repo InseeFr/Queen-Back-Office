@@ -67,6 +67,7 @@ public class ExceptionControllerAdvice {
      * @return the apierror object with linked status code
      */
     private ResponseEntity<ApiError> generateResponseError(Exception ex, HttpStatus status, WebRequest request, String overrideErrorMessage) {
+        log.error(ex.getMessage(), ex);
         String errorMessage = ex.getMessage();
         if (overrideErrorMessage != null) {
             errorMessage = overrideErrorMessage;
@@ -77,7 +78,6 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ApiError> noHandlerFoundException(NoHandlerFoundException e, WebRequest request) {
-        log.error(e.getMessage());
         return generateResponseError(e, HttpStatus.NOT_FOUND, request);
     }
 
@@ -90,7 +90,6 @@ public class ExceptionControllerAdvice {
     public ResponseEntity<ApiError> handleMethodArgumentNotValid(
             MethodArgumentNotValidException e,
             WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request, "Invalid parameters");
     }
 
@@ -98,14 +97,12 @@ public class ExceptionControllerAdvice {
     public ResponseEntity<ApiError> handleConstraintViolation(
             ConstraintViolationException e,
             WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request, "Invalid data");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiError> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException e, WebRequest request) {
-        log.error(e.getMessage(), e);
 
         Throwable rootCause = e.getRootCause();
 
@@ -123,7 +120,6 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiError> noEntityFoundException(EntityNotFoundException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.NOT_FOUND, request);
     }
 
@@ -134,49 +130,41 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(AuthenticationTokenException.class)
     public ResponseEntity<ApiError> authenticationTokenExceptionException(AuthenticationTokenException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
     }
 
     @ExceptionHandler(HabilitationException.class)
     public ResponseEntity<ApiError> habilitationException(HabilitationException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.FORBIDDEN, request);
     }
 
     @ExceptionHandler(QuestionnaireInvalidException.class)
     public ResponseEntity<ApiError> questionnaireInvalidException(QuestionnaireInvalidException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(CampaignDeletionException.class)
     public ResponseEntity<ApiError> campaignDeletionException(CampaignDeletionException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
     @ExceptionHandler(CampaignNotLinkedToQuestionnaireException.class)
     public ResponseEntity<ApiError> campaignDeletionException(CampaignNotLinkedToQuestionnaireException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(EntityAlreadyExistException.class)
     public ResponseEntity<ApiError> entityAlreadyExistException(EntityAlreadyExistException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(IntegrationComponentException.class)
     public ResponseEntity<ApiError> integrationComponentException(IntegrationComponentException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(JsonValidatorComponentInitializationException.class)
     public ResponseEntity<ApiError> integrationComponentException(JsonValidatorComponentInitializationException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request, ERROR_INVALID_DATA);
     }
 
@@ -192,8 +180,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(MetadataValueNotFoundException.class)
     public ResponseEntity<ApiError> metadataValueNotFoundException(MetadataValueNotFoundException e, WebRequest request) {
-        log.error(e.getMessage(), e);
-        return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return generateResponseError(e, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(StateDataInvalidDateException.class)
@@ -203,13 +190,11 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(RestClientException.class)
     public ResponseEntity<ApiError> exceptions(RestClientException e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> exceptions(Exception e, WebRequest request) {
-        log.error(e.getMessage(), e);
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
     }
 }
