@@ -20,13 +20,14 @@ class PilotageServiceTest {
     private PilotageApiService pilotageService;
     private CampaignExistenceFakeService campaignExistenceService;
     private PilotageFakeRepository pilotageRepository;
+    private QuestionnaireModelFakeService questionnaireModelFakeService;
 
     @BeforeEach
     public void init() {
         SurveyUnitFakeService surveyUnitService = new SurveyUnitFakeService();
         pilotageRepository = new PilotageFakeRepository();
         campaignExistenceService = new CampaignExistenceFakeService();
-        QuestionnaireModelFakeService questionnaireModelFakeService = new QuestionnaireModelFakeService();
+        questionnaireModelFakeService = new QuestionnaireModelFakeService();
         pilotageService = new PilotageApiService(surveyUnitService, campaignExistenceService, pilotageRepository, questionnaireModelFakeService);
     }
 
@@ -51,7 +52,16 @@ class PilotageServiceTest {
     void testGetInterviewerCampaigns02() {
         List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
         assertThat(campaigns).hasSize(2);
-        assertThat(campaigns.get(0).id()).isEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
+        assertThat(campaigns.getFirst().id()).isEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
+    }
+
+    @Test
+    @DisplayName("Should not retrieve unexisting campaigns in DB")
+    void testGetInterviewerCampaigns03() {
+        questionnaireModelFakeService.setCampaignIdNotFound(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
+        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
+        assertThat(campaigns).hasSize(1);
+        assertThat(campaigns.getFirst().id()).isNotEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
     }
 
     @Test
