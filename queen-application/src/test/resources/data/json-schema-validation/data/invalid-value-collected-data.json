@@ -5,7 +5,7 @@
       "FORCED": null,
       "INPUTED": "string",
       "PREVIOUS": 1,
-      "COLLECTED": 1
+      "COLLECTED": [1, [],["3", null, "2"],["2", "3", null]]
     }
   }
 }

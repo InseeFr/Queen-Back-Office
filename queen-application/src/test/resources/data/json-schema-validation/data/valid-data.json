@@ -7,7 +7,9 @@
     "ARRAY_BOOLEAN": [true, false],
     "ARRAY_NULL": [null, null],
     "ARRAY_STRING": ["string", "string"],
-    "ARRAY_NUM": [1, 2]
+    "ARRAY_NUM": [1, 2],
+    "ARRAY_MIX": ["string", 1, null],
+    "ARRAY_PAIRWISE": [[null, "1", "2"],["3", null, "2"],["2", "3", null]]
   },
   "CALCULATED": {
     "BOOLEAN_VAR": false,
@@ -17,7 +19,9 @@
     "ARRAY_BOOLEAN": [true, false],
     "ARRAY_NULL": [null, null],
     "ARRAY_STRING": ["string", "string"],
-    "ARRAY_NUM": [1, 2]
+    "ARRAY_NUM": [1, 2],
+    "ARRAY_MIX": ["string", 1, null],
+    "ARRAY_PAIRWISE": [[null, "1", "2"],["3", null, "2"],["2", "3", null]]
   },
   "COLLECTED": {
     "VALUE": {
@@ -32,6 +36,13 @@
       "INPUTED": ["string", "string"],
       "PREVIOUS": [1, 2],
       "INPUTTED": "string"
+    },
+    "ARRAYMIX": {
+      "EDITED": ["string", 1, null],
+      "FORCED": ["string", 1, null],
+      "INPUTED": ["string", 1, null],
+      "PREVIOUS": ["string", 1, null],
+      "INPUTTED": [[null, "1", "2"],["3", null, "2"],["2", "3", null]]
     }
   }
 }
