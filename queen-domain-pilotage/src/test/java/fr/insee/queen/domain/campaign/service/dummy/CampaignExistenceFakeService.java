@@ -25,7 +25,7 @@ public class CampaignExistenceFakeService implements CampaignExistenceService {
 
     @Override
     public void throwExceptionIfCampaignNotLinkedToQuestionnaire(String campaignId, String questionnaireId) {
-
+        // not implemented yet
     }
 
     @Override
