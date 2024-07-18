@@ -33,6 +33,22 @@
           }
         ]
       }
+    },
+    {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
     }
   ]
 }
