@@ -43,8 +43,14 @@ class JsonValidatorComponentTest {
         String dataJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/data/invalid-value-collected-data.json");
         JsonNode dataNode = mapper.readValue(dataJson, JsonNode.class);
         Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.DATA, dataNode);
-        assertThat(errors).isNotEmpty();
-        errors.forEach(error -> assertBadType(error, "$.COLLECTED.VALUE.EDITED"));
+        assertThat(errors)
+                .isNotEmpty()
+                .anySatisfy(error -> {
+                    assertBadType(error, "$.COLLECTED.VALUE.EDITED");
+                })
+                .anySatisfy(error -> {
+                    assertBadType(error, "$.COLLECTED.VALUE.COLLECTED");
+                });
     }
 
     @Test
@@ -64,8 +70,14 @@ class JsonValidatorComponentTest {
         String dataJson = JsonTestHelper.getResourceFileAsString(filePath);
         JsonNode dataNode = mapper.readValue(dataJson, JsonNode.class);
         Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.DATA, dataNode);
-        assertThat(errors).isNotEmpty();
-        errors.forEach(error -> assertBadType(error, "$."+targettedObject+".OBJECT_VAR"));
+        assertThat(errors)
+                .isNotEmpty()
+                .anySatisfy(error -> {
+                    assertBadType(error, "$."+targettedObject+".OBJECT_VAR");
+                })
+                .anySatisfy(error -> {
+                    assertBadType(error, "$."+targettedObject+".PAIRWISE");
+                });
     }
 
     @Test

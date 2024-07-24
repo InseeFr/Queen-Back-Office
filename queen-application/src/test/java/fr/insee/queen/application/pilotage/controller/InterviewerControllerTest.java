@@ -30,7 +30,7 @@ class InterviewerControllerTest {
         List<CampaignSummaryDto> campaigns = interviewerController.getInterviewerCampaignList("userId");
         assertThat(pilotageComponent.isWentThroughInterviewerCampaigns()).isTrue();
         assertThat(campaigns).hasSize(2);
-        assertThat(campaigns.get(0).getId()).isEqualTo(PilotageFakeComponent.CAMPAIGN1_ID);
+        assertThat(campaigns.getFirst().getId()).isEqualTo(PilotageFakeComponent.CAMPAIGN1_ID);
     }
 
     @Test
@@ -38,7 +38,7 @@ class InterviewerControllerTest {
     void testGetSurveyUnitsCampaign01() {
         List<SurveyUnitByCampaignDto> surveyUnits = interviewerController.getListSurveyUnitByCampaign("campaign-id");
         assertThat(surveyUnits).hasSize(2);
-        assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);
+        assertThat(surveyUnits.getFirst().id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);
     }
 
     @Test
@@ -52,15 +52,6 @@ class InterviewerControllerTest {
     @Test
     @DisplayName("On retrieving survey units for an interviewer, return survey units found")
     void testGetSurveyUnitsForInterviewers03() {
-        List<SurveyUnitDto> surveyUnits =  interviewerController.getInterviewerSurveyUnits();
-        assertThat(surveyUnits).size().isEqualTo(2);
-        assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);
-        assertThat(surveyUnits.get(1).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT2_ID);
-    }
-
-    @Test
-    @DisplayName("On retrieving survey units for an interviewer, return survey units found")
-    void testGetSurveyUnitsForInterviewers04() {
         List<SurveyUnitDto> surveyUnits =  interviewerController.getInterviewerSurveyUnits();
         assertThat(surveyUnits).size().isEqualTo(2);
         assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);

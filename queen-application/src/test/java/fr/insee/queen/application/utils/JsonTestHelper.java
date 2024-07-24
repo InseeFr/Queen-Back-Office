@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class JsonTestHelper {
 
-    private final static String DATA_FOLDER = "data/";
+    private static final String DATA_FOLDER = "data/";
 
     public JsonTestHelper() {
         throw new IllegalArgumentException("Utility class");
