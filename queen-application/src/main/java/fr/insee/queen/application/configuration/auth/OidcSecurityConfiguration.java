@@ -5,6 +5,7 @@ import fr.insee.queen.application.configuration.properties.OidcProperties;
 import fr.insee.queen.application.configuration.properties.RoleProperties;
 import fr.insee.queen.application.configuration.rest.RestTemplateAddJsonHeaderInterceptor;
 import fr.insee.queen.application.configuration.rest.RestTemplateTokenInterceptor;
+import fr.insee.queen.application.configuration.rest.RestTemplateTraceIdInterceptor;
 import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -98,6 +99,7 @@ public class OidcSecurityConfiguration {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(new RestTemplateAddJsonHeaderInterceptor());
         restTemplate.getInterceptors().add(new RestTemplateTokenInterceptor(authenticationHelper));
+        restTemplate.getInterceptors().add(new RestTemplateTraceIdInterceptor());
         return restTemplate;
     }
 }
