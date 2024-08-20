@@ -1,7 +1,12 @@
 FROM eclipse-temurin:21.0.3_9-jre-alpine
 
+ENV PATH_TO_JAR=/opt/app/app.jar
 WORKDIR /opt/app/
-COPY ./target/*.jar /opt/app/app.jar
+COPY ./target/*.jar $PATH_TO_JAR
+
+ENV JAVA_TOOL_OPTIONS_DEFAULT \
+    -XX:MaxRAMPercentage=75 \
+    -XX:+UseZGC
 
 # Setup a non-root user context (security)
 RUN addgroup -g 1000 tomcatgroup
@@ -11,4 +16,6 @@ RUN chown -R 1000:1000 /opt/app
 
 USER 1000
 
-ENTRYPOINT ["java", "-jar",  "/opt/app/app.jar"]
+ENTRYPOINT [ "/bin/sh", "-c", \
+    "export JAVA_TOOL_OPTIONS=\"$JAVA_TOOL_OPTIONS_DEFAULT $JAVA_TOOL_OPTIONS\"; \
+    exec java -jar $PATH_TO_JAR" ]
