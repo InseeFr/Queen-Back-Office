@@ -5,8 +5,7 @@ WORKDIR /opt/app/
 COPY ./target/*.jar $PATH_TO_JAR
 
 ENV JAVA_TOOL_OPTIONS_DEFAULT \
-    -XX:MaxRAMPercentage=75 \
-    -XX:+UseZGC
+    -XX:MaxRAMPercentage=75
 
 # Setup a non-root user context (security)
 RUN addgroup -g 1000 tomcatgroup
