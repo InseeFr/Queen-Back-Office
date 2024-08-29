@@ -52,9 +52,6 @@ public class SurveyUnitDB {
     @Column
     private String correlationId;
 
-    @Column
-    private Long creationTimestamp;
-
     public SurveyUnitDB(String id, CampaignDB campaign, QuestionnaireModelDB questionnaireModel) {
         this.id = id;
         this.campaign = campaign;

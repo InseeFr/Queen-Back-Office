@@ -56,8 +56,7 @@ public interface CampaignJpaRepository extends JpaRepository<CampaignDB, String>
      * @return the campaign id
      */
     @Query("""
-            select c.id from CampaignDB c
-            left join fetch c.questionnaireModels qm
+            select qm.campaign.id from QuestionnaireModelDB qm
             where qm.id=:questionnaireId
     """)
     Optional<String> findCampaignIdByQuestionnaireId(String questionnaireId);

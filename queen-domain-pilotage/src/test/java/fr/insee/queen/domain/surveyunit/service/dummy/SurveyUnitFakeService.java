@@ -122,8 +122,8 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     @Override
     public List<SurveyUnit> findAllSurveyUnits() {
         return List.of(
-                SurveyUnit.create(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id", null, null, null, null),
-                SurveyUnit.create(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id", null, null, null, null)
+                new SurveyUnit(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id", null, null, null, null, null),
+                new SurveyUnit(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id", null, null, null, null, null)
         );
     }
 }
