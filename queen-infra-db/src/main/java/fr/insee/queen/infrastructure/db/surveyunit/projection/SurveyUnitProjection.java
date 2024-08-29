@@ -28,6 +28,7 @@ public record SurveyUnitProjection(
                 projection.personalization(),
                 projection.data(),
                 projection.comment(),
-                stateDataModel);
+                stateDataModel,
+                null);
     }
 }

@@ -64,12 +64,12 @@ public class PilotageFakeService implements PilotageService {
             return new ArrayList<>();
         }
         return List.of(
-                new SurveyUnit(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id",
+                SurveyUnit.create(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(),
                         JsonNodeFactory.instance.objectNode(),
                         JsonNodeFactory.instance.objectNode(),
                         new StateData(StateDataType.INIT, 0L, "2#3")),
-                new SurveyUnit(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id",
+                SurveyUnit.create(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(),
                         JsonNodeFactory.instance.objectNode(),
                         JsonNodeFactory.instance.objectNode(),

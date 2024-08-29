@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitCommand;
+import fr.insee.queen.domain.surveyunit.service.SurveyUnitCommandServiceImpl;
+import fr.insee.queen.domain.surveyunit.service.exception.SurveyUnitCommandException;
 import fr.insee.queen.jms.exception.PropertyException;
 import fr.insee.queen.jms.model.JmsResponse;
 import fr.insee.queen.jms.model.ResponseCode;
@@ -11,6 +13,7 @@ import jakarta.jms.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 import static fr.insee.queen.jms.configuration.ConfigurationJMS.SU_QUEUE;
@@ -18,9 +21,10 @@ import static fr.insee.queen.jms.configuration.ConfigurationJMS.SU_QUEUE;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SurveyUnitCreationListener {
+public class SurveyUnitConsumerQueue {
     private final ObjectMapper objectMapper;
-    //private final SurveyUnitCommandServiceImpl surveyUnitCommandService;
+    private final SurveyUnitCommandServiceImpl surveyUnitCommandService;
+    private final JmsTemplate jmsTemplateQueue;
 
     private static final String PROPERTY_NOT_FOUND_MESSAGE =
             "Property %s does not exist";
@@ -54,22 +58,33 @@ public class SurveyUnitCreationListener {
             return;
         }
 
-    try {
-        SurveyUnitCommand surveyUnitCommand = new SurveyUnitCommand(surveyUnitId, questionnaireId, null, null, correlationId);
-        //surveyUnitCommandService.createSurveyUnit(surveyUnitCommand);
-        JmsResponse response = JmsResponse.createResponse(ResponseCode.CREATED);
-        sendToReplyQueue(replyQueue, correlationId, response);
+        try {
+            SurveyUnitCommand surveyUnitCommand = new SurveyUnitCommand(surveyUnitId, questionnaireId, null, null, correlationId);
+            surveyUnitCommandService.createSurveyUnit(surveyUnitCommand);
+            JmsResponse response = JmsResponse.createResponse(ResponseCode.CREATED);
+            sendToReplyQueue(replyQueue, correlationId, response);
+        } catch (SurveyUnitCommandException e) {
+            log.error(e.getMessage(), e);
+            JmsResponse responseMessage = JmsResponse.createResponse(ResponseCode.BUSINESS_ERROR, e.getMessage());
+            sendToReplyQueue(replyQueue, correlationId, responseMessage);
         } catch (RuntimeException e) {
             log.error(e.getMessage(), e);
+            JmsResponse responseMessage = JmsResponse.createResponse(ResponseCode.TECHNICAL_ERROR, e.getMessage());
+            sendToReplyQueue(replyQueue, correlationId, responseMessage);
         }
     }
 
     public void sendToReplyQueue(String replyQueue, String correlationId, JmsResponse responseMessage) {
         log.info("Command {} - reply to queue {} - response code: {} - response message: {} - ",
                 correlationId, replyQueue, responseMessage.code(), responseMessage.message());
-        JmsTemplateQueue.send(replyQueue, session -> {
-                String jsonResponse = objectMapper.writeValueAsString(responseMessage);
-                ObjectMessage objectMessage = session.createObjectMessage(jsonResponse);
+        jmsTemplateQueue.send(replyQueue, session -> {
+            String jsonResponse = null;
+            try {
+                jsonResponse = objectMapper.writeValueAsString(responseMessage);
+            } catch (JsonProcessingException e) {
+                log.error("Command {} - Unable to process json response", correlationId);
+            }
+            ObjectMessage objectMessage = session.createObjectMessage(jsonResponse);
                 objectMessage.setJMSCorrelationID(correlationId);
                 objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
                 return objectMessage;
@@ -90,5 +105,6 @@ public class SurveyUnitCreationListener {
                     String.format(PROPERTY_NOT_TEXTUAL_MESSAGE, propertyToFind)
             );
         }
+        return propertyValue.asText();
     }
 }

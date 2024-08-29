@@ -57,7 +57,8 @@ class SurveyUnitApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
-                stateData);
+                stateData,
+                null);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         surveyUnitApiService.createSurveyUnit(surveyUnit);
 
@@ -72,7 +73,8 @@ class SurveyUnitApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
-                stateData);
+                stateData,
+                null);
         assertThatThrownBy(() -> surveyUnitApiService.createSurveyUnit(surveyUnit))
                 .isInstanceOf(EntityAlreadyExistException.class)
                 .hasMessage(String.format(SurveyUnitApiService.ALREADY_EXIST_MESSAGE, surveyUnit.id()));
@@ -85,6 +87,7 @@ class SurveyUnitApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         surveyUnitApiService.createSurveyUnit(surveyUnit);
@@ -100,7 +103,8 @@ class SurveyUnitApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
-                stateData);
+                stateData,
+                null);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         surveyUnitApiService.createSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitCreated()).isEqualTo(surveyUnit);
@@ -115,7 +119,8 @@ class SurveyUnitApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
-                stateData);
+                stateData,
+                null);
         surveyUnitFakeDao.setSurveyUnitExist(false);
         assertThatThrownBy(() -> surveyUnitApiService.updateSurveyUnit(surveyUnit))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -131,6 +136,7 @@ class SurveyUnitApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         surveyUnitApiService.updateSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitUpdated()).isEqualTo(surveyUnit);
@@ -145,7 +151,8 @@ class SurveyUnitApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
-                stateData);
+                stateData,
+                null);
         surveyUnitApiService.updateSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitUpdated()).isEqualTo(surveyUnit);
         assertThat(stateDataFakeService.getStateDataSaved()).isEqualTo(stateData);
@@ -159,7 +166,8 @@ class SurveyUnitApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
-                stateData);
+                stateData,
+                null);
         stateDataFakeService.setDateInvalid(true);
         surveyUnitApiService.updateSurveyUnit(surveyUnit);
         assertThat(surveyUnitFakeDao.getSurveyUnitUpdated()).isEqualTo(surveyUnit);

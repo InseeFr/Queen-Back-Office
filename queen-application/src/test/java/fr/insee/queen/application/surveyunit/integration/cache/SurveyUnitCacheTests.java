@@ -66,6 +66,7 @@ class SurveyUnitCacheTests {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         surveyUnitService.createSurveyUnit(surveyUnit);
 
@@ -99,6 +100,7 @@ class SurveyUnitCacheTests {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         surveyUnitService.createSurveyUnit(surveyUnit);
 
@@ -131,6 +133,7 @@ class SurveyUnitCacheTests {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         surveyUnitService.createSurveyUnit(surveyUnit);
 
@@ -165,6 +168,7 @@ class SurveyUnitCacheTests {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         surveyUnitService.createSurveyUnit(surveyUnit);
 

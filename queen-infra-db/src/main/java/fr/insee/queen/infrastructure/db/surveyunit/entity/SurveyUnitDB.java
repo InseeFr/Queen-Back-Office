@@ -49,6 +49,12 @@ public class SurveyUnitDB {
     @OneToOne(mappedBy = "surveyUnit", cascade = CascadeType.ALL)
     private CommentDB comment;
 
+    @Column
+    private String correlationId;
+
+    @Column
+    private Long creationTimestamp;
+
     public SurveyUnitDB(String id, CampaignDB campaign, QuestionnaireModelDB questionnaireModel) {
         this.id = id;
         this.campaign = campaign;

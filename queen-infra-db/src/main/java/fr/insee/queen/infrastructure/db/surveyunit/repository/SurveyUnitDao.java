@@ -107,6 +107,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         surveyUnitDB.setPersonalization(personalizationDB);
         surveyUnitDB.setComment(commentDB);
         surveyUnitDB.setData(dataDB);
+        surveyUnitDB.setCorrelationId(surveyUnit.correlationId());
         crudRepository.save(surveyUnitDB);
     }
 
