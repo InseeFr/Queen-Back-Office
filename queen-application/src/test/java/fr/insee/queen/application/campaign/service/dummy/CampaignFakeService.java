@@ -6,6 +6,7 @@ import fr.insee.queen.domain.campaign.service.CampaignService;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Getter
@@ -33,6 +34,11 @@ public class CampaignFakeService implements CampaignService {
     @Override
     public void createCampaign(Campaign campaignData) {
         created = true;
+    }
+
+    @Override
+    public Optional<String> findCampaignIdFromQuestionnaireId(String questionnaireId) {
+        return Optional.empty();
     }
 
     @Override

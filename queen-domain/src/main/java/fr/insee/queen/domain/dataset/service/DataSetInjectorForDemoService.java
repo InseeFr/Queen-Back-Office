@@ -285,7 +285,8 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
                 personalization,
                 data,
                 comment,
-                stateData);
+                stateData,
+                null);
         try {
             surveyUnitService.createSurveyUnit(surveyunit);
         } catch (StateDataInvalidDateException e) {

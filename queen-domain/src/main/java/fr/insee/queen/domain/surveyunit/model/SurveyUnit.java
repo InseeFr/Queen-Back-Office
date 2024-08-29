@@ -11,8 +11,20 @@ public record SurveyUnit(
         ArrayNode personalization,
         ObjectNode data,
         ObjectNode comment,
-        StateData stateData) {
-    public static SurveyUnit createForUpdate(String surveyUnitId, ArrayNode personalization, ObjectNode comment, ObjectNode data, StateData stateData) {
-        return new SurveyUnit(surveyUnitId, null, null, personalization, data, comment, stateData);
+        StateData stateData,
+        String correlationId) {
+    public static SurveyUnit create(String surveyUnitId, ArrayNode personalization,
+                                    ObjectNode comment, ObjectNode data,
+                                    StateData stateData) {
+        return new SurveyUnit(surveyUnitId, null,
+                null, personalization, data,
+                comment, stateData, null);
+    }
+
+    public static SurveyUnit createForUpdate(String surveyUnitId, ArrayNode personalization,
+                                             ObjectNode comment, ObjectNode data,
+                                             StateData stateData) {
+        return new SurveyUnit(surveyUnitId, null, null,
+                personalization, data, comment, stateData, null);
     }
 }

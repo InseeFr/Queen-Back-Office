@@ -36,6 +36,7 @@ public record SurveyUnitCreationInput(
                 surveyUnit.personalization(),
                 surveyUnit.data(),
                 surveyUnit.comment(),
-                StateDataInput.toModel(surveyUnit.stateData()));
+                StateDataInput.toModel(surveyUnit.stateData()),
+                null);
     }
 }

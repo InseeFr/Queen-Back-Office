@@ -50,4 +50,15 @@ public interface CampaignJpaRepository extends JpaRepository<CampaignDB, String>
             from CampaignDB c INNER JOIN c.questionnaireModels qm
             where qm.id=:questionnaireId""")
     Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
+
+    /**
+     * Retrieve campaign by questionnaire id
+     * @return the campaign id
+     */
+    @Query("""
+            select c.id from CampaignDB c
+            left join fetch c.questionnaireModels qm
+            where qm.id=:questionnaireId
+    """)
+    Optional<String> findCampaignIdByQuestionnaireId(String questionnaireId);
 }
