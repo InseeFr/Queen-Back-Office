@@ -10,8 +10,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.jms.annotation.EnableJms;
 
 @SpringBootApplication(scanBasePackages = "fr.insee.queen")
-//@EntityScan("fr.insee.queen")
-//@EnableJpaRepositories("fr.insee.queen")
 @EnableCaching
 @EnableJms
 @Slf4j

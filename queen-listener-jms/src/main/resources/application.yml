@@ -1,13 +1,10 @@
-server:
-  port: 8084
-
-Spring:
+spring:
   application:
     name: queen-listener-jms
   datasource:
     url: jdbc:postgresql://<URL>:5432/queen
-    username: <USER>
-    password: <PASSWORD>
+    username:
+    password:
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 2
@@ -30,14 +27,6 @@ Spring:
         auto: validate
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  liquibase:
-    enabled: true
-    contexts: prod
-    defaultSchema: public
-    change-log: classpath:db/master.xml
-  profiles:
-    group:
-      cache-testing: test,test-cache
   artemis:
     mode: native
     broker-url: (tcp://${ARTEMIS_BROKER_URL}:${ARTEMIS_BROKER_PORT})?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
@@ -52,7 +41,8 @@ logging:
       insee:
         queen:
           jms: INFO
-fr:
-  insee:
-    mock:
-      mockcreatecampaignandquestionnaire: false
+feature:
+  dataset:
+    load-on-start: false
+  jms:
+    request-queue:

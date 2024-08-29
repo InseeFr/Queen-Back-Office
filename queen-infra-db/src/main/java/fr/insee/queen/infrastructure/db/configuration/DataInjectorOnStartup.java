@@ -1,4 +1,4 @@
-package fr.insee.queen.application.configuration;
+package fr.insee.queen.infrastructure.db.configuration;
 
 import fr.insee.queen.domain.dataset.service.DataSetInjectorService;
 import lombok.RequiredArgsConstructor;
