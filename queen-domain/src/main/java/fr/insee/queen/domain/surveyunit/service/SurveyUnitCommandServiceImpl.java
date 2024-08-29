@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.surveyunit.service;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
 import fr.insee.queen.domain.surveyunit.model.*;
@@ -31,7 +32,7 @@ public class SurveyUnitCommandServiceImpl implements SurveyUnitCommandService {
                     surveyUnitCommand.questionnaireId(),
                     surveyUnitCommand.personalization(),
                     surveyUnitCommand.data(),
-                    null,
+                    JsonNodeFactory.instance.objectNode(),
                     null,
                     surveyUnitCommand.correlationId());
             surveyUnitRepository.create(surveyUnitToCreate);
