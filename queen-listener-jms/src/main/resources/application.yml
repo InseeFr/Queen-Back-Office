@@ -29,12 +29,15 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   artemis:
     mode: native
-    broker-url: (tcp://${ARTEMIS_BROKER_URL}:${ARTEMIS_BROKER_PORT})?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
-    user: ${ARTEMIS_USER}
-    password: ${ARTEMIS_PASSWORD}
+    broker-url:
+    user:
+    password:
     pool:
       enabled: true
       max-connections: 50
+  jms:
+    listener:
+      command-queue:
 logging:
   level:
     fr:
@@ -44,5 +47,3 @@ logging:
 feature:
   dataset:
     load-on-start: false
-  jms:
-    request-queue:

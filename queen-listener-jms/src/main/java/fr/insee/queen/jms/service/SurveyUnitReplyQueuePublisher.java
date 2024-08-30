@@ -13,25 +13,28 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SurveyUnitReplyQueuePublisher {
+public class SurveyUnitReplyQueuePublisher implements SurveyUnitResponsePublisher {
     private final ObjectMapper objectMapper;
     private final JmsTemplate jmsQueuePublisher;
 
     public void send(String replyQueue, String correlationId, JmsResponse responseMessage) {
         log.info("Command {} - reply to queue {} - response code: {} - response message: {} - ",
                 correlationId, replyQueue, responseMessage.code(), responseMessage.message());
+
+        String jsonResponse;
+        try {
+            jsonResponse = objectMapper.writeValueAsString(responseMessage);
+        } catch (JsonProcessingException e) {
+            log.error("Command {} - Unable to process json response", correlationId);
+            return;
+        }
+
         jmsQueuePublisher.send(replyQueue, session -> {
-            String jsonResponse = null;
-            try {
-                jsonResponse = objectMapper.writeValueAsString(responseMessage);
-            } catch (JsonProcessingException e) {
-                log.error("Command {} - Unable to process json response", correlationId);
-            }
             ObjectMessage objectMessage = session.createObjectMessage(jsonResponse);
             objectMessage.setJMSCorrelationID(correlationId);
             objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
             return objectMessage;
         });
-        log.debug("Command {} - sent", correlationId);
+        log.info("Command {} - sent", correlationId);
     }
 }
