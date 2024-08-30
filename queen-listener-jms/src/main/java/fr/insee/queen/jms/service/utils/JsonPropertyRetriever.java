@@ -13,8 +13,6 @@ public class JsonPropertyRetriever {
         throw new IllegalArgumentException("Utility class");
     }
 
-    public static final String PROPERTY_NOT_FOUND_MESSAGE =
-            "Property %s does not exist";
     public static final String PROPERTY_NOT_TEXTUAL_MESSAGE =
             "Property %s does not have a textual value";
 
@@ -27,12 +25,7 @@ public class JsonPropertyRetriever {
      * value is not a string
      */
     public static String getPropertyValue(JsonNode sourceNode, String propertyToFind) throws PropertyException {
-        JsonNode propertyValue = sourceNode.get(propertyToFind);
-        if(propertyValue.isNull() || propertyValue.isEmpty()) {
-            throw new PropertyException(
-                    String.format(PROPERTY_NOT_FOUND_MESSAGE, propertyToFind)
-            );
-        }
+        JsonNode propertyValue = sourceNode.path(propertyToFind);
 
         if(!propertyValue.isTextual()) {
             throw new PropertyException(
