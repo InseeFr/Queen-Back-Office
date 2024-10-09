@@ -12,7 +12,7 @@
 	<description>Deposit proof generation for Queen/Stromae</description>
 
 	<properties>
-		<fop.version>2.9</fop.version>
+		<fop.version>2.10</fop.version>
 		<saxon.version>12.5</saxon.version>
 	</properties>
 
