@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.surveyunittempzone.dto.output.SurveyUnitTempZoneDto;
 import fr.insee.queen.application.web.validation.IdValid;
-import fr.insee.queen.application.web.validation.json.JsonValid;
 import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.surveyunittempzone.service.SurveyUnitTempZoneService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +48,6 @@ public class SurveyUnitTempZoneController {
     @ResponseStatus(HttpStatus.CREATED)
     public void postSurveyUnitByIdInTempZone(@IdValid @PathVariable(value = "id") String surveyUnitId,
                                              @RequestBody
-                                             @JsonValid(SchemaType.SURVEY_UNIT_TEMP_ZONE)
                                              ObjectNode surveyUnit,
                                              @CurrentSecurityContext(expression = "authentication.name") String userId) {
         surveyUnitTempZoneService.saveSurveyUnitToTempZone(surveyUnitId, userId, surveyUnit);
