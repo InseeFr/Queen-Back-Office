@@ -9,7 +9,7 @@
             <file>${LOG_FILE}</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- daily rollover -->
-                <fileNamePattern>%d{yyyy-MM-dd}.${LOG_FILE}.gz</fileNamePattern>
+                <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
                 <maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY}</maxHistory>
             </rollingPolicy>
 
