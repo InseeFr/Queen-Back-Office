@@ -24,8 +24,6 @@ class GrantedAuthorityConverterTest {
 
     private OidcProperties oidcProperties;
 
-    private Map<String, Object> jwtHeaders;
-
     private static final String JWT_ROLE_INTERVIEWER = "interviewer";
     private static final String JWT_ROLE_REVIEWER = "reviewer";
     private static final String JWT_ROLE_REVIEWER_ALTERNATIVE = "reviewerAlternative";
@@ -35,9 +33,8 @@ class GrantedAuthorityConverterTest {
 
     @BeforeEach
     void init() {
-        oidcProperties = new OidcProperties(true, "host", "url", "realm", "principal-attribute", "roleClaim", "client-id");
-        jwtHeaders = new HashMap<>();
-        jwtHeaders.put("header", "headerValue");
+        oidcProperties = new OidcProperties(true, "host", "url", "realm", "principal-attribute", "", "client-id");
+
     }
 
     @Test
@@ -45,14 +42,11 @@ class GrantedAuthorityConverterTest {
     void testConverter01() {
         RoleProperties roleProperties = new RoleProperties("", null, JWT_ROLE_ADMIN, JWT_ROLE_WEBCLIENT, JWT_ROLE_REVIEWER_ALTERNATIVE, JWT_ROLE_SURVEY_UNIT);
         converter = new GrantedAuthorityConverter(oidcProperties, roleProperties);
-        Map<String, Object> claims = new HashMap<>();
         List<String> tokenRoles = new ArrayList<>();
         tokenRoles.add(null);
         tokenRoles.add("");
-        claims.put(oidcProperties.roleClaim(), tokenRoles);
 
-
-        Jwt jwt = new Jwt("user-id", Instant.now(), Instant.MAX, jwtHeaders, claims);
+        Jwt jwt = createJwt(tokenRoles);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
         assertThat(authorities).isEmpty();
     }
@@ -62,55 +56,74 @@ class GrantedAuthorityConverterTest {
     void testConverter02() {
         RoleProperties roleProperties = new RoleProperties(JWT_ROLE_INTERVIEWER, JWT_ROLE_REVIEWER, JWT_ROLE_ADMIN, JWT_ROLE_WEBCLIENT, JWT_ROLE_REVIEWER_ALTERNATIVE, JWT_ROLE_SURVEY_UNIT);
         converter = new GrantedAuthorityConverter(oidcProperties, roleProperties);
-        Map<String, Object> claims = new HashMap<>();
         List<String> tokenRoles = List.of("dummyRole1", roleProperties.reviewer(), "dummyRole2", roleProperties.interviewer(), "dummyRole3", roleProperties.surveyUnit());
-        claims.put(oidcProperties.roleClaim(), tokenRoles);
 
-        Jwt jwt = new Jwt("user-id", Instant.now(), Instant.MAX, jwtHeaders, claims);
+        Jwt jwt = createJwt(tokenRoles);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
         assertThat(authorities)
                 .hasSize(3)
                 .containsExactlyInAnyOrder(
-                        new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.INTERVIEWER),
-                        new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.SURVEY_UNIT),
-                        new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.REVIEWER));
+                        new SimpleGrantedAuthority(AuthorityRoleEnum.INTERVIEWER.securityRole()),
+                        new SimpleGrantedAuthority(AuthorityRoleEnum.SURVEY_UNIT.securityRole()),
+                        new SimpleGrantedAuthority(AuthorityRoleEnum.REVIEWER.securityRole()));
+    }
+
+    @Test
+    @DisplayName("Given a JWT, when converting roles, then accept a config role can be used for multiple app roles")
+    void testConverter03() {
+        String dummyRole = "dummyRole";
+        String dummyRole2 = "dummyRole2";
+        RoleProperties roleProperties = new RoleProperties(dummyRole, dummyRole, dummyRole2, dummyRole2, null, dummyRole2);
+        oidcProperties = new OidcProperties(true, "host", "url", "realm", "principal-attribute", "", "client-id");
+        converter = new GrantedAuthorityConverter(oidcProperties, roleProperties);
+
+        List<String> tokenRoles = List.of(dummyRole, "role-not-used", dummyRole2, "role-not-used-2");
+        Jwt jwt = createJwt(tokenRoles);
+
+        Collection<GrantedAuthority> authorities = converter.convert(jwt);
+        assertThat(authorities)
+                .hasSize(5)
+                .contains(
+                        new SimpleGrantedAuthority(AuthorityRoleEnum.INTERVIEWER.securityRole()),
+                        new SimpleGrantedAuthority(AuthorityRoleEnum.REVIEWER.securityRole()),
+                        new SimpleGrantedAuthority(AuthorityRoleEnum.ADMIN.securityRole()),
+                        new SimpleGrantedAuthority(AuthorityRoleEnum.WEBCLIENT.securityRole()),
+                        new SimpleGrantedAuthority(AuthorityRoleEnum.SURVEY_UNIT.securityRole()));
     }
 
     @ParameterizedTest
     @MethodSource("provideJWTRoleWithAppRoleAssociated")
     @DisplayName("Given a JWT, when converting roles, then assure each JWT role is converted to equivalent app role")
-    void testConverter03(String jwtRole, AuthorityRoleEnum appRole) {
+    void testConverter04(String jwtRole, AuthorityRoleEnum appRole) {
         RoleProperties roleProperties = new RoleProperties(JWT_ROLE_INTERVIEWER, JWT_ROLE_REVIEWER, JWT_ROLE_ADMIN, JWT_ROLE_WEBCLIENT, JWT_ROLE_REVIEWER_ALTERNATIVE, JWT_ROLE_SURVEY_UNIT);
         converter = new GrantedAuthorityConverter(oidcProperties, roleProperties);
-        Map<String, Object> claims = new HashMap<>();
         List<String> tokenRoles = List.of(jwtRole);
-        claims.put(oidcProperties.roleClaim(), tokenRoles);
 
-        Jwt jwt = new Jwt("user-id", Instant.now(), Instant.MAX, jwtHeaders, claims);
+        Jwt jwt = createJwt(tokenRoles);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
         assertThat(authorities)
                 .hasSize(1)
-                .contains(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + appRole));
+                .contains(new SimpleGrantedAuthority(appRole.securityRole()));
     }
 
     @Test
-    @DisplayName("Given a JWT, when no role claim is defined, then default role claim is used")
-    void testConverter04() {
-        oidcProperties = new OidcProperties(true, "host", "url", "realm", "principal-attribute", "", "client-id");
+    @DisplayName("Given a JWT, when role claim is defined, then role claim is used to retrieve roles")
+    void testConverter05() {
+        oidcProperties = new OidcProperties(true, "host", "url", "realm", "principal-attribute", "roleClaim", "client-id");
         RoleProperties roleProperties = new RoleProperties(JWT_ROLE_INTERVIEWER, JWT_ROLE_REVIEWER, JWT_ROLE_ADMIN, JWT_ROLE_WEBCLIENT, JWT_ROLE_REVIEWER_ALTERNATIVE, JWT_ROLE_SURVEY_UNIT);
         converter = new GrantedAuthorityConverter(oidcProperties, roleProperties);
         Map<String, Object> claims = new HashMap<>();
-        Map<String, Object> roleClaims = new HashMap<>();
         List<String> tokenRoles = List.of(JWT_ROLE_INTERVIEWER, JWT_ROLE_REVIEWER);
-        roleClaims.put(GrantedAuthorityConverter.ROLES, tokenRoles);
-        claims.put(GrantedAuthorityConverter.REALM_ACCESS, roleClaims);
+        claims.put(oidcProperties.roleClaim(), tokenRoles);
+        Map<String, Object> jwtHeaders = new HashMap<>();
+        jwtHeaders.put("header", "headerValue");
 
         Jwt jwt = new Jwt("user-id", Instant.now(), Instant.MAX, jwtHeaders, claims);
         Collection<GrantedAuthority> authorities = converter.convert(jwt);
         assertThat(authorities)
                 .hasSize(2)
-                .contains(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.INTERVIEWER))
-                .contains(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + AuthorityRoleEnum.REVIEWER));
+                .contains(new SimpleGrantedAuthority(AuthorityRoleEnum.INTERVIEWER.securityRole()))
+                .contains(new SimpleGrantedAuthority(AuthorityRoleEnum.REVIEWER.securityRole()));
     }
 
     private static Stream<Arguments> provideJWTRoleWithAppRoleAssociated() {
@@ -121,5 +134,17 @@ class GrantedAuthorityConverterTest {
                 Arguments.of(JWT_ROLE_ADMIN, AuthorityRoleEnum.ADMIN),
                 Arguments.of(JWT_ROLE_WEBCLIENT, AuthorityRoleEnum.WEBCLIENT),
                 Arguments.of(JWT_ROLE_SURVEY_UNIT, AuthorityRoleEnum.SURVEY_UNIT));
+    }
+
+    private Jwt createJwt(List<String> tokenRoles) {
+        Map<String, Object> jwtHeaders = new HashMap<>();
+        jwtHeaders.put("header", "headerValue");
+
+        Map<String, Object> claims = new HashMap<>();
+        Map<String, List<String>> realmRoles = new HashMap<>();
+        realmRoles.put(GrantedAuthorityConverter.REALM_ACCESS_ROLE, tokenRoles);
+        claims.put(GrantedAuthorityConverter.REALM_ACCESS, realmRoles);
+
+        return new Jwt("user-id", Instant.now(), Instant.MAX, jwtHeaders, claims);
     }
 }
