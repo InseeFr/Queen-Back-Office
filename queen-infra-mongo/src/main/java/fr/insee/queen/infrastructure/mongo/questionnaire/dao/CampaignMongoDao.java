@@ -60,16 +60,16 @@ public class CampaignMongoDao implements CampaignRepository {
 
     @Override
     @Transactional
-    public void update(Campaign campaign) {
-        MetadataObject metadata = MetadataObject.fromModel(campaign.getMetadata());
+    public void update(Campaign campaignToUpdate) {
+        MetadataObject metadata = MetadataObject.fromModel(campaignToUpdate.getMetadata());
 
-        questionnaireRepository.findQuestionnairesSummaryByCampaignId(campaign.getId()).stream()
+        questionnaireRepository.findQuestionnairesSummaryByCampaignId(campaignToUpdate.getId()).stream()
                 .map(QuestionnaireModelDocument::getId)
-                .filter(questionnaireId -> !questionnaireId.contains(campaign.getId()))
+                .filter(questionnaireId -> !campaignToUpdate.getQuestionnaireIds().contains(questionnaireId))
                 .forEach(questionnaireRepository::deleteCampaignFromQuestionnaire);
 
-        campaign.getQuestionnaireIds().forEach(questionnaireId ->
-            questionnaireRepository.updateCampaign(questionnaireId, campaign.getId(), campaign.getLabel(), metadata)
+        campaignToUpdate.getQuestionnaireIds().forEach(questionnaireId ->
+            questionnaireRepository.updateCampaign(questionnaireId, campaignToUpdate.getId(), campaignToUpdate.getLabel(), metadata)
         );
     }
 
