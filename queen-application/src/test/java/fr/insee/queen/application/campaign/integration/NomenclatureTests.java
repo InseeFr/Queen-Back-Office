@@ -2,8 +2,10 @@ package fr.insee.queen.application.campaign.integration;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import fr.insee.queen.QueenApplication;
 import fr.insee.queen.application.campaign.dto.input.NomenclatureCreationData;
 import fr.insee.queen.application.configuration.ScriptConstants;
+import fr.insee.queen.application.configuration.db.JpaConfiguration;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = { QueenApplication.class, JpaConfiguration.class })
 @ActiveProfiles("test")
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase

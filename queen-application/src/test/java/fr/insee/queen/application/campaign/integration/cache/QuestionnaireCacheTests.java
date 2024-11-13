@@ -2,7 +2,9 @@ package fr.insee.queen.application.campaign.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.QueenApplication;
 import fr.insee.queen.application.configuration.ScriptConstants;
+import fr.insee.queen.application.configuration.db.JpaConfiguration;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
@@ -32,7 +34,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { QueenApplication.class, JpaConfiguration.class })
 @ActiveProfiles("cache-testing")
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase
