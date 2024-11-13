@@ -118,6 +118,7 @@ management:
       discovery:
         enabled: false
 logging:
+  appender: ROLLING_FILE # ROLLING_FILE | CONSOLE
   level:
     root: INFO
     fr:
