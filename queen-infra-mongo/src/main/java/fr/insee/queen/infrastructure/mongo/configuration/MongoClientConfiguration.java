@@ -1,4 +1,4 @@
-package fr.insee.queen.application.configuration.db;
+package fr.insee.queen.infrastructure.mongo.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.infrastructure.mongo.converter.ArrayNodeToDocumentConverter;
@@ -7,6 +7,7 @@ import fr.insee.queen.infrastructure.mongo.converter.DocumentToObjectNodeConvert
 import fr.insee.queen.infrastructure.mongo.converter.ObjectNodeToDocumentConverter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -18,9 +19,12 @@ import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 public class MongoClientConfiguration extends AbstractMongoClientConfiguration {
     private final ObjectMapper mapper;
 
+    @Value("${spring.data.mongodb.database}")
+    private final String databaseName;
+
     @Override
     protected @NonNull String getDatabaseName() {
-        return "test";
+        return databaseName;
     }
 
     @Override

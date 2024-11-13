@@ -11,6 +11,10 @@
     <name>queen-infra-paradata</name>
     <description>Paradata DAO for Queen/Stromae</description>
 
+    <properties>
+        <mongock.version>5.4.4</mongock.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>fr.insee.queen</groupId>
@@ -21,6 +25,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <!-- Mongock for Spring Boot and MongoDB -->
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongock-springboot-v3</artifactId>
+            <version>${mongock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongodb-springdata-v4-driver</artifactId>
+            <version>${mongock.version}</version>
         </dependency>
 
         <dependency>
