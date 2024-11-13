@@ -69,6 +69,12 @@ public class SurveyUnitDocument {
                 surveyUnitDocument.getCampaignId());
     }
 
+    public static SurveyUnitPersonalization toPersonalizationModel(SurveyUnitDocument surveyUnitDocument) {
+        return new SurveyUnitPersonalization(surveyUnitDocument.getId(),
+                surveyUnitDocument.getQuestionnaireId(),
+                surveyUnitDocument.getPersonalization().getValue());
+    }
+
     public static SurveyUnitState toStateModel(SurveyUnitDocument surveyUnitDocument) {
         StateData stateData = null;
         if(surveyUnitDocument.getStateData() != null) {

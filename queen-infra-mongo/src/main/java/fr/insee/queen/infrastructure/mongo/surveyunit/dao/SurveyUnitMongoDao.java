@@ -3,10 +3,7 @@ package fr.insee.queen.infrastructure.mongo.surveyunit.dao;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitDepositProof;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.infrastructure.mongo.paradata.repository.ParadataEventMongoRepository;
 import fr.insee.queen.infrastructure.mongo.questionnaire.document.QuestionnaireModelDocument;
 import fr.insee.queen.infrastructure.mongo.questionnaire.repository.QuestionnaireMongoRepository;
@@ -18,6 +15,10 @@ import fr.insee.queen.infrastructure.mongo.surveyunit.repository.SurveyUnitMongo
 import fr.insee.queen.infrastructure.mongo.surveyunittempzone.repository.SurveyUnitTempZoneMongoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -33,6 +34,7 @@ public class SurveyUnitMongoDao implements SurveyUnitRepository {
     private final QuestionnaireMongoRepository questionnaireRepository;
     private final SurveyUnitTempZoneMongoRepository surveyUnitTempZoneRepository;
     private final ParadataEventMongoRepository paradataEventRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
@@ -75,7 +77,6 @@ public class SurveyUnitMongoDao implements SurveyUnitRepository {
     @Override
     public Optional<List<String>> findAllIds() {
         List<String> ids = crudRepository.findAllIds().stream()
-                .flatMap(Collection::stream)
                 .map(SurveyUnitDocument::getId)
                 .toList();
         return Optional.of(ids);
@@ -124,6 +125,12 @@ public class SurveyUnitMongoDao implements SurveyUnitRepository {
     }
 
     @Override
+    public SurveyUnitPersonalization getSurveyUnitPersonalization(String surveyUnitId) {
+        SurveyUnitDocument surveyUnit = crudRepository.getPersonalizationById(surveyUnitId);
+        return SurveyUnitDocument.toPersonalizationModel(surveyUnit);
+    }
+
+    @Override
     public Optional<ArrayNode> findPersonalization(String surveyUnitId) {
         return crudRepository.findPersonalization(surveyUnitId)
                 .map(SurveyUnitDocument::getPersonalization)
@@ -158,7 +165,17 @@ public class SurveyUnitMongoDao implements SurveyUnitRepository {
 
     @Override
     public void updateCollectedData(String surveyUnitId, ObjectNode partialCollectedDataNode) {
-        crudRepository.updateCollectedData(surveyUnitId, partialCollectedDataNode);
+        Query query = new Query(Criteria.where("_id").is(surveyUnitId));
+        Update update = new Update();
+
+        // Ajouter chaque champ de manière dynamique dans `Update`
+        partialCollectedDataNode
+                .fields()
+                .forEachRemaining(
+                        field -> update.set("data.COLLECTED." + field.getKey(), field.getValue())
+                );
+
+        mongoTemplate.updateFirst(query, update, SurveyUnitDocument.class);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package fr.insee.queen.infrastructure.mongo.surveyunit.repository;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.mongo.surveyunit.document.*;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -75,8 +74,8 @@ public interface SurveyUnitMongoRepository extends MongoRepository<SurveyUnitDoc
      *
      * @return List of survey unit ids
      */
-    @Query(value = "{ '_id' : ?0 }", fields = "{ '_id' : 1 }", sort = "{ '_id' : 1 }")
-    Optional<List<SurveyUnitDocument>> findAllIds();
+    @Query(value = "{ }", fields = "{ '_id' : 1 }", sort = "{ '_id' : 1 }")
+    List<SurveyUnitDocument> findAllIds();
 
     /**
      * Search survey units by ids
@@ -156,10 +155,6 @@ public interface SurveyUnitMongoRepository extends MongoRepository<SurveyUnitDoc
     @Update("{ '$set': { 'state-data': ?1 } }")
     void saveStateData(String surveyUnitId, StateDataObject data);
 
-    @Query(value = "{ '_id' : ?0 }")
-    @Update("{ '$set': { 'data.COLLECTED': ?1 } }")
-    void updateCollectedData(String surveyUnitId, ObjectNode partialCollectedDataNode);
-
     /**
      *
      * @param surveyUnitId survey unit id
@@ -167,4 +162,7 @@ public interface SurveyUnitMongoRepository extends MongoRepository<SurveyUnitDoc
      */
     @Query(value = "{ '_id' : ?0, 'state-data' : { '$exists' : 1 }}")
     boolean existsStateDataBySurveyUnitId(String surveyUnitId);
+
+    @Query(value = "{ '_id' : ?0 }", fields = " { 'questionnaire-id' : 1, 'campaign-id' : 1, 'personalization' : 1 }")
+    SurveyUnitDocument getPersonalizationById(String surveyUnitId);
 }
