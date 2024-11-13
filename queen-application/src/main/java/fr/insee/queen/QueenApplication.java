@@ -14,12 +14,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan(excludeFilters =
-    @ComponentScan.Filter(type = FilterType.REGEX, pattern = "fr.insee.queen.infrastructure.mongo.*")
+@ComponentScan(excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "fr.insee.queen.infrastructure.mongo.*"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "fr.insee.queen.infrastructure.db.*")
+    }
 )
 @EnableAutoConfiguration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = {"fr.insee.queen.infrastructure.db"})
 @ConfigurationPropertiesScan
 @Slf4j
 public class QueenApplication {
