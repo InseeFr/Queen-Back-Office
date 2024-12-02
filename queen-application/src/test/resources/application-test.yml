@@ -31,14 +31,22 @@ feature:
     enabled: true
   interviewer-mode:
     enabled: true
+  mongo:
+    enabled: false
 
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration
   liquibase:
     enabled: true
     contexts: test
     defaultSchema: public
     change-log: classpath:db/integration-test.xml
 logging:
+  appender: CONSOLE
   level:
     root: INFO
     liquibase: ERROR

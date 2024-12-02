@@ -21,6 +21,7 @@
 		<guava.version>33.3.1-jre</guava.version>
 		<json-schema-validator.version>1.5.3</json-schema-validator.version>
 	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -47,6 +48,20 @@
 		</dependency>
 
 		<dependency>
+			<groupId>io.zonky.test</groupId>
+			<artifactId>embedded-database-spring-test</artifactId>
+			<version>${zonky-spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.zonky.test</groupId>
+			<artifactId>embedded-postgres</artifactId>
+			<version>${zonky-postgres.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>fr.insee.queen</groupId>
 			<artifactId>queen-domain-depositproof</artifactId>
 			<version>${project.version}</version>
@@ -67,6 +82,12 @@
 		<dependency>
 			<groupId>fr.insee.queen</groupId>
 			<artifactId>queen-infra-pilotage</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.insee.queen</groupId>
+			<artifactId>queen-infra-mongo</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -92,20 +113,6 @@
 					<artifactId>android-json</artifactId>
 				</exclusion>
 			</exclusions>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>io.zonky.test</groupId>
-			<artifactId>embedded-database-spring-test</artifactId>
-			<version>${zonky-spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>io.zonky.test</groupId>
-			<artifactId>embedded-postgres</artifactId>
-			<version>${zonky-postgres.version}</version>
 			<scope>test</scope>
 		</dependency>
 

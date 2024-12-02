@@ -1,6 +1,8 @@
 package fr.insee.queen.application.surveyunit.integration;
 
+import fr.insee.queen.QueenApplication;
 import fr.insee.queen.application.configuration.ScriptConstants;
+import fr.insee.queen.application.configuration.db.JpaConfiguration;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -23,7 +25,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = { QueenApplication.class, JpaConfiguration.class })
 @ActiveProfiles("test")
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase

@@ -1,7 +1,9 @@
 package fr.insee.queen.application.surveyunit.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import fr.insee.queen.QueenApplication;
 import fr.insee.queen.application.configuration.ScriptConstants;
+import fr.insee.queen.application.configuration.db.JpaConfiguration;
 import fr.insee.queen.domain.campaign.service.CampaignApiService;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -27,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { QueenApplication.class, JpaConfiguration.class })
 @ActiveProfiles("cache-testing")
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase

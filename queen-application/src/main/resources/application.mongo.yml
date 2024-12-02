@@ -1,0 +1,118 @@
+application:
+  public-urls:
+    - /swagger-ui/**
+    - /v3/api-docs/**
+    - /v3/*.json
+    - /api/healthcheck
+    - /
+  roles:
+    interviewer:
+    reviewer:
+    admin:
+    webclient:
+    reviewer-alternative:
+    survey-unit:
+  corsOrigins:
+  # Folder where to store temp files.
+  # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
+  # Use a folder with permissions for the app only
+  temp-folder:
+
+feature:
+  oidc:
+    enabled: true
+    auth-server-host: https://auth-server.host
+    auth-server-url: ${feature.oidc.auth-server-host}/auth
+    client-id: my-client-id
+    realm: my-realm
+    principal-attribute: id-claim
+    role-claim:
+  dataset:
+    # create demo dataset on startup
+    load-on-start: false
+    # display api endpoint to create dataset
+    display-endpoint: false
+  swagger:
+    enabled: false
+  pilotage:
+    enabled: true
+    url:
+    alternative-habilitation:
+      url: http://alternative.url
+      campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
+  cache:
+    enabled: true
+  comments:
+    enabled: false
+  interviewer-mode:
+    enabled: false
+  mongo:
+    enabled: true
+
+spring:
+  jpa:
+    enabled: false
+  data:
+    mongodb:
+      host:
+      port:
+      database:
+      replica-set-name:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${feature.oidc.auth-server-url}/realms/${feature.oidc.realm}
+  liquibase:
+    enabled: false
+  profiles:
+    group:
+      cache-testing: test,test-cache
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+
+mongock:
+  enabled: true
+  transaction-enabled: true
+  migration-scan-package:
+    - fr.insee.queen.infrastructure.mongo.configuration.migration.changelog
+    - fr.insee.queen.infrastructure.mongo.configuration.migration.data
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: ${feature.oidc.client-id}
+      # /!\ when injecting this property from env var, cannot convert KCIDPHINT env var to kc_idp_hint otherwise
+      # This property is a hint for spring-boot to map the env var to this property
+      additionalQueryStringParams:
+        kc_idp_hint: my-idp
+    path: /
+    syntax-highlight:
+      activated: false
+    tagsSorter: alpha
+    doc-expansion: none
+  api-docs:
+    version: OPENAPI_3_1
+#Actuator Metrics
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      discovery:
+        enabled: false
+logging:
+  appender: console
+  level:
+    root: INFO
+    fr:
+      insee:
+        queen: INFO
+  pattern:
+    console: "%d{YYYY-MM-dd HH:mm:ss.SSS} [%X{id}][%X{user}][%X{method} %X{path}] [%thread] %-5level %logger{36} - %htmlEncode{%m}%n"
+    file: ${logging.pattern.console}
+  logback:
+    rollingpolicy:
+      max-history: 90

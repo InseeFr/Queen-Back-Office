@@ -1,5 +1,7 @@
 package fr.insee.queen.application.campaign.integration;
 
+import fr.insee.queen.QueenApplication;
+import fr.insee.queen.application.configuration.db.JpaConfiguration;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -19,7 +21,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = { QueenApplication.class, JpaConfiguration.class })
 @ActiveProfiles("test")
 @ContextConfiguration
 @AutoConfigureEmbeddedDatabase
