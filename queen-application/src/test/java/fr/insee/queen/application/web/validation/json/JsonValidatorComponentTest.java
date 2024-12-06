@@ -7,6 +7,7 @@ import com.networknt.schema.ValidationMessage;
 import com.networknt.schema.ValidatorTypeCode;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,6 +40,8 @@ class JsonValidatorComponentTest {
 
     @Test
     @DisplayName("when validating incorrect value from collected data, errors returned")
+    @Disabled(value = "Disabled temporarily for lunatic bug")
+    //TODO enable tests when lunatic bug fixed
     void testData02() throws IOException {
         String dataJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/data/invalid-value-collected-data.json");
         JsonNode dataNode = mapper.readValue(dataJson, JsonNode.class);
@@ -66,6 +69,8 @@ class JsonValidatorComponentTest {
     @ParameterizedTest
     @CsvSource({"json-schema-validation/data/invalid-value-calculated-data.json,CALCULATED","json-schema-validation/data/invalid-value-external-data.json,EXTERNAL"})
     @DisplayName("when validating incorrect value from calculated/external data, errors returned")
+    @Disabled(value = "Disabled temporarily for lunatic bug")
+    //TODO enable tests when lunatic bug fixed
     void testData04(String filePath, String targettedObject) throws IOException {
         String dataJson = JsonTestHelper.getResourceFileAsString(filePath);
         JsonNode dataNode = mapper.readValue(dataJson, JsonNode.class);
