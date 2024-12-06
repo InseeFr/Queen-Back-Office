@@ -30,24 +30,21 @@
           },
           {
             "type": "null"
+          },
+          {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
           }
         ]
-      }
-    },
-    {
-      "type": "array",
-      "items": {
-        "type": "array",
-        "items": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
       }
     }
   ]
