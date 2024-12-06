@@ -1,6 +1,5 @@
 package fr.insee.queen.application.utils;
 
-import fr.insee.queen.application.configuration.auth.AuthConstants;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -51,7 +50,7 @@ public class AuthenticatedUserTestHelper {
     public JwtAuthenticationToken getAuthenticatedUser(AuthorityRoleEnum... roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (AuthorityRoleEnum role : roles) {
-            authorities.add(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + role.name()));
+            authorities.add(new SimpleGrantedAuthority(role.securityRole()));
         }
 
         Map<String, Object> headers = Map.of("typ", "JWT");
@@ -63,7 +62,7 @@ public class AuthenticatedUserTestHelper {
 
     public AnonymousAuthenticationToken getNotAuthenticatedUser() {
         Map<String, String> principal = new HashMap<>();
-        AnonymousAuthenticationToken auth = new AnonymousAuthenticationToken("id", principal, List.of(new SimpleGrantedAuthority(AuthConstants.ROLE_PREFIX + "ANONYMOUS")));
+        AnonymousAuthenticationToken auth = new AnonymousAuthenticationToken("id", principal, List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
         auth.setAuthenticated(false);
         return auth;
     }

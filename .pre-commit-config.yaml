@@ -1,0 +1,14 @@
+repos:
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.6.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [] # optional: list of Conventional Commits types to allow e.g. [feat, fix, ci, chore, test]
+  - repo: local
+    hooks:
+      - id: trivy-scan
+        name: Trivy scan
+        entry: trivy fs . --scanners vuln,secret --severity HIGH,CRITICAL --exit-code 1
+        language: system
+        pass_filenames: false

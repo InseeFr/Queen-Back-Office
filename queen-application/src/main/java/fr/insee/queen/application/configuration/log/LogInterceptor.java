@@ -28,7 +28,7 @@ public class LogInterceptor implements HandlerInterceptor {
 
         Authentication authentication = authenticationHelper.getAuthenticationPrincipal();
 
-        String userId = authentication.getName();
+        String userId = authentication.getName().toUpperCase();
 
         MDC.put("id", fishTag);
         MDC.put("path", operationPath);
