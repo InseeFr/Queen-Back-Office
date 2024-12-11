@@ -1,7 +1,7 @@
-package fr.insee.queen.infrastructure.db.surveyunit.data.entity.unciphered;
+package fr.insee.queen.infrastructure.db.data.entity.unciphered;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.DataDB;
+import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
 import jakarta.persistence.*;
 import lombok.Getter;

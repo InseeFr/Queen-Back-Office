@@ -1,7 +1,7 @@
-package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa;
+package fr.insee.queen.infrastructure.db.data.repository.jpa;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.DataDB;
+import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 
 import java.util.Optional;
 

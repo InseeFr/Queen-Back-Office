@@ -1,9 +1,7 @@
-package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.data;
-
+package fr.insee.queen.infrastructure.db.data.repository.jpa;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.DataDB;
-import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.DataJpaRepository;
+import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-@ConditionalOnProperty(name = "feature.cipher.enabled", havingValue = "true")
+/**
+ * JPA repository to handle survey unit's data response for a questionnaire
+ */
+@ConditionalOnProperty(name = "feature.cipher.enabled", havingValue = "false")
 @Repository
-public interface CipheredDataJpaRepository extends JpaRepository<DataDB, UUID>, DataJpaRepository {
-
+public interface UncipheredDataJpaRepository extends JpaRepository<DataDB, UUID>, DataJpaRepository {
     /**
      * Delete all survey units data for a campaign
      *
@@ -46,13 +46,16 @@ public interface CipheredDataJpaRepository extends JpaRepository<DataDB, UUID>, 
      */
     @Transactional
     @Modifying
-    @Query(nativeQuery = true,
-        value = """
-            update data
-                set value = pgp_sym_encrypt(:data\\:\\:text, current_setting('data.encryption.key'))
-                where survey_unit_id = :surveyUnitId"""
-    )
+    @Query("update DataDB d set d.value = :data where d.surveyUnit.id = :surveyUnitId")
     int updateData(String surveyUnitId, ObjectNode data);
+
+    /**
+     * Delete data of a survey unit
+     * @param surveyUnitId survey unit id
+     */
+    @Transactional
+    @Modifying
+    void deleteBySurveyUnitId(String surveyUnitId);
 
     /**
      * Update data for a survey unit
@@ -63,27 +66,11 @@ public interface CipheredDataJpaRepository extends JpaRepository<DataDB, UUID>, 
     @Transactional
     @Modifying
     @Query(value = """
-        WITH decrypted_data AS (
-            SELECT
-                id,
-                pgp_sym_decrypt(value, current_setting('data.encryption.key'))::jsonb AS decrypted_value
-            FROM
-                data
-            WHERE
-                survey_unit_id = :surveyUnitId
-        )
-        UPDATE data
-        SET value = pgp_sym_encrypt(
-                        jsonb_set(
-                            COALESCE(decrypted_data.decrypted_value, '{}'),
-                            '{COLLECTED}',
-                            COALESCE(decrypted_data.decrypted_value->'COLLECTED', '{}'::jsonb) || :collectedUpdateData
-                        )::text,
-                        current_setting('data.encryption.key')
-                    )
-        FROM decrypted_data
-        WHERE data.id = decrypted_data.id
-          AND data.survey_unit_id = :surveyUnitId;
+        update data
+            set value = jsonb_set(coalesce(value, '{}'),
+                        '{COLLECTED}',
+                        coalesce(value->'COLLECTED', '{}') || :collectedUpdateData)
+            where survey_unit_id=:surveyUnitId
     """, nativeQuery = true)
     void updateCollectedData(String surveyUnitId, ObjectNode collectedUpdateData);
 }

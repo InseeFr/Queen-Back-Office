@@ -1,9 +1,9 @@
 package fr.insee.queen.infrastructure.db.configuration;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.infrastructure.db.surveyunit.data.entity.ciphered.CipheredDataDB;
-import fr.insee.queen.infrastructure.db.surveyunit.data.entity.unciphered.UncipheredDataDB;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.DataDB;
+import fr.insee.queen.infrastructure.db.data.entity.ciphered.CipheredDataDB;
+import fr.insee.queen.infrastructure.db.data.entity.unciphered.UncipheredDataDB;
+import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

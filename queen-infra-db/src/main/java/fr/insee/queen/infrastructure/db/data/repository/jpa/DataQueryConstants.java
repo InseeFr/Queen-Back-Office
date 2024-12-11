@@ -1,4 +1,4 @@
-package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.data;
+package fr.insee.queen.infrastructure.db.data.repository.jpa;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

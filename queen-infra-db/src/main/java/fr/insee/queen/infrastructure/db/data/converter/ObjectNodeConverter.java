@@ -1,4 +1,4 @@
-package fr.insee.queen.infrastructure.db.surveyunit.repository.converter;
+package fr.insee.queen.infrastructure.db.data.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

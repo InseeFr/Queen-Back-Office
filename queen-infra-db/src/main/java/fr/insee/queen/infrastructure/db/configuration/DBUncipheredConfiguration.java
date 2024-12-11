@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.configuration;
 
-import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.data.CipheredDataJpaRepository;
+import fr.insee.queen.infrastructure.db.data.repository.jpa.CipheredDataJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -21,8 +21,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "fr.insee.queen.infrastructure.db.campaign",
         "fr.insee.queen.infrastructure.db.paradata",
         "fr.insee.queen.infrastructure.db.surveyunittempzone",
-        "fr.insee.queen.infrastructure.db.surveyunit.entity",
-        "fr.insee.queen.infrastructure.db.surveyunit.data.entity.unciphered"
+        "fr.insee.queen.infrastructure.db.surveyunit",
+        "fr.insee.queen.infrastructure.db.data.entity.common",
+        "fr.insee.queen.infrastructure.db.data.entity.unciphered",
 })
 public class DBUncipheredConfiguration {
 }
