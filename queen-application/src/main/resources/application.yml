@@ -19,6 +19,9 @@ application:
   temp-folder:
 
 feature:
+  cipher:
+    enabled: false
+    encryptionSecretKey:
   oidc:
     enabled: true
     auth-server-host: https://auth-server.host
