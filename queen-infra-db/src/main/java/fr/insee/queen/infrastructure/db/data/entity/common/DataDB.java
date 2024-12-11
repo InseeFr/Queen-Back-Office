@@ -1,5 +1,6 @@
-package fr.insee.queen.infrastructure.db.surveyunit.entity;
+package fr.insee.queen.infrastructure.db.data.entity.common;
 
+import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
