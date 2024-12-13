@@ -89,9 +89,6 @@ spring:
     contexts: prod
     defaultSchema: public
     change-log: classpath:db/master.xml
-  profiles:
-    group:
-      cache-testing: test,test-cache
 
 springdoc:
   swagger-ui:

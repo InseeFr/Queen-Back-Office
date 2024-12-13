@@ -41,7 +41,7 @@ public class PropertiesLogger implements ApplicationListener<ApplicationEnvironm
                     }
                     return false;
                 })
-                .forEach(key -> log.info("{} = {}", key, hideProperties(key, environment)));
+                .forEach(key -> log.info("{} = {}", key, hideProperties(key.toLowerCase(), environment)));
         log.info("===============================================================================================");
 
     }

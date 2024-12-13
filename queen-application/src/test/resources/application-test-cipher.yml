@@ -9,6 +9,9 @@ application:
   temp-folder: ${java.io.tmpdir}
 
 feature:
+  cipher:
+    enabled: true
+    encryptionSecretKey: plop
   oidc:
     enabled: true
     auth-server-host: https://auth.oauth2
@@ -31,18 +34,22 @@ feature:
     enabled: true
   interviewer-mode:
     enabled: true
-
 spring:
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 5
+      connection-init-sql: select set_config('data.encryption.key', '${feature.cipher.encryptionSecretKey}', false)
   liquibase:
     enabled: true
-    contexts: test
+    contexts: ciphered-data
     defaultSchema: public
-    change-log: classpath:db/integration-test.xml
+    change-log: classpath:db/integration-test-cipher.xml
 logging:
-  appender: CONSOLE
   level:
     root: INFO
     liquibase: ERROR
+
 #force charset for mockmvc
 server:
   servlet:
