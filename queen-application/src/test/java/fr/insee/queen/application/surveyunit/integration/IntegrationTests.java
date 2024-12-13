@@ -1,8 +1,9 @@
 package fr.insee.queen.application.surveyunit.integration;
 
+import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,12 +12,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -29,12 +26,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@ContextConfiguration
-@AutoConfigureEmbeddedDatabase
-@AutoConfigureMockMvc
-class IntegrationTests {
+class IntegrationTests extends ContainerConfiguration {
 
     @Autowired
     private MockMvc mockMvc;
@@ -70,7 +62,7 @@ class IntegrationTests {
     @MethodSource("getPaths")
     @DisplayName("on integrate context, return integration state")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void integrateContext030(String internalZipPath, String urlPath) throws Exception {
+    void integrateContext03(String internalZipPath, String urlPath) throws Exception {
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration" + internalZipPath + "/integration-component.zip");
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, zipInputStream
         );

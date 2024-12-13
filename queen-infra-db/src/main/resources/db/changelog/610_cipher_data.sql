@@ -5,6 +5,7 @@ ALTER TABLE data add column encrypted integer;
 UPDATE data set encrypted=0;
 
 --changeset davdarras:610-1 context:ciphered-data
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 ALTER TABLE data add column tempdata bytea;
 
 --changeset davdarras:610-2 context:ciphered-data
