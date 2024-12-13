@@ -25,7 +25,7 @@ public interface UncipheredDataJpaRepository extends JpaRepository<DataDB, UUID>
      */
     @Transactional
     @Modifying
-    @Query(value = DataQueryConstants.DELETE_QUERY, nativeQuery = true)
+    @Query(value = DataQueryConstants.DELETE_QUERY_FROM_CAMPAIGN_ID, nativeQuery = true)
     void deleteDatas(String campaignId);
 
     /**
@@ -38,6 +38,15 @@ public interface UncipheredDataJpaRepository extends JpaRepository<DataDB, UUID>
     Optional<ObjectNode> findData(String surveyUnitId);
 
     /**
+     * Delete data of a survey unit
+     * @param surveyUnitId survey unit id
+     */
+    @Transactional
+    @Modifying
+    @Query(value = DataQueryConstants.DELETE_QUERY_FROM_SURVEYUNIT_ID, nativeQuery = true)
+    void deleteBySurveyUnitId(String surveyUnitId);
+
+    /**
      * Update data for a survey unit
      *
      * @param surveyUnitId survey unit id
@@ -48,14 +57,6 @@ public interface UncipheredDataJpaRepository extends JpaRepository<DataDB, UUID>
     @Modifying
     @Query("update DataDB d set d.value = :data where d.surveyUnit.id = :surveyUnitId")
     int updateData(String surveyUnitId, ObjectNode data);
-
-    /**
-     * Delete data of a survey unit
-     * @param surveyUnitId survey unit id
-     */
-    @Transactional
-    @Modifying
-    void deleteBySurveyUnitId(String surveyUnitId);
 
     /**
      * Update data for a survey unit
