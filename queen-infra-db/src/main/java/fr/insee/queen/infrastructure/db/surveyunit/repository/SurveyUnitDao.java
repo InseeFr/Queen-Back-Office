@@ -13,7 +13,7 @@ import fr.insee.queen.infrastructure.db.surveyunit.entity.*;
 import fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.*;
 import fr.insee.queen.infrastructure.db.configuration.DataFactory;
-import fr.insee.queen.infrastructure.db.data.repository.jpa.DataJpaRepository;
+import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
 import fr.insee.queen.infrastructure.db.surveyunittempzone.repository.jpa.SurveyUnitTempZoneJpaRepository;
 import fr.insee.queen.infrastructure.db.paradata.repository.jpa.ParadataEventJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     private final SurveyUnitJpaRepository crudRepository;
     private final CommentJpaRepository commentRepository;
     private final PersonalizationJpaRepository personalizationRepository;
-    private final DataJpaRepository dataRepository;
+    private final DataRepository dataRepository;
     private final StateDataDao stateDataDao;
     private final CampaignJpaRepository campaignRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
