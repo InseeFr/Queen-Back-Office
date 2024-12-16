@@ -113,6 +113,7 @@ management:
       discovery:
         enabled: false
 logging:
+  appender: CONSOLE # CONSOLE | ROLLING_FILE
   level:
     root: INFO
     fr:
