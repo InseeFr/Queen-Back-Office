@@ -5,7 +5,7 @@ import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.infrastructure.db.configuration.DataFactory;
 import fr.insee.queen.infrastructure.db.data.entity.ciphered.CipheredDataDB;
 import fr.insee.queen.infrastructure.db.data.repository.jpa.CipheredDataJpaRepository;
-import fr.insee.queen.infrastructure.db.data.repository.jpa.DataJpaRepository;
+import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class DataCipherTests extends CipheredContainerConfiguration {
     }
 
     @Autowired
-    private DataJpaRepository jpaRepository;
+    private DataRepository jpaRepository;
 
     @Autowired
     private DataFactory dataFactory;
