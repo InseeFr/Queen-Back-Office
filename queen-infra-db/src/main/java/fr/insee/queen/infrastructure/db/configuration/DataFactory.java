@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Factory used to provide entities/repository based on the cipher setting
+ * Factory used to provide entities/repository based on the sensitive-data setting
  */
 @RequiredArgsConstructor
 @Slf4j

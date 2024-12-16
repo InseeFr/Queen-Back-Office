@@ -19,7 +19,7 @@ application:
   temp-folder:
 
 feature:
-  cipher:
+  sensitive-data:
     enabled: false
     encryptionSecretKey:
   oidc:

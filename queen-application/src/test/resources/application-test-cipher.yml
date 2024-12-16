@@ -9,7 +9,7 @@ application:
   temp-folder: ${java.io.tmpdir}
 
 feature:
-  cipher:
+  sensitive-data:
     enabled: true
     encryptionSecretKey: plop
   oidc:
@@ -39,7 +39,7 @@ spring:
     hikari:
       minimum-idle: 5
       maximum-pool-size: 5
-      connection-init-sql: select set_config('data.encryption.key', '${feature.cipher.encryptionSecretKey}', false)
+      connection-init-sql: select set_config('data.encryption.key', '${feature.sensitive-data.encryptionSecretKey}', false)
   liquibase:
     enabled: true
     contexts: ciphered-data

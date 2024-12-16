@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * JPA repository to handle survey unit's data response for a questionnaire
  */
-@ConditionalOnProperty(name = "feature.cipher.enabled", havingValue = "false")
+@ConditionalOnProperty(name = "feature.sensitive-data.enabled", havingValue = "false")
 @Repository
 public interface UncipheredDataJpaRepository extends DataJpaRepository {
 

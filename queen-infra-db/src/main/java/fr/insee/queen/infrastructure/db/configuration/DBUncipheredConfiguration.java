@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@ConditionalOnProperty(name = "feature.cipher.enabled", havingValue = "false")
+@ConditionalOnProperty(name = "feature.sensitive-data.enabled", havingValue = "false")
 @Configuration
 @RequiredArgsConstructor
 @EnableJpaRepositories(basePackages = "fr.insee.queen.infrastructure.db", excludeFilters = {
