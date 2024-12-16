@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@ConditionalOnProperty(name = "feature.cipher.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "feature.sensitive-data.enabled", havingValue = "true")
 @Repository
 public interface CipheredDataJpaRepository extends DataJpaRepository {
 

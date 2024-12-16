@@ -10,6 +10,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
+/* Disable the "Add at least one assertion to this test case." (sic)
+   The sonar rule is not smart enough to inspect common test class
+ */
+@SuppressWarnings("java:S2699")
 class SurveyUnitCipherTests extends CipheredContainerConfiguration {
 
     private final SurveyUnitCommonAssertions surveyUnitTests;
