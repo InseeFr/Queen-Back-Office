@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Interface used to centralize common sql queries between cipher/non cipher data jpa repositories
+ */
 @NoRepositoryBean
 public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepository {
     /**
