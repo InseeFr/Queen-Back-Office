@@ -28,16 +28,16 @@ class DataSetCipherTests extends CipheredContainerConfiguration {
     @Sql(value = ScriptConstants.TRUNCATE_SQL_SCRIPT, executionPhase = BEFORE_TEST_METHOD)
     @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void createDataset01() throws Exception {
-        dataSetCommonAssertions.createDataset01();
+        dataSetCommonAssertions.createAdminUserDataset();
     }
 
     @Test
     void createDataset02() throws Exception {
-        dataSetCommonAssertions.createDataset02();
+        dataSetCommonAssertions.createNonAdminUserDataset();
     }
 
     @Test
     void createDataset03() throws Exception {
-        dataSetCommonAssertions.createDataset03();
+        dataSetCommonAssertions.notAuthenticatedUserDataset();
     }
 }

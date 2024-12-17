@@ -14,7 +14,7 @@ class DataSetCommonAssertions {
     private final MockMvc mockMvc;
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    void createDataset01() throws Exception {
+    void createAdminUserDataset() throws Exception {
         mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
@@ -22,7 +22,7 @@ class DataSetCommonAssertions {
                 .andExpect(status().isCreated());
     }
 
-    void createDataset02() throws Exception {
+    void createNonAdminUserDataset() throws Exception {
         mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
@@ -30,7 +30,7 @@ class DataSetCommonAssertions {
                 .andExpect(status().isForbidden());
     }
 
-    void createDataset03() throws Exception {
+    void notAuthenticatedUserDataset() throws Exception {
         mockMvc.perform(post("/api/create-dataset")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))

@@ -27,17 +27,17 @@ class DataSetUnCipherTests extends ContainerConfiguration {
     @DisplayName("on creating dataset, create the dataset")
     @Sql(value = ScriptConstants.TRUNCATE_SQL_SCRIPT, executionPhase = BEFORE_TEST_METHOD)
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void createDataset01() throws Exception {
-        dataSetCommonAssertions.createDataset01();
+    void createAdminUserDataset() throws Exception {
+        dataSetCommonAssertions.createAdminUserDataset();
     }
 
     @Test
-    void createDataset02() throws Exception {
-        dataSetCommonAssertions.createDataset02();
+    void createNonAdminUserDataset() throws Exception {
+        dataSetCommonAssertions.createNonAdminUserDataset();
     }
 
     @Test
-    void createDataset03() throws Exception {
-        dataSetCommonAssertions.createDataset03();
+    void notAuthenticatedUserDataset() throws Exception {
+        dataSetCommonAssertions.notAuthenticatedUserDataset();
     }
 }

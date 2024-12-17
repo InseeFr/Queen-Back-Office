@@ -6,13 +6,11 @@ import fr.insee.queen.infrastructure.db.data.entity.unciphered.UncipheredDataDB;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Factory used to provide entities/repository based on the sensitive-data setting
  */
 @RequiredArgsConstructor
-@Slf4j
 public class DataFactory {
     private final boolean isCiphered;
 
