@@ -6,6 +6,7 @@ import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import fr.insee.queen.domain.campaign.model.Campaign;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.campaign.service.MetadataService;
@@ -71,7 +72,7 @@ class QuestionnaireCacheTests extends ContainerConfiguration {
         String campaignId = "campaign-cache-id";
 
         ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("campaign/metadata/metadata.json");
-        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), metadataNode));
+        campaignService.createCampaign(new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, new HashSet<>(), metadataNode));
         check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("regions2019")));
 
         // when updating questionnaire, cache is evicted
@@ -106,7 +107,7 @@ class QuestionnaireCacheTests extends ContainerConfiguration {
         check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("cities2019")));
 
         String campaignId = "campaign-with-questionnaires-cache-id";
-        campaignService.createCampaign(new Campaign(campaignId, "label", Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
+        campaignService.createCampaign(new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
 
         // when deleting campaign, associated questionnaires are evicted from cache
         campaignService.delete(campaignId);
@@ -135,10 +136,10 @@ class QuestionnaireCacheTests extends ContainerConfiguration {
 
         // create campaign and associate questionnaireId1 & questionnaireId2
         String campaignId = "campaign-with-questionnaires-cache-id";
-        Campaign campaign = new Campaign(campaignId, "label", Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode());
+        Campaign campaign = new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode());
         campaignService.createCampaign(campaign);
 
-        campaign = new Campaign(campaignId, "labelUpdated", Set.of(questionnaireId2), JsonNodeFactory.instance.objectNode());
+        campaign = new Campaign(campaignId, "labelUpdated", CampaignSensitivity.NORMAL, Set.of(questionnaireId2), JsonNodeFactory.instance.objectNode());
         // when deleting campaign, associated questionnaires are evicted from cache
         campaignService.updateCampaign(campaign);
 

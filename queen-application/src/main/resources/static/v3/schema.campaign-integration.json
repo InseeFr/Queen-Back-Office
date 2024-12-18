@@ -2,10 +2,21 @@
     "$schema": "http://json-schema.org/draft/2020-12/schema",
     "additionalProperties": false,
     "type": "object",
-    "required": ["id","label"],
+    "required": ["id", "label"],
     "properties": {
-        "id": {"type": "string"},
-        "label": {"type": "string"},
-        "metadata": {"$ref": "schema.metadata.json#"}
+        "id": {
+            "type": "string"
+        },
+        "label": {
+            "type": "string"
+        },
+        "sensitivity": {
+            "type": "string",
+            "enum": ["NORMAL", "SENSITIVE"],
+            "description": "Specifies the sensitivity level of the campaign."
+        },
+        "metadata": {
+            "$ref": "schema.metadata.json#"
+        }
     }
 }
