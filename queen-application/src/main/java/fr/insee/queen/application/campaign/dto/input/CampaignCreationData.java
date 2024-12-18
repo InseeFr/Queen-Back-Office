@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.model.Campaign;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +28,7 @@ public record CampaignCreationData(
         String id,
         @NotBlank
         String label,
+        CampaignSensitivity sensitivity,
         @NotEmpty
         Set<String> questionnaireIds,
         @Valid
@@ -34,9 +36,14 @@ public record CampaignCreationData(
 
     public static Campaign toModel(CampaignCreationData campaign) {
         ObjectNode metadataValue = JsonNodeFactory.instance.objectNode();
+        CampaignSensitivity sensitivityValue = CampaignSensitivity.NORMAL;
         if (campaign.metadata() != null) {
             metadataValue = campaign.metadata.value();
         }
-        return new Campaign(campaign.id, campaign.label, campaign.questionnaireIds, metadataValue);
+        if(campaign.sensitivity != null) {
+            sensitivityValue = campaign.sensitivity();
+        }
+
+        return new Campaign(campaign.id, campaign.label, sensitivityValue, campaign.questionnaireIds, metadataValue);
     }
 }
