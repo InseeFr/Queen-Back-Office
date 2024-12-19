@@ -12,6 +12,7 @@ import fr.insee.queen.application.integration.component.exception.IntegrationVal
 import fr.insee.queen.application.integration.dto.input.CampaignIntegrationData;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.web.validation.json.SchemaType;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.integration.model.IntegrationResult;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.service.IntegrationService;
@@ -56,6 +57,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
     private final ObjectMapper mapper;
     private static final String LABEL = "Label";
     private static final String METADATA = "Metadata";
+    private static final String SENSITIVITY = "Sensitivity";
     public static final String CAMPAIGN_XML = "campaign.xml";
     public static final String CAMPAIGN_JSON = "campaign.json";
 
@@ -94,6 +96,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
 
         NodeList metadataTags = doc.getElementsByTagName(METADATA);
         NodeList labelTags = doc.getElementsByTagName(LABEL);
+        NodeList sensitivityTags = doc.getElementsByTagName(SENSITIVITY);
 
         ObjectNode metadataValue = mapper.createObjectNode();
         if (metadataTags.getLength() > 0) {
@@ -112,7 +115,13 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             label = labelTags.item(0).getTextContent();
         }
 
-        CampaignIntegrationData campaign = new CampaignIntegrationData(id, label, metadataValue);
+        CampaignSensitivity campaignSensitivity = CampaignSensitivity.NORMAL;
+        if (sensitivityTags.getLength() > 0) {
+            log.info("Setting sensitivity for campaign {}", id);
+            String sensitivity = sensitivityTags.item(0).getTextContent();
+            campaignSensitivity = CampaignSensitivity.valueOf(sensitivity);
+        }
+        CampaignIntegrationData campaign = new CampaignIntegrationData(id, label, campaignSensitivity, metadataValue);
         return buildCampaign(campaign);
     }
 
@@ -121,6 +130,9 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, CAMPAIGN_JSON, SchemaType.CAMPAIGN_INTEGRATION);
             ZipEntry zipCampaignFile = zf.getEntry(CAMPAIGN_JSON);
             CampaignIntegrationData campaign = mapper.readValue(zf.getInputStream(zipCampaignFile), CampaignIntegrationData.class);
+            if(campaign.sensitivity() == null) {
+                campaign = new CampaignIntegrationData(campaign.id(), campaign.label(), CampaignSensitivity.NORMAL, campaign.metadata());
+            }
             return buildCampaign(campaign);
         } catch (IntegrationValidationException ex) {
             return ex.getResultError();

@@ -1,0 +1,58 @@
+application:
+  corsOrigins: https://localhost
+  roles:
+    interviewer: interviewer
+    reviewer: reviewer
+    admin: admin
+    webclient: webclient
+    reviewer-alternative: alternate-reviewer
+  temp-folder: ${java.io.tmpdir}
+
+feature:
+  sensitive-data:
+    enabled: true
+    encryptionSecretKey: plop
+  oidc:
+    enabled: true
+    auth-server-host: https://auth.oauth2
+    client-id: client
+    realm: my-realm
+    principal-attribute: username
+    additional-realm: additional-realm
+  dataset:
+    # create demo dataset on startup
+    load-on-start: false
+    # display api endpoint to create dataset
+    display-endpoint: true
+  swagger:
+    enabled: false
+  pilotage:
+    enabled: false
+  cache:
+    enabled: false
+  comments:
+    enabled: true
+  interviewer-mode:
+    enabled: true
+spring:
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 5
+      connection-init-sql: select set_config('data.encryption.key', '${feature.sensitive-data.encryptionSecretKey}', false)
+  liquibase:
+    enabled: true
+    contexts: ciphered-data
+    defaultSchema: public
+    change-log: classpath:db/integration-test-cipher.xml
+logging:
+  level:
+    root: INFO
+    liquibase: ERROR
+
+#force charset for mockmvc
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true

@@ -2,6 +2,7 @@ package fr.insee.queen.domain.integration.service;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.domain.campaign.model.Campaign;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.Nomenclature;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import fr.insee.queen.domain.campaign.service.dummy.*;
@@ -70,7 +71,7 @@ class IntegrationServiceTest {
     void testIntegrationCampaign01() {
         campaignExistenceService.setCampaignExist(true);
 
-        Campaign campaign = new Campaign(CAMPAIGN_ID, LABEL, JsonNodeFactory.instance.objectNode());
+        Campaign campaign = new Campaign(CAMPAIGN_ID, LABEL, CampaignSensitivity.NORMAL, JsonNodeFactory.instance.objectNode());
         IntegrationResult campaignResult = integrationService.create(campaign);
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.UPDATED);
         assertThat(campaignResult.getId()).isEqualTo(CAMPAIGN_ID);
@@ -82,7 +83,7 @@ class IntegrationServiceTest {
     void testIntegrationCampaign02() {
         campaignExistenceService.setCampaignExist(false);
 
-        Campaign campaign = new Campaign(CAMPAIGN_ID, LABEL, JsonNodeFactory.instance.objectNode());
+        Campaign campaign = new Campaign(CAMPAIGN_ID, LABEL, CampaignSensitivity.NORMAL, JsonNodeFactory.instance.objectNode());
         IntegrationResult campaignResult = integrationService.create(campaign);
 
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);

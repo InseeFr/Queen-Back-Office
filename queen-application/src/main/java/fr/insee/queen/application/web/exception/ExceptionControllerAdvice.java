@@ -14,7 +14,7 @@ import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.domain.surveyunit.service.exception.MetadataValueNotFoundException;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
-import fr.insee.queen.infrastructure.db.surveyunit.repository.exception.UpdateCollectedDataException;
+import fr.insee.queen.infrastructure.db.data.exception.UpdateCollectedDataException;
 import fr.insee.queen.infrastructure.depositproof.exception.DepositProofException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;

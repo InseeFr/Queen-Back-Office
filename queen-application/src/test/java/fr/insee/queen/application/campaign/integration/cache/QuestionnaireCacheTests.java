@@ -2,25 +2,24 @@ package fr.insee.queen.application.campaign.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import fr.insee.queen.domain.campaign.model.Campaign;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.campaign.service.MetadataService;
 import fr.insee.queen.domain.campaign.service.NomenclatureService;
 import fr.insee.queen.domain.campaign.service.QuestionnaireModelService;
 import fr.insee.queen.domain.common.cache.CacheName;
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.io.IOException;
@@ -32,12 +31,8 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("cache-testing")
-@ContextConfiguration
-@AutoConfigureEmbeddedDatabase
-@AutoConfigureMockMvc
-class QuestionnaireCacheTests {
+@ActiveProfiles("test-cache")
+class QuestionnaireCacheTests extends ContainerConfiguration {
 
     @Autowired
     private CampaignService campaignService;
@@ -77,7 +72,7 @@ class QuestionnaireCacheTests {
         String campaignId = "campaign-cache-id";
 
         ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("campaign/metadata/metadata.json");
-        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), metadataNode));
+        campaignService.createCampaign(new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, new HashSet<>(), metadataNode));
         check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("regions2019")));
 
         // when updating questionnaire, cache is evicted
@@ -112,7 +107,7 @@ class QuestionnaireCacheTests {
         check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutCampaign(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("cities2019")));
 
         String campaignId = "campaign-with-questionnaires-cache-id";
-        campaignService.createCampaign(new Campaign(campaignId, "label", Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
+        campaignService.createCampaign(new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
 
         // when deleting campaign, associated questionnaires are evicted from cache
         campaignService.delete(campaignId);
@@ -141,10 +136,10 @@ class QuestionnaireCacheTests {
 
         // create campaign and associate questionnaireId1 & questionnaireId2
         String campaignId = "campaign-with-questionnaires-cache-id";
-        Campaign campaign = new Campaign(campaignId, "label", Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode());
+        Campaign campaign = new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode());
         campaignService.createCampaign(campaign);
 
-        campaign = new Campaign(campaignId, "labelUpdated", Set.of(questionnaireId2), JsonNodeFactory.instance.objectNode());
+        campaign = new Campaign(campaignId, "labelUpdated", CampaignSensitivity.NORMAL, Set.of(questionnaireId2), JsonNodeFactory.instance.objectNode());
         // when deleting campaign, associated questionnaires are evicted from cache
         campaignService.updateCampaign(campaign);
 

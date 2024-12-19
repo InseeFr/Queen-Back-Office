@@ -7,6 +7,7 @@ import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.application.web.validation.json.JsonValid;
 import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.campaign.model.Campaign;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -28,6 +29,7 @@ public record CampaignCreationDataV2(
         String id,
         @NotBlank
         String label,
+        CampaignSensitivity sensitivity,
         @NotEmpty
         Set<String> questionnaireIds,
         @Schema(ref = SchemaType.Names.METADATA)
@@ -36,9 +38,13 @@ public record CampaignCreationDataV2(
 
     public static Campaign toModel(CampaignCreationDataV2 campaign) {
         ObjectNode metadataValue = JsonNodeFactory.instance.objectNode();
+        CampaignSensitivity sensitivityValue = CampaignSensitivity.NORMAL;
         if (campaign.metadata() != null) {
             metadataValue = campaign.metadata();
         }
-        return new Campaign(campaign.id, campaign.label, campaign.questionnaireIds, metadataValue);
+        if(campaign.sensitivity != null) {
+            sensitivityValue = campaign.sensitivity();
+        }
+        return new Campaign(campaign.id, campaign.label, sensitivityValue, campaign.questionnaireIds, metadataValue);
     }
 }
