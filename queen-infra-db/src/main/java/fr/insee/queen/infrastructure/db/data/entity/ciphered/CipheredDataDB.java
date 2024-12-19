@@ -23,7 +23,7 @@ public class CipheredDataDB extends DataDB {
     @Convert(converter = ObjectNodeConverter.class)
     @ColumnTransformer(
             read  = "pgp_sym_decrypt(value, current_setting('data.encryption.key'))",
-            write = "pgp_sym_encrypt(?, current_setting('data.encryption.key'))"
+            write = "pgp_sym_encrypt(?, current_setting('data.encryption.key'), 's2k-count=65536')"
     )
     private ObjectNode value;
 

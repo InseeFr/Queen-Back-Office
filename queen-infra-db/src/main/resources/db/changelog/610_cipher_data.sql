@@ -9,7 +9,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 ALTER TABLE data add column tempdata bytea;
 
 --changeset davdarras:610-2 context:ciphered-data
-UPDATE data SET tempdata = pgp_sym_encrypt(value::text, current_setting('data.encryption.key'));
+UPDATE data SET tempdata = pgp_sym_encrypt(value::text, current_setting('data.encryption.key'), 's2k-count=65536');
 UPDATE data set encrypted=1;
 
 --changeset davdarras:610-3 context:ciphered-data
