@@ -56,7 +56,7 @@ class MetadataTests {
 
     @Test
     void on_get_metadata_by_questionnaire_when_incorrect_identifier_questionnaire_format_id_return_400() throws Exception {
-        mockMvc.perform(get("/api/questionnaire/insert into plop%s/metadata")
+        mockMvc.perform(get("/api/questionnaire/insert into plopés/metadata")
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
@@ -95,7 +95,7 @@ class MetadataTests {
 
     @Test
     void on_get_metadata_by_campaign_when_incorrect_identifier_campaign_format_id_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/insert into plop%s/metadata")
+        mockMvc.perform(get("/api/campaign/insert into plopés/metadata")
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());

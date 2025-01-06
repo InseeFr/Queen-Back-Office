@@ -143,7 +143,7 @@ class NomenclatureTests {
 
     @Test
     void on_get_required_nomenclatures_when_campaign_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/%plop/required-nomenclatures")
+        mockMvc.perform(get("/api/campaign/éplop/required-nomenclatures")
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isBadRequest());
     }

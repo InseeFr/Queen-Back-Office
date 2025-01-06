@@ -65,7 +65,7 @@ class QuestionnaireTests {
 
     @Test
     void on_get_questionnaires_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/invalid%identifier/questionnaires")
+        mockMvc.perform(get("/api/campaign/invalidéidentifier/questionnaires")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getManagerUser()))
                 )
@@ -100,16 +100,16 @@ class QuestionnaireTests {
 
     @Test
     void on_get_questionnaire_ids_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/invalid%identifier/questionnaire-id")
+        mockMvc.perform(get("/api/campaign/invalidéidentifier/questionnaire-id")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void on_get_questionnaire_when_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/questionnaire/invalid%identifier")
+        mockMvc.perform(get("/api/questionnaire/invalidéidentifier")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
