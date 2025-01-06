@@ -13,20 +13,20 @@
 
 	<properties>
 		<caffeine.version>3.1.8</caffeine.version>
-		<zonky-spring.version>2.5.1</zonky-spring.version>
-		<zonky-postgres.version>2.0.7</zonky-postgres.version>
-		<springdoc.version>2.6.0</springdoc.version>
-		<commons-io.version>2.17.0</commons-io.version>
+		<zonky-spring.version>2.6.0</zonky-spring.version>
+		<zonky-postgres.version>2.1.0</zonky-postgres.version>
+		<springdoc.version>2.8.0</springdoc.version>
+		<commons-io.version>2.18.0</commons-io.version>
 		<org-json.version>20240303</org-json.version>
-		<guava.version>33.3.1-jre</guava.version>
-		<json-schema-validator.version>1.5.3</json-schema-validator.version>
+		<guava.version>33.4.0-jre</guava.version>
+		<json-schema-validator.version>1.5.4</json-schema-validator.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>io.zonky.test.postgres</groupId>
 				<artifactId>embedded-postgres-binaries-bom</artifactId>
-				<version>16.4.0</version>
+				<version>16.6.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
