@@ -9,6 +9,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ConditionalOnProperty(name = "feature.sensitive-data.enabled", havingValue = "true")
 @Component
 @RequiredArgsConstructor
@@ -17,13 +20,15 @@ public class DBCipheredBeanPostProcessor implements BeanPostProcessor {
     private final CipherProperties cipherProperties;
 
     @Override
+    @NonNull
     public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         if (bean instanceof LiquibaseProperties liquibaseProperties) {
-            if (liquibaseProperties.getContexts() != null && !liquibaseProperties.getContexts().isEmpty()) {
-                liquibaseProperties.setContexts(liquibaseProperties.getContexts() + ",ciphered-data");
-                return liquibaseProperties;
+            List<String> contexts = liquibaseProperties.getContexts();
+            if (contexts == null) {
+                contexts = new ArrayList<>();
+                liquibaseProperties.setContexts(contexts);
             }
-            liquibaseProperties.setContexts("ciphered-data");
+            contexts.add("ciphered-data");
         }
 
         if (bean instanceof HikariDataSource dataSource) {
@@ -37,6 +42,7 @@ public class DBCipheredBeanPostProcessor implements BeanPostProcessor {
     }
 
     @Override
+    @NonNull
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         return bean;
     }

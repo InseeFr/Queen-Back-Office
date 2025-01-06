@@ -18,10 +18,12 @@ import java.util.Set;
  * Data used for campaign creation
  *
  * @param id campaign id
- * @param label campaign labe
+ * @param label campaign label
+ * @param sensitivity campaign sensitivity (classic or sensitive)
  * @param questionnaireIds list of questionnaire ids linked to the campaign
  * @param metadata campaign metadata
  */
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "CampaignCreationV2")
 public record CampaignCreationDataV2(
