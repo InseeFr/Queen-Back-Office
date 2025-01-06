@@ -249,7 +249,7 @@ class SurveyUnitTests {
 
     @Test
     void on_get_survey_unit_when_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/survey-unit/invalid%identifier")
+        mockMvc.perform(get("/api/survey-unit/invalidéidentifier")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
