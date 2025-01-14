@@ -22,8 +22,8 @@ public class CipheredDataDB extends DataDB {
     @Column(columnDefinition = "bytea")
     @Convert(converter = ObjectNodeConverter.class)
     @ColumnTransformer(
-            read  = "pgp_sym_decrypt(value, current_setting('data.encryption.key'))",
-            write = "pgp_sym_encrypt(?, current_setting('data.encryption.key'), 's2k-count=65536')"
+            read  = "pgp_sym_decrypt(value, current_setting('data.encryption.key'), 's2k-mode=1')",
+            write = "pgp_sym_encrypt(?, current_setting('data.encryption.key'), 's2k-mode=1')"
     )
     private ObjectNode value;
 

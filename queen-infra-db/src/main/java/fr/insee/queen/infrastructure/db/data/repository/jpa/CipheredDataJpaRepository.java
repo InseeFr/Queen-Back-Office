@@ -24,7 +24,7 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
     @Query(nativeQuery = true,
         value = """
             update data
-                set value = pgp_sym_encrypt(:data\\:\\:text, current_setting('data.encryption.key'), 's2k-count=65536')
+                set value = pgp_sym_encrypt(:data\\:\\:text, current_setting('data.encryption.key'), 's2k-mode=1')
                 where survey_unit_id = :surveyUnitId"""
     )
     int updateData(String surveyUnitId, ObjectNode data);
@@ -41,7 +41,7 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
         WITH decrypted_data AS (
             SELECT
                 id,
-                pgp_sym_decrypt(value, current_setting('data.encryption.key'))::jsonb AS decrypted_value
+                pgp_sym_decrypt(value, current_setting('data.encryption.key'), 's2k-mode=1')::jsonb AS decrypted_value
             FROM
                 data
             WHERE
@@ -55,7 +55,7 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
                             COALESCE(decrypted_data.decrypted_value->'COLLECTED', '{}'::jsonb) || :collectedUpdateData
                         )::text,
                         current_setting('data.encryption.key'),
-                        's2k-count=65536'
+                        's2k-mode=1'
                     )
         FROM decrypted_data
         WHERE data.id = decrypted_data.id
