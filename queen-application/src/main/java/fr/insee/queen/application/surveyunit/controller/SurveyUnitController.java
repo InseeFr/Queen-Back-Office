@@ -2,18 +2,21 @@ package fr.insee.queen.application.surveyunit.controller;
 
 import fr.insee.queen.application.campaign.component.MetadataConverter;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
+import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
+import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitCreationInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitDataStateDataUpdateInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitUpdateInput;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitMetadataDto;
+import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
-import fr.insee.queen.domain.surveyunit.model.StateData;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitMetadata;
+import fr.insee.queen.domain.surveyunit.model.*;
+import fr.insee.queen.domain.surveyunit.service.StateDataService;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,11 +26,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Handle survey units
@@ -42,6 +47,8 @@ public class SurveyUnitController {
     private final SurveyUnitService surveyUnitService;
     private final PilotageComponent pilotageComponent;
     private final MetadataConverter metadataConverter;
+    private final StateDataService stateDataService;
+    private final AuthenticationHelper authenticationUserHelper;
 
     /**
      * Retrieve all survey units id
@@ -66,7 +73,39 @@ public class SurveyUnitController {
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public SurveyUnitDto getSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId) {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
-        return SurveyUnitDto.fromModel(surveyUnitService.getSurveyUnit(surveyUnitId));
+        SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
+
+        // if campaign sensitivity is OFF, return data
+        if(surveyUnitSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
+            return SurveyUnitDto.fromModel(surveyUnitService.getSurveyUnit(surveyUnitId));
+        }
+
+        // here, campaign sensitivity is ON !
+
+        // admin can see everything
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
+            return SurveyUnitDto.fromModel(surveyUnitService.getSurveyUnit(surveyUnitId));
+        }
+
+        // interviewer retrieve the dto with filled or empty data
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.SURVEY_UNIT)){
+            SurveyUnit su = surveyUnitService.getSurveyUnit(surveyUnitId);
+            StateData stateData = su.stateData();
+            if(stateData == null) {
+                return SurveyUnitDto.fromModel(su);
+            }
+
+            // survey is finished, not returning survey unit data
+            if(StateDataType.EXTRACTED.equals(stateData.state())
+                    || StateDataType.VALIDATED.equals(stateData.state())) {
+                return SurveyUnitDto.fromSensitiveModel(su);
+            }
+
+            return SurveyUnitDto.fromModel(su);
+        }
+
+        // reviewer cannot see data
+        throw new AccessDeniedException("Not authorized to see survey unit data");
     }
 
     /**
@@ -94,10 +133,44 @@ public class SurveyUnitController {
     @PutMapping(path = {"/survey-unit/{id}"})
     @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                     @Valid @RequestBody SurveyUnitUpdateInput surveyUnitUpdateInput) {
+                                     @Valid @RequestBody SurveyUnitUpdateInput surveyUnitUpdateInput) throws ConflictException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
-        SurveyUnit surveyUnit = SurveyUnitUpdateInput.toModel(surveyUnitId, surveyUnitUpdateInput);
-        surveyUnitService.updateSurveyUnit(surveyUnit);
+
+        SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
+
+        // if campaign sensitivity is OFF, update data
+        if(surveyUnitSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
+            SurveyUnit surveyUnit = SurveyUnitUpdateInput.toModel(surveyUnitId, surveyUnitUpdateInput);
+            surveyUnitService.updateSurveyUnit(surveyUnit);
+            return;
+        }
+
+        // here, campaign sensitivity is ON !
+
+        // admin can see everything
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
+            SurveyUnit surveyUnit = SurveyUnitUpdateInput.toModel(surveyUnitId, surveyUnitUpdateInput);
+            surveyUnitService.updateSurveyUnit(surveyUnit);
+            return;
+        }
+
+        // interviewer can update data if survey is not ended
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER)){
+            Optional<StateDataType> validatedState = stateDataService
+                    .findStateData(surveyUnitId)
+                    .map(StateData::state)
+                    .filter(state -> StateDataType.EXTRACTED.equals(state)
+                            || StateDataType.VALIDATED.equals(state));
+
+            if (validatedState.isEmpty()) {
+                SurveyUnit surveyUnit = SurveyUnitUpdateInput.toModel(surveyUnitId, surveyUnitUpdateInput);
+                surveyUnitService.updateSurveyUnit(surveyUnit);
+                return;
+            }
+            throw new ConflictException(surveyUnitId);
+        }
+
+        throw new AccessDeniedException("Not authorized to update survey unit data");
     }
 
     /**
@@ -126,10 +199,43 @@ public class SurveyUnitController {
     @PatchMapping(path = {"/survey-unit/{id}"})
     @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void updateSurveyUnitDataStateDataById(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                                  @Valid @RequestBody SurveyUnitDataStateDataUpdateInput surveyUnitUpdateInput) {
+                                                  @Valid @RequestBody SurveyUnitDataStateDataUpdateInput surveyUnitUpdateInput) throws ConflictException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
-        StateData stateData = StateDataInput.toModel(surveyUnitUpdateInput.stateData());
-        surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitUpdateInput.data(), stateData);
+
+        SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
+
+        // if campaign sensitivity is OFF, update data
+        if(surveyUnitSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
+            StateData stateData = StateDataInput.toModel(surveyUnitUpdateInput.stateData());
+            surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitUpdateInput.data(), stateData);
+            return;
+        }
+
+        // here, campaign sensitivity is ON !
+
+        // admin can do everything
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
+            StateData stateData = StateDataInput.toModel(surveyUnitUpdateInput.stateData());
+            surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitUpdateInput.data(), stateData);
+            return;
+        }
+
+        // interviewer/survey-unit can update data if survey is not ended
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.SURVEY_UNIT)){
+            Optional<StateDataType> validatedState = stateDataService
+                    .findStateData(surveyUnitId)
+                    .map(StateData::state)
+                    .filter(state -> StateDataType.EXTRACTED.equals(state)
+                            || StateDataType.VALIDATED.equals(state));
+
+            if (validatedState.isEmpty()) {
+                StateData stateData = StateDataInput.toModel(surveyUnitUpdateInput.stateData());
+                surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitUpdateInput.data(), stateData);
+                return;
+            }
+            throw new ConflictException(surveyUnitId);
+        }
+        throw new AccessDeniedException("Not authorized to update survey unit data");
     }
 
 

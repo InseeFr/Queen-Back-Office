@@ -36,7 +36,7 @@ class PilotageApiComponentTest {
     void testCheckHabilitations02() {
         authHelper = new AuthenticationFakeHelper(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.ADMIN));
         pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
-        pilotageComponent.checkHabilitations("11", PilotageRole.INTERVIEWER);
+        pilotageComponent.checkHabilitations(SurveyUnitFakeService.SURVEY_UNIT1_ID, PilotageRole.INTERVIEWER);
         assertThat(pilotageService.getWentThroughHasHabilitation()).isZero();
     }
 
@@ -45,7 +45,7 @@ class PilotageApiComponentTest {
     void testCheckHabilitations03() {
         authHelper = new AuthenticationFakeHelper(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.WEBCLIENT));
         pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
-        pilotageComponent.checkHabilitations("11", PilotageRole.INTERVIEWER);
+        pilotageComponent.checkHabilitations(SurveyUnitFakeService.SURVEY_UNIT1_ID, PilotageRole.INTERVIEWER);
         assertThat(pilotageService.getWentThroughHasHabilitation()).isZero();
     }
 
@@ -54,7 +54,7 @@ class PilotageApiComponentTest {
     void testCheckHabilitations04() {
         authHelper = new AuthenticationFakeHelper(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER));
         pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
-        pilotageComponent.checkHabilitations("11", PilotageRole.INTERVIEWER);
+        pilotageComponent.checkHabilitations(SurveyUnitFakeService.SURVEY_UNIT1_ID, PilotageRole.INTERVIEWER);
         assertThat(pilotageService.getWentThroughHasHabilitation()).isEqualTo(1);
     }
 
@@ -66,7 +66,7 @@ class PilotageApiComponentTest {
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageService.setHasHabilitation(false);
         pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, surveyUnitService);
-        assertThatThrownBy(() -> pilotageComponent.checkHabilitations("11", PilotageRole.INTERVIEWER, PilotageRole.REVIEWER))
+        assertThatThrownBy(() -> pilotageComponent.checkHabilitations(SurveyUnitFakeService.SURVEY_UNIT1_ID, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER))
                 .isInstanceOf(HabilitationException.class);
         assertThat(pilotageService.getWentThroughHasHabilitation()).isEqualTo(2);
     }

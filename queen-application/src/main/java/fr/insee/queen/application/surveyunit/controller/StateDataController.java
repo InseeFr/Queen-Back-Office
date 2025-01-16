@@ -1,14 +1,21 @@
 package fr.insee.queen.application.surveyunit.controller;
 
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
+import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
+import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.output.StateDataDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitOkNokDto;
+import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
+import fr.insee.queen.domain.surveyunit.model.StateData;
+import fr.insee.queen.domain.surveyunit.model.StateDataType;
 import fr.insee.queen.domain.surveyunit.model.SurveyUnitState;
+import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
 import fr.insee.queen.domain.surveyunit.service.StateDataService;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
@@ -18,11 +25,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Handle the data state of a survey unit.
@@ -37,6 +46,7 @@ public class StateDataController {
     private final StateDataService stateDataService;
     private final SurveyUnitService surveyUnitService;
     private final PilotageComponent pilotageComponent;
+    private final AuthenticationHelper authenticationUserHelper;
 
     /**
      * Retrieve the data linked of a survey unit
@@ -62,9 +72,39 @@ public class StateDataController {
     @PutMapping(path = "/survey-unit/{id}/state-data")
     @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                             @Valid @RequestBody StateDataInput stateDataInputDto) throws StateDataInvalidDateException {
+                             @Valid @RequestBody StateDataInput stateDataInputDto) throws StateDataInvalidDateException, ConflictException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
-        stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
+        SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
+
+        // if campaign sensitivity is OFF, update data
+        if(surveyUnitSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
+            stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
+            return;
+        }
+
+        // here, campaign sensitivity is ON !
+
+        // admin can do everything
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
+            stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
+            return;
+        }
+
+        // interviewer/survey-unit can update data if survey is not ended
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.SURVEY_UNIT)){
+            Optional<StateDataType> validatedState = stateDataService
+                    .findStateData(surveyUnitId)
+                    .map(StateData::state)
+                    .filter(state -> StateDataType.EXTRACTED.equals(state)
+                            || StateDataType.VALIDATED.equals(state));
+
+            if (validatedState.isEmpty()) {
+                stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
+                return;
+            }
+            throw new ConflictException(surveyUnitId);
+        }
+        throw new AccessDeniedException("Not authorized to update survey unit data");
     }
 
     /**

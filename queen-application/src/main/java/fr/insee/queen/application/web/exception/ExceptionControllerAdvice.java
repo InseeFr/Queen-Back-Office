@@ -3,6 +3,7 @@ package fr.insee.queen.application.web.exception;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
+import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
 import fr.insee.queen.application.web.authentication.AuthenticationTokenException;
 import fr.insee.queen.application.web.validation.exception.JsonValidatorComponentInitializationException;
 import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
@@ -131,6 +132,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(AuthenticationTokenException.class)
     public ResponseEntity<ApiError> authenticationTokenExceptionException(AuthenticationTokenException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiError> conflictException(ConflictException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler(HabilitationException.class)

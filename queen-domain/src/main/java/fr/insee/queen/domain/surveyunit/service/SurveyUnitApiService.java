@@ -190,7 +190,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
     }
 
     @Override
-    public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
+    public SurveyUnitSummary getSummaryById(String surveyUnitId) {
         return findSummaryById(surveyUnitId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, surveyUnitId)));
     }

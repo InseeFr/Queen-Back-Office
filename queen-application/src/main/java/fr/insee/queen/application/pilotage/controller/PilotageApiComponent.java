@@ -51,7 +51,7 @@ public class PilotageApiComponent implements PilotageComponent {
 
     @Override
     public void checkHabilitations(String surveyUnitId, PilotageRole... rolesToCheck) {
-        SurveyUnitSummary surveyUnit = surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
+        SurveyUnitSummary surveyUnit = surveyUnitService.getSummaryById(surveyUnitId);
         Authentication auth = authHelper.getAuthenticationPrincipal();
 
         List<String> userRoles = auth.getAuthorities().stream()

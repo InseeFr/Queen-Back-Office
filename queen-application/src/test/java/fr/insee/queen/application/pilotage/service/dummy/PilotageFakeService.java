@@ -1,6 +1,8 @@
 package fr.insee.queen.application.pilotage.service.dummy;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
+import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.PilotageService;
@@ -33,10 +35,12 @@ public class PilotageFakeService implements PilotageService {
     public static final String SURVEY_UNIT1_ID = "pilotage-s1";
     public static final String SURVEY_UNIT2_ID = "pilotage-s2";
 
+    public final CampaignSummary campaignSummary = new CampaignSummary("campaign-id", "label", CampaignSensitivity.NORMAL);
+
     @Getter
     private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
-            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
-            new SurveyUnitSummary("s2", "questionnaire-id", "campaign-id")
+            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", campaignSummary),
+            new SurveyUnitSummary("s2", "questionnaire-id", campaignSummary)
     );
 
     @Getter
