@@ -53,6 +53,7 @@ public class CampaignDao implements CampaignRepository {
                 .map(campaign -> new CampaignSummary(
                         campaign.getId(),
                         campaign.getLabel(),
+                        campaign.getSensitivity(),
                         campaign.getQuestionnaireModels()
                                 .stream()
                                 .map(QuestionnaireModelDB::getId)
@@ -76,6 +77,7 @@ public class CampaignDao implements CampaignRepository {
         return Optional.of(new CampaignSummary(
                 campaign.getId(),
                 campaign.getLabel(),
+                campaign.getSensitivity(),
                 campaign.getQuestionnaireModels()
                         .stream()
                         .map(QuestionnaireModelDB::getId)

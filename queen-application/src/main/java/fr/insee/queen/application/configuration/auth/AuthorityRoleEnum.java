@@ -13,4 +13,11 @@ public enum AuthorityRoleEnum {
     public String securityRole() {
         return ROLE_PREFIX + this.name();
     }
+
+    public static AuthorityRoleEnum fromAuthority(String authority) {
+        if(authority != null && authority.startsWith(ROLE_PREFIX)) {
+            authority = authority.split(ROLE_PREFIX)[1];
+        }
+        return AuthorityRoleEnum.valueOf(authority);
+    }
 }

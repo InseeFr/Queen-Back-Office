@@ -38,7 +38,7 @@ public interface SurveyUnitService {
 
     SurveyUnitMetadata getSurveyUnitMetadata(String surveyUnitId);
 
-    SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId);
+    SurveyUnitSummary getSummaryById(String surveyUnitId);
 
     List<SurveyUnit> findByIds(List<String> surveyUnitIds);
 

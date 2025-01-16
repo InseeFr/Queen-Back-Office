@@ -3,6 +3,7 @@ package fr.insee.queen.application.surveyunit.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.surveyunit.model.StateData;
@@ -37,6 +38,14 @@ public record SurveyUnitDto(
         return new SurveyUnitDto(surveyUnit.id(), surveyUnit.questionnaireId(),
                 surveyUnit.personalization(),
                 surveyUnit.data(),
+                surveyUnit.comment(),
+                StateDataDto.fromModel(surveyUnit.stateData()));
+    }
+
+    public static SurveyUnitDto fromSensitiveModel(SurveyUnit surveyUnit) {
+        return new SurveyUnitDto(surveyUnit.id(), surveyUnit.questionnaireId(),
+                surveyUnit.personalization(),
+                JsonNodeFactory.instance.objectNode(),
                 surveyUnit.comment(),
                 StateDataDto.fromModel(surveyUnit.stateData()));
     }
