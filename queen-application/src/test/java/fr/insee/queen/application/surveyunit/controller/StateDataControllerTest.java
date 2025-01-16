@@ -2,7 +2,7 @@ package fr.insee.queen.application.surveyunit.controller;
 
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
-import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
+import fr.insee.queen.application.surveyunit.controller.exception.LockedResourceException;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataTypeInput;
 import fr.insee.queen.application.surveyunit.service.dummy.StateDataFakeService;
@@ -67,7 +67,7 @@ class StateDataControllerTest {
     @ParameterizedTest
     @MethodSource("provideAdminAndWebclientUsers")
     @DisplayName("Should update data when campaign is sensitive and role is admin/webclient")
-    void testUpdateStateData04() throws StateDataInvalidDateException, ConflictException {
+    void testUpdateStateData04() throws StateDataInvalidDateException, LockedResourceException {
         // given
         StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, 1L, "1.0");
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
@@ -85,7 +85,7 @@ class StateDataControllerTest {
     @ParameterizedTest
     @MethodSource("provideInterviewerAndSuUsers")
     @DisplayName("Should update data when campaign is sensitive and role is interviewer/survey-unit")
-    void testUpdateStateData05(Authentication auth) throws StateDataInvalidDateException, ConflictException {
+    void testUpdateStateData05(Authentication auth) throws StateDataInvalidDateException, LockedResourceException {
         // given
         StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, 1L, "1.0");
         authenticationFakeHelper.setAuthenticationUser(auth);
@@ -102,7 +102,7 @@ class StateDataControllerTest {
 
     @Test
     @DisplayName("Should update data when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
-    void testUpdateStateData06() throws StateDataInvalidDateException, ConflictException {
+    void testUpdateStateData06() throws StateDataInvalidDateException, LockedResourceException {
         // given
         StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, 1L, "1.0");
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
@@ -135,7 +135,7 @@ class StateDataControllerTest {
 
         // when & then
         assertThatThrownBy(() -> stateDataController.setStateData(surveyUnitId, stateDataInput))
-                .isInstanceOf(ConflictException.class);
+                .isInstanceOf(LockedResourceException.class);
         assertThat(pilotageFakeComponent.isChecked()).isTrue();
         assertThat(stateDataFakeService.getStateDataSaved()).isNull();
     }

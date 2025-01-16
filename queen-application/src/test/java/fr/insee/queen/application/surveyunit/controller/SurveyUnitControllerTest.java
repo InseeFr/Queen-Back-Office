@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
 import fr.insee.queen.application.surveyunit.controller.dummy.MetadataFakeConverter;
-import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
+import fr.insee.queen.application.surveyunit.controller.exception.LockedResourceException;
 import fr.insee.queen.application.surveyunit.dto.input.*;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
 import fr.insee.queen.application.surveyunit.service.dummy.StateDataFakeService;
@@ -81,14 +81,14 @@ class SurveyUnitControllerTest {
 
         // when & then
         assertThatThrownBy(() -> surveyUnitController.updateSurveyUnitDataStateDataById(surveyUnitId, suInput))
-                .isInstanceOf(ConflictException.class);
+                .isInstanceOf(LockedResourceException.class);
         assertThat(pilotageComponent.isChecked()).isTrue();
     }
 
     @ParameterizedTest
     @MethodSource("provideAdminAndWebclientUsers")
     @DisplayName("Should update survey unit when campaign is sensitive and role is admin/webclient")
-    void testDiffUpdateSurveyUnit04() throws ConflictException {
+    void testDiffUpdateSurveyUnit04() throws LockedResourceException {
         // given
         SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, 1L, "2.0"));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
@@ -111,7 +111,7 @@ class SurveyUnitControllerTest {
     @ParameterizedTest
     @MethodSource("provideInterviewerAndSuUsers")
     @DisplayName("Should update survey unit when campaign is sensitive and role is interviewer/survey-unit")
-    void testDiffUpdateSurveyUnit05(Authentication auth) throws ConflictException {
+    void testDiffUpdateSurveyUnit05(Authentication auth) throws LockedResourceException {
         // given
         SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, 1L, "2.0"));
         authenticatedUserHelper.setAuthenticationUser(auth);
@@ -133,7 +133,7 @@ class SurveyUnitControllerTest {
 
     @Test
     @DisplayName("Should update survey unit when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
-    void testDiffUpdateSurveyUnit06() throws ConflictException {
+    void testDiffUpdateSurveyUnit06() throws LockedResourceException {
         // given
         SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, 1L, "2.0"));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
@@ -158,7 +158,7 @@ class SurveyUnitControllerTest {
 
     @Test
     @DisplayName("Should update survey unit and transform state-data to null if state from input state data is null")
-    void testUpdateSurveyUnit01() throws ConflictException {
+    void testUpdateSurveyUnit01() throws LockedResourceException {
         // given
         StateDataForSurveyUnitUpdateInput stateData = new StateDataForSurveyUnitUpdateInput(null, 123456789L, "2.3");
         SurveyUnitUpdateInput suInput = new SurveyUnitUpdateInput(null, null, null, stateData);
@@ -176,7 +176,7 @@ class SurveyUnitControllerTest {
 
     @Test
     @DisplayName("Should update survey unit and transform state-data to null if input state data is null")
-    void testUpdateSurveyUnit02() throws ConflictException {
+    void testUpdateSurveyUnit02() throws LockedResourceException {
         // given
         SurveyUnitUpdateInput suInput = new SurveyUnitUpdateInput(null, null, null, null);
         SurveyUnitSummary surveyUnitSummary = surveyUnitFakeService.getSummaryById(SurveyUnitFakeService.SURVEY_UNIT1_ID);
@@ -209,7 +209,7 @@ class SurveyUnitControllerTest {
     @ParameterizedTest
     @MethodSource("provideAdminAndWebclientUsers")
     @DisplayName("Should update survey unit when campaign is sensitive and role is admin/webclient")
-    void testUpdateSurveyUnit04() throws ConflictException {
+    void testUpdateSurveyUnit04() throws LockedResourceException {
         // given
         SurveyUnitUpdateInput suInput = new SurveyUnitUpdateInput(null, null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
@@ -227,7 +227,7 @@ class SurveyUnitControllerTest {
 
     @Test
     @DisplayName("Should update survey unit when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
-    void testUpdateSurveyUnit06() throws ConflictException {
+    void testUpdateSurveyUnit06() throws LockedResourceException {
         // given
         SurveyUnitUpdateInput suInput = new SurveyUnitUpdateInput(null, null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
@@ -261,7 +261,7 @@ class SurveyUnitControllerTest {
 
         // when & then
         assertThatThrownBy(() -> surveyUnitController.updateSurveyUnitById(surveyUnitId, suInput))
-                .isInstanceOf(ConflictException.class);
+                .isInstanceOf(LockedResourceException.class);
 
         // then
         assertThat(pilotageComponent.isChecked()).isTrue();

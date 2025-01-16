@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
+import fr.insee.queen.application.surveyunit.controller.exception.LockedResourceException;
 import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.application.web.validation.json.JsonValid;
@@ -113,7 +113,7 @@ public class DataController {
             ObjectNode dataValue,
             @IdValid
             @PathVariable(value = "id")
-            String surveyUnitId) throws ConflictException {
+            String surveyUnitId) throws LockedResourceException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
 
         SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
@@ -145,7 +145,7 @@ public class DataController {
                 return;
             }
 
-            throw new ConflictException(surveyUnitId);
+            throw new LockedResourceException(surveyUnitId);
         }
         throw new AccessDeniedException("Not authorized to update survey unit data");
     }

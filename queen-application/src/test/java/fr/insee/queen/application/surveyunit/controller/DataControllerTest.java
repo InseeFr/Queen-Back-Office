@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
-import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
+import fr.insee.queen.application.surveyunit.controller.exception.LockedResourceException;
 import fr.insee.queen.application.surveyunit.service.dummy.DataFakeService;
 import fr.insee.queen.application.surveyunit.service.dummy.StateDataFakeService;
 import fr.insee.queen.application.surveyunit.service.dummy.SurveyUnitFakeService;
@@ -69,7 +69,7 @@ class DataControllerTest {
     @ParameterizedTest
     @MethodSource("provideAdminAndWebclientUsers")
     @DisplayName("Should update data when campaign is sensitive and role is admin/webclient")
-    void testUpdateSurveyUnit04() throws ConflictException {
+    void testUpdateSurveyUnit04() throws LockedResourceException {
         // given
         ObjectNode dataInput = JsonNodeFactory.instance.objectNode();
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
@@ -87,7 +87,7 @@ class DataControllerTest {
     @ParameterizedTest
     @MethodSource("provideInterviewerAndSuUsers")
     @DisplayName("Should update data when campaign is sensitive and role is interviewer/survey-unit")
-    void testUpdateSurveyUnit05(Authentication auth) throws ConflictException {
+    void testUpdateSurveyUnit05(Authentication auth) throws LockedResourceException {
         // given
         ObjectNode dataInput = JsonNodeFactory.instance.objectNode();
         authenticationFakeHelper.setAuthenticationUser(auth);
@@ -104,7 +104,7 @@ class DataControllerTest {
 
     @Test
     @DisplayName("Should update data when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
-    void testUpdateSurveyUnit06() throws ConflictException {
+    void testUpdateSurveyUnit06() throws LockedResourceException {
         // given
         ObjectNode dataInput = JsonNodeFactory.instance.objectNode();
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
@@ -138,7 +138,7 @@ class DataControllerTest {
         // when
 
         assertThatThrownBy(() -> dataController.updateData(dataInput, surveyUnitId))
-                .isInstanceOf(ConflictException.class);
+                .isInstanceOf(LockedResourceException.class);
 
         // then
         assertThat(pilotageFakeComponent.isChecked()).isTrue();

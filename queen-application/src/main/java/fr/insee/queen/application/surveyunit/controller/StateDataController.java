@@ -3,7 +3,7 @@ package fr.insee.queen.application.surveyunit.controller;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
+import fr.insee.queen.application.surveyunit.controller.exception.LockedResourceException;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.output.StateDataDto;
 import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
@@ -72,7 +72,7 @@ public class StateDataController {
     @PutMapping(path = "/survey-unit/{id}/state-data")
     @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void setStateData(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                             @Valid @RequestBody StateDataInput stateDataInputDto) throws StateDataInvalidDateException, ConflictException {
+                             @Valid @RequestBody StateDataInput stateDataInputDto) throws StateDataInvalidDateException, LockedResourceException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
         SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
 
@@ -102,7 +102,7 @@ public class StateDataController {
                 stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
                 return;
             }
-            throw new ConflictException(surveyUnitId);
+            throw new LockedResourceException(surveyUnitId);
         }
         throw new AccessDeniedException("Not authorized to update survey unit data");
     }

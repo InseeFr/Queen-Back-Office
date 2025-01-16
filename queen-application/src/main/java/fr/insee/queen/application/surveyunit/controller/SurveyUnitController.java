@@ -4,7 +4,7 @@ import fr.insee.queen.application.campaign.component.MetadataConverter;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.application.surveyunit.controller.exception.ConflictException;
+import fr.insee.queen.application.surveyunit.controller.exception.LockedResourceException;
 import fr.insee.queen.application.surveyunit.dto.input.StateDataInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitCreationInput;
 import fr.insee.queen.application.surveyunit.dto.input.SurveyUnitDataStateDataUpdateInput;
@@ -133,7 +133,7 @@ public class SurveyUnitController {
     @PutMapping(path = {"/survey-unit/{id}"})
     @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     public void updateSurveyUnitById(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                     @Valid @RequestBody SurveyUnitUpdateInput surveyUnitUpdateInput) throws ConflictException {
+                                     @Valid @RequestBody SurveyUnitUpdateInput surveyUnitUpdateInput) throws LockedResourceException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
 
         SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
@@ -167,7 +167,7 @@ public class SurveyUnitController {
                 surveyUnitService.updateSurveyUnit(surveyUnit);
                 return;
             }
-            throw new ConflictException(surveyUnitId);
+            throw new LockedResourceException(surveyUnitId);
         }
 
         throw new AccessDeniedException("Not authorized to update survey unit data");
@@ -199,7 +199,7 @@ public class SurveyUnitController {
     @PatchMapping(path = {"/survey-unit/{id}"})
     @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void updateSurveyUnitDataStateDataById(@IdValid @PathVariable(value = "id") String surveyUnitId,
-                                                  @Valid @RequestBody SurveyUnitDataStateDataUpdateInput surveyUnitUpdateInput) throws ConflictException {
+                                                  @Valid @RequestBody SurveyUnitDataStateDataUpdateInput surveyUnitUpdateInput) throws LockedResourceException {
         pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
 
         SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
@@ -233,7 +233,7 @@ public class SurveyUnitController {
                 surveyUnitService.updateSurveyUnit(surveyUnitId, surveyUnitUpdateInput.data(), stateData);
                 return;
             }
-            throw new ConflictException(surveyUnitId);
+            throw new LockedResourceException(surveyUnitId);
         }
         throw new AccessDeniedException("Not authorized to update survey unit data");
     }
