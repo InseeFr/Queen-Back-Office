@@ -1,16 +1,5 @@
 --changeset davdarras:test-data context:test
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
 --
 -- TOC entry 3402 (class 0 OID 16416)
 -- Dependencies: 215
@@ -131,30 +120,6 @@ INSERT INTO public.comment VALUES ('833b5a5d-845e-4b3e-a725-d444907ee476', '{}',
 INSERT INTO public.comment VALUES ('692a1749-e293-4bcf-8456-4fb8edc9a5a8', '{}', 'su-test-diff-data');
 INSERT INTO public.comment VALUES ('692a1749-e293-4bcf-8456-4fb8edc9a5a9', '{}', 'su-test-diff-without-collected-data');
 
-
---
--- TOC entry 3400 (class 0 OID 16403)
--- Dependencies: 213
--- Data for Name: data; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO public.data VALUES ('6cb4378d-aa70-4add-bb61-1f2fdc86dfbb', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '11');
-INSERT INTO public.data VALUES ('cf72a231-b40f-4ffa-9834-bf4e40bf85ac', '{}', '12');
-INSERT INTO public.data VALUES ('f63bbfbe-9926-48ae-8d04-421296a40634', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '13');
-INSERT INTO public.data VALUES ('8e3b28cc-74b1-4391-8359-c495538129b7', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '14');
-INSERT INTO public.data VALUES ('e9e97450-ef9c-4f49-9375-adf11b6a158b', '{}', '20');
-INSERT INTO public.data VALUES ('42dc1400-0a36-4c20-8742-115e22c42369', '{}', '21');
-INSERT INTO public.data VALUES ('4540afba-ee51-42e4-bf74-d2346d813e89', '{}', '22');
-INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e416', '{}', '23');
-INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e417', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}, "READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}}}', 'su-test-diff-data');
-INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e418', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}}', 'su-test-diff-without-collected-data');
-INSERT INTO public.data VALUES ('27abfaed-187a-44ab-8287-af08f3bd7158', '{}', 'LOG2021X11Web-01');
-INSERT INTO public.data VALUES ('c118114a-c0be-462d-9fe9-604436bea20a', '{}', 'LOG2021X11Web-02');
-INSERT INTO public.data VALUES ('df044ba3-9abb-451e-9e4d-75ba98ace5e6', '{}', 'LOG2021X11Web-03');
-INSERT INTO public.data VALUES ('fdc43238-cf8e-4a55-ad49-14ea8152728d', '{}', 'LOG2021X11Tel_01');
-INSERT INTO public.data VALUES ('fa0a7a90-0324-429f-837b-ad06b79cfd7d', '{}', 'LOG2021X11Tel_02');
-INSERT INTO public.data VALUES ('d51e29b9-b27b-4159-957c-6bb54d811a20', '{}', 'LOG2021X11Tel_03');
-
 --
 -- TOC entry 3407 (class 0 OID 16494)
 -- Dependencies: 220
@@ -235,3 +200,26 @@ INSERT INTO public.state_data VALUES ('e75e53d5-66a4-4ab9-922a-a84e5709e8c9', '1
 
 INSERT INTO public.survey_unit_temp_zone VALUES ('42858b14-2a0c-4d17-afd0-f50a0f9a8dd5','temp-11', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-11"}');
 INSERT INTO public.survey_unit_temp_zone VALUES ('6fcbbd84-3464-4290-b8fc-cdf0082ee339','temp-12', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-12"}');
+
+--
+-- TOC entry 3400 (class 0 OID 16403)
+-- Dependencies: 213
+-- Data for Name: data; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.data VALUES ('6cb4378d-aa70-4add-bb61-1f2fdc86dfbb', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '11', 0);
+INSERT INTO public.data VALUES ('cf72a231-b40f-4ffa-9834-bf4e40bf85ac', '{}', '12');
+INSERT INTO public.data VALUES ('f63bbfbe-9926-48ae-8d04-421296a40634', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '13', 0);
+INSERT INTO public.data VALUES ('8e3b28cc-74b1-4391-8359-c495538129b7', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '14', 0);
+INSERT INTO public.data VALUES ('e9e97450-ef9c-4f49-9375-adf11b6a158b', '{}', '20', 0);
+INSERT INTO public.data VALUES ('42dc1400-0a36-4c20-8742-115e22c42369', '{}', '21', 0);
+INSERT INTO public.data VALUES ('4540afba-ee51-42e4-bf74-d2346d813e89', '{}', '22', 0);
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e416', '{}', '23', 0);
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e417', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}, "READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}}}', 'su-test-diff-data', 0);
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e418', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}}', 'su-test-diff-without-collected-data', 0);
+INSERT INTO public.data VALUES ('27abfaed-187a-44ab-8287-af08f3bd7158', '{}', 'LOG2021X11Web-01', 0);
+INSERT INTO public.data VALUES ('c118114a-c0be-462d-9fe9-604436bea20a', '{}', 'LOG2021X11Web-02', 0);
+INSERT INTO public.data VALUES ('df044ba3-9abb-451e-9e4d-75ba98ace5e6', '{}', 'LOG2021X11Web-03', 0);
+INSERT INTO public.data VALUES ('fdc43238-cf8e-4a55-ad49-14ea8152728d', '{}', 'LOG2021X11Tel_01', 0);
+INSERT INTO public.data VALUES ('fa0a7a90-0324-429f-837b-ad06b79cfd7d', '{}', 'LOG2021X11Tel_02', 0);
+INSERT INTO public.data VALUES ('d51e29b9-b27b-4159-957c-6bb54d811a20', '{}', 'LOG2021X11Tel_03', 0);

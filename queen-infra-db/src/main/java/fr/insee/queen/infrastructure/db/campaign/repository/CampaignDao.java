@@ -30,7 +30,7 @@ public class CampaignDao implements CampaignRepository {
     @Transactional
     public void create(Campaign campaign) {
         Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.getQuestionnaireIds());
-        CampaignDB campaignDB = new CampaignDB(campaign.getId(), campaign.getLabel(), questionnaireModels);
+        CampaignDB campaignDB = new CampaignDB(campaign.getId(), campaign.getLabel(), campaign.getSensitivity(), questionnaireModels);
         questionnaireModels.parallelStream()
                 .forEach(questionnaireModel -> questionnaireModel.setCampaign(campaignDB));
 
@@ -89,6 +89,7 @@ public class CampaignDao implements CampaignRepository {
         CampaignDB campaignDB = jpaRepository.findById(campaign.getId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaign.getId())));
         campaignDB.setLabel(campaign.getLabel());
+        campaignDB.setSensitivity(campaign.getSensitivity());
 
         ObjectNode metadataValue = campaign.getMetadata();
         MetadataDB metadata = campaignDB.getMetadata();
