@@ -1,12 +1,14 @@
 package fr.insee.queen.domain.surveyunit.service.dummy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
+import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +27,9 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Getter
     private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
-            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
-            new SurveyUnitSummary("survey-unit2", "questionnaire-id", "campaign-id"),
-            new SurveyUnitSummary("survey-unit3", "questionnaire-id", "campaign-id")
+            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL)),
+            new SurveyUnitSummary("survey-unit2", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL)),
+            new SurveyUnitSummary("survey-unit3", "questionnaire-id", new CampaignSummary("campaign-id2", "campaign-label", CampaignSensitivity.SENSITIVE))
     );
 
     @Override
@@ -77,16 +79,18 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Override
     public List<SurveyUnitSummary> findSummariesByIds(List<String> surveyUnitIds) {
-        List<SurveyUnitSummary> surveyUnits = new ArrayList<>();
-
-        surveyUnitIds.forEach(surveyUnitId -> surveyUnits.add(new SurveyUnitSummary(surveyUnitId, "questionnaire-id", "campaign-id")));
-        return surveyUnits;
+        return surveyUnitSummaries
+                .stream()
+                .filter(surveyUnitSummary -> surveyUnitIds.contains(surveyUnitSummary.id()))
+                .toList();
     }
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
-        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(surveyUnitId, "questionnaire-id", "campaign-id");
-        return Optional.of(surveyUnit);
+        return surveyUnitSummaries
+                .stream()
+                .filter(surveyUnitSummary -> surveyUnitSummary.id().equals(surveyUnitId))
+                .findFirst();
     }
 
     @Override
@@ -110,8 +114,9 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
-        return new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id");
+    public SurveyUnitSummary getSummaryById(String surveyUnitId) {
+        return findSummaryById(surveyUnitId)
+                .orElseThrow(() -> new EntityNotFoundException("survey unit not found"));
     }
 
     @Override

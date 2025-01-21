@@ -28,7 +28,10 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             select new fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary(
                 s.id,
                 s.questionnaireModel.id,
-                s.campaign.id
+                new fr.insee.queen.domain.campaign.model.CampaignSummary(
+                    s.campaign.id,
+                    s.campaign.label,
+                    s.campaign.sensitivity)
             )
             from SurveyUnitDB s where s.id=:surveyUnitId""")
     Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId);
@@ -58,7 +61,10 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             select new fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary(
                 s.id,
                 s.questionnaireModel.id,
-                s.campaign.id
+                new fr.insee.queen.domain.campaign.model.CampaignSummary(
+                    s.campaign.id,
+                    s.campaign.label,
+                    s.campaign.sensitivity)
             )
             from SurveyUnitDB s where s.campaign.id=:campaignId""")
     List<SurveyUnitSummary> findAllSummaryByCampaignId(String campaignId);
@@ -73,7 +79,10 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             select new fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary(
                 s.id,
                 s.questionnaireModel.id,
-                s.campaign.id
+                new fr.insee.queen.domain.campaign.model.CampaignSummary(
+                    s.campaign.id,
+                    s.campaign.label,
+                    s.campaign.sensitivity)
             )
             from SurveyUnitDB s where s.id in :surveyUnitIds""")
     List<SurveyUnitSummary> findAllSummaryByIdIn(List<String> surveyUnitIds);
@@ -130,7 +139,8 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
                 s.id,
                 new fr.insee.queen.domain.campaign.model.CampaignSummary(
                     s.campaign.id,
-                    s.campaign.label
+                    s.campaign.label,
+                    s.campaign.sensitivity
                 ),
                 new fr.insee.queen.domain.surveyunit.model.StateData(
                     s.stateData.state,

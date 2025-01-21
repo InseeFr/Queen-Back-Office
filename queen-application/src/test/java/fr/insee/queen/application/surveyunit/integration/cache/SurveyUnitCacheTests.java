@@ -116,7 +116,7 @@ class SurveyUnitCacheTests extends ContainerConfiguration {
         String surveyUnitId = "survey-unit-campaign-cache-id";
 
         // check cache is null at beginning
-        assertThatThrownBy(() -> surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> surveyUnitService.getSummaryById(surveyUnitId)).isInstanceOf(EntityNotFoundException.class);
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY)).get(surveyUnitId)).isNull();
 
         SurveyUnit surveyUnit = new SurveyUnit(surveyUnitId,
@@ -131,7 +131,7 @@ class SurveyUnitCacheTests extends ContainerConfiguration {
         // not retrieving yet so no survey unit in cache
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY)).get(surveyUnitId)).isNull();
 
-        SurveyUnitSummary expectedSurveyUnitSummary = surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
+        SurveyUnitSummary expectedSurveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
 
         // now survey unit is in cache
         SurveyUnitSummary surveyUnitSummary = Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY).get(surveyUnitId, SurveyUnitSummary.class));
@@ -150,7 +150,7 @@ class SurveyUnitCacheTests extends ContainerConfiguration {
         String surveyUnitId = "survey-unit-campaign-cache-id";
         String campaignId = "LOG2021X11Tel";
         // check cache is null at beginning
-        assertThatThrownBy(() -> surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> surveyUnitService.getSummaryById(surveyUnitId)).isInstanceOf(EntityNotFoundException.class);
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY)).get(surveyUnitId)).isNull();
 
         SurveyUnit surveyUnit = new SurveyUnit(surveyUnitId,
@@ -165,7 +165,7 @@ class SurveyUnitCacheTests extends ContainerConfiguration {
         // not retrieving yet so no survey unit in cache
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY)).get(surveyUnitId)).isNull();
 
-        SurveyUnitSummary expectedSurveyUnitSummary = surveyUnitService.getSurveyUnitWithCampaignById(surveyUnitId);
+        SurveyUnitSummary expectedSurveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
 
         // now survey unit is in cache
         SurveyUnitSummary surveyUnitSummary = Objects.requireNonNull(cacheManager.getCache(CacheName.SURVEY_UNIT_SUMMARY).get(surveyUnitId, SurveyUnitSummary.class));
