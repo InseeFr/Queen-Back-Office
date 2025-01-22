@@ -1,8 +1,12 @@
 package fr.insee.queen.application.surveyunit.integration;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.application.configuration.ContainerConfiguration;
+import fr.insee.queen.application.surveyunit.dto.input.StateDataTypeInput;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -13,9 +17,11 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,6 +39,39 @@ class SurveyUnitTests extends ContainerConfiguration {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(16)));
+    }
+
+    @Test
+    @DisplayName("Should return survey units with states")
+    void on_get_survey_units_return_survey_units() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String expectedFirstResult = """
+        {
+                "id":"12",
+                "questionnaireId":"simpsons",
+                "campaignId":"SIMPSONS2020X00",
+                "stateData":{
+                    "state":"INIT",
+                    "date":1111111111,
+                    "currentPage":"2.3#5"
+                }
+        }""";
+        mockMvc.perform(post("/api/survey-units")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("state", StateDataTypeInput.INIT.name())
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contents.size()", is(13)))
+                // extract and check first element
+                .andExpect(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    JsonNode rootNode = mapper.readTree(responseContent);
+                    JsonNode firstContent = rootNode.path("contents").get(0);
+                    JsonNode expectedNode = mapper.readTree(expectedFirstResult);
+                    assertThat(firstContent).isEqualTo(expectedNode);
+                });
     }
 
     @Test
