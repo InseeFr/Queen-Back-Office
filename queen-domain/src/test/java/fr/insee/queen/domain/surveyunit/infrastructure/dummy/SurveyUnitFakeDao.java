@@ -2,6 +2,7 @@ package fr.insee.queen.domain.surveyunit.infrastructure.dummy;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.common.paging.PagingResult;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
 import fr.insee.queen.domain.surveyunit.model.*;
 import lombok.Getter;
@@ -52,6 +53,11 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
     @Override
     public Optional<List<String>> findAllIds() {
         return Optional.empty();
+    }
+
+    @Override
+    public PagingResult<SurveyUnitState> findAllByState(StateDataType stateDataType, Integer pageNumber) {
+        return null;
     }
 
     @Override

@@ -2,6 +2,7 @@ package fr.insee.queen.domain.surveyunit.gateway;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.common.paging.PagingResult;
 import fr.insee.queen.domain.surveyunit.model.*;
 
 import java.util.List;
@@ -57,6 +58,14 @@ public interface SurveyUnitRepository {
      * @return List of survey unit ids
      */
     Optional<List<String>> findAllIds();
+
+    /**
+     *
+     * @param stateDataType state data type to filter
+     * @param pageNumber page number
+     * @return pages of survey units with states
+     */
+    PagingResult<SurveyUnitState> findAllByState(StateDataType stateDataType, Integer pageNumber);
 
     /**
      * Find survey units with state linked by ids

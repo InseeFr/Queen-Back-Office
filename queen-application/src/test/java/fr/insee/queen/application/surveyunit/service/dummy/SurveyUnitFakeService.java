@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.common.paging.PagingResult;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import lombok.Getter;
@@ -188,5 +189,10 @@ public class SurveyUnitFakeService implements SurveyUnitService {
                 new SurveyUnit(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id", null, null, null, null),
                 new SurveyUnit(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id", null, null, null, null)
         );
+    }
+
+    @Override
+    public PagingResult<SurveyUnitState> getSurveyUnits(StateDataType stateDataType, Integer pageNumber) {
+        return null;
     }
 }

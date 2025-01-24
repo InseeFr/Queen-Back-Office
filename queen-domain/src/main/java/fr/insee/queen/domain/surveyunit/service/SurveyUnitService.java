@@ -1,6 +1,7 @@
 package fr.insee.queen.domain.surveyunit.service;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.common.paging.PagingResult;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 
@@ -43,4 +44,6 @@ public interface SurveyUnitService {
     List<SurveyUnit> findByIds(List<String> surveyUnitIds);
 
     List<SurveyUnit> findAllSurveyUnits();
+
+    PagingResult<SurveyUnitState> getSurveyUnits(StateDataType stateDataType, Integer pageNumber);
 }

@@ -14,6 +14,7 @@ import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitMetadataDto;
 import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
+import fr.insee.queen.domain.common.paging.PagingResult;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.StateDataService;
@@ -60,6 +61,22 @@ public class SurveyUnitController {
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public List<String> getSurveyUnitIds() {
         return surveyUnitService.findAllSurveyUnitIds();
+    }
+
+    /**
+     * Retrieve survey units filtered by state
+     *
+     * @param stateDataType state
+     * @param pageNumber page to retrieve
+     * @return all ids of survey units
+     */
+    @Operation(summary = "Retrieve survey-units by state")
+    @PostMapping(path = "/survey-units")
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    public PagingResult<SurveyUnitState> getSurveyUnitsByState(
+            @RequestParam(name="state") StateDataType stateDataType,
+            @RequestParam(defaultValue = "0") Integer pageNumber) {
+        return surveyUnitService.getSurveyUnits(stateDataType, pageNumber);
     }
 
     /**
