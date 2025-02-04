@@ -56,14 +56,14 @@ class SurveyUnitTests extends ContainerConfiguration {
                     "currentPage":"2.3#5"
                 }
         }""";
-        mockMvc.perform(post("/api/survey-units")
+        mockMvc.perform(get("/api/admin/campaign/SIMPSONS2020X00/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
                         .param("state", StateDataTypeInput.INIT.name())
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.contents.size()", is(13)))
+                .andExpect(jsonPath("$.contents.size()", is(3)))
                 // extract and check first element
                 .andExpect(result -> {
                     String responseContent = result.getResponse().getContentAsString();
