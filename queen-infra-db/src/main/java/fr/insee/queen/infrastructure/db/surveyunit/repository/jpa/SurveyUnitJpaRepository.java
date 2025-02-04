@@ -164,6 +164,7 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
     /**
      * Find all survey units by state
      *
+     * @param campaignId campaign id
      * @param stateDataType state data used for filtering
      * @return List of survey units by state
      */
@@ -178,8 +179,10 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
                     st.currentPage
                 )
             )
-            from SurveyUnitDB s left join s.stateData st where st.state = :stateDataType""")
-    Page<SurveyUnitState> findAllByState(StateDataType stateDataType, Pageable pageable);
+            from SurveyUnitDB s left join s.stateData st
+            where st.state = :stateDataType
+            and s.campaign.id = :campaignId""")
+    Page<SurveyUnitState> findAllByState(String campaignId, StateDataType stateDataType, Pageable pageable);
 
     /**
      * Search survey units by ids
