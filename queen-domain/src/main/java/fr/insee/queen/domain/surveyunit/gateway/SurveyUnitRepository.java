@@ -61,11 +61,12 @@ public interface SurveyUnitRepository {
 
     /**
      *
+     * @param campaignId campaign id
      * @param stateDataType state data type to filter
      * @param pageNumber page number
      * @return pages of survey units with states
      */
-    PagingResult<SurveyUnitState> findAllByState(StateDataType stateDataType, Integer pageNumber);
+    PagingResult<SurveyUnitState> findAllByState(String campaignId, StateDataType stateDataType, Integer pageNumber);
 
     /**
      * Find survey units with state linked by ids

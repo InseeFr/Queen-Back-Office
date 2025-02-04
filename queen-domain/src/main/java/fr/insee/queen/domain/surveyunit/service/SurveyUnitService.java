@@ -45,5 +45,5 @@ public interface SurveyUnitService {
 
     List<SurveyUnit> findAllSurveyUnits();
 
-    PagingResult<SurveyUnitState> getSurveyUnits(StateDataType stateDataType, Integer pageNumber);
+    PagingResult<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType, Integer pageNumber);
 }

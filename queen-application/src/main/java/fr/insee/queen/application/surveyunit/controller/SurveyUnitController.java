@@ -66,17 +66,19 @@ public class SurveyUnitController {
     /**
      * Retrieve survey units filtered by state
      *
+     * @param campaignId campaign id
      * @param stateDataType state
      * @param pageNumber page to retrieve
      * @return all ids of survey units
      */
     @Operation(summary = "Retrieve survey-units by state")
-    @PostMapping(path = "/survey-units")
+    @GetMapping(path = "/admin/campaign/{id}/survey-units")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public PagingResult<SurveyUnitState> getSurveyUnitsByState(
+            @IdValid @PathVariable("id") String campaignId,
             @RequestParam(name="state") StateDataType stateDataType,
             @RequestParam(defaultValue = "0") Integer pageNumber) {
-        return surveyUnitService.getSurveyUnits(stateDataType, pageNumber);
+        return surveyUnitService.getSurveyUnits(campaignId, stateDataType, pageNumber);
     }
 
     /**

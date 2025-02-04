@@ -134,7 +134,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public PagingResult<SurveyUnitState> getSurveyUnits(StateDataType stateDataType, Integer pageNumber) {
+    public PagingResult<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType, Integer pageNumber) {
         return null;
     }
 }

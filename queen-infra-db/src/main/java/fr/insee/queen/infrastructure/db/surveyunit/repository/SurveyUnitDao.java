@@ -79,12 +79,12 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     }
 
     @Override
-    public PagingResult<SurveyUnitState> findAllByState(StateDataType state, Integer pageNumber) {
+    public PagingResult<SurveyUnitState> findAllByState(String campaignId, StateDataType state, Integer pageNumber) {
 
         Pageable pageable = PageRequest.of(pageNumber, 1000, Sort.by("id"));
         Page<SurveyUnitState> surveyUnitPages;
 
-        surveyUnitPages = crudRepository.findAllByState(state, pageable);
+        surveyUnitPages = crudRepository.findAllByState(campaignId, state, pageable);
 
         return new PagingResult<>(surveyUnitPages.toList(),
                 surveyUnitPages.getNumber(),

@@ -91,8 +91,8 @@ public class SurveyUnitApiService implements SurveyUnitService {
     }
 
     @Override
-    public PagingResult<SurveyUnitState> getSurveyUnits(StateDataType stateDataType, Integer pageNumber) {
-        return surveyUnitRepository.findAllByState(stateDataType, pageNumber);
+    public PagingResult<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType, Integer pageNumber) {
+        return surveyUnitRepository.findAllByState(campaignId, stateDataType, pageNumber);
     }
 
     @Transactional

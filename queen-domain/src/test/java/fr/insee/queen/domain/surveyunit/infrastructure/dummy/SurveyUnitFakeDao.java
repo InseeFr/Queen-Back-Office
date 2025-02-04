@@ -56,7 +56,7 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
     }
 
     @Override
-    public PagingResult<SurveyUnitState> findAllByState(StateDataType stateDataType, Integer pageNumber) {
+    public PagingResult<SurveyUnitState> findAllByState(String campaignId, StateDataType stateDataType, Integer pageNumber) {
         return null;
     }
 

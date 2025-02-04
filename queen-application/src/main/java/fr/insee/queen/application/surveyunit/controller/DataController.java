@@ -60,7 +60,7 @@ public class DataController {
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.DATA))})
     public ObjectNode getDataBySurveyUnit(@IdValid @PathVariable(value = "id") String surveyUnitId) {
-        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
+        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
         SurveyUnitSummary surveyUnitSummary = surveyUnitService.getSummaryById(surveyUnitId);
 
         // if campaign sensitivity is OFF, return data
