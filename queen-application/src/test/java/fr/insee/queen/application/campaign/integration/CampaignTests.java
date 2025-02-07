@@ -12,10 +12,13 @@ import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Set;
 
@@ -108,6 +111,42 @@ class CampaignTests extends ContainerConfiguration {
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_get_campaign_when_campaign_exist_return_campaign() throws Exception {
+        String campaignName = "SIMPSONS2020X00";
+
+        String expectedResult = """
+                {
+                  "id": "SIMPSONS2020X00",
+                  "sensitivity": "NORMAL",
+                  "questionnaireIds": [
+                    "simpsonsV2",
+                    "simpsons"
+                  ],
+                  "metadata": {}
+                }""";
+        MvcResult result = mockMvc.perform(get("/api/admin/campaigns/" + campaignName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        JSONAssert.assertEquals(expectedResult, result.getResponse().getContentAsString(), JSONCompareMode.NON_EXTENSIBLE);
+    }
+
+    @Test
+    void on_get_campaign_when_campaign_not_exist_return_404() throws Exception {
+        String campaignName = "CAMPAIGN-TEST";
+
+        mockMvc.perform(get("/api/admin/campaigns/" + campaignName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isNotFound());
     }
 
     @Test
