@@ -27,6 +27,30 @@ public class CampaignDao implements CampaignRepository {
     private final QuestionnaireModelJpaRepository questionnaireModelJpaRepository;
 
     @Override
+    public Optional<Campaign> findCampaign(String campaignId) {
+        Optional<CampaignDB> campaignOpt = jpaRepository.findById(campaignId);
+        if (campaignOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        ObjectNode metadata = null;
+        CampaignDB campaign = campaignOpt.get();
+        if(campaign.getMetadata() != null) {
+            metadata = campaign.getMetadata().getValue();
+        }
+
+        return Optional.of(new Campaign(
+                campaign.getId(),
+                campaign.getLabel(),
+                campaign.getSensitivity(),
+                campaign.getQuestionnaireModels()
+                        .stream()
+                        .map(QuestionnaireModelDB::getId)
+                        .collect(Collectors.toSet()),
+                metadata)
+        );
+    }
+
+    @Override
     @Transactional
     public void create(Campaign campaign) {
         Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.getQuestionnaireIds());
@@ -69,7 +93,7 @@ public class CampaignDao implements CampaignRepository {
 
     @Override
     public Optional<CampaignSummary> findWithQuestionnaireIds(String campaignId) {
-        Optional<CampaignDB> campaignOpt = jpaRepository.findWithQuestionnaireModels(campaignId);
+        Optional<CampaignDB> campaignOpt = jpaRepository.findById(campaignId);
         if (campaignOpt.isEmpty()) {
             return Optional.empty();
         }

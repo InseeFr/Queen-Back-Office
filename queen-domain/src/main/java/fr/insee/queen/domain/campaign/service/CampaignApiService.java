@@ -30,6 +30,12 @@ public class CampaignApiService implements CampaignService {
     private final CampaignExistenceService campaignExistenceService;
     private final CacheManager cacheManager;
 
+    @Override
+    public Campaign getCampaign(String campaignId) {
+        return campaignRepository.findCampaign(campaignId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaignId)));
+    }
+
     public List<CampaignSummary> getAllCampaigns() {
         return campaignRepository.getAllWithQuestionnaireIds();
     }

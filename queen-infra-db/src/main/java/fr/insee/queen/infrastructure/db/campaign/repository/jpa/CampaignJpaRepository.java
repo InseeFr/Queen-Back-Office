@@ -27,7 +27,7 @@ public interface CampaignJpaRepository extends JpaRepository<CampaignDB, String>
      * @return {@link CampaignDB} a campaign
      */
     @Query("select c from CampaignDB c left join fetch c.metadata left join fetch c.questionnaireModels where c.id=:campaignId")
-    Optional<CampaignDB> findWithQuestionnaireModels(String campaignId);
+    Optional<CampaignDB> findById(String campaignId);
 
     /**
      * Retrieve the metadata json value of a campaign

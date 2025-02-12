@@ -40,4 +40,9 @@ public class CampaignFakeService implements CampaignService {
     public void updateCampaign(Campaign campaignData) {
         updated = true;
     }
+
+    @Override
+    public Campaign getCampaign(String campaignId) {
+        return null;
+    }
 }

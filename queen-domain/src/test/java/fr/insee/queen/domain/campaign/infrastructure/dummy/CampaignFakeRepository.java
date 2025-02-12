@@ -74,4 +74,9 @@ public class CampaignFakeRepository implements CampaignRepository {
         }
         return Optional.empty();
     }
+
+    @Override
+    public Optional<Campaign> findCampaign(String campaignId) {
+        return Optional.empty();
+    }
 }
