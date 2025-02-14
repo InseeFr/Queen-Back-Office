@@ -26,7 +26,7 @@ class DataSetCipherTests extends CipheredContainerConfiguration {
     @Test
     @DisplayName("on creating dataset, create the dataset")
     @Sql(value = ScriptConstants.TRUNCATE_SQL_SCRIPT, executionPhase = BEFORE_TEST_METHOD)
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void createDataset01() throws Exception {
         dataSetCommonAssertions.createAdminUserDataset();
     }
