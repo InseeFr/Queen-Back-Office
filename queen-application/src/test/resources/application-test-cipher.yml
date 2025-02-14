@@ -42,9 +42,9 @@ spring:
       connection-init-sql: select set_config('data.encryption.key', '${feature.sensitive-data.encryptionSecretKey}', false)
   liquibase:
     enabled: true
-    contexts: ciphered-data
+    contexts: test
     defaultSchema: public
-    change-log: classpath:db/integration-test-cipher.xml
+    change-log: classpath:db/integration-test.xml
 logging:
   level:
     root: INFO

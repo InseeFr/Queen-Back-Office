@@ -28,31 +28,31 @@ class SurveyUnitCipherTests extends CipheredContainerConfiguration {
     }
 
     @Test
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_survey_unit_then_survey_unit_is_saved() throws Exception {
         surveyUnitTests.on_create_survey_unit_then_survey_unit_is_saved();
     }
 
     @Test
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_survey_unit_then_survey_unit_is_saved() throws Exception {
         surveyUnitTests.on_update_survey_unit_then_survey_unit_is_saved();
     }
 
     @Test
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_with_put_survey_unit_then_survey_unit_is_saved() throws Exception {
         surveyUnitTests.on_update_with_put_survey_unit_then_survey_unit_is_saved();
     }
 
     @Test
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_create_survey_unit_without_statedata_then_survey_unit_is_saved() throws Exception {
         surveyUnitTests.on_create_survey_unit_without_statedata_then_survey_unit_is_saved();
     }
 
     @Test
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_delete_survey_unit_process_deletion() throws Exception {
         surveyUnitTests.on_delete_survey_unit_process_deletion();
     }
