@@ -16,8 +16,8 @@ INSERT INTO public.campaign VALUES ('VQS2021X00', 'Everyday life and health surv
 INSERT INTO public.campaign VALUES ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'SENSITIVE');
 INSERT INTO public.campaign VALUES ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', 'NORMAL');
 INSERT INTO public.campaign VALUES ('AQV2022X00', 'Campagne qualité volaille en 2022', 'NORMAL');
-INSERT INTO public.campaign VALUES ('AQV2023X00', 'Campagne qualité volaille en 2023', 'NORMAL');
-INSERT INTO public.campaign VALUES ('AQV2024X00', 'Campagne qualité volaille en 2024', 'SENSITIVE');
+INSERT INTO public.campaign VALUES ('AQV2023X00', 'Campagne qualité volaille en 2023', 'SENSITIVE');
+INSERT INTO public.campaign VALUES ('AQV2024X00', 'Campagne qualité volaille en 2024', 'NORMAL');
 
 
 --
