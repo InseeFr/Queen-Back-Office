@@ -64,7 +64,7 @@ class DataCipherTests extends CipheredContainerConfiguration {
     }
 
     @Test
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_data_data_is_updated() throws Exception {
         dataCommonAssertions.on_update_data_data_is_updated();
     }
@@ -96,14 +96,14 @@ class DataCipherTests extends CipheredContainerConfiguration {
 
     @Test
     @DisplayName("Given survey unit data with collected data, when inserting partial collected data, then merge collected datas")
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void updateCollectedData02() throws Exception {
         dataCommonAssertions.updateCollectedData02();
     }
 
     @Test
     @DisplayName("Given survey unit with no collected json data, when updating data then insert partial data as collected data")
-    @Sql(value = ScriptConstants.REINIT_CIPHERED_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void updateCollectedData01() throws Exception {
         dataCommonAssertions.updateCollectedData01();
     }

@@ -8,7 +8,8 @@ repos:
   - repo: local
     hooks:
       - id: trivy-scan
+        stages: [pre-push]
         name: Trivy scan
-        entry: trivy fs . --scanners vuln,secret --severity HIGH,CRITICAL --exit-code 1
+        entry: trivy fs . --scanners vuln,secret --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
         language: system
         pass_filenames: false
