@@ -47,18 +47,18 @@ class SurveyUnitTests extends ContainerConfiguration {
         ObjectMapper mapper = new ObjectMapper();
         String expectedFirstResult = """
         {
-                "id":"12",
+                "id":"11",
                 "questionnaireId":"simpsons",
                 "campaignId":"SIMPSONS2020X00",
                 "stateData":{
-                    "state":"INIT",
+                    "state":"EXTRACTED",
                     "date":1111111111,
                     "currentPage":"2.3#5"
                 }
         }""";
         mockMvc.perform(get("/api/admin/campaign/SIMPSONS2020X00/survey-units")
                         .accept(MediaType.APPLICATION_JSON)
-                        .param("state", StateDataTypeInput.INIT.name())
+                        .param("state", StateDataTypeInput.EXTRACTED.name())
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andDo(print())

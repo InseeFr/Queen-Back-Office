@@ -178,8 +178,8 @@ INSERT INTO public.personalization VALUES ('8b377092-33da-4494-a5fc-d2825d755e2c
 --
 
 INSERT INTO public.state_data VALUES ('f55c7388-0724-4b3e-9c78-536ee2dee5f6', '2.3#5', 1111111111, 'EXTRACTED', '11');
-INSERT INTO public.state_data VALUES ('c11f8aae-5201-4a16-89d8-5f8b4c6ab942', '2.3#5', 1111111111, 'INIT', '12');
-INSERT INTO public.state_data VALUES ('1fe17624-70d0-48e2-ba50-041cc23cbeeb', '2.3#5', 1111111111, 'INIT', '13');
+INSERT INTO public.state_data VALUES ('c11f8aae-5201-4a16-89d8-5f8b4c6ab942', '2.3#5', 1111111115, 'EXTRACTED', '12');
+INSERT INTO public.state_data VALUES ('1fe17624-70d0-48e2-ba50-041cc23cbeeb', '2.3#5', 1111111119, 'EXTRACTED', '13');
 INSERT INTO public.state_data VALUES ('164cc2b6-b58f-4011-a064-01f5f761326b', '2.3#5', 1111111111, 'INIT', '14');
 INSERT INTO public.state_data VALUES ('42858b14-2a0c-4d17-afd0-f50a0f9a8dd5', '1', 900000000, 'INIT', '20');
 INSERT INTO public.state_data VALUES ('a2067072-8887-4ba0-8493-d91f50734d95', '1', 900000000, 'INIT', '21');

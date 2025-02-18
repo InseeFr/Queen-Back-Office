@@ -226,4 +226,9 @@ public class SurveyUnitDao implements SurveyUnitRepository {
                 .map(SurveyUnitProjection::toModel)
                 .toList();
     }
+
+    @Override
+    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+        dataRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    }
 }

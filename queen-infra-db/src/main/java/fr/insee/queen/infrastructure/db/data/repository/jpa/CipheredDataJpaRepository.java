@@ -62,4 +62,19 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
           AND data.survey_unit_id = :surveyUnitId;
     """, nativeQuery = true)
     void updateCollectedData(String surveyUnitId, ObjectNode collectedUpdateData);
+
+    @Transactional
+    @Modifying
+    @Query(value = """
+        UPDATE data
+            SET value = pgp_sym_encrypt('{}', current_setting('data.encryption.key'), 's2k-count=65536')
+            WHERE survey_unit_id IN (
+                SELECT su.id
+                FROM survey_unit su
+                INNER JOIN state_data sd ON sd.survey_unit_id = su.id
+                WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
+                AND sd.date BETWEEN :startTimestamp AND :endTimestamp
+            );
+    """, nativeQuery = true)
+    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 }

@@ -55,4 +55,13 @@ public interface DataRepository {
      * @return saved entity
      */
     DataDB save(DataDB data);
+
+    /**
+     * clean all extracted data for a campaign
+     *
+     * @param campaignId campaign id
+     * @param startTimestamp start timestamp
+     * @param endTimestamp end timestamp
+     */
+    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 }

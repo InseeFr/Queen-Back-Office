@@ -79,7 +79,7 @@ class StateDataTests extends ContainerConfiguration {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1111111111","1111111112"})
+    @ValueSource(strings = {"1111111119","1111111120"})
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_state_data_state_data_is_updated(String timestamp) throws Exception {
         String surveyUnitId = "12";
@@ -90,15 +90,6 @@ class StateDataTests extends ContainerConfiguration {
               ,"currentPage": "2.3#5"
             }
         """;
-        MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
-                )
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String content = result.getResponse().getContentAsString();
-        JSONAssert.assertNotEquals(stateDataJson, content, JSONCompareMode.NON_EXTENSIBLE);
 
         mockMvc.perform(put("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .content(stateDataJson)
@@ -108,14 +99,14 @@ class StateDataTests extends ContainerConfiguration {
                 )
                 .andExpect(status().isOk());
 
-        result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
+        MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
 
-        content = result.getResponse().getContentAsString();
+        String content = result.getResponse().getContentAsString();
         JSONAssert.assertEquals(stateDataJson, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 

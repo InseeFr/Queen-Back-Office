@@ -23,4 +23,9 @@ public class DataFakeService implements DataService {
     public void updateCollectedData(String surveyUnitId, ObjectNode collectedData) {
         dataSaved = collectedData;
     }
+
+    @Override
+    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+
+    }
 }

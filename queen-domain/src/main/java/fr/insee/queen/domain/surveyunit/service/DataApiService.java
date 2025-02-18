@@ -32,4 +32,12 @@ public class DataApiService implements DataService {
     public void updateCollectedData(String surveyUnitId, ObjectNode collectedData) {
         surveyUnitRepository.updateCollectedData(surveyUnitId, collectedData);
     }
+
+    @Override
+    @Transactional
+    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+        surveyUnitRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    }
+
+
 }
