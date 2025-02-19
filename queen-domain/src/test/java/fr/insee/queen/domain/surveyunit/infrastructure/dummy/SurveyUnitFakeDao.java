@@ -142,6 +142,6 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
 
     @Override
     public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
-
+        // not used at this moment
     }
 }

@@ -28,6 +28,6 @@ public class DataFakeService implements DataService {
 
     @Override
     public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
-        
+        // not used at this moment
     }
 }
