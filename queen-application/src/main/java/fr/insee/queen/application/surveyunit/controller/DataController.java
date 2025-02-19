@@ -149,4 +149,18 @@ public class DataController {
         }
         throw new AccessDeniedException("Not authorized to update survey unit data");
     }
+
+    /**
+     * Clean all data from survey units of a campaign with extracted state
+     *
+     * @param campaignId the campaign id
+     */
+    @Operation(summary = "Clean all data from survey units of a campaign with extracted state")
+    @DeleteMapping(path = "/admin/campaign/{id}/survey-units/data/extracted")
+    @PreAuthorize("hasRole('WEBCLIENT')")
+    public void cleanData(@IdValid @PathVariable(value = "id") String campaignId,
+                          @NotNull @RequestParam("start") Long startTimestamp,
+                          @NotNull @RequestParam("end") Long endTimestamp) {
+        dataService.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    }
 }

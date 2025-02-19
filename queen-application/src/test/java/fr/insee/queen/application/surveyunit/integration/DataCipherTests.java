@@ -125,4 +125,11 @@ class DataCipherTests extends CipheredContainerConfiguration {
     void updateCollectedDataError04() throws Exception {
         dataCommonAssertions.updateCollectedDataError04();
     }
+
+    @Test
+    @DisplayName("Should clean data on survey units with extracted state data")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void cleanExtractedData() throws Exception {
+        dataCommonAssertions.cleanExtractedData();
+    }
 }

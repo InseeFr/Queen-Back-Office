@@ -187,4 +187,13 @@ public interface SurveyUnitRepository {
      * @return List of {@link SurveyUnit} all survey units
      */
     List<SurveyUnit> findAll();
+
+    /**
+     * clear all extracted data for a campaign between 2 timestamps
+     *
+     * @param campaignId campaign id
+     * @param startTimestamp timestamp start
+     * @param endTimestamp timestamp end
+     */
+    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 }

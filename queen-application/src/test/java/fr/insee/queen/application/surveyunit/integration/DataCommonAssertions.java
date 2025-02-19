@@ -1,5 +1,6 @@
 package fr.insee.queen.application.surveyunit.integration;
 
+import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -48,6 +51,40 @@ public class DataCommonAssertions {
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+    void cleanExtractedData() throws Exception {
+        List<String> surveyUnitIds = List.of("11","12");
+        String expectedResult = "{}";
+        mockMvc.perform(
+                delete("/api/admin/campaign/SIMPSONS2020X00/survey-units/data/extracted?start=1111111111&end=1111111118")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT)))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        for(String surveyUnitId : surveyUnitIds) {
+            MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/data")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                    )
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String content = result.getResponse().getContentAsString();
+            JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
+        }
+
+        MvcResult result = mockMvc.perform(get("/api/survey-unit/13/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        JSONAssert.assertNotEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
     void on_update_data_data_is_updated() throws Exception {

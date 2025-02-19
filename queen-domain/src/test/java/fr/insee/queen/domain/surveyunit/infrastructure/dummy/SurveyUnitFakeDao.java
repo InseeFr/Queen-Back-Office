@@ -139,4 +139,9 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
     public List<SurveyUnit> findAll() {
         return null;
     }
+
+    @Override
+    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+        // not used at this moment
+    }
 }
