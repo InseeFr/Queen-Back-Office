@@ -6,7 +6,6 @@ import fr.insee.queen.domain.campaign.service.MetadataService;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
-import fr.insee.queen.domain.common.paging.PagingResult;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
@@ -91,8 +90,8 @@ public class SurveyUnitApiService implements SurveyUnitService {
     }
 
     @Override
-    public PagingResult<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType, Integer pageNumber) {
-        return surveyUnitRepository.findAllByState(campaignId, stateDataType, pageNumber);
+    public List<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType) {
+        return surveyUnitRepository.findAllByState(campaignId, stateDataType);
     }
 
     @Transactional
