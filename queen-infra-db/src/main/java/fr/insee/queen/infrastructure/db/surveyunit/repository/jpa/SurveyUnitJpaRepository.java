@@ -3,8 +3,6 @@ package fr.insee.queen.infrastructure.db.surveyunit.repository.jpa;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
 import fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -182,7 +180,7 @@ public interface SurveyUnitJpaRepository extends JpaRepository<SurveyUnitDB, Str
             from SurveyUnitDB s left join s.stateData st
             where st.state = :stateDataType
             and s.campaign.id = :campaignId""")
-    Page<SurveyUnitState> findAllByState(String campaignId, StateDataType stateDataType, Pageable pageable);
+    List<SurveyUnitState> findAllByState(String campaignId, StateDataType stateDataType);
 
     /**
      * Search survey units by ids

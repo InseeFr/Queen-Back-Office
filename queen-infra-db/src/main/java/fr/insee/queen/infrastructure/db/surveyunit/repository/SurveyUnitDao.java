@@ -2,7 +2,6 @@ package fr.insee.queen.infrastructure.db.surveyunit.repository;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.common.paging.PagingResult;
 import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
@@ -19,10 +18,6 @@ import fr.insee.queen.infrastructure.db.surveyunittempzone.repository.jpa.Survey
 import fr.insee.queen.infrastructure.db.paradata.repository.jpa.ParadataEventJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -79,18 +74,8 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     }
 
     @Override
-    public PagingResult<SurveyUnitState> findAllByState(String campaignId, StateDataType state, Integer pageNumber) {
-
-        Pageable pageable = PageRequest.of(pageNumber, 1000, Sort.by("id"));
-        Page<SurveyUnitState> surveyUnitPages;
-
-        surveyUnitPages = crudRepository.findAllByState(campaignId, state, pageable);
-
-        return new PagingResult<>(surveyUnitPages.toList(),
-                surveyUnitPages.getNumber(),
-                surveyUnitPages.getSize(),
-                surveyUnitPages.getTotalElements(),
-                surveyUnitPages.getTotalPages());
+    public List<SurveyUnitState> findAllByState(String campaignId, StateDataType state) {
+        return crudRepository.findAllByState(campaignId, state);
     }
 
     @Override

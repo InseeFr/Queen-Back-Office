@@ -3,7 +3,6 @@ package fr.insee.queen.domain.surveyunit.service.dummy;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
-import fr.insee.queen.domain.common.paging.PagingResult;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import lombok.Getter;
@@ -132,7 +131,7 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public PagingResult<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType, Integer pageNumber) {
+    public List<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType) {
         return null;
     }
 }

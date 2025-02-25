@@ -63,12 +63,12 @@ class SurveyUnitTests extends ContainerConfiguration {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.contents.size()", is(3)))
+                .andExpect(jsonPath("$.size()", is(3)))
                 // extract and check first element
                 .andExpect(result -> {
                     String responseContent = result.getResponse().getContentAsString();
                     JsonNode rootNode = mapper.readTree(responseContent);
-                    JsonNode firstContent = rootNode.path("contents").get(0);
+                    JsonNode firstContent = rootNode.get(0);
                     JsonNode expectedNode = mapper.readTree(expectedFirstResult);
                     assertThat(firstContent).isEqualTo(expectedNode);
                 });
