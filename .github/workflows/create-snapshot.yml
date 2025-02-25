@@ -52,5 +52,5 @@ jobs:
           name: inseefr/queen-back-office
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          tags: "snapshot-${{ build-snapshot.steps.extract_branch.outputs.branch }}"
+          tags: "snapshot-${{ needs.build-snapshot.steps.extract_branch.outputs.branch }}"
           workdir: queen-application
