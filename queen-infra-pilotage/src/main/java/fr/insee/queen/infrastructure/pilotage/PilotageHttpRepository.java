@@ -103,7 +103,7 @@ public class PilotageHttpRepository implements PilotageRepository {
     @Override
     public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
         StringBuilder uriPilotageFilter = new StringBuilder();
-        String campaignId = surveyUnit.campaign().getId();
+        String campaignId = surveyUnit.campaignId();
 
         if (Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
             log.debug("Current campaignId {} requires an alternative habilitation service {} ", campaignId, alternativeHabilitationServiceURL);

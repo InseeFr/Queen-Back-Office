@@ -1,6 +1,5 @@
 package fr.insee.queen.application.web.authentication;
 
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import org.springframework.security.core.Authentication;
 
 public interface AuthenticationHelper {
@@ -17,11 +16,4 @@ public interface AuthenticationHelper {
      * @return {@link Authentication} the authentication user object
      */
     Authentication getAuthenticationPrincipal();
-
-    /**
-     *
-     * @param roles roles to check
-     * @return true if current user has a specific role, false otherwise
-     */
-    boolean hasRole(AuthorityRoleEnum... roles);
 }

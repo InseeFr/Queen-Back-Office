@@ -1,7 +1,5 @@
 package fr.insee.queen.infrastructure.pilotage.repository;
 
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.model.PilotageSurveyUnit;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
@@ -39,7 +37,7 @@ class PilotageHttpRepositoryTest {
     private final String campaignId = "campaign-id";
 
     @BeforeEach
-    void init() {
+    public void init() {
         RestTemplate restTemplate = new RestTemplate();
         mockServer = MockRestServiceServer.createServer(restTemplate);
         String campaignIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
@@ -255,7 +253,7 @@ class PilotageHttpRepositoryTest {
         String idSu = "id-su";
         String idep = "idep";
         PilotageRole role = PilotageRole.INTERVIEWER;
-        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", campaignId);
 
         String habilitationResponse = "{ \"habilitated\": \"" + status + "\" }";
         mockServer.expect(request ->
@@ -284,7 +282,7 @@ class PilotageHttpRepositoryTest {
         String idep = "idep";
         String matchedRegexCampaignId = "EDT-campaign-id";
         PilotageRole role = PilotageRole.REVIEWER;
-        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", new CampaignSummary(matchedRegexCampaignId, "label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", matchedRegexCampaignId);
 
         String habilitationResponse = "{ \"habilitated\": \"true\" }";
         mockServer.expect(request ->
@@ -311,7 +309,7 @@ class PilotageHttpRepositoryTest {
         String idSu = "id-su";
         String idep = "idep";
         PilotageRole role = PilotageRole.INTERVIEWER;
-        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", campaignId);
 
         mockServer.expect(request ->
                         assertThat(pilotageUrl).isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost()))
@@ -337,7 +335,7 @@ class PilotageHttpRepositoryTest {
         String idSu = "id-su";
         String idep = "idep";
         PilotageRole role = PilotageRole.INTERVIEWER;
-        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", campaignId);
 
         mockServer.expect(request ->
                         assertThat(pilotageUrl).isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost()))
@@ -363,7 +361,7 @@ class PilotageHttpRepositoryTest {
         String idSu = "id-su";
         String idep = "idep";
         PilotageRole role = PilotageRole.INTERVIEWER;
-        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", campaignId);
 
         mockServer.expect(request ->
                         assertThat(pilotageUrl).isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost()))
@@ -389,7 +387,7 @@ class PilotageHttpRepositoryTest {
         String idSu = "id-su";
         String idep = "idep";
         PilotageRole role = PilotageRole.INTERVIEWER;
-        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(idSu, "questionnaire-id", campaignId);
 
         mockServer.expect(method(HttpMethod.GET))
                 .andRespond(withException(new IOException("message")));

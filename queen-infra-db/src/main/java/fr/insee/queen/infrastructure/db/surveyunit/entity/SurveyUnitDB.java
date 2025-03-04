@@ -2,7 +2,6 @@ package fr.insee.queen.infrastructure.db.surveyunit.entity;
 
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
 import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
-import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

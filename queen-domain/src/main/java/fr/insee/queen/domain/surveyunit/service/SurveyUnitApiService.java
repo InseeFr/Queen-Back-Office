@@ -89,11 +89,6 @@ public class SurveyUnitApiService implements SurveyUnitService {
                 .orElseThrow(() -> new EntityNotFoundException("List of survey unit ids not found"));
     }
 
-    @Override
-    public List<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType) {
-        return surveyUnitRepository.findAllByState(campaignId, stateDataType);
-    }
-
     @Transactional
     @Override
     public void updateSurveyUnit(SurveyUnit surveyUnit) {
@@ -195,7 +190,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
     }
 
     @Override
-    public SurveyUnitSummary getSummaryById(String surveyUnitId) {
+    public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
         return findSummaryById(surveyUnitId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, surveyUnitId)));
     }

@@ -1,6 +1,5 @@
 package fr.insee.queen.domain.campaign.service.dummy;
 
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
@@ -17,8 +16,8 @@ public class CampaignFakeService implements CampaignService {
     private boolean created = false;
     public static final String CAMPAIGN1_ID = "allCampaigns1";
     public static final List<CampaignSummary> CAMPAIGN_SUMMARY_LIST = List.of(
-            new CampaignSummary(CAMPAIGN1_ID, "label", CampaignSensitivity.NORMAL, Set.of("questionnaireId1", "questionnaireId2")),
-            new CampaignSummary("allCampaigns2", "label", CampaignSensitivity.SENSITIVE, Set.of("questionnaireId1", "questionnaireId2"))
+            new CampaignSummary(CAMPAIGN1_ID, "label", Set.of("questionnaireId1", "questionnaireId2")),
+            new CampaignSummary("allCampaigns2", "label", Set.of("questionnaireId1", "questionnaireId2"))
     );
 
     @Override
@@ -39,10 +38,5 @@ public class CampaignFakeService implements CampaignService {
     @Override
     public void updateCampaign(Campaign campaignData) {
         updated = true;
-    }
-
-    @Override
-    public Campaign getCampaign(String campaignId) {
-        return null;
     }
 }

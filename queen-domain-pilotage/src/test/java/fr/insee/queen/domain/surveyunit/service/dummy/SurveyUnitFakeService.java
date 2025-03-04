@@ -1,8 +1,6 @@
 package fr.insee.queen.domain.surveyunit.service.dummy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.surveyunit.model.*;
 import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
 import lombok.Getter;
@@ -27,9 +25,9 @@ public class SurveyUnitFakeService implements SurveyUnitService {
 
     @Getter
     private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
-            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL)),
-            new SurveyUnitSummary("survey-unit2", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL)),
-            new SurveyUnitSummary("survey-unit3", "questionnaire-id", new CampaignSummary("campaign-id2", "campaign-label", CampaignSensitivity.SENSITIVE))
+            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
+            new SurveyUnitSummary("survey-unit2", "questionnaire-id", "campaign-id"),
+            new SurveyUnitSummary("survey-unit3", "questionnaire-id", "campaign-id")
     );
 
     @Override
@@ -81,13 +79,13 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     public List<SurveyUnitSummary> findSummariesByIds(List<String> surveyUnitIds) {
         List<SurveyUnitSummary> surveyUnits = new ArrayList<>();
 
-        surveyUnitIds.forEach(surveyUnitId -> surveyUnits.add(new SurveyUnitSummary(surveyUnitId, "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL))));
+        surveyUnitIds.forEach(surveyUnitId -> surveyUnits.add(new SurveyUnitSummary(surveyUnitId, "questionnaire-id", "campaign-id")));
         return surveyUnits;
     }
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
-        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(surveyUnitId, "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary surveyUnit = new SurveyUnitSummary(surveyUnitId, "questionnaire-id", "campaign-id");
         return Optional.of(surveyUnit);
     }
 
@@ -112,10 +110,9 @@ public class SurveyUnitFakeService implements SurveyUnitService {
     }
 
     @Override
-    public SurveyUnitSummary getSummaryById(String surveyUnitId) {
-        return new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
+    public SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId) {
+        return new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id");
     }
-
 
     @Override
     public List<SurveyUnit> findByIds(List<String> surveyUnitIds) {
@@ -128,10 +125,5 @@ public class SurveyUnitFakeService implements SurveyUnitService {
                 new SurveyUnit(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id", null, null, null, null),
                 new SurveyUnit(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id", null, null, null, null)
         );
-    }
-
-    @Override
-    public List<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType) {
-        return null;
     }
 }

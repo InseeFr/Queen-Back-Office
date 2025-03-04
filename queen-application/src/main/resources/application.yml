@@ -19,9 +19,6 @@ application:
   temp-folder:
 
 feature:
-  sensitive-data:
-    enabled: false
-    encryptionSecretKey:
   oidc:
     enabled: true
     auth-server-host: https://auth-server.host
@@ -89,6 +86,9 @@ spring:
     contexts: prod
     defaultSchema: public
     change-log: classpath:db/master.xml
+  profiles:
+    group:
+      cache-testing: test,test-cache
 
 springdoc:
   swagger-ui:
@@ -119,7 +119,7 @@ logging:
     fr:
       insee:
         queen: INFO
-    liquibase: INFO
+    liquibase: ERROR
   pattern:
     console: "%d{YYYY-MM-dd HH:mm:ss.SSS} [%X{id}][%X{user}][%X{method} %X{path}] [%thread] %-5level %logger{36} - %htmlEncode{%m}%n"
     file: ${logging.pattern.console}

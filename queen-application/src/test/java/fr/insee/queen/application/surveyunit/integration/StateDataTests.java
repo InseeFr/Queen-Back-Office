@@ -1,17 +1,20 @@
 package fr.insee.queen.application.surveyunit.integration;
 
-import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
-
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -21,7 +24,12 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class StateDataTests extends ContainerConfiguration {
+@SpringBootTest
+@ActiveProfiles("test")
+@ContextConfiguration
+@AutoConfigureEmbeddedDatabase
+@AutoConfigureMockMvc
+class StateDataTests {
     @Autowired
     private MockMvc mockMvc;
 
@@ -79,7 +87,7 @@ class StateDataTests extends ContainerConfiguration {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1111111119","1111111120"})
+    @ValueSource(strings = {"1111111111","1111111112"})
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_update_state_data_state_data_is_updated(String timestamp) throws Exception {
         String surveyUnitId = "12";
@@ -90,6 +98,15 @@ class StateDataTests extends ContainerConfiguration {
               ,"currentPage": "2.3#5"
             }
         """;
+        MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        JSONAssert.assertNotEquals(stateDataJson, content, JSONCompareMode.NON_EXTENSIBLE);
 
         mockMvc.perform(put("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .content(stateDataJson)
@@ -99,14 +116,14 @@ class StateDataTests extends ContainerConfiguration {
                 )
                 .andExpect(status().isOk());
 
-        MvcResult result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
+        result = mockMvc.perform(get("/api/survey-unit/" + surveyUnitId + "/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        content = result.getResponse().getContentAsString();
         JSONAssert.assertEquals(stateDataJson, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 

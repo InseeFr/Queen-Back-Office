@@ -1,7 +1,5 @@
 package fr.insee.queen.domain.pilotage.service;
 
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
 import fr.insee.queen.domain.campaign.service.dummy.QuestionnaireModelFakeService;
 import fr.insee.queen.domain.pilotage.infrastructure.dummy.PilotageFakeRepository;
@@ -25,7 +23,7 @@ class PilotageServiceTest {
     private QuestionnaireModelFakeService questionnaireModelFakeService;
 
     @BeforeEach
-    void init() {
+    public void init() {
         SurveyUnitFakeService surveyUnitService = new SurveyUnitFakeService();
         pilotageRepository = new PilotageFakeRepository();
         campaignExistenceService = new CampaignExistenceFakeService();
@@ -69,7 +67,7 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On check habilitation, when role == INTERVIEWER return true")
     void testHasHabilitation_01() {
-        SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", "campaign-id");
         boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.INTERVIEWER, "idep");
         assertThat(hasHabilitation).isTrue();
     }
@@ -77,7 +75,7 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On check habilitation, when role == REVIEWER return true")
     void testHasHabilitation_02() {
-        SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
+        SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", "campaign-id");
         boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.REVIEWER, "idep");
         assertThat(hasHabilitation).isTrue();
     }

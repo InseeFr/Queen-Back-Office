@@ -146,7 +146,7 @@ public class PilotageApiService implements PilotageService {
     }
 
     @Override
-    @Cacheable(value = CacheName.HABILITATION, key = "{#surveyUnit.id, #surveyUnit.campaign.id, #role, #idep}")
+    @Cacheable(value = CacheName.HABILITATION, key = "{#surveyUnit.id, #surveyUnit.campaignId, #role, #idep}")
     public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
         return pilotageRepository.hasHabilitation(surveyUnit, role, idep);
     }

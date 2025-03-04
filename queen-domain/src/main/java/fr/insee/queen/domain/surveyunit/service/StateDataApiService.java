@@ -23,13 +23,8 @@ public class StateDataApiService implements StateDataService {
 
     @Override
     public StateData getStateData(String surveyUnitId) {
-        return findStateData(surveyUnitId)
+        return stateDataRepository.find(surveyUnitId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, surveyUnitId)));
-    }
-
-    @Override
-    public Optional<StateData> findStateData(String surveyUnitId) {
-        return stateDataRepository.find(surveyUnitId);
     }
 
     @Override

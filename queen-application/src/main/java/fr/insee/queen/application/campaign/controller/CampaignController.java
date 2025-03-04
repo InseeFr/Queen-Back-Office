@@ -2,7 +2,6 @@ package fr.insee.queen.application.campaign.controller;
 
 import fr.insee.queen.application.campaign.dto.input.CampaignCreationData;
 import fr.insee.queen.application.campaign.dto.input.CampaignCreationDataV2;
-import fr.insee.queen.application.campaign.dto.output.CampaignDto;
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
@@ -46,18 +45,6 @@ public class CampaignController {
         return campaignService.getAllCampaigns()
                 .stream().map(CampaignSummaryDto::fromModel)
                 .toList();
-    }
-
-    /**
-     * Retrieve a campaign
-     *
-     * @return {@link CampaignSummaryDto}
-     */
-    @Operation(summary = "Get campaign")
-    @GetMapping(path = "/admin/campaigns/{id}")
-    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public CampaignDto getCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
-        return CampaignDto.fromModel(campaignService.getCampaign(campaignId));
     }
 
     /**
