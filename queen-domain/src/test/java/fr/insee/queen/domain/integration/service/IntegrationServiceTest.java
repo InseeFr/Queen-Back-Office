@@ -32,7 +32,7 @@ class IntegrationServiceTest {
     private static final String CAMPAIGN_ID = "id-campaign";
 
     @BeforeEach
-    public void init() {
+    void init() {
         campaignExistenceService = new CampaignExistenceFakeService();
         campaignService = new CampaignFakeService();
         questionnaireExistenceService = new QuestionnaireModelExistenceFakeService();

@@ -40,7 +40,7 @@ class SurveyUnitControllerTest {
     private AuthenticatedUserTestHelper authenticationUserProvider;
 
     @BeforeEach
-    public void init() {
+    void init() {
         authenticationUserProvider = new AuthenticatedUserTestHelper();
         metadataConverter = new MetadataFakeConverter();
         pilotageComponent = new PilotageFakeComponent();

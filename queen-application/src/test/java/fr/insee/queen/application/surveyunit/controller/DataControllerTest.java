@@ -40,7 +40,7 @@ class DataControllerTest {
     private AuthenticatedUserTestHelper authenticationUserProvider;
 
     @BeforeEach
-    public void init() {
+    void init() {
         authenticationUserProvider = new AuthenticatedUserTestHelper();
         pilotageFakeComponent = new PilotageFakeComponent();
         surveyUnitFakeService = new SurveyUnitFakeService();
