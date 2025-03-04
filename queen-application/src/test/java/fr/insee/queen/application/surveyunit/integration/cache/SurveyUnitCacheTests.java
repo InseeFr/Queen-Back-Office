@@ -38,7 +38,7 @@ class SurveyUnitCacheTests extends ContainerConfiguration {
     private CampaignApiService campaignService;
 
     @AfterEach
-    public void clearCaches() {
+    void clearCaches() {
         for (String cacheName : cacheManager.getCacheNames()) {
             Objects.requireNonNull(cacheManager.getCache(cacheName)).clear();
         }

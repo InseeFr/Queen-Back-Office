@@ -50,7 +50,7 @@ class QuestionnaireCacheTests extends ContainerConfiguration {
     private CacheManager cacheManager;
 
     @AfterEach
-    public void clearCaches() {
+    void clearCaches() {
         for (String cacheName : cacheManager.getCacheNames()) {
             Objects.requireNonNull(cacheManager.getCache(cacheName)).clear();
         }

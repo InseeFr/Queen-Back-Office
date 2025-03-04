@@ -25,7 +25,7 @@ class PilotageServiceTest {
     private QuestionnaireModelFakeService questionnaireModelFakeService;
 
     @BeforeEach
-    public void init() {
+    void init() {
         SurveyUnitFakeService surveyUnitService = new SurveyUnitFakeService();
         pilotageRepository = new PilotageFakeRepository();
         campaignExistenceService = new CampaignExistenceFakeService();

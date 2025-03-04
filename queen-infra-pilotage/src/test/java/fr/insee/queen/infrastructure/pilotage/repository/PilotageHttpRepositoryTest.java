@@ -39,7 +39,7 @@ class PilotageHttpRepositoryTest {
     private final String campaignId = "campaign-id";
 
     @BeforeEach
-    public void init() {
+    void init() {
         RestTemplate restTemplate = new RestTemplate();
         mockServer = MockRestServiceServer.createServer(restTemplate);
         String campaignIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
