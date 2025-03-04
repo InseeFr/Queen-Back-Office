@@ -1,17 +1,14 @@
 package fr.insee.queen.application.surveyunit.integration;
 
+import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,12 +17,8 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@ContextConfiguration
-@AutoConfigureEmbeddedDatabase
-@AutoConfigureMockMvc
-class ParadataTests {
+
+class ParadataTests extends ContainerConfiguration {
     @Autowired
     private MockMvc mockMvc;
 

@@ -2,6 +2,8 @@ package fr.insee.queen.application.pilotage.controller.dummy;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
+import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.surveyunit.model.StateData;
@@ -43,9 +45,10 @@ public class PilotageFakeComponent implements PilotageComponent {
         if (this.hasEmptySurveyUnits) {
             return new ArrayList<>();
         }
+        CampaignSummary campaignSummary = new CampaignSummary("campaign-id", "label", CampaignSensitivity.NORMAL);
         return List.of(
-                new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", "campaign-id"),
-                new SurveyUnitSummary("s2", "questionnaire-id", "campaign-id")
+                new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", campaignSummary),
+                new SurveyUnitSummary("s2", "questionnaire-id", campaignSummary)
         );
     }
 

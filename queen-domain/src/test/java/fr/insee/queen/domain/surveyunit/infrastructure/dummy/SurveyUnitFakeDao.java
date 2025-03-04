@@ -55,6 +55,11 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
     }
 
     @Override
+    public List<SurveyUnitState> findAllByState(String campaignId, StateDataType stateDataType) {
+        return null;
+    }
+
+    @Override
     public List<SurveyUnitState> findAllWithStateByIdIn(List<String> surveyUnitIds) {
         return null;
     }
@@ -132,5 +137,10 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
     @Override
     public List<SurveyUnit> findAll() {
         return null;
+    }
+
+    @Override
+    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+        // not used at this moment
     }
 }

@@ -1,16 +1,13 @@
 package fr.insee.queen.application.campaign.integration;
 
+import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -19,12 +16,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@ContextConfiguration
-@AutoConfigureEmbeddedDatabase
-@AutoConfigureMockMvc
-class MetadataTests {
+
+class MetadataTests extends ContainerConfiguration {
     @Autowired
     private MockMvc mockMvc;
 
@@ -56,7 +49,7 @@ class MetadataTests {
 
     @Test
     void on_get_metadata_by_questionnaire_when_incorrect_identifier_questionnaire_format_id_return_400() throws Exception {
-        mockMvc.perform(get("/api/questionnaire/insert into plop%s/metadata")
+        mockMvc.perform(get("/api/questionnaire/insert into plopés/metadata")
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
@@ -95,7 +88,7 @@ class MetadataTests {
 
     @Test
     void on_get_metadata_by_campaign_when_incorrect_identifier_campaign_format_id_return_400() throws Exception {
-        mockMvc.perform(get("/api/campaign/insert into plop%s/metadata")
+        mockMvc.perform(get("/api/campaign/insert into plopés/metadata")
                         .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
