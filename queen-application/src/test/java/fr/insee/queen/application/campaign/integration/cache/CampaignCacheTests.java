@@ -1,19 +1,21 @@
 package fr.insee.queen.application.campaign.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
 import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.common.cache.CacheName;
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashSet;
@@ -22,8 +24,12 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@ActiveProfiles("test-cache")
-class CampaignCacheTests extends ContainerConfiguration {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("cache-testing")
+@ContextConfiguration
+@AutoConfigureEmbeddedDatabase
+@AutoConfigureMockMvc
+class CampaignCacheTests {
 
     @Autowired
     private CampaignService campaignService;
@@ -35,7 +41,7 @@ class CampaignCacheTests extends ContainerConfiguration {
     private CacheManager cacheManager;
 
     @AfterEach
-    void clearCaches() {
+    public void clearCaches() {
         for (String cacheName : cacheManager.getCacheNames()) {
             Objects.requireNonNull(cacheManager.getCache(cacheName)).clear();
         }
@@ -52,7 +58,7 @@ class CampaignCacheTests extends ContainerConfiguration {
         Boolean campaignExist = Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId, Boolean.class));
         assertThat(campaignExist).isFalse();
 
-        campaignService.createCampaign(new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, new HashSet<>(), JsonNodeFactory.instance.objectNode()));
+        campaignService.createCampaign(new Campaign(campaignId, "label", new HashSet<>(), JsonNodeFactory.instance.objectNode()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
 
         campaignExistenceService.existsById(campaignId);

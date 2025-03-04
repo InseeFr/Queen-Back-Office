@@ -8,15 +8,12 @@ import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
 import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireModelJpaRepository;
-import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import fr.insee.queen.infrastructure.db.surveyunit.entity.*;
 import fr.insee.queen.infrastructure.db.surveyunit.projection.SurveyUnitProjection;
 import fr.insee.queen.infrastructure.db.surveyunit.repository.jpa.*;
-import fr.insee.queen.infrastructure.db.configuration.DataFactory;
-import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
 import fr.insee.queen.infrastructure.db.surveyunittempzone.repository.jpa.SurveyUnitTempZoneJpaRepository;
 import fr.insee.queen.infrastructure.db.paradata.repository.jpa.ParadataEventJpaRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -27,20 +24,19 @@ import java.util.Optional;
  * DAO to handle survey units in DB
  */
 @Repository
+@AllArgsConstructor
 @Slf4j
-@RequiredArgsConstructor
 public class SurveyUnitDao implements SurveyUnitRepository {
 
     private final SurveyUnitJpaRepository crudRepository;
     private final CommentJpaRepository commentRepository;
     private final PersonalizationJpaRepository personalizationRepository;
-    private final DataRepository dataRepository;
+    private final DataJpaRepository dataRepository;
     private final StateDataDao stateDataDao;
     private final CampaignJpaRepository campaignRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
     private final ParadataEventJpaRepository paradataEventRepository;
-    private final DataFactory dataFactory;
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
@@ -71,11 +67,6 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     @Override
     public Optional<List<String>> findAllIds() {
         return crudRepository.findAllIds();
-    }
-
-    @Override
-    public List<SurveyUnitState> findAllByState(String campaignId, StateDataType state) {
-        return crudRepository.findAllByState(campaignId, state);
     }
 
     @Override
@@ -110,7 +101,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         CampaignDB campaign = campaignRepository.getReferenceById(surveyUnit.campaignId());
         QuestionnaireModelDB questionnaire = questionnaireModelRepository.getReferenceById(surveyUnit.questionnaireId());
         SurveyUnitDB surveyUnitDB = new SurveyUnitDB(surveyUnit.id(), campaign, questionnaire);
-        DataDB dataDB = dataFactory.buildData(surveyUnit.data(), surveyUnitDB);
+        DataDB dataDB = new DataDB(surveyUnit.data(), surveyUnitDB);
         CommentDB commentDB = new CommentDB(surveyUnit.comment(), surveyUnitDB);
         PersonalizationDB personalizationDB = new PersonalizationDB(surveyUnit.personalization(), surveyUnitDB);
         surveyUnitDB.setPersonalization(personalizationDB);
@@ -152,10 +143,11 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         if (data == null) {
             return;
         }
+
         int countUpdated = dataRepository.updateData(surveyUnitId, data);
         if (countUpdated == 0) {
             SurveyUnitDB surveyUnit = crudRepository.getReferenceById(surveyUnitId);
-            DataDB dataDB = dataFactory.buildData(data, surveyUnit);
+            DataDB dataDB = new DataDB(data, surveyUnit);
             dataRepository.save(dataDB);
         }
     }
@@ -212,8 +204,5 @@ public class SurveyUnitDao implements SurveyUnitRepository {
                 .toList();
     }
 
-    @Override
-    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
-        dataRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
-    }
+
 }

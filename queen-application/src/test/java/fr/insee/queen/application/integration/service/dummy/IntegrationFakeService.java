@@ -7,17 +7,12 @@ import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import fr.insee.queen.domain.integration.model.IntegrationResult;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import fr.insee.queen.domain.integration.service.IntegrationService;
-import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 public class IntegrationFakeService implements IntegrationService {
-    private Campaign campaignCreated = null;
-
     @Override
     public IntegrationResult create(Campaign campaign) {
-        campaignCreated = campaign;
         return new IntegrationResult(campaign.getId(), IntegrationStatus.CREATED, null);
     }
 

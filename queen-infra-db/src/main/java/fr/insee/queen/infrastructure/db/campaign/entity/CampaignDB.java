@@ -1,6 +1,5 @@
 package fr.insee.queen.infrastructure.db.campaign.entity;
 
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,9 +33,6 @@ public class CampaignDB {
     @Column(nullable = false)
     private String label;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private CampaignSensitivity sensitivity;
 
     @OneToOne(mappedBy = "campaign", cascade = CascadeType.ALL, orphanRemoval = true)
     private MetadataDB metadata;
@@ -45,11 +41,10 @@ public class CampaignDB {
     @OneToMany(fetch = FetchType.LAZY, targetEntity = QuestionnaireModelDB.class, cascade = CascadeType.ALL, mappedBy = "campaign")
     private Set<QuestionnaireModelDB> questionnaireModels = new HashSet<>();
 
-    public CampaignDB(String id, String label, CampaignSensitivity sensitivity, Set<QuestionnaireModelDB> questionnaireModels) {
+    public CampaignDB(String id, String label, Set<QuestionnaireModelDB> questionnaireModels) {
         super();
         this.id = id;
         this.label = label;
-        this.sensitivity = sensitivity;
         this.questionnaireModels = questionnaireModels;
     }
 }

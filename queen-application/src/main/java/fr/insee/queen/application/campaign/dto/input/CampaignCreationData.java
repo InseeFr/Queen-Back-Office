@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -17,8 +16,7 @@ import java.util.Set;
  * Data used for campaign creation
  *
  * @param id campaign id
- * @param label campaign label
- * @param sensitivity campaign sensitivity (classic or sensitive)
+ * @param label campaign labe
  * @param questionnaireIds list of questionnaire ids linked to the campaign
  * @param metadata campaign metadata
  */
@@ -29,7 +27,6 @@ public record CampaignCreationData(
         String id,
         @NotBlank
         String label,
-        CampaignSensitivity sensitivity,
         @NotEmpty
         Set<String> questionnaireIds,
         @Valid
@@ -37,14 +34,9 @@ public record CampaignCreationData(
 
     public static Campaign toModel(CampaignCreationData campaign) {
         ObjectNode metadataValue = JsonNodeFactory.instance.objectNode();
-        CampaignSensitivity sensitivityValue = CampaignSensitivity.NORMAL;
         if (campaign.metadata() != null) {
             metadataValue = campaign.metadata.value();
         }
-        if(campaign.sensitivity != null) {
-            sensitivityValue = campaign.sensitivity();
-        }
-
-        return new Campaign(campaign.id, campaign.label, sensitivityValue, campaign.questionnaireIds, metadataValue);
+        return new Campaign(campaign.id, campaign.label, campaign.questionnaireIds, metadataValue);
     }
 }

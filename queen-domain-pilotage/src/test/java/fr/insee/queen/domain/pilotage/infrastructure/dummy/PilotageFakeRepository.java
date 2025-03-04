@@ -13,7 +13,7 @@ import java.util.List;
 public class PilotageFakeRepository implements PilotageRepository {
 
     public static final String INTERVIEWER_CAMPAIGN1_ID = "interviewer-campaign1";
-    public static final String CURRENT_SU_CAMPAIGN1_ID = "campaign-id";
+    public static final String CURRENT_SU_CAMPAIGN1_ID = "su-campaign1";
 
     public static final String SURVEY_UNIT1_ID = "pilotage-su-1";
     public static final String SURVEY_UNIT2_ID = "pilotage-su-2";
@@ -41,7 +41,7 @@ public class PilotageFakeRepository implements PilotageRepository {
         }
         return List.of(
                 new PilotageSurveyUnit(SURVEY_UNIT1_ID, CURRENT_SU_CAMPAIGN1_ID),
-                new PilotageSurveyUnit(SURVEY_UNIT2_ID, "campaign-id2"),
+                new PilotageSurveyUnit(SURVEY_UNIT2_ID, "su-campaign2"),
                 new PilotageSurveyUnit(SURVEY_UNIT3_ID, CURRENT_SU_CAMPAIGN1_ID)
         );
     }

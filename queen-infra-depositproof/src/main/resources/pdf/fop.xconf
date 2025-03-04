@@ -14,19 +14,19 @@
      <renderers>
         <renderer mime="application/pdf">
           <fonts>
-            <font kerning="yes" embed-url="classpath:/pdf/fonts/LiberationSans-Regular.ttf">
+            <font kerning="yes" embed-url="classpath:pdf/fonts/LiberationSans-Regular.ttf">
               <font-triplet name="Liberation Sans" style="normal" weight="normal"/>
             </font>
-            <font kerning="yes" embed-url="classpath:/pdf/fonts/LiberationSans-Bold.ttf">
+            <font kerning="yes" embed-url="classpath:pdf/fonts/LiberationSans-Bold.ttf">
               <font-triplet name="Liberation Sans" style="normal" weight="bold"/>
             </font>
-            <font kerning="yes" embed-url="classpath:/pdf/fonts/LiberationSans-Italic.ttf">
+            <font kerning="yes" embed-url="classpath:pdf/fonts/LiberationSans-Italic.ttf">
               <font-triplet name="Liberation Sans" style="italic" weight="normal"/>
             </font>
-            <font kerning="yes" embed-url="classpath:/pdf/fonts/LiberationSans-BoldItalic.ttf">
+            <font kerning="yes" embed-url="classpath:pdf/fonts/LiberationSans-BoldItalic.ttf">
               <font-triplet name="Liberation Sans" style="italic" weight="bold"/>
             </font>
-            <font kerning="yes" embed-url="classpath:/pdf/fonts/LucidaConsole.ttf">
+            <font kerning="yes" embed-url="classpath:pdf/fonts/LucidaConsole.ttf">
               <font-triplet name="Lucida Console" style="normal" weight="normal"/>
             </font>
           </fonts>

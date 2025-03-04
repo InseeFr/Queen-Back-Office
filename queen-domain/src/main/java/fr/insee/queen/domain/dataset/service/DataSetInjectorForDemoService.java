@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.service.*;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.Nomenclature;
@@ -232,7 +231,7 @@ public class DataSetInjectorForDemoService implements DataSetInjectorService {
         }
 
         log.info("Create Campaign {}", id);
-        Campaign campaign = new Campaign(id, label, CampaignSensitivity.NORMAL, new HashSet<>(questionnaireIds), jsonMetadata);
+        Campaign campaign = new Campaign(id, label, new HashSet<>(questionnaireIds), jsonMetadata);
         campaignService.createCampaign(campaign);
     }
 

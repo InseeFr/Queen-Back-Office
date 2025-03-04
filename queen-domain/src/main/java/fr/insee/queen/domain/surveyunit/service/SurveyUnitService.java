@@ -38,11 +38,9 @@ public interface SurveyUnitService {
 
     SurveyUnitMetadata getSurveyUnitMetadata(String surveyUnitId);
 
-    SurveyUnitSummary getSummaryById(String surveyUnitId);
+    SurveyUnitSummary getSurveyUnitWithCampaignById(String surveyUnitId);
 
     List<SurveyUnit> findByIds(List<String> surveyUnitIds);
 
     List<SurveyUnit> findAllSurveyUnits();
-
-    List<SurveyUnitState> getSurveyUnits(String campaignId, StateDataType stateDataType);
 }

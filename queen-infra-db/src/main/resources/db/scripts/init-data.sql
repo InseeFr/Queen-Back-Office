@@ -1,5 +1,16 @@
 --changeset davdarras:test-data context:test
 
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
 --
 -- TOC entry 3402 (class 0 OID 16416)
 -- Dependencies: 215
@@ -11,10 +22,10 @@ TRUNCATE TABLE public.survey_unit_temp_zone, public.state_data, public.paradata_
     public.required_nomenclature, public.questionnaire_model, public.nomenclature,
     public.metadata, public.campaign;
 
-INSERT INTO public.campaign VALUES ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'NORMAL');
-INSERT INTO public.campaign VALUES ('VQS2021X00', 'Everyday life and health survey 2021', 'NORMAL');
-INSERT INTO public.campaign VALUES ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'SENSITIVE');
-INSERT INTO public.campaign VALUES ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', 'NORMAL');
+INSERT INTO public.campaign VALUES ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020');
+INSERT INTO public.campaign VALUES ('VQS2021X00', 'Everyday life and health survey 2021');
+INSERT INTO public.campaign VALUES ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web');
+INSERT INTO public.campaign VALUES ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR');
 
 --
 -- TOC entry 3406 (class 0 OID 16489)
@@ -120,6 +131,30 @@ INSERT INTO public.comment VALUES ('833b5a5d-845e-4b3e-a725-d444907ee476', '{}',
 INSERT INTO public.comment VALUES ('692a1749-e293-4bcf-8456-4fb8edc9a5a8', '{}', 'su-test-diff-data');
 INSERT INTO public.comment VALUES ('692a1749-e293-4bcf-8456-4fb8edc9a5a9', '{}', 'su-test-diff-without-collected-data');
 
+
+--
+-- TOC entry 3400 (class 0 OID 16403)
+-- Dependencies: 213
+-- Data for Name: data; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.data VALUES ('6cb4378d-aa70-4add-bb61-1f2fdc86dfbb', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '11');
+INSERT INTO public.data VALUES ('cf72a231-b40f-4ffa-9834-bf4e40bf85ac', '{}', '12');
+INSERT INTO public.data VALUES ('f63bbfbe-9926-48ae-8d04-421296a40634', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '13');
+INSERT INTO public.data VALUES ('8e3b28cc-74b1-4391-8359-c495538129b7', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}', '14');
+INSERT INTO public.data VALUES ('e9e97450-ef9c-4f49-9375-adf11b6a158b', '{}', '20');
+INSERT INTO public.data VALUES ('42dc1400-0a36-4c20-8742-115e22c42369', '{}', '21');
+INSERT INTO public.data VALUES ('4540afba-ee51-42e4-bf74-d2346d813e89', '{}', '22');
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e416', '{}', '23');
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e417', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}, "READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}}}', 'su-test-diff-data');
+INSERT INTO public.data VALUES ('757170c2-b2d5-4c71-85c1-61988b36e418', '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}}', 'su-test-diff-without-collected-data');
+INSERT INTO public.data VALUES ('27abfaed-187a-44ab-8287-af08f3bd7158', '{}', 'LOG2021X11Web-01');
+INSERT INTO public.data VALUES ('c118114a-c0be-462d-9fe9-604436bea20a', '{}', 'LOG2021X11Web-02');
+INSERT INTO public.data VALUES ('df044ba3-9abb-451e-9e4d-75ba98ace5e6', '{}', 'LOG2021X11Web-03');
+INSERT INTO public.data VALUES ('fdc43238-cf8e-4a55-ad49-14ea8152728d', '{}', 'LOG2021X11Tel_01');
+INSERT INTO public.data VALUES ('fa0a7a90-0324-429f-837b-ad06b79cfd7d', '{}', 'LOG2021X11Tel_02');
+INSERT INTO public.data VALUES ('d51e29b9-b27b-4159-957c-6bb54d811a20', '{}', 'LOG2021X11Tel_03');
+
 --
 -- TOC entry 3407 (class 0 OID 16494)
 -- Dependencies: 220
@@ -178,8 +213,8 @@ INSERT INTO public.personalization VALUES ('8b377092-33da-4494-a5fc-d2825d755e2c
 --
 
 INSERT INTO public.state_data VALUES ('f55c7388-0724-4b3e-9c78-536ee2dee5f6', '2.3#5', 1111111111, 'EXTRACTED', '11');
-INSERT INTO public.state_data VALUES ('c11f8aae-5201-4a16-89d8-5f8b4c6ab942', '2.3#5', 1111111115, 'EXTRACTED', '12');
-INSERT INTO public.state_data VALUES ('1fe17624-70d0-48e2-ba50-041cc23cbeeb', '2.3#5', 1111111119, 'EXTRACTED', '13');
+INSERT INTO public.state_data VALUES ('c11f8aae-5201-4a16-89d8-5f8b4c6ab942', '2.3#5', 1111111111, 'INIT', '12');
+INSERT INTO public.state_data VALUES ('1fe17624-70d0-48e2-ba50-041cc23cbeeb', '2.3#5', 1111111111, 'INIT', '13');
 INSERT INTO public.state_data VALUES ('164cc2b6-b58f-4011-a064-01f5f761326b', '2.3#5', 1111111111, 'INIT', '14');
 INSERT INTO public.state_data VALUES ('42858b14-2a0c-4d17-afd0-f50a0f9a8dd5', '1', 900000000, 'INIT', '20');
 INSERT INTO public.state_data VALUES ('a2067072-8887-4ba0-8493-d91f50734d95', '1', 900000000, 'INIT', '21');
@@ -200,94 +235,3 @@ INSERT INTO public.state_data VALUES ('e75e53d5-66a4-4ab9-922a-a84e5709e8c9', '1
 
 INSERT INTO public.survey_unit_temp_zone VALUES ('42858b14-2a0c-4d17-afd0-f50a0f9a8dd5','temp-11', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-11"}');
 INSERT INTO public.survey_unit_temp_zone VALUES ('6fcbbd84-3464-4290-b8fc-cdf0082ee339','temp-12', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-12"}');
-
-
---changeset davdarras:test-fun1-data context:test
-
--- quite ugly here. need to have the ' as delimiter for @Sql annotation (hibernate problem)
--- maybe switch to liquibase migration in IT intead of using @Sql annotation
-CREATE OR REPLACE FUNCTION encrypt(data_text text) RETURNS bytea
-AS
-'
-BEGIN
-    RETURN pgp_sym_encrypt(data_text, current_setting(''data.encryption.key'', true), ''s2k-count=65536'');
-END;
-' LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION is_encrypted()
-RETURNS integer AS
-'
-BEGIN
-  IF current_setting(''data.encryption.key'', true) IS NOT NULL THEN
-    RETURN 1;
-  ELSE
-    RETURN 0;
-  END IF;
-END;
-' LANGUAGE plpgsql;
-
-
-DO '
-DECLARE
-  -- Define array with all lines to insert
-  datas_to_insert text[][] := ARRAY[
-      ARRAY[''6cb4378d-aa70-4add-bb61-1f2fdc86dfbb'',
-            ''{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}'',
-            ''11''],
-      ARRAY[''cf72a231-b40f-4ffa-9834-bf4e40bf85ac'',
-            ''{}'',
-            ''12''],
-      ARRAY[''f63bbfbe-9926-48ae-8d04-421296a40634'',
-            ''{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}'',
-            ''13''],
-      ARRAY[''8e3b28cc-74b1-4391-8359-c495538129b7'',
-            ''{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}'',
-            ''14''],
-      ARRAY[''e9e97450-ef9c-4f49-9375-adf11b6a158b'',
-            ''{}'',
-            ''20''],
-      ARRAY[''42dc1400-0a36-4c20-8742-115e22c42369'',
-            ''{}'',
-            ''21''],
-      ARRAY[''4540afba-ee51-42e4-bf74-d2346d813e89'',
-            ''{}'',
-            ''22''],
-      ARRAY[''757170c2-b2d5-4c71-85c1-61988b36e416'',
-            ''{}'',
-            ''23''],
-      ARRAY[''757170c2-b2d5-4c71-85c1-61988b36e417'',
-            ''{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}, "READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}}}'',
-            ''su-test-diff-data''],
-      ARRAY[''757170c2-b2d5-4c71-85c1-61988b36e418'',
-            ''{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}}'',
-            ''su-test-diff-without-collected-data''],
-      ARRAY[''27abfaed-187a-44ab-8287-af08f3bd7158'',
-            ''{}'',
-            ''LOG2021X11Web-01''],
-      ARRAY[''c118114a-c0be-462d-9fe9-604436bea20a'',
-            ''{}'',
-            ''LOG2021X11Web-02''],
-      ARRAY[''df044ba3-9abb-451e-9e4d-75ba98ace5e6'',
-            ''{}'',
-            ''LOG2021X11Web-03''],
-      ARRAY[''fdc43238-cf8e-4a55-ad49-14ea8152728d'',
-            ''{}'',
-            ''LOG2021X11Tel_01''],
-      ARRAY[''fa0a7a90-0324-429f-837b-ad06b79cfd7d'',
-            ''{}'',
-            ''LOG2021X11Tel_02''],
-      ARRAY[''d51e29b9-b27b-4159-957c-6bb54d811a20'',
-            ''{}'',
-            ''LOG2021X11Tel_03'']
-  ];
-  line text[];
-BEGIN
-  FOREACH line SLICE 1 IN ARRAY datas_to_insert LOOP
-    -- line[1] = id, line[2] = json value, line[3] = survey_unit_id.
-    IF is_encrypted() = 1 THEN
-      INSERT INTO public.data (id, value, survey_unit_id, encrypted) VALUES ( line[1]::uuid, encrypt(line[2]), line[3], is_encrypted());
-    ELSE
-      INSERT INTO public.data (id, value, survey_unit_id, encrypted) VALUES ( line[1]::uuid, line[2]::jsonb, line[3], is_encrypted());
-    END IF;
-  END LOOP;
-END ';

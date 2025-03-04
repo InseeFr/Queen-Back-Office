@@ -8,6 +8,4 @@ public interface DataService {
     void saveData(String surveyUnitId, ObjectNode dataValue);
 
     void updateCollectedData(String surveyUnitId, ObjectNode collectedData);
-
-    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 }
