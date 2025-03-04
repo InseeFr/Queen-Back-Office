@@ -4,36 +4,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-  check-version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Get version
-        id: version
-        run: |
-          if [[ "${{ github.base_ref }}" == "main" ]]; then
-            echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
-          else
-            echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT" >> $GITHUB_OUTPUT
-          fi
-      - name: Print version
-        run: echo ${{ steps.version.outputs.version }}
-
-      - uses: mukunku/tag-exists-action@v1.6.0
-        name: Check tag existence
-        id: check-tag-exists
-        with:
-          tag: ${{ steps.version.outputs.version }}
-
-      - name: Tag verification
-        id: check-tag
-        run: |
-          if [[ "${{ steps.check-tag-exists.outputs.exists }}" == "true" ]]; then
-            echo "Tag ${{ steps.version.outputs.version }} already exists, don't forget to upgrade your pom"
-            exit 1
-          fi
   test:
     runs-on: ubuntu-latest
     steps:

@@ -8,15 +8,14 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Slf4j
 public class PropertiesLogger implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
     private static final Set<String> hiddenWords = Set.of("password", "pwd", "jeton", "token", "secret");
+    private static final List<String> propertyPrefixes = List.of("application", "spring", "feature", "logging");
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationEnvironmentPreparedEvent event) {
@@ -25,32 +24,49 @@ public class PropertiesLogger implements ApplicationListener<ApplicationEnvironm
         log.info("===============================================================================================");
         log.info("                                     Properties                                                ");
 
-        List<String> propertyObjects = List.of("application", "spring", "feature", "logging");
-        ((AbstractEnvironment) environment).getPropertySources().stream()
+        getFilteredPropertyStream((AbstractEnvironment) environment)
+                .forEach(key -> log.info("{} = {}", key, hideProperties(key.toLowerCase(), environment)));
+
+        log.info("===============================================================================================");
+    }
+
+    /**
+     * Retrieve filtered properties starting with propertyPrefixes and with masked values for hidden words
+     * @param environment Spring environment
+     * @return filtered properties
+     */
+    Stream<String> getFilteredPropertyStream(AbstractEnvironment environment) {
+        return environment.getPropertySources().stream()
                 .filter(EnumerablePropertySource.class::isInstance)
                 .map(ps -> ((EnumerablePropertySource<?>) ps).getPropertyNames())
                 .flatMap(Arrays::stream)
                 .distinct()
                 .filter(Objects::nonNull)
                 .sorted()
-                .filter(ps -> {
-                    for(String propertyObject : propertyObjects) {
-                        if(ps.startsWith(propertyObject)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
-                .forEach(key -> log.info("{} = {}", key, hideProperties(key, environment)));
-        log.info("===============================================================================================");
-
+                .filter(this::isRelevantProperty);
     }
 
-    private static Object hideProperties(String key, Environment environment) {
+    /**
+     * Is the property relevant to be logged
+     * @param property to check
+     * @return true if relevant false otherwise
+     */
+    boolean isRelevantProperty(String property) {
+        return propertyPrefixes
+                .stream()
+                .anyMatch(property::startsWith);
+    }
+
+    /**
+     *
+     * @param key key property
+     * @param environment environment
+     * @return property value
+     */
+    Object hideProperties(String key, Environment environment) {
         if (hiddenWords.stream().anyMatch(key::contains)) {
             return "******";
         }
         return environment.getProperty(key);
     }
-
 }

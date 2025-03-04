@@ -1,0 +1,3 @@
+spring:
+  liquibase:
+    change-log: classpath:db/integration-demo.xml

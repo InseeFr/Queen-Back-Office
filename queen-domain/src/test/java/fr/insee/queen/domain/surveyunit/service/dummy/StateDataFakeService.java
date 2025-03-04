@@ -6,6 +6,8 @@ import fr.insee.queen.domain.surveyunit.service.exception.StateDataInvalidDateEx
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Optional;
+
 public class StateDataFakeService implements StateDataService {
 
     public static final String ERROR_MESSAGE = "error";
@@ -26,5 +28,10 @@ public class StateDataFakeService implements StateDataService {
             throw new StateDataInvalidDateException(ERROR_MESSAGE);
         }
         stateDataSaved = stateData;
+    }
+
+    @Override
+    public Optional<StateData> findStateData(String surveyUnitId) {
+        return Optional.empty();
     }
 }

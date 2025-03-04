@@ -70,4 +70,11 @@ public interface CampaignRepository {
      * @return {@link String} json metadata value
      */
     Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
+
+    /**
+     * Find campaign
+     *
+     * @param campaignId campaign id
+     */
+    Optional<Campaign> findCampaign(String campaignId);
 }
