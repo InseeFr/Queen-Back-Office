@@ -1,3 +1,4 @@
 spring:
   liquibase:
+    contexts: demo
     change-log: classpath:db/integration-demo.xml

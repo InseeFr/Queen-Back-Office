@@ -33,6 +33,30 @@ feature:
     enabled: true
 
 spring:
+  docker:
+    compose:
+      enabled: true
+      file: compose.yml
+      lifecycle-management: start-and-stop
+      start:
+        command: up
+      stop:
+        command: down
+        timeout: 1m
+        arguments: -v
+      skip:
+        in-tests: false
+      profiles:
+        active:
+          - queen-db
+  datasource:
+    url: jdbc:postgresql://localhost:5434/queen
+    username: mypostgresuser
+    password: mypostgrespassword
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 1
   liquibase:
     enabled: true
     contexts: test
@@ -42,7 +66,7 @@ logging:
   appender: CONSOLE
   level:
     root: INFO
-    liquibase: ERROR
+    liquibase: INFO
 #force charset for mockmvc
 server:
   servlet:
