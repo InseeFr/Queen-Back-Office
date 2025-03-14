@@ -1,6 +1,5 @@
 package fr.insee.queen.application.campaign.integration;
 
-import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 
@@ -8,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -16,8 +18,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-class MetadataTests extends ContainerConfiguration {
+@ActiveProfiles("test")
+@SpringBootTest
+@AutoConfigureMockMvc
+class MetadataIT {
     @Autowired
     private MockMvc mockMvc;
 

@@ -1,7 +1,6 @@
 package fr.insee.queen.application.campaign.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.domain.campaign.model.Nomenclature;
 import fr.insee.queen.domain.campaign.service.NomenclatureService;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -19,8 +19,9 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@ActiveProfiles("test-cache")
-class NomenclatureCacheTests extends ContainerConfiguration {
+@SpringBootTest
+@ActiveProfiles({"test", "test-cache"})
+class NomenclatureCacheIT {
 
     @Autowired
     private NomenclatureService nomenclatureService;
