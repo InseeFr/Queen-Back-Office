@@ -51,6 +51,9 @@ feature:
     enabled: false
 
 spring:
+  docker:
+    compose:
+      enabled: false
   main:
     allow-bean-definition-overriding: true
   datasource:

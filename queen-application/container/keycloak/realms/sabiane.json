@@ -1,0 +1,233 @@
+{
+  "realm": "sabiane",
+  "enabled": true,
+  "users": [
+    {
+      "username": "gestio1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Gertrude",
+      "lastName": "Gestionnaire1",
+      "email": "gestion@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "gestio1",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["gestionnaire"]
+    },
+    {
+      "username": "gestio2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Gontrand",
+      "lastName": "Gestionnaire2",
+      "email": "gestion2@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "gestio2",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["gestionnaire"]
+    },
+    {
+      "username": "gestio3",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Gerard",
+      "lastName": "Gestionnaire3",
+      "email": "gestion3@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "gestio3",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["gestionnaire"]
+    },
+    {
+      "username": "gestio4",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Gustave",
+      "lastName": "Gestionnaire4",
+      "email": "gestion4@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "gestio4",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["gestionnaire"]
+    },
+    {
+      "username": "interv1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Isabelle",
+      "lastName": "Interviewer 1",
+      "email": "interviewer1@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "interv1",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["interviewer"]
+    },
+    {
+      "username": "interv2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Ingrid",
+      "lastName": "Interviewer 2",
+      "email": "interviewer2@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "interv2",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["interviewer"]
+    },
+    {
+      "username": "interv3",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Isaac",
+      "lastName": "Interviewer 3",
+      "email": "interviewer3@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "interv3",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["interviewer"]
+    },
+    {
+      "username": "interv4",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Isidore",
+      "lastName": "Interviewer 4",
+      "email": "interviewer4@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "interv4",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["interviewer"]
+    },
+    {
+      "username": "interv5",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Irma",
+      "lastName": "Interviewer 5",
+      "email": "interviewer5@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "interv5",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["interviewer"]
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Adele",
+      "lastName": "Admin",
+      "email": "adele@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin"]
+    },
+    {
+      "id": "15cfea92-65bc-441e-bf55-1234c73b3129",
+      "username": "service-account-webclient",
+      "emailVerified": false,
+      "createdTimestamp": 1739881777223,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "webclient",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-sabiane",
+        "webclient"
+      ],
+      "notBefore": 0,
+      "groups": []
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "myclient",
+      "enabled": true,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false
+    },
+    {
+      "clientId": "webclient",
+      "enabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "publicClient": false,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "webclient"
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "gestionnaire",
+        "description": "gestionnaire role"
+      },
+      {
+        "name": "admin",
+        "description": "Admin role"
+      },
+      {
+        "name": "interviewer",
+        "description": "Interviewer role"
+      },
+      {
+        "name": "webclient",
+        "description": "webclient role"
+      }
+    ]
+  }
+}

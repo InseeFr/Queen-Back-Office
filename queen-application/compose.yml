@@ -1,0 +1,49 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    profiles:
+      - keycloak
+    environment:
+      KEYCLOAK_ADMIN: administrator
+      KEYCLOAK_ADMIN_PASSWORD: administrator
+      KC_HEALTH_ENABLED: "true"
+      KC_LOG_LEVEL: info
+    command: [ "start-dev", "--import-realm" ]
+    ports:
+      - "${KEYCLOAK_PORT}:8080"
+    volumes:
+      - ./container/keycloak/realms:/opt/keycloak/data/import
+
+  queen-db:
+    image: postgres:15.1
+    profiles:
+      - queen-db
+    environment:
+      - POSTGRES_USER=${QUEEN_DB_USER}
+      - POSTGRES_PASSWORD=${QUEEN_DB_PASSWORD}
+      - POSTGRES_DB=${QUEEN_DB}
+    command: ["postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${QUEEN_DB_USER} -d ${QUEEN_DB} -h localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - ${QUEEN_DB_PORT}:5432
+
+  queen-db-ciphered:
+    image: postgres:15.1
+    profiles:
+      - queen-db-ciphered
+    environment:
+      - POSTGRES_USER=${QUEEN_DB_USER}
+      - POSTGRES_PASSWORD=${QUEEN_DB_PASSWORD}
+      - POSTGRES_DB=${QUEEN_DB_CIPHERED}
+    command: ["postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${QUEEN_DB_USER} -d ${QUEEN_DB} -h localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - ${QUEEN_DB_CIPHERED_PORT}:5432

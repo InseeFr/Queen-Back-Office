@@ -1,29 +1,35 @@
 package fr.insee.queen.application.surveyunit.integration;
 
-import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.infrastructure.db.configuration.DataFactory;
-import fr.insee.queen.infrastructure.db.data.entity.unciphered.UncipheredDataDB;
+import fr.insee.queen.infrastructure.db.data.entity.ciphered.CipheredDataDB;
+import fr.insee.queen.infrastructure.db.data.repository.jpa.CipheredDataJpaRepository;
 import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
-import fr.insee.queen.infrastructure.db.data.repository.jpa.UncipheredDataJpaRepository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
+@ActiveProfiles("test-cipher")
+@SpringBootTest
+@AutoConfigureMockMvc
 /* Disable the "Add at least one assertion to this test case." (sic)
    The sonar rule is not smart enough to inspect common test class
  */
 @SuppressWarnings("java:S2699")
-class DataUnCipherTests extends ContainerConfiguration {
+class DataCipherIT {
+
     private final DataCommonAssertions dataCommonAssertions;
 
-    public DataUnCipherTests(@Autowired MockMvc mockMvc) {
+    public DataCipherIT(@Autowired MockMvc mockMvc) {
         this.dataCommonAssertions = new DataCommonAssertions(mockMvc);
     }
 
@@ -33,19 +39,18 @@ class DataUnCipherTests extends ContainerConfiguration {
     @Autowired
     private DataFactory dataFactory;
 
-
     @Test
     @DisplayName("Check Ciphered Data repository is loaded")
     void checkRepository() {
         assertThat(jpaRepository)
-                .isInstanceOf(UncipheredDataJpaRepository.class);
+                .isInstanceOf(CipheredDataJpaRepository.class);
     }
 
     @Test
     @DisplayName("Check Ciphered Data repository is loaded")
     void checkDataFactory() {
         assertThat(dataFactory.buildData(null, null))
-                .isInstanceOf(UncipheredDataDB.class);
+                .isInstanceOf(CipheredDataDB.class);
     }
 
     @Test

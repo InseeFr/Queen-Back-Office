@@ -67,7 +67,7 @@ class DataControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideAdminAndWebclientUsers")
+    @MethodSource("provideReviewerUsers")
     @DisplayName("Should update data when campaign is sensitive and role is admin/webclient")
     void testUpdateSurveyUnit04() throws LockedResourceException {
         // given
@@ -159,24 +159,9 @@ class DataControllerTest {
         ObjectNode surveyUnitData = dataFakeService.getData(SurveyUnitFakeService.SURVEY_UNIT1_ID);
         assertThat(data).isEqualTo(surveyUnitData);
     }
-
-    @Test
-    @DisplayName("Should throw exception when role is reviewer and campaign is sensitive")
-    void testGetSurveyUnitException() {
-        // given
-        authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER));
-        SurveyUnitSummary surveyUnitSummary = surveyUnitFakeService.getSummaryById(SurveyUnitFakeService.SURVEY_UNIT3_ID);
-        assertThat(surveyUnitSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
-
-        // when & then
-        assertThatThrownBy(() -> dataController.getDataBySurveyUnit(SurveyUnitFakeService.SURVEY_UNIT3_ID))
-                .isInstanceOf(AccessDeniedException.class);
-        assertThat(pilotageFakeComponent.isChecked()).isTrue();
-    }
-
     @ParameterizedTest
-    @MethodSource("provideAdminAndWebclientUsers")
-    @DisplayName("Should return data when campaign is sensitive and role is admin/webclient")
+    @MethodSource("provideReviewerUsers")
+    @DisplayName("Should return data when campaign is sensitive and role is admin/webclient/reviewer")
     void testGetSurveyUnit02() {
         // given
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
@@ -262,10 +247,11 @@ class DataControllerTest {
                 Arguments.of(provider.getAuthenticatedUser(AuthorityRoleEnum.SURVEY_UNIT)));
     }
 
-    private static Stream<Arguments> provideAdminAndWebclientUsers() {
+    private static Stream<Arguments> provideReviewerUsers() {
         AuthenticatedUserTestHelper provider = new AuthenticatedUserTestHelper();
         return Stream.of(
                 Arguments.of(provider.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT)),
+                Arguments.of(provider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER)),
                 Arguments.of(provider.getAuthenticatedUser(AuthorityRoleEnum.ADMIN)));
     }
 

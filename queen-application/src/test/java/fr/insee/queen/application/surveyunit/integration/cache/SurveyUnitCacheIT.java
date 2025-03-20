@@ -1,7 +1,6 @@
 package fr.insee.queen.application.surveyunit.integration.cache;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import fr.insee.queen.application.configuration.ContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.domain.campaign.service.CampaignApiService;
 import fr.insee.queen.domain.common.cache.CacheName;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -25,8 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@ActiveProfiles("test-cache")
-class SurveyUnitCacheTests extends ContainerConfiguration {
+@SpringBootTest
+@ActiveProfiles({"test", "test-cache"})
+class SurveyUnitCacheIT {
 
     @Autowired
     private SurveyUnitApiService surveyUnitService;

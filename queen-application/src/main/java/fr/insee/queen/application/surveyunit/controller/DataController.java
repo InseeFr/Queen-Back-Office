@@ -70,8 +70,8 @@ public class DataController {
 
         // here, campaign sensitivity is ON !
 
-        // admin can see everything
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
+        // admin/reviewer can see data regardless sensitivity
+        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT, AuthorityRoleEnum.REVIEWER)){
             return dataService.getData(surveyUnitId);
         }
 

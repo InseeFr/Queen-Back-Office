@@ -1,4 +1,4 @@
---changeset davdarras:test-data context:test
+--changeset davdarras:demo-data context:demo
 
 --
 -- TOC entry 3402 (class 0 OID 16416)
@@ -53,15 +53,761 @@ INSERT INTO public.nomenclature VALUES ('L_NATIONETR', 'nationalités', '[{"id":
 -- Data for Name: questionnaire_model; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.questionnaire_model VALUES ('QmWithoutCamp', 'Questionnaire with no campaign', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', NULL);
-INSERT INTO public.questionnaire_model VALUES ('simpsons', 'Questionnaire about the Simpsons tv show', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'SIMPSONS2020X00');
-INSERT INTO public.questionnaire_model VALUES ('simpsonsV2', 'Questionnaire about the Simpsons tv show version 2', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'SIMPSONS2020X00');
-INSERT INTO public.questionnaire_model VALUES ('VQS2021X00', 'Questionnaire of the Everyday life and health survey 2021', '{"id": "k1g74VQS2bisqf2", "label": "Questionnaire simple rallye game", "modele": "VQS2021", "maxPage": "21", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.3.7", "generatingDate": "21-04-2022 13:17:27", "lunaticModelVersion": "2.2.10"}', 'VQS2021X00');
-INSERT INTO public.questionnaire_model VALUES ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', '{"id": "kwdqpj7a", "label": "Enquête Logement - Partie 1", "modele": "m1", "maxPage": "184", "missing": false, "variables": []}', 'LOG2021X11Web');
-INSERT INTO public.questionnaire_model VALUES ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', '{"id": "kwdqpj7a", "label": "Enquête Logement - Partie 1"}', 'LOG2021X11Tel');
-INSERT INTO public.questionnaire_model VALUES ('aqv2022x00', 'qualité volaille en 2022', '{"id": "kwdqpj7a", "label": "Enquête volaille"}', 'AQV2022X00');
-INSERT INTO public.questionnaire_model VALUES ('aqv2023x00', 'qualité volaille en 2022', '{"id": "kwdqpj7a", "label": "Enquête volaille"}', 'AQV2023X00');
-INSERT INTO public.questionnaire_model VALUES ('aqv2024x00', 'qualité volaille en 2022', '{"id": "kwdqpj7a", "label": "Enquête volaille"}', 'AQV2024X00');
+INSERT INTO public.questionnaire_model VALUES (
+  'QmWithoutCamp',
+  'Questionnaire with no campaign',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  NULL
+);
+
+INSERT INTO public.questionnaire_model VALUES (
+  'simpsons',
+  'Questionnaire about the Simpsons tv show',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  'SIMPSONS2020X00'
+);
+
+INSERT INTO public.questionnaire_model VALUES (
+  'simpsonsV2',
+  'Questionnaire about the Simpsons tv show version 2',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  'SIMPSONS2020X00'
+);
+
+INSERT INTO public.questionnaire_model VALUES (
+  'VQS2021X00',
+  'Questionnaire of the Everyday life and health survey 2021',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  'VQS2021X00'
+);
+
+INSERT INTO public.questionnaire_model VALUES (
+  'LOG2021X11Web',
+  'Enquête Logement 2022 - Séquence 1 - HR - Web',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  'LOG2021X11Web'
+);
+
+INSERT INTO public.questionnaire_model VALUES (
+  'LOG2021X11Tel',
+  'Enquête Logement 2022 - Séquence 1 - HR',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  'LOG2021X11Tel'
+);
+
+INSERT INTO public.questionnaire_model VALUES (
+  'aqv2022x00',
+  'qualité volaille en 2022',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  'AQV2022X00'
+);
+
+INSERT INTO public.questionnaire_model VALUES (
+  'aqv2023x00',
+  'qualité volaille en 2022',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  'AQV2023X00'
+);
+
+INSERT INTO public.questionnaire_model VALUES (
+  'aqv2024x00',
+  'qualité volaille en 2022',
+  $${
+  "id": "m6kllxkx",
+  "label": {
+    "type": "VTL|MD",
+    "value": "test pattern - QR"
+  },
+  "modele": "TESTPATTERQR",
+  "maxPage": "2",
+  "resizing": {},
+  "variables": [
+    {
+      "name": "TEXT",
+      "values": {
+        "EDITED": null,
+        "FORCED": null,
+        "INPUTTED": null,
+        "PREVIOUS": null,
+        "COLLECTED": null
+      },
+      "dimension": 0,
+      "variableType": "COLLECTED"
+    },
+    {
+      "name": "FILTER_RESULT_TEXT",
+      "dimension": 0,
+      "expression": {
+        "type": "VTL",
+        "value": "true"
+      },
+      "variableType": "CALCULATED"
+    }
+  ],
+  "components": [
+    {
+      "id": "m6klho5q",
+      "page": "1",
+      "label": {
+        "type": "VTL",
+        "value": "\"I - \" || \"S1\""
+      },
+      "componentType": "Sequence",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    },
+    {
+      "id": "question-m6klhuk3",
+      "page": "2",
+      "label": {
+        "type": "VTL|MD",
+        "value": "\"question texte\""
+      },
+      "components": [
+        {
+          "id": "m6klhuk3",
+          "page": "2",
+          "response": {
+            "name": "TEXT"
+          },
+          "mandatory": false,
+          "maxLength": 249,
+          "componentType": "Input"
+        }
+      ],
+      "componentType": "Question",
+      "conditionFilter": {
+        "type": "VTL",
+        "value": "true"
+      }
+    }
+  ],
+  "pagination": "question",
+  "componentType": "Questionnaire",
+  "enoCoreVersion": "3.33.0-SNAPSHOT.1",
+  "generatingDate": "13-02-2025 13:41:02",
+  "lunaticModelVersion": "3.15.3"
+}$$,
+  'AQV2024X00'
+);
 
 --
 -- TOC entry 3405 (class 0 OID 16427)
@@ -133,6 +879,17 @@ INSERT INTO public.survey_unit VALUES ('PROTO18', 'AQV2023X00', 'aqv2023x00');
 INSERT INTO public.survey_unit VALUES ('PROTO19', 'AQV2023X00', 'aqv2023x00');
 INSERT INTO public.survey_unit VALUES ('PROTO20', 'AQV2023X00', 'aqv2023x00');
 INSERT INTO public.survey_unit VALUES ('PROTO21', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO22', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO23', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO24', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO25', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO26', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO27', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO28', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO29', 'AQV2024X00', 'aqv2024x00');
+INSERT INTO public.survey_unit VALUES ('PROTO30', 'AQV2024X00', 'aqv2024x00');
+
+
 
 --
 -- TOC entry 3399 (class 0 OID 16396)
@@ -177,6 +934,15 @@ INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2148', '{"CO
 INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2149', '{"COMMENT": "un commentaire"}', 'PROTO19');
 INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2150', '{"COMMENT": "un commentaire"}', 'PROTO20');
 INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2151', '{"COMMENT": "un commentaire"}', 'PROTO21');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2152', '{"COMMENT": "un commentaire"}', 'PROTO22');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2153', '{"COMMENT": "un commentaire"}', 'PROTO23');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2154', '{"COMMENT": "un commentaire"}', 'PROTO24');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2155', '{"COMMENT": "un commentaire"}', 'PROTO25');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2156', '{"COMMENT": "un commentaire"}', 'PROTO26');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2157', '{"COMMENT": "un commentaire"}', 'PROTO27');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2158', '{"COMMENT": "un commentaire"}', 'PROTO28');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2159', '{"COMMENT": "un commentaire"}', 'PROTO29');
+INSERT INTO public.comment VALUES ('b78366f8-8653-448a-8754-53a3135a2160', '{"COMMENT": "un commentaire"}', 'PROTO30');
 
 --
 -- TOC entry 3407 (class 0 OID 16494)
@@ -225,6 +991,15 @@ INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2148'
 INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2149', '{"idSU": "PROTO19"}', 'PROTO19');
 INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2150', '{"idSU": "PROTO20"}', 'PROTO20');
 INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2151', '{"idSU": "PROTO21"}', 'PROTO21');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2152', '{"idSU": "PROTO22"}', 'PROTO22');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2153', '{"idSU": "PROTO23"}', 'PROTO23');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2154', '{"idSU": "PROTO24"}', 'PROTO24');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2155', '{"idSU": "PROTO25"}', 'PROTO25');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2156', '{"idSU": "PROTO26"}', 'PROTO26');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2157', '{"idSU": "PROTO27"}', 'PROTO27');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2158', '{"idSU": "PROTO28"}', 'PROTO28');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2159', '{"idSU": "PROTO29"}', 'PROTO29');
+INSERT INTO public.paradata_event VALUES ('b78366f8-8653-448a-8754-53a3135a2160', '{"idSU": "PROTO30"}', 'PROTO30');
 
 --
 -- TOC entry 3408 (class 0 OID 16499)
@@ -269,6 +1044,15 @@ INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2148
 INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2149', '[]', 'PROTO19');
 INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2150', '[]', 'PROTO20');
 INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2151', '[]', 'PROTO21');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2152', '[]', 'PROTO22');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2153', '[]', 'PROTO23');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2154', '[]', 'PROTO24');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2155', '[]', 'PROTO25');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2156', '[]', 'PROTO26');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2157', '[]', 'PROTO27');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2158', '[]', 'PROTO28');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2159', '[]', 'PROTO29');
+INSERT INTO public.personalization VALUES ('b78366f8-8653-448a-8754-53a3135a2160', '[]', 'PROTO30');
 --
 -- TOC entry 3409 (class 0 OID 16504)
 -- Dependencies: 222
@@ -289,25 +1073,34 @@ INSERT INTO public.state_data VALUES ('f024ca52-95e5-4d4d-a15f-6111c68ff83e', '1
 INSERT INTO public.state_data VALUES ('ffa9847f-c2fa-4b50-a017-afcbf6a9c205', '1', 1731165855012, 'INIT', 'LOG2021X11Tel_01');
 INSERT INTO public.state_data VALUES ('9affeeb6-84f8-4f8c-bc7d-31b27202c8ab', '1', 1731165855013, 'INIT', 'LOG2021X11Tel_02');
 INSERT INTO public.state_data VALUES ('e75e53d5-66a4-4ab9-922a-a84e5709e8c9', '1', 1731165855014, 'INIT', 'LOG2021X11Tel_03');
-INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2131', 'endPage', 1741179158000, 'VALIDATED', 'PROTO02');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2131', '1', 1741179158000, 'VALIDATED', 'PROTO02');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2132', '1', 1741179158001, 'INIT', 'PROTO03');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2134', '2', 1741179158002, 'INIT', 'PROTO05');
-INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2135', 'endPage', 1741179158003, 'EXTRACTED', 'PROTO06');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2135', '1', 1741179158003, 'EXTRACTED', 'PROTO06');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2136', '4', 1741179158004, 'INIT', 'PROTO07');
-INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2137', 'endPage', 1741179158005, 'EXTRACTED', 'PROTO08');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2137', '1', 1741179158005, 'EXTRACTED', 'PROTO08');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2138', '5', 1741179158006, 'INIT', 'PROTO09');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2140', '6', 1741179158007, 'INIT', 'PROTO10');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2141', '7', 1741179158008, 'INIT', 'PROTO11');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2142', '8', 1741179158009, 'INIT', 'PROTO12');
-INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2143', 'endPage', 1741179158010, 'VALIDATED', 'PROTO13');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2143', '1', 1741179158010, 'VALIDATED', 'PROTO13');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2144', '10', 1741179158011, 'INIT', 'PROTO14');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2145', '11', 1741179158012, 'INIT', 'PROTO15');
-INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2146', 'endPage', 1741179158013, 'VALIDATED', 'PROTO16');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2146', '1', 1741179158013, 'VALIDATED', 'PROTO16');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2147', '13', 1741179158014, 'INIT', 'PROTO17');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2148', '14', 1741179158015, 'INIT', 'PROTO18');
-INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2149', 'endPage', 1741179158016, 'EXTRACTED', 'PROTO19');
-INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2150', '15#2', 1741179158017, 'INIT', 'PROTO20');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2149', '1', 1741179158016, 'EXTRACTED', 'PROTO19');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2150', '2.1#2', 1741179158017, 'INIT', 'PROTO20');
 INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2151', '1', 1741179158018, 'INIT', 'PROTO21');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2152', '1', 1741179158019, 'VALIDATED', 'PROTO22');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2153', '1', 1741179158020, 'INIT', 'PROTO23');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2154', '1', 1741179158021, 'INIT', 'PROTO24');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2155', '1', 1741179158022, 'INIT', 'PROTO25');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2156', '1', 1741179158023, 'EXTRACTED', 'PROTO26');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2157', '1', 1741179158024, 'INIT', 'PROTO27');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2158', '1', 1741179158025, 'EXTRACTED', 'PROTO28');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2159', '1', 1741179158026, 'INIT', 'PROTO29');
+INSERT INTO public.state_data VALUES ('b78366f8-8653-448a-8754-53a3135a2160', '1', 1741179158027, 'INIT', 'PROTO30');
 --
 -- TOC entry 3410 (class 0 OID 16540)
 -- Dependencies: 223
@@ -346,55 +1139,55 @@ DECLARE
   -- Définition du tableau contenant toutes les lignes à insérer.
   datas_to_insert text[][] := ARRAY[
       ARRAY['6cb4378d-aa70-4add-bb61-1f2fdc86dfbb',
-            '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse11"}}}',
             '11'],
       ARRAY['cf72a231-b40f-4ffa-9834-bf4e40bf85ac',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse12"}}}',
             '12'],
       ARRAY['f63bbfbe-9926-48ae-8d04-421296a40634',
-            '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse13"}}}',
             '13'],
       ARRAY['8e3b28cc-74b1-4391-8359-c495538129b7',
-            '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}, "COMMENT": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Love it !"}, "PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}}}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse14"}}}',
             '14'],
       ARRAY['e9e97450-ef9c-4f49-9375-adf11b6a158b',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse20"}}}',
             '20'],
       ARRAY['42dc1400-0a36-4c20-8742-115e22c42369',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse21"}}}',
             '21'],
       ARRAY['4540afba-ee51-42e4-bf74-d2346d813e89',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse22"}}}',
             '22'],
       ARRAY['757170c2-b2d5-4c71-85c1-61988b36e416',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse23"}}}',
             '23'],
       ARRAY['757170c2-b2d5-4c71-85c1-61988b36e417',
-            '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}, "COLLECTED": {"PRODUCER": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": "Matt Groening"}, "READY": {"EDITED": null, "FORCED": null, "INPUTED": null, "PREVIOUS": null, "COLLECTED": true}}}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse su-test-diff-data"}}}',
             'su-test-diff-data'],
       ARRAY['757170c2-b2d5-4c71-85c1-61988b36e418',
-            '{"EXTERNAL": {"LAST_BROADCAST": "12/07/1998"}}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse su-test-diff-without-collected-data"}}}',
             'su-test-diff-without-collected-data'],
       ARRAY['27abfaed-187a-44ab-8287-af08f3bd7158',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse LOG2021X11Web-01"}}}',
             'LOG2021X11Web-01'],
       ARRAY['c118114a-c0be-462d-9fe9-604436bea20a',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse LOG2021X11Web-02"}}}',
             'LOG2021X11Web-02'],
       ARRAY['df044ba3-9abb-451e-9e4d-75ba98ace5e6',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse LOG2021X11Web-03"}}}',
             'LOG2021X11Web-03'],
       ARRAY['fdc43238-cf8e-4a55-ad49-14ea8152728d',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse LOG2021X11Tel_01"}}}',
             'LOG2021X11Tel_01'],
       ARRAY['fa0a7a90-0324-429f-837b-ad06b79cfd7d',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse LOG2021X11Tel_02"}}}',
             'LOG2021X11Tel_02'],
       ARRAY['d51e29b9-b27b-4159-957c-6bb54d811a20',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse LOG2021X11Tel_03"}}}',
             'LOG2021X11Tel_03'],
       ARRAY['b78366f8-8653-448a-8754-53a3135a2130',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse1"}}}',
             'PROTO01'],
       ARRAY['b78366f8-8653-448a-8754-53a3135a2131',
             '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse2"}}}',
@@ -403,7 +1196,7 @@ DECLARE
             '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse3"}}}',
             'PROTO03'],
       ARRAY['b78366f8-8653-448a-8754-53a3135a2133',
-            '{}',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse4"}}}',
             'PROTO04'],
       ARRAY['b78366f8-8653-448a-8754-53a3135a2134',
             '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse5"}}}',
@@ -455,7 +1248,34 @@ DECLARE
             'PROTO20'],
       ARRAY['b78366f8-8653-448a-8754-53a3135a2151',
             '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse21"}}}',
-            'PROTO21']
+            'PROTO21'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2152',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse22"}}}',
+            'PROTO22'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2153',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse23"}}}',
+            'PROTO23'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2154',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse24"}}}',
+            'PROTO24'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2155',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse25"}}}',
+            'PROTO25'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2156',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse26"}}}',
+            'PROTO26'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2157',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse27"}}}',
+            'PROTO27'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2158',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse28"}}}',
+            'PROTO28'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2159',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse29"}}}',
+            'PROTO29'],
+      ARRAY['b78366f8-8653-448a-8754-53a3135a2160',
+            '{"EXTERNAL": {}, "CALCULATED": {}, "COLLECTED": {"TEXT": {"COLLECTED": "super réponse30"}}}',
+            'PROTO30']
   ];
   line text[];
 BEGIN

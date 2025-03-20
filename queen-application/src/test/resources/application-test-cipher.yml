@@ -35,20 +35,43 @@ feature:
   interviewer-mode:
     enabled: true
 spring:
+  docker:
+    compose:
+      enabled: true
+      file: compose.yml
+      lifecycle-management: start-and-stop
+      start:
+        command: up
+      stop:
+        command: down
+        timeout: 1m
+        arguments: -v
+      skip:
+        in-tests: false
+      profiles:
+        active:
+          - queen-db-ciphered
   datasource:
+    url: jdbc:postgresql://localhost:5435/queen-ciphered
+    username: mypostgresuser
+    password: mypostgrespassword
+    driver-class-name: org.postgresql.Driver
     hikari:
-      minimum-idle: 5
-      maximum-pool-size: 5
+      minimum-idle: 1
+      maximum-pool-size: 1
       connection-init-sql: select set_config('data.encryption.key', '${feature.sensitive-data.encryptionSecretKey}', false)
   liquibase:
     enabled: true
-    contexts: test
     defaultSchema: public
     change-log: classpath:db/integration-test.xml
+    parameters:
+      secretKey: ${feature.sensitive-data.encryptionSecretKey}
+
 logging:
+  appender: CONSOLE
   level:
     root: INFO
-    liquibase: ERROR
+    liquibase: INFO
 
 #force charset for mockmvc
 server:
