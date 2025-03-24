@@ -136,7 +136,10 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(LockedResourceException.class)
     public ResponseEntity<ApiError> lockedResourceException(LockedResourceException e, WebRequest request) {
-        return generateResponseError(e, HttpStatus.LOCKED, request);
+        log.info(e.getMessage());
+        HttpStatus status = HttpStatus.LOCKED;
+        ApiError error = errorComponent.buildApiErrorObject(request, status, e.getMessage());
+        return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(HabilitationException.class)
