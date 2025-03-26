@@ -1,0 +1,354 @@
+package fr.insee.queen.application.interrogation.integration;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.insee.queen.application.interrogation.dto.input.StateDataTypeInput;
+import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ActiveProfiles("test")
+@SpringBootTest
+@AutoConfigureMockMvc
+class InterrogationIT {
+    @Autowired
+    private MockMvc mockMvc;
+
+    private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
+
+    @Test
+    void on_get_interrogation_ids_return_ids() throws Exception {
+        mockMvc.perform(get("/api/interrogations")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(16)));
+    }
+
+    @Test
+    @DisplayName("Should return interrogations with states")
+    void on_get_interrogations_return_interrogations() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String expectedFirstResult = """
+        {
+                "id":"517046b6-bd88-47e0-838e-00d03461f592",
+                "surveyUnitId":"survey-unit-11",
+                "questionnaireId":"simpsons",
+                "campaignId":"SIMPSONS2020X00",
+                "stateData":{
+                    "state":"EXTRACTED",
+                    "date":1111111111,
+                    "currentPage":"2.3#5"
+                }
+        }""";
+        mockMvc.perform(get("/api/admin/campaign/SIMPSONS2020X00/interrogations")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("state", StateDataTypeInput.EXTRACTED.name())
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)))
+                // extract and check first element
+                .andExpect(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    JsonNode rootNode = mapper.readTree(responseContent);
+                    JsonNode firstContent = rootNode.get(0);
+                    JsonNode expectedNode = mapper.readTree(expectedFirstResult);
+                    assertThat(firstContent).isEqualTo(expectedNode);
+                });
+    }
+
+    @Test
+    void on_get_interrogations_by_campaign_when_campaign_not_exist_return_404() throws Exception {
+        mockMvc.perform(get("/api/campaign/not-exist/interrogations")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void on_get_interrogations_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
+        mockMvc.perform(get("/api/campaign/invalid!identifier/interrogations")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_create_interrogation_when_campaign_not_exist_return_404() throws Exception {
+        mockMvc.perform(post("/api/campaign/not-exist/interrogation")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(InterrogationCommonAssertions.INTERROGATION_DATA)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void on_create_interrogation_when_campaign_not_linked_to_questionnaire_return_400() throws Exception {
+        String suData = """
+                {
+                    "id":"test-interrogation2",
+                    "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                    "questionnaireId":"simpsons"
+                }""";
+        mockMvc.perform(post("/api/campaign/VQS2021X00/interrogation")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(suData)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_create_interrogation_when_campaign_identifier_invalid_return_400() throws Exception {
+        mockMvc.perform(post("/api/campaign/invalid!identifier/interrogation")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(InterrogationCommonAssertions.INTERROGATION_DATA)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_get_interrogation_when_identifier_invalid_return_400() throws Exception {
+        mockMvc.perform(get("/api/interrogation/invalidéidentifier")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_get_interrogation_when_not_exist_return_404() throws Exception {
+        mockMvc.perform(get("/api/interrogation/not-exist")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void on_delete_interrogation_when_identifier_invalid_return_400() throws Exception {
+        mockMvc.perform(delete("/api/interrogation/invalid!identifier")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void on_delete_interrogation_when_not_exist_return_404() throws Exception {
+        mockMvc.perform(delete("/api/interrogation/not-exist")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void on_get_deposit_proof_return_200() throws Exception {
+        mockMvc.perform(get("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/deposit-proof")
+                        .accept(MediaType.APPLICATION_PDF)
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
+                )
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    void on_get_interrogation_metadata_return_interrogation_metadata() throws Exception {
+        String interrogationId = "538d89c2-1047-48f7-8c16-02e9f41a8093";
+        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/metadata")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        String expectedResult = """
+        {
+            "context":"household",
+            "personalization":[],
+            "label":"Enquête logement pour la recette technique",
+            "objectives":"Cette enquête permet de connaître votre logement mais surtout nos applis",
+            "variables":[
+                {"name":"Enq_CaractereObligatoire","value":true},
+                {"name":"Enq_NumeroVisa","value":"2021A054EC"},
+                {"name":"Enq_MinistereTutelle","value":"de l'Économie, des Finances et de la Relance"},
+                {"name":"Enq_ParutionJo","value":true},{"name":"Enq_DateParutionJo","value":"23/11/2020"},
+                {"name":"Enq_RespOperationnel","value":"L’Institut national de la statistique et des études économiques (Insee)"},
+                {"name":"Enq_RespTraitement","value":"l'Insee"},{"name":"Enq_AnneeVisa","value":"2021"},
+                {"name":"Loi_statistique","value":"https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000888573"},
+                {"name":"Loi_rgpd","value":"https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32016R0679"},
+                {"name":"Loi_informatique","value":"https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000886460"}
+            ],
+            "logos": {
+                "main": {
+                    "url": "https://insee.fr/logo1.png",
+                    "label": "logo1"
+                },
+                "secondaries": [
+                    {
+                        "url": "https://insee.fr/logo2.png",
+                        "label": "logo2"
+                    },
+                    {
+                        "url": "https://insee.fr/logo3.png",
+                        "label": "logo3"
+                    }
+                ]
+            }
+        }""";
+        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
+    }
+
+    @Test
+    void on_get_interrogation_metadata_when_invalid_metadata_return_404() throws Exception {
+        String interrogationId = "517046b6-bd88-47e0-838e-00d03461f592";
+        mockMvc.perform(get("/api/interrogation/" + interrogationId + "/metadata")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void on_get_deposit_proof_when_not_exist_return_404() throws Exception {
+        mockMvc.perform(get("/api/interrogation/not-exist/deposit-proof")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void when_authenticated_non_admin_user_access_admin_endpoints_return_403() throws Exception {
+        mockMvc.perform(get("/api/interrogations")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
+                )
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/api/campaign/VQS2021X00/interrogation")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(InterrogationCommonAssertions.INTERROGATION_DATA)
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
+                )
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(delete("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void when_user_update_interrogation_with_incorrect_identifier_return_400() throws Exception {
+        String interrogationDataStateData = """
+            {
+                "data":""" + InterrogationCommonAssertions.INTERROGATION_DATA + ", " +
+                """
+                    "stateData": {
+                        "state": "EXTRACTED",
+                        "date": 1111111111,
+                        "currentPage": "2.3#5"
+                    }
+                }""";
+        mockMvc.perform(patch("/api/interrogation/invalid!identifier")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(interrogationDataStateData)
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void when_non_interviewer_get_interrogations_return_403() throws Exception {
+        mockMvc.perform(get("/api/interrogations/interviewer")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getNonInterviewerUser()))
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void when_anonymous_user_access_authenticated_endpoints_return_401() throws Exception {
+        List<String> getEndPoints = List.of(
+                "/api/interrogations",
+                "/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592",
+                "/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/deposit-proof",
+                "/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/metadata",
+                "/api/campaign/VQS2021X00/interrogations",
+                "/api/interrogations/interviewer");
+        for (String getEndPoint : getEndPoints) {
+            mockMvc.perform(get(getEndPoint)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                    )
+                    .andExpect(status().isUnauthorized());
+        }
+
+        mockMvc.perform(post("/api/campaign/VQS2021X00/interrogation")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(InterrogationCommonAssertions.INTERROGATION_DATA)
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                )
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(put("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(InterrogationCommonAssertions.INTERROGATION_DATA)
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                )
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(patch("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(InterrogationCommonAssertions.INTERROGATION_DATA)
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                )
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(delete("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                )
+                .andExpect(status().isUnauthorized());
+    }
+}

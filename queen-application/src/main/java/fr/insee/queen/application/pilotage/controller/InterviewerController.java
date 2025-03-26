@@ -2,13 +2,13 @@ package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
-import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitByCampaignDto;
-import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationByCampaignDto;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.interrogation.model.Interrogation;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,43 +56,43 @@ public class InterviewerController {
     }
 
     /**
-     * Retrieve all the survey units of the current interviewer
+     * Retrieve all the interrogations of the current interviewer
      *
-     * @return List of {@link SurveyUnitDto} survey units
+     * @return List of {@link InterrogationDto} interrogations
      */
-    @Operation(summary = "Get list of survey units linked to the current interviewer")
-    @Tag(name = "06. Survey units")
-    @GetMapping(path = "/survey-units/interviewer")
+    @Operation(summary = "Get list of interrogations linked to the current interviewer")
+    @Tag(name = "06. Interrogations")
+    @GetMapping("/interrogations/interviewer")
     @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
-    public List<SurveyUnitDto> getInterviewerSurveyUnits() {
-        // get survey units for the interviewer
-        List<SurveyUnit> surveyUnits = pilotageComponent.getInterviewerSurveyUnits();
+    public List<InterrogationDto> getInterviewerInterrogations() {
+        // get interrogations for the interviewer
+        List<Interrogation> interrogations = pilotageComponent.getInterviewerInterrogations();
 
-        return surveyUnits.stream()
-                .map(SurveyUnitDto::fromModel)
+        return interrogations.stream()
+                .map(InterrogationDto::fromModel)
                 .toList();
     }
 
     /**
-     * Retrieve all the survey units of a campaign
+     * Retrieve all the interrogations of a campaign
      *
      * @param campaignId the id of campaign
-     * @return List of {@link SurveyUnitByCampaignDto}
+     * @return List of {@link InterrogationByCampaignDto}
      */
-    @Operation(summary = "Get list of survey units for a campaign")
-    @Tag(name = "06. Survey units")
-    @GetMapping(path = "/campaign/{id}/survey-units")
+    @Operation(summary = "Get list of interrogations for a campaign")
+    @Tag(name = "06. Interrogations")
+    @GetMapping("/campaign/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
-    public List<SurveyUnitByCampaignDto> getListSurveyUnitByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
-        // get survey units of a campaign from the pilotage api
-        List<SurveyUnitSummary> surveyUnits = pilotageComponent.getSurveyUnitsByCampaign(campaignId);
+    public List<InterrogationByCampaignDto> getListInterrogationByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
+        // get interrogations of a campaign from the pilotage api
+        List<InterrogationSummary> interrogations = pilotageComponent.getInterrogationsByCampaign(campaignId);
 
-        if (surveyUnits.isEmpty()) {
-            throw new EntityNotFoundException(String.format("No survey units for the campaign with id %s", campaignId));
+        if (interrogations.isEmpty()) {
+            throw new EntityNotFoundException(String.format("No interrogations for the campaign with id %s", campaignId));
         }
 
-        return surveyUnits.stream()
-                .map(SurveyUnitByCampaignDto::fromModel)
+        return interrogations.stream()
+                .map(InterrogationByCampaignDto::fromModel)
                 .toList();
     }
 }

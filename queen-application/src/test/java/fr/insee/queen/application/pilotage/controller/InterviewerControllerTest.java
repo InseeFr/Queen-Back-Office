@@ -2,8 +2,8 @@ package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
-import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitByCampaignDto;
-import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationByCampaignDto;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,27 +34,27 @@ class InterviewerControllerTest {
     }
 
     @Test
-    @DisplayName("On retrieving survey units for a campaign, then return survey units from pilotage service")
-    void testGetSurveyUnitsCampaign01() {
-        List<SurveyUnitByCampaignDto> surveyUnits = interviewerController.getListSurveyUnitByCampaign("campaign-id");
-        assertThat(surveyUnits).hasSize(2);
-        assertThat(surveyUnits.getFirst().id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);
+    @DisplayName("On retrieving interrogations for a campaign, then return interrogations from pilotage service")
+    void testGetInterrogationsCampaign01() {
+        List<InterrogationByCampaignDto> interrogations = interviewerController.getListInterrogationByCampaign("campaign-id");
+        assertThat(interrogations).hasSize(2);
+        assertThat(interrogations.getFirst().id()).isEqualTo(PilotageFakeComponent.INTERROGATION1_ID);
     }
 
     @Test
-    @DisplayName("On retrieving survey units for a campaign, when survey units are empty then throws exception")
-    void testGetSurveyUnitsCampaign02() {
-        pilotageComponent.setHasEmptySurveyUnits(true);
-        assertThatThrownBy(() -> interviewerController.getListSurveyUnitByCampaign("campaign-id"))
+    @DisplayName("On retrieving interrogations for a campaign, when interrogations are empty then throws exception")
+    void testGetInterrogationsCampaign02() {
+        pilotageComponent.setHasEmptyInterrogations(true);
+        assertThatThrownBy(() -> interviewerController.getListInterrogationByCampaign("campaign-id"))
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
-    @DisplayName("On retrieving survey units for an interviewer, return survey units found")
-    void testGetSurveyUnitsForInterviewers03() {
-        List<SurveyUnitDto> surveyUnits =  interviewerController.getInterviewerSurveyUnits();
-        assertThat(surveyUnits).size().isEqualTo(2);
-        assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT1_ID);
-        assertThat(surveyUnits.get(1).id()).isEqualTo(PilotageFakeComponent.SURVEY_UNIT2_ID);
+    @DisplayName("On retrieving interrogations for an interviewer, return interrogations found")
+    void testGetInterrogationsForInterviewers03() {
+        List<InterrogationDto> interrogations =  interviewerController.getInterviewerInterrogations();
+        assertThat(interrogations).size().isEqualTo(2);
+        assertThat(interrogations.get(0).id()).isEqualTo(PilotageFakeComponent.INTERROGATION1_ID);
+        assertThat(interrogations.get(1).id()).isEqualTo(PilotageFakeComponent.INTERROGATION2_ID);
     }
 }

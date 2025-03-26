@@ -28,10 +28,10 @@ import java.io.*;
 import java.nio.file.Files;
 
 /**
- * Handle survey units
+ * Handle interrogations
  */
 @RestController
-@Tag(name = "06. Survey units", description = "Endpoints for survey units")
+@Tag(name = "06. Interrogations", description = "Endpoints for interrogations")
 @RequestMapping(path = "/api")
 @Slf4j
 @RequiredArgsConstructor
@@ -41,20 +41,20 @@ public class DepositProofController {
     private final PilotageComponent pilotageComponent;
 
     /**
-     * Generate and retrieve a deposit proof (pdf file) for a survey unit
+     * Generate and retrieve a deposit proof (pdf file) for a interrogation
      *
-     * @param surveyUnitId survey unit id
+     * @param interrogationId interrogation id
      */
-    @Operation(summary = "Get deposit proof for a survey unit")
+    @Operation(summary = "Get deposit proof for a interrogation")
     @Parameter(name = "userId", hidden = true)
-    @GetMapping(value = "/survey-unit/{id}/deposit-proof")
+    @GetMapping("/interrogation/{id}/deposit-proof")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    public ResponseEntity<FileSystemResource> generateDepositProof(@IdValid @PathVariable(value = "id") String surveyUnitId,
+    public ResponseEntity<FileSystemResource> generateDepositProof(@IdValid @PathVariable(value = "id") String interrogationId,
                                                                    @CurrentSecurityContext(expression = "authentication.name")
                                      String userId) {
-        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
+        pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
 
-        PdfDepositProof depositProof = depositProofService.generateDepositProof(userId, surveyUnitId);
+        PdfDepositProof depositProof = depositProofService.generateDepositProof(userId, interrogationId);
         File pdfFile = depositProof.depositProof();
         long fileLength = pdfFile.length();
 

@@ -8,16 +8,16 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * JPA repository to handle survey unit's data response for a questionnaire
+ * JPA repository to handle interrogation's data response for a questionnaire
  */
 @ConditionalOnProperty(name = "feature.sensitive-data.enabled", havingValue = "false")
 @Repository
 public interface UncipheredDataJpaRepository extends DataJpaRepository {
 
     /**
-     * Update data for a survey unit
+     * Update data for a interrogation
      *
-     * @param surveyUnitId survey unit id
+     * @param interrogationId interrogation id
      * @param collectedUpdateData partial collected data to set on current collected data
      */
     @Transactional
@@ -27,19 +27,19 @@ public interface UncipheredDataJpaRepository extends DataJpaRepository {
             set value = jsonb_set(coalesce(value, '{}'),
                         '{COLLECTED}',
                         coalesce(value->'COLLECTED', '{}') || :collectedUpdateData)
-            where survey_unit_id=:surveyUnitId
+            where interrogation_id=:interrogationId
     """, nativeQuery = true)
-    void updateCollectedData(String surveyUnitId, ObjectNode collectedUpdateData);
+    void updateCollectedData(String interrogationId, ObjectNode collectedUpdateData);
 
     @Transactional
     @Modifying
     @Query(value = """
         UPDATE data
             SET value = '{}'::jsonb
-            WHERE survey_unit_id IN (
+            WHERE interrogation_id IN (
                 SELECT su.id
-                FROM survey_unit su
-                INNER JOIN state_data sd ON sd.survey_unit_id = su.id
+                FROM interrogation su
+                INNER JOIN state_data sd ON sd.interrogation_id = su.id
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND sd.date BETWEEN :startTimestamp AND :endTimestamp
             );

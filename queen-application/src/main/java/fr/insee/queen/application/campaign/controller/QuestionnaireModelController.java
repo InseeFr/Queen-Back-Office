@@ -5,12 +5,12 @@ import fr.insee.queen.application.campaign.dto.input.QuestionnaireModelCreationD
 import fr.insee.queen.application.campaign.dto.output.QuestionnaireModelIdDto;
 import fr.insee.queen.application.campaign.dto.output.QuestionnaireModelValueDto;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
-import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitDto;
-import fr.insee.queen.application.surveyunit.dto.output.SurveyUnitOkNokDto;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationOkNokDto;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.service.QuestionnaireModelService;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
-import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
+import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -35,7 +35,7 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class QuestionnaireModelController {
-    private final SurveyUnitService surveyUnitService;
+    private final InterrogationService interrogationService;
     private final QuestionnaireModelService questionnaireModelService;
 
     /**
@@ -115,25 +115,25 @@ public class QuestionnaireModelController {
     }
 
     /**
-     * Search questionnaire ids linked to survey units
+     * Search questionnaire ids linked to interrogations
      *
-     * @param surveyUnitIdsToSearch survey unit ids where we want to retrive the questionnaire ids
-     * @return {@link SurveyUnitOkNokDto} list of survey units with their questionnaire ids, and list of survey units where no questionnaire found
+     * @param interrogationIdsToSearch interrogation ids where we want to retrive the questionnaire ids
+     * @return {@link InterrogationOkNokDto} list of interrogations with their questionnaire ids, and list of interrogations where no questionnaire found
      */
-    @Operation(summary = "Search questionnaire ids linked to survey units")
-    @PostMapping(path = "/survey-units/questionnaire-model-id")
+    @Operation(summary = "Search questionnaire ids linked to interrogations")
+    @PostMapping("/interrogations/questionnaire-model-id")
     @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
-    public ResponseEntity<SurveyUnitOkNokDto> getQuestionnaireModelIdBySurveyUnits(
-            @NotEmpty @RequestBody List<String> surveyUnitIdsToSearch) {
-        List<SurveyUnitSummary> surveyUnitsFound = surveyUnitService.findSummariesByIds(surveyUnitIdsToSearch);
-        List<String> surveyUnitIdsFound = surveyUnitsFound.stream().map(SurveyUnitSummary::id).toList();
-        List<SurveyUnitDto> surveyUnitsNOK = surveyUnitIdsToSearch.stream()
-                .filter(surveyUnitIdToSearch -> !surveyUnitIdsFound.contains(surveyUnitIdToSearch))
-                .map(SurveyUnitDto::createSurveyUnitNOKDto)
+    public ResponseEntity<InterrogationOkNokDto> getQuestionnaireModelIdByInterrogations(
+            @NotEmpty @RequestBody List<String> interrogationIdsToSearch) {
+        List<InterrogationSummary> interrogationsFound = interrogationService.findSummariesByIds(interrogationIdsToSearch);
+        List<String> interrogationIdsFound = interrogationsFound.stream().map(InterrogationSummary::id).toList();
+        List<InterrogationDto> interrogationsNOK = interrogationIdsToSearch.stream()
+                .filter(interrogationIdToSearch -> !interrogationIdsFound.contains(interrogationIdToSearch))
+                .map(InterrogationDto::createInterrogationNOKDto)
                 .toList();
-        List<SurveyUnitDto> surveyUnitsOK = surveyUnitsFound.stream()
-                .map(su -> SurveyUnitDto.createSurveyUnitOKDtoWithQuestionnaireModel(su.id(), su.questionnaireId()))
+        List<InterrogationDto> interrogationsOK = interrogationsFound.stream()
+                .map(su -> InterrogationDto.createInterrogationOKDtoWithQuestionnaireModel(su.id(), su.questionnaireId()))
                 .toList();
-        return new ResponseEntity<>(new SurveyUnitOkNokDto(surveyUnitsOK, surveyUnitsNOK), HttpStatus.OK);
+        return new ResponseEntity<>(new InterrogationOkNokDto(interrogationsOK, interrogationsNOK), HttpStatus.OK);
     }
 }

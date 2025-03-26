@@ -62,7 +62,7 @@ class NomenclatureIT{
     @CsvSource(value = {"regions2019,nomenclature/regions-2019.json"})
     void on_get_nomenclature_return_json_nomenclature(String nomenclatureName, String nomenclatureJsonFile) throws Exception {
         MvcResult result = mockMvc.perform(get("/api/nomenclature/" + nomenclatureName)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
@@ -100,7 +100,7 @@ class NomenclatureIT{
     @ValueSource(strings = {"sqqghk"})
     void on_get_nomenclature_when_nomenclature_not_exists_return_404(String nomenclatureName) throws Exception {
         mockMvc.perform(get("/api/nomenclature/" + nomenclatureName)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isNotFound())
                 .andReturn();
     }
@@ -108,7 +108,7 @@ class NomenclatureIT{
     @Test
     void on_get_nomenclature_when_nomenclature_id_not_valid_return_400() throws Exception {
         mockMvc.perform(get("/api/nomenclature/s4-%")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
@@ -116,7 +116,7 @@ class NomenclatureIT{
     @Test
     void on_get_required_nomenclatures_return_nomenclatures_for_campaign() throws Exception {
         mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/required-nomenclatures")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
                 .andExpect(jsonPath("$[*]").value(containsInAnyOrder("cities2019", "regions2019")));
@@ -125,7 +125,7 @@ class NomenclatureIT{
     @Test
     void on_get_required_nomenclatures_return_nomenclatures_for_questionnaire() throws Exception {
         mockMvc.perform(get("/api/questionnaire/simpsons/required-nomenclatures")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
                 .andExpect(jsonPath("$[*]").value(containsInAnyOrder("cities2019", "regions2019")));
@@ -134,14 +134,14 @@ class NomenclatureIT{
     @Test
     void on_get_required_nomenclatures_when_campaign_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/campaign/QSHL/required-nomenclatures")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void on_get_required_nomenclatures_when_campaign_id_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/campaign/éplop/required-nomenclatures")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isBadRequest());
     }
 
@@ -183,9 +183,9 @@ class NomenclatureIT{
     }
 
     @Test
-    void on_get_nomenclatures_when_surveyUnitUser_return_403() throws Exception {
+    void on_get_nomenclatures_when_interrogationUser_return_403() throws Exception {
         mockMvc.perform(get("/api/nomenclatures")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isForbidden());
     }
 }

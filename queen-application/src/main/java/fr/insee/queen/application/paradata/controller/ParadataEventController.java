@@ -18,7 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Handle creation of paradata events for a survey unit. Paradatas are data
+ * Handle creation of paradata events for a interrogation. Paradatas are data
  * giving additional information about how the user is filling the questionnaire
  */
 @RestController
@@ -32,27 +32,27 @@ public class ParadataEventController {
     private final PilotageComponent pilotageComponent;
 
     /**
-     * Create a paradata event for a survey unit
+     * Create a paradata event for a interrogation
      *
      * @param paradataValue paradata value
      */
-    @Operation(summary = "Create paradata event for a survey unit")
+    @Operation(summary = "Create paradata event for a interrogation")
     @PostMapping(path = "/paradata")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)
     public void addParadata(@NotNull @RequestBody ObjectNode paradataValue) {
-        String paradataSurveyUnitIdParameter = "idSU";
-        if (!paradataValue.has(paradataSurveyUnitIdParameter)) {
-            throw new EntityNotFoundException("Paradata does not contain the survey unit id");
+        String paradataInterrogationIdParameter = "idInterrogation";
+        if (!paradataValue.has(paradataInterrogationIdParameter)) {
+            throw new EntityNotFoundException("Paradata does not contain the interrogation id");
         }
 
-        JsonNode surveyUnitNode = paradataValue.get(paradataSurveyUnitIdParameter);
-        if (!surveyUnitNode.isTextual() || surveyUnitNode.textValue() == null) {
-            throw new EntityNotFoundException("Paradata does not contain the survey unit id");
+        JsonNode interrogationNode = paradataValue.get(paradataInterrogationIdParameter);
+        if (!interrogationNode.isTextual() || interrogationNode.textValue() == null) {
+            throw new EntityNotFoundException("Paradata does not contain the interrogation id");
         }
 
-        String surveyUnitId = surveyUnitNode.textValue();
-        pilotageComponent.checkHabilitations(surveyUnitId, PilotageRole.INTERVIEWER);
-        paradataEventService.createParadataEvent(surveyUnitId, paradataValue);
+        String interrogationId = interrogationNode.textValue();
+        pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER);
+        paradataEventService.createParadataEvent(interrogationId, paradataValue);
     }
 }

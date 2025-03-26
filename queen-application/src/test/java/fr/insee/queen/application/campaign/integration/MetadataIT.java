@@ -31,7 +31,7 @@ class MetadataIT {
     @Test
     void when_empty_or_no_metadata_by_questionnaire_return_empty_json_metadata() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/questionnaire/simpsonsV2/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -42,7 +42,7 @@ class MetadataIT {
     @Test
     void on_get_metadata_by_questionnaire_retrieve_correct_metadata() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/questionnaire/LOG2021X11Web/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -54,7 +54,7 @@ class MetadataIT {
     @Test
     void on_get_metadata_by_questionnaire_when_incorrect_identifier_questionnaire_format_id_return_400() throws Exception {
         mockMvc.perform(get("/api/questionnaire/insert into plopés/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -62,7 +62,7 @@ class MetadataIT {
     @Test
     void on_get_metadata_by_questionnaire_when_non_existing_questionnaire_format_id_return_404() throws Exception {
         mockMvc.perform(get("/api/questionnaire/QSJFDG12345/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -70,7 +70,7 @@ class MetadataIT {
     @Test
     void when_empty_or_no_metadata_by_campaign_return_empty_json_metadata() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -81,7 +81,7 @@ class MetadataIT {
     @Test
     void on_get_metadata_by_campaign_retrieve_correct_metadata() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/campaign/LOG2021X11Web/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -93,7 +93,7 @@ class MetadataIT {
     @Test
     void on_get_metadata_by_campaign_when_incorrect_identifier_campaign_format_id_return_400() throws Exception {
         mockMvc.perform(get("/api/campaign/insert into plopés/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -101,7 +101,7 @@ class MetadataIT {
     @Test
     void on_get_metadata_by_campaign_when_non_existing_campaign_format_id_return_404() throws Exception {
         mockMvc.perform(get("/api/campaign/QSJFDG12345/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser())))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
     }

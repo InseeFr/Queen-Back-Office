@@ -24,4 +24,5 @@
 	<include file="changelog/611_sensitive_campaign.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/612_add-interrogation-id.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/613_change_type_of_intero_id.sql" relativeToChangelogFile="true"/>
+	<include file="changelog/620_surveyunit-to-interrogation.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
