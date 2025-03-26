@@ -6,11 +6,11 @@ import java.util.UUID;
 
 public interface ParadataEventRepository {
     /**
-     * Create paradata for a survey unit
+     * Create paradata for a interrogation
      *
      * @param id paradata id
      * @param paradataValue paradata value (json format)
-     * @param surveyUnitId survey unit id
+     * @param interrogationId interrogation id
      */
-    void createParadataEvent(UUID id, ObjectNode paradataValue, String surveyUnitId);
+    void createParadataEvent(UUID id, ObjectNode paradataValue, String interrogationId);
 }

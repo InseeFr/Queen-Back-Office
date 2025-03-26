@@ -3,9 +3,9 @@ package fr.insee.queen.application.pilotage.controller;
 import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
-import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
+import fr.insee.queen.domain.interrogation.model.Interrogation;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
+import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class NoPilotageComponent implements PilotageComponent {
-    private final SurveyUnitService surveyUnitService;
+    private final InterrogationService interrogationService;
     private final CampaignService campaignService;
 
     @Override
@@ -25,8 +25,8 @@ public class NoPilotageComponent implements PilotageComponent {
     }
 
     @Override
-    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId) {
-        return surveyUnitService.findSummariesByCampaignId(campaignId);
+    public List<InterrogationSummary> getInterrogationsByCampaign(String campaignId) {
+        return interrogationService.findSummariesByCampaignId(campaignId);
     }
 
     @Override
@@ -37,12 +37,12 @@ public class NoPilotageComponent implements PilotageComponent {
     }
 
     @Override
-    public List<SurveyUnit> getInterviewerSurveyUnits() {
-        return surveyUnitService.findAllSurveyUnits();
+    public List<Interrogation> getInterviewerInterrogations() {
+        return interrogationService.findAllInterrogations();
     }
 
     @Override
-    public void checkHabilitations(String surveyUnitId, PilotageRole... roles) {
-        surveyUnitService.throwExceptionIfSurveyUnitNotExist(surveyUnitId);
+    public void checkHabilitations(String interrogationId, PilotageRole... roles) {
+        interrogationService.throwExceptionIfInterrogationNotExist(interrogationId);
     }
 }

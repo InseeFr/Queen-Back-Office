@@ -43,7 +43,7 @@ public class AuthenticatedUserTestHelper {
                 AuthorityRoleEnum.SURVEY_UNIT);
     }
 
-    public JwtAuthenticationToken getSurveyUnitUser() {
+    public JwtAuthenticationToken getInterrogationUser() {
         return getAuthenticatedUser(AuthorityRoleEnum.SURVEY_UNIT);
     }
 

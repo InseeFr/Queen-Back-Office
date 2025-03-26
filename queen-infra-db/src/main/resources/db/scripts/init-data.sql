@@ -6,8 +6,8 @@
 -- Data for Name: campaign; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-TRUNCATE TABLE public.survey_unit_temp_zone, public.state_data, public.paradata_event,
-    public.data, public.comment, public.personalization, public.survey_unit,
+TRUNCATE TABLE public.interrogation_temp_zone, public.state_data, public.paradata_event,
+    public.data, public.comment, public.personalization, public.interrogation,
     public.required_nomenclature, public.questionnaire_model, public.nomenclature,
     public.metadata, public.campaign;
 
@@ -77,25 +77,25 @@ INSERT INTO public.required_nomenclature VALUES ('LOG2021X11Tel', 'L_NATIONETR')
 --
 -- TOC entry 3404 (class 0 OID 16424)
 -- Dependencies: 217
--- Data for Name: survey_unit; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: interrogation; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.survey_unit VALUES ('11', 'SIMPSONS2020X00', 'simpsons');
-INSERT INTO public.survey_unit VALUES ('12', 'SIMPSONS2020X00', 'simpsons');
-INSERT INTO public.survey_unit VALUES ('13', 'SIMPSONS2020X00', 'simpsonsV2');
-INSERT INTO public.survey_unit VALUES ('14', 'SIMPSONS2020X00', 'simpsonsV2');
-INSERT INTO public.survey_unit VALUES ('20', 'VQS2021X00', 'VQS2021X00');
-INSERT INTO public.survey_unit VALUES ('21', 'VQS2021X00', 'VQS2021X00');
-INSERT INTO public.survey_unit VALUES ('22', 'VQS2021X00', 'VQS2021X00');
-INSERT INTO public.survey_unit VALUES ('23', 'VQS2021X00', 'VQS2021X00');
-INSERT INTO public.survey_unit VALUES ('LOG2021X11Web-01', 'LOG2021X11Web', 'LOG2021X11Web');
-INSERT INTO public.survey_unit VALUES ('LOG2021X11Web-02', 'LOG2021X11Web', 'LOG2021X11Web');
-INSERT INTO public.survey_unit VALUES ('LOG2021X11Web-03', 'LOG2021X11Web', 'LOG2021X11Web');
-INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_01', 'LOG2021X11Tel', 'LOG2021X11Tel');
-INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_02', 'LOG2021X11Tel', 'LOG2021X11Tel');
-INSERT INTO public.survey_unit VALUES ('LOG2021X11Tel_03', 'LOG2021X11Tel', 'LOG2021X11Tel');
-INSERT INTO public.survey_unit VALUES ('su-test-diff-data', 'LOG2021X11Tel', 'LOG2021X11Tel');
-INSERT INTO public.survey_unit VALUES ('su-test-diff-without-collected-data', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.interrogation VALUES ('11', 'SIMPSONS2020X00', 'simpsons');
+INSERT INTO public.interrogation VALUES ('12', 'SIMPSONS2020X00', 'simpsons');
+INSERT INTO public.interrogation VALUES ('13', 'SIMPSONS2020X00', 'simpsonsV2');
+INSERT INTO public.interrogation VALUES ('14', 'SIMPSONS2020X00', 'simpsonsV2');
+INSERT INTO public.interrogation VALUES ('20', 'VQS2021X00', 'VQS2021X00');
+INSERT INTO public.interrogation VALUES ('21', 'VQS2021X00', 'VQS2021X00');
+INSERT INTO public.interrogation VALUES ('22', 'VQS2021X00', 'VQS2021X00');
+INSERT INTO public.interrogation VALUES ('23', 'VQS2021X00', 'VQS2021X00');
+INSERT INTO public.interrogation VALUES ('LOG2021X11Web-01', 'LOG2021X11Web', 'LOG2021X11Web');
+INSERT INTO public.interrogation VALUES ('LOG2021X11Web-02', 'LOG2021X11Web', 'LOG2021X11Web');
+INSERT INTO public.interrogation VALUES ('LOG2021X11Web-03', 'LOG2021X11Web', 'LOG2021X11Web');
+INSERT INTO public.interrogation VALUES ('LOG2021X11Tel_01', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.interrogation VALUES ('LOG2021X11Tel_02', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.interrogation VALUES ('LOG2021X11Tel_03', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.interrogation VALUES ('su-test-diff-data', 'LOG2021X11Tel', 'LOG2021X11Tel');
+INSERT INTO public.interrogation VALUES ('su-test-diff-without-collected-data', 'LOG2021X11Tel', 'LOG2021X11Tel');
 
 --
 -- TOC entry 3399 (class 0 OID 16396)
@@ -195,11 +195,11 @@ INSERT INTO public.state_data VALUES ('e75e53d5-66a4-4ab9-922a-a84e5709e8c9', '1
 --
 -- TOC entry 3410 (class 0 OID 16540)
 -- Dependencies: 223
--- Data for Name: survey_unit_temp_zone; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: interrogation_temp_zone; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.survey_unit_temp_zone VALUES ('42858b14-2a0c-4d17-afd0-f50a0f9a8dd5','temp-11', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-11"}');
-INSERT INTO public.survey_unit_temp_zone VALUES ('6fcbbd84-3464-4290-b8fc-cdf0082ee339','temp-12', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-12"}');
+INSERT INTO public.interrogation_temp_zone VALUES ('42858b14-2a0c-4d17-afd0-f50a0f9a8dd5','temp-11', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-11"}');
+INSERT INTO public.interrogation_temp_zone VALUES ('6fcbbd84-3464-4290-b8fc-cdf0082ee339','temp-12', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-12"}');
 
 
 --changeset davdarras:test-fun1-data context:test
@@ -283,11 +283,11 @@ DECLARE
   line text[];
 BEGIN
   FOREACH line SLICE 1 IN ARRAY datas_to_insert LOOP
-    -- line[1] = id, line[2] = json value, line[3] = survey_unit_id.
+    -- line[1] = id, line[2] = json value, line[3] = interrogation_id.
     IF is_encrypted() = 1 THEN
-      INSERT INTO public.data (id, value, survey_unit_id, encrypted) VALUES ( line[1]::uuid, encrypt(line[2]), line[3], is_encrypted());
+      INSERT INTO public.data (id, value, interrogation_id, encrypted) VALUES ( line[1]::uuid, encrypt(line[2]), line[3], is_encrypted());
     ELSE
-      INSERT INTO public.data (id, value, survey_unit_id, encrypted) VALUES ( line[1]::uuid, line[2]::jsonb, line[3], is_encrypted());
+      INSERT INTO public.data (id, value, interrogation_id, encrypted) VALUES ( line[1]::uuid, line[2]::jsonb, line[3], is_encrypted());
     END IF;
   END LOOP;
 END ';

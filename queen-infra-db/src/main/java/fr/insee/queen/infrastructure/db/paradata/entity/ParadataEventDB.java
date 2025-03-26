@@ -1,7 +1,7 @@
 package fr.insee.queen.infrastructure.db.paradata.entity;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
+import fr.insee.queen.infrastructure.db.interrogation.entity.InterrogationDB;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,5 +33,5 @@ public class ParadataEventDB {
     private ObjectNode value;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private SurveyUnitDB surveyUnit;
+    private InterrogationDB interrogation;
 }

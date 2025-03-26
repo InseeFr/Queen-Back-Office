@@ -9,7 +9,7 @@ public class ParadataEventFakeService implements ParadataEventService {
     private boolean created = false;
 
     @Override
-    public void createParadataEvent(String surveyUnitId, ObjectNode paradataValue) {
+    public void createParadataEvent(String interrogationId, ObjectNode paradataValue) {
         this.created = true;
     }
 }

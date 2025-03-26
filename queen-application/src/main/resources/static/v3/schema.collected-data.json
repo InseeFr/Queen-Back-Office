@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Collected data schema",
-  "description": "Validation of survey unit collected data",
+  "description": "Validation of interrogation collected data",
   "type": "object",
   "patternProperties": {
     "^.*$": {

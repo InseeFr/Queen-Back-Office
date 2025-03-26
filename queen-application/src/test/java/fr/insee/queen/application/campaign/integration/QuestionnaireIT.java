@@ -108,7 +108,7 @@ class QuestionnaireIT {
     void on_get_questionnaire_when_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/questionnaire/invalidéidentifier")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -117,7 +117,7 @@ class QuestionnaireIT {
     void on_get_questionnaire_when_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/questionnaire/not-exist")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -126,7 +126,7 @@ class QuestionnaireIT {
     void on_get_questionnaire_return_correct_questionnaire() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/questionnaire/simpsons")
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -164,8 +164,8 @@ class QuestionnaireIT {
     }
 
     @Test
-    void on_get_list_questionnaire_for_each_surveyunit_in_request_return_questionnaire_list() throws Exception {
-        String surveyUnitIdsInput = """
+    void on_get_list_questionnaire_for_each_interrogation_in_request_return_questionnaire_list() throws Exception {
+        String interrogationIdsInput = """
                 [
                   "11",
                   "12",
@@ -175,7 +175,7 @@ class QuestionnaireIT {
                 ]
                 """;
         MvcResult result = mockMvc.perform(post("/api/survey-units/questionnaire-model-id")
-                        .content(surveyUnitIdsInput)
+                        .content(interrogationIdsInput)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getManagerUser()))
@@ -200,7 +200,7 @@ class QuestionnaireIT {
     }
 
     @Test
-    void on_get_list_questionnaire_for_each_surveyunit_when_anonymous_return_401() throws Exception {
+    void on_get_list_questionnaire_for_each_interrogation_when_anonymous_return_401() throws Exception {
         mockMvc.perform(post("/api/survey-units/questionnaire-model-id")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -213,21 +213,21 @@ class QuestionnaireIT {
     @ParameterizedTest
     @ValueSource(strings = {"/api/campaign/1/questionnaires",
             "/api/campaign/1/questionnaire-id"})
-    void on_get_questionnaires_when_surveyUnitUser_return_403(String url) throws Exception {
+    void on_get_questionnaires_when_interrogationUser_return_403(String url) throws Exception {
         mockMvc.perform(get(url)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    void on_find_questionnaire_model_ids_when_surveyUnitUser_return_403() throws Exception {
+    void on_find_questionnaire_model_ids_when_interrogationUser_return_403() throws Exception {
         mockMvc.perform(post("/api/survey-units/questionnaire-model-id")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
                 .andExpect(status().isForbidden());
     }

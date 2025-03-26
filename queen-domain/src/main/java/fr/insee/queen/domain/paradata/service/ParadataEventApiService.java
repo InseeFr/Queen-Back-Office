@@ -14,7 +14,7 @@ public class ParadataEventApiService implements ParadataEventService {
     private final ParadataEventRepository paradataEventRepository;
 
     @Override
-    public void createParadataEvent(String surveyUnitId, ObjectNode paradataValue) {
-        paradataEventRepository.createParadataEvent(UUID.randomUUID(), paradataValue, surveyUnitId);
+    public void createParadataEvent(String interrogationId, ObjectNode paradataValue) {
+        paradataEventRepository.createParadataEvent(UUID.randomUUID(), paradataValue, interrogationId);
     }
 }
