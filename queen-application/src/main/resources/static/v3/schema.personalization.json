@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Personalization schema",
-  "description": "Validation of personalizations for a survey unit",
+  "description": "Validation of personalizations for a interrogation",
   "type": "array",
   "items": {
     "$ref": "#/$defs/personalization"

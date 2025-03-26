@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.application.surveyunit.dto.output.*;
-import fr.insee.queen.domain.surveyunit.service.exception.MetadataValueNotFoundException;
+import fr.insee.queen.application.interrogation.dto.output.*;
+import fr.insee.queen.domain.interrogation.service.exception.MetadataValueNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

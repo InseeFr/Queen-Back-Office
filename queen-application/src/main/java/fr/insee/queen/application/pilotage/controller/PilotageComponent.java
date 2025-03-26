@@ -2,19 +2,19 @@ package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.interrogation.model.Interrogation;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 
 import java.util.List;
 
 public interface PilotageComponent {
     /**
-     * Check if the current user has defined roles for a survey unit
+     * Check if the current user has defined roles for a interrogation
      *
-     * @param surveyUnitId the survey unit the user want to access
-     * @param roles        the roles the current user should have to access the survey unit
+     * @param interrogationId the interrogation the user want to access
+     * @param roles        the roles the current user should have to access the interrogation
      */
-    void checkHabilitations(String surveyUnitId, PilotageRole... roles);
+    void checkHabilitations(String interrogationId, PilotageRole... roles);
 
     /**
      * Check if a campaign is closed
@@ -24,11 +24,11 @@ public interface PilotageComponent {
     boolean isClosed(String campaignId);
 
     /**
-     * Retrieve survey unit list of a campaign
+     * Retrieve interrogation list of a campaign
      * @param campaignId campaign id
-     * @return List of {@link SurveyUnitSummary} survey units of the campaign
+     * @return List of {@link InterrogationSummary} interrogations of the campaign
      */
-    List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId);
+    List<InterrogationSummary> getInterrogationsByCampaign(String campaignId);
 
     /**
      * Retrieve campaigns the user has access to as an interviewer
@@ -37,8 +37,8 @@ public interface PilotageComponent {
     List<PilotageCampaign> getInterviewerCampaigns();
 
     /**
-     * Retrieve survey unit list for an interviewer
-     * @return List of {@link SurveyUnit} survey units of the campaign
+     * Retrieve interrogation list for an interviewer
+     * @return List of {@link Interrogation} interrogations of the campaign
      */
-    List<SurveyUnit> getInterviewerSurveyUnits();
+    List<Interrogation> getInterviewerInterrogations();
 }

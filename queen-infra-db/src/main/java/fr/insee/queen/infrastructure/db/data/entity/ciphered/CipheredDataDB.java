@@ -3,7 +3,7 @@ package fr.insee.queen.infrastructure.db.data.entity.ciphered;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.data.converter.ObjectNodeConverter;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
-import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
+import fr.insee.queen.infrastructure.db.interrogation.entity.InterrogationDB;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +27,8 @@ public class CipheredDataDB extends DataDB {
     )
     private ObjectNode value;
 
-    public CipheredDataDB(ObjectNode value, SurveyUnitDB surveyUnit) {
-        this.setSurveyUnit(surveyUnit);
+    public CipheredDataDB(ObjectNode value, InterrogationDB interrogation) {
+        this.setInterrogation(interrogation);
         this.value = value;
     }
 }

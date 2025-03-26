@@ -7,10 +7,10 @@ import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.domain.pilotage.gateway.PilotageRepository;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
-import fr.insee.queen.domain.pilotage.model.PilotageSurveyUnit;
-import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
+import fr.insee.queen.domain.interrogation.service.InterrogationService;
+import fr.insee.queen.domain.interrogation.model.Interrogation;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Slf4j
 public class PilotageApiService implements PilotageService {
-    private final SurveyUnitService surveyUnitService;
+    private final InterrogationService interrogationService;
     private final CampaignExistenceService campaignExistenceService;
     private final PilotageRepository pilotageRepository;
     private final QuestionnaireModelService questionnaireModelService;
@@ -35,90 +35,90 @@ public class PilotageApiService implements PilotageService {
     }
 
     @Override
-    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId) {
+    public List<InterrogationSummary> getInterrogationsByCampaign(String campaignId) {
         campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-        Map<String, SurveyUnitSummary> surveyUnitMap = new HashMap<>();
+        Map<String, InterrogationSummary> interrogationMap = new HashMap<>();
 
-        List<String> surveyUnitIds = getSurveyUnitIds(campaignId);
+        List<String> interrogationIds = getInterrogationIds(campaignId);
 
-        surveyUnitService.findSummariesByIds(surveyUnitIds)
-                .forEach(surveyUnitSummary ->
-                        surveyUnitMap.putIfAbsent(surveyUnitSummary.id(), surveyUnitSummary)
+        interrogationService.findSummariesByIds(interrogationIds)
+                .forEach(interrogationSummary ->
+                        interrogationMap.putIfAbsent(interrogationSummary.id(), interrogationSummary)
                 );
-        return surveyUnitMap.values().stream().toList();
+        return interrogationMap.values().stream().toList();
     }
 
     @Override
-    public List<SurveyUnit> getInterviewerSurveyUnits() {
-        Map<String, SurveyUnit> surveyUnitMap = new HashMap<>();
-        List<String> surveyUnitIds = getSurveyUnitIds();
+    public List<Interrogation> getInterviewerInterrogations() {
+        Map<String, Interrogation> interrogationMap = new HashMap<>();
+        List<String> interrogationIds = getInterrogationIds();
 
-        surveyUnitService.findByIds(surveyUnitIds)
-                .forEach(surveyUnit ->
-                        surveyUnitMap.putIfAbsent(surveyUnit.id(), surveyUnit)
+        interrogationService.findByIds(interrogationIds)
+                .forEach(interrogation ->
+                        interrogationMap.putIfAbsent(interrogation.id(), interrogation)
                 );
-        return surveyUnitMap.values().stream().toList();
+        return interrogationMap.values().stream().toList();
     }
 
     /**
-     * Retrieve survey unit ids for the current interviewer for a campaign
+     * Retrieve interrogation ids for the current interviewer for a campaign
      *
      * @param campaignId campaign id
-     * @return List of survey unit ids
+     * @return List of interrogation ids
      */
-    private List<String> getSurveyUnitIds(String campaignId) {
-        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits();
+    private List<String> getInterrogationIds(String campaignId) {
+        List<PilotageInterrogation> interrogations = pilotageRepository.getInterrogations();
 
-        if (surveyUnits == null || surveyUnits.isEmpty()) {
+        if (interrogations == null || interrogations.isEmpty()) {
             return Collections.emptyList();
         }
 
-        log.debug("Detail : {}", displayDetail(surveyUnits));
-        List<String> surveyUnitIds = surveyUnits.stream()
-                .filter(surveyUnit -> campaignId.equals(surveyUnit.campaign()))
-                .map(PilotageSurveyUnit::id)
+        log.debug("Detail : {}", displayDetail(interrogations));
+        List<String> interrogationIds = interrogations.stream()
+                .filter(interrogation -> campaignId.equals(interrogation.campaign()))
+                .map(PilotageInterrogation::id)
                 .toList();
 
-        log.info("Survey units found in pilotage api for campaign {}: {}", campaignId, surveyUnitIds.size());
-        return surveyUnitIds;
+        log.info("Interrogations found in pilotage api for campaign {}: {}", campaignId, interrogationIds.size());
+        return interrogationIds;
     }
 
     /**
-     * Retrieve survey unit ids for the current interviewer
+     * Retrieve interrogation ids for the current interviewer
      *
-     * @return List of survey unit ids
+     * @return List of interrogation ids
      */
-    private List<String> getSurveyUnitIds() {
-        List<PilotageSurveyUnit> surveyUnits = pilotageRepository.getSurveyUnits();
+    private List<String> getInterrogationIds() {
+        List<PilotageInterrogation> interrogations = pilotageRepository.getInterrogations();
 
-        if (surveyUnits == null || surveyUnits.isEmpty()) {
+        if (interrogations == null || interrogations.isEmpty()) {
             return Collections.emptyList();
         }
 
-        log.debug("Detail : {}", displayDetail(surveyUnits));
-        List<String> surveyUnitIds = surveyUnits.stream()
-                .map(PilotageSurveyUnit::id)
+        log.debug("Detail : {}", displayDetail(interrogations));
+        List<String> interrogationIds = interrogations.stream()
+                .map(PilotageInterrogation::id)
                 .toList();
 
-        log.info("Survey units found in pilotage api: {}", surveyUnitIds.size());
-        return surveyUnitIds;
+        log.info("Interrogations found in pilotage api: {}", interrogationIds.size());
+        return interrogationIds;
     }
 
-    private String displayDetail(List<PilotageSurveyUnit> surveyUnits) {
-        Map<String, Integer> countSurveyUnitsByCampaign = new HashMap<>();
-        for (PilotageSurveyUnit surveyUnit : surveyUnits) {
-            String campaign = surveyUnit.campaign();
-            if(!countSurveyUnitsByCampaign.containsKey(campaign)) {
-                countSurveyUnitsByCampaign.put(surveyUnit.campaign(), 1);
+    private String displayDetail(List<PilotageInterrogation> interrogations) {
+        Map<String, Integer> countInterrogationsByCampaign = new HashMap<>();
+        for (PilotageInterrogation interrogation : interrogations) {
+            String campaign = interrogation.campaign();
+            if(!countInterrogationsByCampaign.containsKey(campaign)) {
+                countInterrogationsByCampaign.put(interrogation.campaign(), 1);
                 continue;
             }
-            int count = countSurveyUnitsByCampaign.get(campaign) + 1;
-            countSurveyUnitsByCampaign.put(campaign, count);
+            int count = countInterrogationsByCampaign.get(campaign) + 1;
+            countInterrogationsByCampaign.put(campaign, count);
         }
 
-        return "[" + countSurveyUnitsByCampaign.entrySet()
+        return "[" + countInterrogationsByCampaign.entrySet()
                 .stream()
-                .map(entry -> entry.getKey() + ": " + entry.getValue() + " Survey unit")
+                .map(entry -> entry.getKey() + ": " + entry.getValue() + " Interrogation")
                 .collect(Collectors.joining("; ")) + "]";
 
     }
@@ -146,8 +146,8 @@ public class PilotageApiService implements PilotageService {
     }
 
     @Override
-    @Cacheable(value = CacheName.HABILITATION, key = "{#surveyUnit.id, #surveyUnit.campaign.id, #role, #idep}")
-    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
-        return pilotageRepository.hasHabilitation(surveyUnit, role, idep);
+    @Cacheable(value = CacheName.HABILITATION, key = "{#interrogation.id, #interrogation.campaign.id, #role, #idep}")
+    public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
+        return pilotageRepository.hasHabilitation(interrogation, role, idep);
     }
 }

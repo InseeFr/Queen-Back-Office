@@ -206,23 +206,23 @@ feature:
 	- `GET /campaign/{idCampaign}/questionnaire-id` : Retrieve all the questionnaire ids for a campaign
 	- `POST /questionnaire-models` : Create a new questionnaire
 
-- SurveyUnit
-	- `GET /survey-units` : Retrieve all survey units id 
-	- `GET /survey-unit/{id}` : Retrieve the survey unit
-	- `GET /survey-unit/{id}/deposit-prof` : Generate and retrieve a deposit proof (pdf file) for a survey unit
-	- `GET /campaign/{id}/survey-units` : Retrieve all the survey units of a campaign
-	- `PUT /survey-unit/{id}` : Update a survey unit
-    - `GET /survey-units/interviewer` : Retrieve all the survey units of the current interviewer
-	- `POST /campaign/{id}/survey-unit` : Create or update a survey unit
-	- `DELETE /survey-unit/{id}` : Delete a survey unit
+- Interrogation
+	- `GET /interrogations` : Retrieve all interrogations id 
+	- `GET /interrogation/{id}` : Retrieve the interrogation
+	- `GET /interrogation/{id}/deposit-prof` : Generate and retrieve a deposit proof (pdf file) for a interrogation
+	- `GET /campaign/{id}/interrogations` : Retrieve all the interrogations of a campaign
+	- `PUT /interrogation/{id}` : Update a interrogation
+    - `GET /interrogations/interviewer` : Retrieve all the interrogations of the current interviewer
+	- `POST /campaign/{id}/interrogation` : Create or update a interrogation
+	- `DELETE /interrogation/{id}` : Delete a interrogation
 
 - Data
-	- `GET /survey-unit/{id}/data` : Retrieve the data of a survey unit
-	- `PUT /survey-unit/{id}/data` : Update the data of a survey unit
+	- `GET /interrogation/{id}/data` : Retrieve the data of a interrogation
+	- `PUT /interrogation/{id}/data` : Update the data of a interrogation
 
 - Comment
-	- `GET /survey-unit/{id}/comment` : Retrieve the comment of a survey unit
-	- `PUT /survey-unit/{id}/comment` : Update the comment of a survey unit
+	- `GET /interrogation/{id}/comment` : Retrieve the comment of a interrogation
+	- `PUT /interrogation/{id}/comment` : Update the comment of a interrogation
 
 - Nomenclatures
 	- `GET /questionnaire/{id}/required-nomenclatures` : Retrieve all required nomenclatures of a questionnaire
@@ -232,20 +232,20 @@ feature:
     - `GET /nomenclatures` : Retrieve all nomenclatures ids
 
 - Personalization
-	- `GET /survey-unit/{id}/personalization` : Retrieve the personalization of a survey unit
-	- `PUT /survey-unit/{id}/personalization` : Update the personalization of a survey unit
+	- `GET /interrogation/{id}/personalization` : Retrieve the personalization of a interrogation
+	- `PUT /interrogation/{id}/personalization` : Update the personalization of a interrogation
 	
 - Metadata
 	- `GET /campaign/{id}/metadata` : Retrieve campaign metadata
 	- `GET /questionnaire/{id}/metadata` : Retrieve campaign metadata
 
 - Paradata
-	- `POST /paradata` : Create a paradata event for a survey unit
+	- `POST /paradata` : Create a paradata event for a interrogation
 	
 - StateData
-	- `GET /survey-unit/{id}/state-data` : Retrieve the state-data of a survey unit
-	- `PUT /survey-unit/{id}/state-data` : Update the state-data of a survey unit
-	- `POST /survey-units/state-data` : Get state-data for all survey-units defined in request body
+	- `GET /interrogation/{id}/state-data` : Retrieve the state-data of a interrogation
+	- `PUT /interrogation/{id}/state-data` : Update the state-data of a interrogation
+	- `POST /interrogations/state-data` : Get state-data for all interrogations defined in request body
 	
 - DataSet
 	- `POST /create-dataset` : Create dataset for demo environments
