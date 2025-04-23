@@ -170,7 +170,7 @@ public interface SurveyUnitRepository {
      * Update survey unit infos (data/state-data/comment/personalization)
      * @param surveyUnit survey unit to update
      */
-    void updateInfos(SurveyUnit surveyUnit);
+    void update(SurveyUnit surveyUnit);
 
     /**
      *

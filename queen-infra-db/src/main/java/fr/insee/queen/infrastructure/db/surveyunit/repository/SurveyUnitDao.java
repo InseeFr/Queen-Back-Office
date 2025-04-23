@@ -16,11 +16,15 @@ import fr.insee.queen.infrastructure.db.configuration.DataFactory;
 import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
 import fr.insee.queen.infrastructure.db.surveyunittempzone.repository.jpa.SurveyUnitTempZoneJpaRepository;
 import fr.insee.queen.infrastructure.db.paradata.repository.jpa.ParadataEventJpaRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -41,6 +45,7 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     private final SurveyUnitTempZoneJpaRepository surveyUnitTempZoneRepository;
     private final ParadataEventJpaRepository paradataEventRepository;
     private final DataFactory dataFactory;
+    private final EntityManager entityManager;
 
     @Override
     public Optional<SurveyUnitSummary> findSummaryById(String surveyUnitId) {
@@ -190,9 +195,11 @@ public class SurveyUnitDao implements SurveyUnitRepository {
         return crudRepository.existsById(surveyUnitId);
     }
 
+    @Transactional
     @Override
-    public void updateInfos(SurveyUnit surveyUnit) {
+    public void update(SurveyUnit surveyUnit) {
         String surveyUnitId = surveyUnit.id();
+        save(surveyUnitId, surveyUnit.campaignId(), surveyUnit.questionnaireId());
         savePersonalization(surveyUnitId, surveyUnit.personalization());
         saveComment(surveyUnitId, surveyUnit.comment());
         saveData(surveyUnitId, surveyUnit.data());
@@ -215,5 +222,42 @@ public class SurveyUnitDao implements SurveyUnitRepository {
     @Override
     public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
         dataRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    }
+
+    private void save(String surveyUnitId, String campaignId, String questionnaireId) {
+        Map<String, Object> fieldsToUpdate = new LinkedHashMap<>();
+        if (campaignId != null) {
+            fieldsToUpdate.put("campaign_id", campaignId);
+        }
+
+        if (questionnaireId != null) {
+            fieldsToUpdate.put("questionnaire_model_id", questionnaireId);
+        }
+
+        if (fieldsToUpdate.isEmpty()) {
+            return;
+        }
+
+        StringBuilder sql = new StringBuilder("UPDATE survey_unit SET ");
+
+        boolean firstKey = true;
+        for (String fieldKey : fieldsToUpdate.keySet()) {
+            if (!firstKey) {
+                sql.append(", ");
+            }
+            sql
+                .append(fieldKey)
+                .append(" = :")
+                .append(fieldKey);
+            firstKey = false;
+        }
+
+        sql.append(" WHERE id = :surveyUnitId");
+
+        var query = entityManager.createNativeQuery(sql.toString());
+        fieldsToUpdate.forEach(query::setParameter);
+        query.setParameter("surveyUnitId", surveyUnitId);
+
+        query.executeUpdate();
     }
 }

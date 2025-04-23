@@ -125,7 +125,7 @@ public class SurveyUnitFakeDao implements SurveyUnitRepository {
     }
 
     @Override
-    public void updateInfos(SurveyUnit surveyUnit) {
+    public void update(SurveyUnit surveyUnit) {
         surveyUnitUpdated = surveyUnit;
     }
 
