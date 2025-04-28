@@ -67,9 +67,9 @@ class SurveyUnitCommonAssertions {
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
                     "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED"},
                     "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
-                    "questionnaireId":"simpsons"
+                    "questionnaireId":"simpsonsV2"
                 }""";
-        mockMvc.perform(post("/api/campaign/simpsons/survey-unit")
+        mockMvc.perform(post("/api/campaign/LOG2021X11Tel/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(surveyUnitDataUpdated)

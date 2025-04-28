@@ -100,7 +100,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
         throwExceptionIfSurveyUnitNotExist(surveyUnit.id());
         StateData newStateData = surveyUnit.stateData();
 
-        surveyUnitRepository.updateInfos(surveyUnit);
+        surveyUnitRepository.update(surveyUnit);
         if (newStateData == null) {
             return;
         }
