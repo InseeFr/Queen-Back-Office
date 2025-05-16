@@ -1,24 +1,28 @@
 package fr.insee.queen.application.surveyunit.integration;
 
-import fr.insee.queen.application.configuration.CipheredContainerConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
+@ActiveProfiles("test")
+@SpringBootTest
+@AutoConfigureMockMvc
 /* Disable the "Add at least one assertion to this test case." (sic)
    The sonar rule is not smart enough to inspect common test class
  */
 @SuppressWarnings("java:S2699")
-class SurveyUnitCipherTests extends CipheredContainerConfiguration {
-
+class SurveyUnitUnCipherIT {
     private final SurveyUnitCommonAssertions surveyUnitTests;
 
-    public SurveyUnitCipherTests(@Autowired MockMvc mockMvc) {
+    public SurveyUnitUnCipherIT(@Autowired MockMvc mockMvc) {
         this.surveyUnitTests = new SurveyUnitCommonAssertions(mockMvc);
     }
 
