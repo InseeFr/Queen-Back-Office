@@ -23,4 +23,5 @@
 	<include file="changelog/610_cipher_data.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/611_sensitive_campaign.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/612_add-interrogation-id.sql" relativeToChangelogFile="true"/>
+	<include file="changelog/613_change_type_of_intero_id.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
