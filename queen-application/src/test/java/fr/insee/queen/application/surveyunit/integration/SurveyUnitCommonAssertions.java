@@ -23,11 +23,21 @@ class SurveyUnitCommonAssertions {
                 "id":"test-surveyunit",
                 "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
                 "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
-                "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
+                "stateData":{"state":"EXTRACTED","currentPage":"2.3#5"},
+                "questionnaireId":"VQS2021X00"
+            }""";
+
+    public static final String SURVEYUNIT_DATA_SAVED = """
+            {
+                "id":"test-surveyunit",
+                "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
+                "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                "stateData":{"state":"EXTRACTED","date":1747395350727,"currentPage":"2.3#5"},
                 "questionnaireId":"VQS2021X00"
             }""";
     private final MockMvc mockMvc;
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
+
 
     void on_get_survey_units_by_campaign_return_survey_units() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/survey-units")
@@ -57,27 +67,37 @@ class SurveyUnitCommonAssertions {
                 )
                 .andExpect(status().isCreated());
 
-        on_get_survey_unit_return_survey_unit("test-surveyunit", SURVEYUNIT_DATA);
+        on_get_survey_unit_return_survey_unit("test-surveyunit", SURVEYUNIT_DATA_SAVED);
     }
 
     void on_update_survey_unit_then_survey_unit_is_saved() throws Exception {
-        String surveyUnitDataUpdated = """
+        String surveyUnitData = """
                 {
                     "id":"11",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
                     "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED"},
-                    "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
+                    "stateData":{"state":"EXTRACTED","currentPage":"2.3#5"},
                     "questionnaireId":"simpsonsV2"
                 }""";
+
+        String surveyUnitDataExpected = """
+                {
+                    "id":"11",
+                    "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED"},
+                    "stateData":{"state":"EXTRACTED","date":1747395350727,"currentPage":"2.3#5"},
+                    "questionnaireId":"simpsonsV2"
+                }""";
+
         mockMvc.perform(post("/api/campaign/LOG2021X11Tel/survey-unit")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(surveyUnitDataUpdated)
+                        .content(surveyUnitData)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk());
 
-        on_get_survey_unit_return_survey_unit("11", surveyUnitDataUpdated);
+        on_get_survey_unit_return_survey_unit("11", surveyUnitDataExpected);
     }
 
     void on_update_with_put_survey_unit_then_survey_unit_is_saved() throws Exception {

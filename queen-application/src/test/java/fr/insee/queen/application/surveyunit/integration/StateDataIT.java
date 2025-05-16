@@ -1,12 +1,11 @@
 package fr.insee.queen.application.surveyunit.integration;
 
+import fr.insee.queen.application.configuration.FixedTimeConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +17,25 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.Clock;
+import java.time.Instant;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(classes = {
+        FixedTimeConfiguration.class
+})
 @AutoConfigureMockMvc
 class StateDataIT {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private Clock fixedClock;
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
@@ -65,34 +72,20 @@ class StateDataIT {
     }
 
     @Test
-    void on_update_state_data_when_date_invalid_return_409() throws Exception {
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void on_update_state_data_state_data_is_updated() throws Exception {
         String surveyUnitId = "12";
         String stateDataJson = """
             {
               "state": "EXTRACTED",
-              "date": 1111111110,
               "currentPage": "2.3#5"
             }
         """;
-        mockMvc.perform(put("/api/survey-unit/" + surveyUnitId + "/state-data")
-                        .content(stateDataJson)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getSurveyUnitUser()))
-                )
-                .andExpect(status().isConflict());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"1111111119","1111111120"})
-    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void on_update_state_data_state_data_is_updated(String timestamp) throws Exception {
-        String surveyUnitId = "12";
-        String stateDataJson = """
+        String stateDataJsonExpected = """
             {
               "state": "EXTRACTED",
-              "date":""" + timestamp + """
-              ,"currentPage": "2.3#5"
+              "date": """ + Instant.now(fixedClock).toEpochMilli() + "," +"""
+              "currentPage": "2.3#5"
             }
         """;
 
@@ -112,7 +105,7 @@ class StateDataIT {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        JSONAssert.assertEquals(stateDataJson, content, JSONCompareMode.NON_EXTENSIBLE);
+        JSONAssert.assertEquals(stateDataJsonExpected, content, JSONCompareMode.NON_EXTENSIBLE);
     }
 
     @Test
