@@ -9,6 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,11 +21,14 @@ class StateDataApiServiceTest {
     private StateDataFakeDao stateDataDao;
     private StateDataApiService stateDataService;
     private final String surveyUnitId = "11";
+    private final Clock fixedClock = Clock.fixed(
+            Instant.ofEpochSecond(1740601599),
+            ZoneId.systemDefault());
 
     @BeforeEach
     void init() {
         stateDataDao = new StateDataFakeDao();
-        stateDataService = new StateDataApiService(stateDataDao);
+        stateDataService = new StateDataApiService(stateDataDao, fixedClock);
     }
 
     @Test
@@ -44,9 +51,12 @@ class StateDataApiServiceTest {
     @DisplayName("On saving new state data, when previous state data doesn't exist, save new state data")
     void testSave01() throws StateDataInvalidDateException {
         stateDataDao.setHasEmptyStateData(true);
-        StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 1000000L, "5");
+        StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, null, "5");
         stateDataService.saveStateData(surveyUnitId, stateDataUpdate);
-        assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
+        StateData stateDataSaved = stateDataDao.getStateDataSaved();
+        assertThat(stateDataSaved.date()).isEqualTo(Instant.now(fixedClock).toEpochMilli());
+        assertThat(stateDataSaved.state()).isEqualTo(stateDataUpdate.state());
+        assertThat(stateDataSaved.currentPage()).isEqualTo(stateDataUpdate.currentPage());
     }
 
     @Test

@@ -9,8 +9,6 @@ import jakarta.validation.constraints.NotNull;
 public record StateDataInput(
         @NotNull
         StateDataTypeInput state,
-        @NotNull
-        Long date,
         @NotBlank
         String currentPage) {
 
@@ -18,7 +16,7 @@ public record StateDataInput(
         if (stateDataInputDto == null) {
             return null;
         }
-        return new StateData(stateDataInputDto.state().getStateDataType(), stateDataInputDto.date(), stateDataInputDto.currentPage);
+        return new StateData(stateDataInputDto.state().getStateDataType(), null, stateDataInputDto.currentPage);
     }
 }
 

@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * DAO to handle survey units in DB
@@ -238,23 +239,13 @@ public class SurveyUnitDao implements SurveyUnitRepository {
             return;
         }
 
-        StringBuilder sql = new StringBuilder("UPDATE survey_unit SET ");
+        String fields = fieldsToUpdate.keySet()
+                .stream()
+                .map(key -> key + " = :" + key)
+                .collect(Collectors.joining(", "));
+        String sql = String.format("UPDATE survey_unit SET %s WHERE id = :surveyUnitId", fields);
 
-        boolean firstKey = true;
-        for (String fieldKey : fieldsToUpdate.keySet()) {
-            if (!firstKey) {
-                sql.append(", ");
-            }
-            sql
-                .append(fieldKey)
-                .append(" = :")
-                .append(fieldKey);
-            firstKey = false;
-        }
-
-        sql.append(" WHERE id = :surveyUnitId");
-
-        var query = entityManager.createNativeQuery(sql.toString());
+        var query = entityManager.createNativeQuery(sql);
         fieldsToUpdate.forEach(query::setParameter);
         query.setParameter("surveyUnitId", surveyUnitId);
 
