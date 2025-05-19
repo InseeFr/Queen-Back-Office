@@ -129,7 +129,3 @@ logging:
   logback:
     rollingpolicy:
       max-history: 90
-
-## Server connections configuration
-server:
-  max-http-request-header-size: 128KB
