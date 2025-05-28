@@ -97,12 +97,6 @@ feature:
   oidc:
     enabled: false
 
-  dataset:
-    # create demo dataset on startup
-    load-on-start: true
-    # display api endpoint to create dataset
-    display-endpoint: true
-
   # enable swagger
   swagger:
     enabled: true
@@ -159,12 +153,6 @@ feature:
     realm: my-realm
     principal-attribute: id-claim
     role-claim: role-claim
-
-  dataset:
-    # create demo dataset on startup
-    load-on-start: false
-    # display api endpoint to create dataset
-    display-endpoint: false
 
   # enable swagger
   swagger:
@@ -246,9 +234,6 @@ feature:
 	- `GET /interrogation/{id}/state-data` : Retrieve the state-data of a interrogation
 	- `PUT /interrogation/{id}/state-data` : Update the state-data of a interrogation
 	- `POST /interrogations/state-data` : Get state-data for all interrogations defined in request body
-	
-- DataSet
-	- `POST /create-dataset` : Create dataset for demo environments
 
 ## Libraries used
 - spring-boot-data-jpa

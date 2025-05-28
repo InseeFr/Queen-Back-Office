@@ -30,11 +30,6 @@ feature:
     realm: my-realm
     principal-attribute: id-claim
     role-claim:
-  dataset:
-    # create demo dataset on startup
-    load-on-start: false
-    # display api endpoint to create dataset
-    display-endpoint: false
   swagger:
     enabled: false
   pilotage:
