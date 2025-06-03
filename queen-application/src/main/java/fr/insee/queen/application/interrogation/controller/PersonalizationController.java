@@ -21,7 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Handle personalization data for a interrogation
+ * Handle personalization data for an interrogation
  */
 @RestController
 @Tag(name = "06. Interrogations")
@@ -35,13 +35,13 @@ public class PersonalizationController {
 
 
     /**
-     * Retrieve the personalization data of a interrogation
+     * Retrieve the personalization data of an interrogation
      *
      * @param interrogationId the id of the interrogation
      * @return {@link ArrayNode} the personalization linked to the interrogation
      */
-    @Operation(summary = "Get personalization for a interrogation")
-    @GetMapping("/interrogation/{id}/personalization")
+    @Operation(summary = "Get personalization for an interrogation")
+    @GetMapping("/interrogations/{id}/personalization")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.PERSONALIZATION))})
     public ArrayNode getPersonalizationByInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
@@ -55,10 +55,10 @@ public class PersonalizationController {
      * @param personalizationValues the value to update
      * @param interrogationId          the id of the interrogation
      */
-    @Operation(summary = "Update personalization for a interrogation",
+    @Operation(summary = "Update personalization for an interrogation",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                     schema = @Schema(ref = SchemaType.Names.PERSONALIZATION))))
-    @PutMapping("/interrogation/{id}/personalization")
+    @PutMapping("/interrogations/{id}/personalization")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public void setPersonalization(@IdValid @PathVariable(value = "id") String interrogationId,
                                    @NotNull @RequestBody @JsonValid(SchemaType.PERSONALIZATION) ArrayNode personalizationValues) {

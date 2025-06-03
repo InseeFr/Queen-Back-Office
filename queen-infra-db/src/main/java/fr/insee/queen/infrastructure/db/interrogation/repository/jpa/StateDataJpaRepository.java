@@ -18,15 +18,15 @@ import java.util.UUID;
 @Repository
 public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID> {
     /**
-     * Find state data for a interrogation
+     * Find state data for an interrogation
      *
      * @param interrogationId interrogation id
-     * @return {@link Optional< StateData >} state data of the interrogation
+     * @return {@link Optional<StateData>} state data of the interrogation
      */
     Optional<StateData> findByInterrogationId(String interrogationId);
 
     /**
-     * Update state data of a interrogation
+     * Update state data of an interrogation
      * @param interrogationId interrogation to update
      * @param date state date
      * @param currentPage state current page
@@ -53,7 +53,7 @@ public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID>
     void deleteStateDatas(String campaignId);
 
     /**
-     * Check if a state data exists for a interrogation
+     * Check if a state data exists for an interrogation
      * @param interrogationId interrogation to check
      * @return true if state data exists, false otherwise
      */

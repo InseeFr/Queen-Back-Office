@@ -51,7 +51,7 @@ public class StateDataDao implements StateDataRepository {
     }
 
     /**
-     * Delete state data for a interrogation
+     * Delete state data for an interrogation
      * @param interrogationId interrogation id
      */
     public void deleteByInterrogationId(String interrogationId) {

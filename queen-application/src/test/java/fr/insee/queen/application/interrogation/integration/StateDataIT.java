@@ -6,6 +6,8 @@ import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,7 @@ class StateDataIT {
 
     @Test
     void on_get_state_data_return_state_data() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/state-data")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -55,7 +57,7 @@ class StateDataIT {
 
     @Test
     void on_get_state_data_when_su_not_exist_return_404() throws Exception {
-        mockMvc.perform(get("/api/interrogation/plop/state-data")
+        mockMvc.perform(get("/api/interrogations/plop/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -64,16 +66,35 @@ class StateDataIT {
 
     @Test
     void on_get_state_data_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/interrogation/pl!op/state-data")
+        mockMvc.perform(get("/api/interrogations/pl!op/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void on_update_state_data_when_date_invalid_return_409() throws Exception {
+        String interrogationId = "d98d28c2-1535-4fc8-a405-d6a554231bbc";
+        String stateDataJson = """
+            {
+              "state": "EXTRACTED",
+              "currentPage": "2.3#5"
+            }
+        """;
+        mockMvc.perform(put("/api/interrogations/" + interrogationId + "/state-data")
+                        .content(stateDataJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
+                )
+                .andExpect(status().isConflict());
+    }
+
     @ParameterizedTest
+    @ValueSource(strings = {"1111111119","1111111120"})
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void on_update_state_data_state_data_is_updated() throws Exception {
+    void on_update_state_data_state_data_is_updated(String timestamp) throws Exception {
         String interrogationId = "d98d28c2-1535-4fc8-a405-d6a554231bbc";
         String stateDataJson = """
             {
@@ -89,7 +110,7 @@ class StateDataIT {
             }
         """;
 
-        mockMvc.perform(put("/api/interrogation/" + interrogationId + "/state-data")
+        mockMvc.perform(put("/api/interrogations/" + interrogationId + "/state-data")
                         .content(stateDataJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -97,7 +118,7 @@ class StateDataIT {
                 )
                 .andExpect(status().isOk());
 
-        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/state-data")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -172,7 +193,7 @@ class StateDataIT {
                 },
                 "stateData": %s
             }""", stateData);
-        mockMvc.perform(patch("/api/interrogation/80dc2493-5258-44c5-8ec1-9c600d1df80b")
+        mockMvc.perform(patch("/api/interrogations/80dc2493-5258-44c5-8ec1-9c600d1df80b")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(interrogationDataStateData)
@@ -180,7 +201,7 @@ class StateDataIT {
                 )
                 .andExpect(status().isOk());
 
-        MvcResult result = mockMvc.perform(get("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/state-data")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(interrogationDataStateData)
@@ -204,7 +225,7 @@ class StateDataIT {
                         "currentPage": "2.3#5"
                     }
                 }""";
-        mockMvc.perform(patch("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+        mockMvc.perform(patch("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(interrogationDataStateData)
@@ -216,7 +237,7 @@ class StateDataIT {
     @Test
     void on_update_state_data_when_su_not_exist_return_404() throws Exception {
         String stateDataJson = JsonTestHelper.getResourceFileAsString("interrogation/state_data.json");
-        mockMvc.perform(put("/api/interrogation/not-exist/state-data")
+        mockMvc.perform(put("/api/interrogations/not-exist/state-data")
                         .content(stateDataJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -227,7 +248,7 @@ class StateDataIT {
 
     @Test
     void on_update_state_data_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(put("/api/interrogation/invalid_identifier/state-data")
+        mockMvc.perform(put("/api/interrogations/invalid_identifier/state-data")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -238,7 +259,7 @@ class StateDataIT {
 
     @Test
     void on_update_state_data_when_state_data_not_valid_return_400() throws Exception {
-        mockMvc.perform(put("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc/state-data")
+        mockMvc.perform(put("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc/state-data")
                         .content("""
                                 {
                                     "state": "PLOP",
@@ -254,7 +275,7 @@ class StateDataIT {
 
     @Test
     void on_get_state_data_when_anonymous_return_401() throws Exception {
-        mockMvc.perform(get("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/state-data")
+        mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/state-data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
@@ -263,7 +284,7 @@ class StateDataIT {
 
     @Test
     void on_update_state_data_when_anonymous_return_401() throws Exception {
-        mockMvc.perform(put("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/state-data")
+        mockMvc.perform(put("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/state-data")
                         .content("{}")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))

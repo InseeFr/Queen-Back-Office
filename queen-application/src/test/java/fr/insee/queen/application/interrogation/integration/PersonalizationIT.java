@@ -33,7 +33,7 @@ class PersonalizationIT {
 
     @Test
     void on_get_personalization_return_personalization() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/personalization")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -47,7 +47,7 @@ class PersonalizationIT {
 
     @Test
     void on_get_personalization_when_su_not_exist_return_404() throws Exception {
-        mockMvc.perform(get("/api/interrogation/plop/personalization")
+        mockMvc.perform(get("/api/interrogations/plop/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -56,7 +56,7 @@ class PersonalizationIT {
 
     @Test
     void on_get_personalization_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/interrogation/pl!op/personalization")
+        mockMvc.perform(get("/api/interrogations/pl!op/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -68,7 +68,7 @@ class PersonalizationIT {
     void on_update_personalization_personalization_is_updated() throws Exception {
         String interrogationId = "d98d28c2-1535-4fc8-a405-d6a554231bbc";
         String personalizationJson = JsonTestHelper.getResourceFileAsString("interrogation/personalization.json");
-        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/personalization")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -78,7 +78,7 @@ class PersonalizationIT {
         String content = result.getResponse().getContentAsString();
         JSONAssert.assertNotEquals(personalizationJson, content, JSONCompareMode.NON_EXTENSIBLE);
 
-        mockMvc.perform(put("/api/interrogation/" + interrogationId + "/personalization")
+        mockMvc.perform(put("/api/interrogations/" + interrogationId + "/personalization")
                         .content(personalizationJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ class PersonalizationIT {
                 )
                 .andExpect(status().isOk());
 
-        result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/personalization")
+        result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -99,7 +99,7 @@ class PersonalizationIT {
 
     @Test
     void on_update_personalization_when_su_not_exist_return_404() throws Exception {
-        mockMvc.perform(put("/api/interrogation/not-exist/personalization")
+        mockMvc.perform(put("/api/interrogations/not-exist/personalization")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -110,7 +110,7 @@ class PersonalizationIT {
 
     @Test
     void on_update_personalization_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(put("/api/interrogation/invalid!identifier/personalization")
+        mockMvc.perform(put("/api/interrogations/invalid!identifier/personalization")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -121,7 +121,7 @@ class PersonalizationIT {
 
     @Test
     void on_update_personalization_when_personalization_not_json_array_node_return_400() throws Exception {
-        mockMvc.perform(put("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc/personalization")
+        mockMvc.perform(put("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc/personalization")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
@@ -131,7 +131,7 @@ class PersonalizationIT {
 
     @Test
     void on_get_data_when_anonymous_user_return_401() throws Exception {
-        mockMvc.perform(get("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc/personalization")
+        mockMvc.perform(get("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc/personalization")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
@@ -140,7 +140,7 @@ class PersonalizationIT {
 
     @Test
     void on_update_data_when_anonymous_user_return_401() throws Exception {
-        mockMvc.perform(put("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc/personalization")
+        mockMvc.perform(put("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc/personalization")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -151,7 +151,7 @@ class PersonalizationIT {
 
     @Test
     void on_update_data_when_nonAdmin_user_return_403() throws Exception {
-        mockMvc.perform(put("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc/personalization")
+        mockMvc.perform(put("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc/personalization")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

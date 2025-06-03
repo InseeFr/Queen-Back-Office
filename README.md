@@ -196,21 +196,21 @@ feature:
 
 - Interrogation
 	- `GET /interrogations` : Retrieve all interrogations id 
-	- `GET /interrogation/{id}` : Retrieve the interrogation
-	- `GET /interrogation/{id}/deposit-prof` : Generate and retrieve a deposit proof (pdf file) for a interrogation
+	- `GET /interrogations/{id}` : Retrieve the interrogation
+	- `GET /interrogations/{id}/deposit-prof` : Generate and retrieve a deposit proof (pdf file) for an interrogation
 	- `GET /campaign/{id}/interrogations` : Retrieve all the interrogations of a campaign
-	- `PUT /interrogation/{id}` : Update a interrogation
+	- `PUT /interrogations/{id}` : Update an interrogation
     - `GET /interrogations/interviewer` : Retrieve all the interrogations of the current interviewer
-	- `POST /campaign/{id}/interrogation` : Create or update a interrogation
-	- `DELETE /interrogation/{id}` : Delete a interrogation
+	- `POST /campaign/{id}/interrogation` : Create or update an interrogation
+	- `DELETE /interrogations/{id}` : Delete an interrogation
 
 - Data
-	- `GET /interrogation/{id}/data` : Retrieve the data of a interrogation
-	- `PUT /interrogation/{id}/data` : Update the data of a interrogation
+	- `GET /interrogations/{id}/data` : Retrieve the data of an interrogation
+	- `PUT /interrogations/{id}/data` : Update the data of an interrogation
 
 - Comment
-	- `GET /interrogation/{id}/comment` : Retrieve the comment of a interrogation
-	- `PUT /interrogation/{id}/comment` : Update the comment of a interrogation
+	- `GET /interrogations/{id}/comment` : Retrieve the comment of an interrogation
+	- `PUT /interrogations/{id}/comment` : Update the comment of an interrogation
 
 - Nomenclatures
 	- `GET /questionnaire/{id}/required-nomenclatures` : Retrieve all required nomenclatures of a questionnaire
@@ -220,19 +220,19 @@ feature:
     - `GET /nomenclatures` : Retrieve all nomenclatures ids
 
 - Personalization
-	- `GET /interrogation/{id}/personalization` : Retrieve the personalization of a interrogation
-	- `PUT /interrogation/{id}/personalization` : Update the personalization of a interrogation
+	- `GET /interrogations/{id}/personalization` : Retrieve the personalization of an interrogation
+	- `PUT /interrogations/{id}/personalization` : Update the personalization of an interrogation
 	
 - Metadata
 	- `GET /campaign/{id}/metadata` : Retrieve campaign metadata
 	- `GET /questionnaire/{id}/metadata` : Retrieve campaign metadata
 
 - Paradata
-	- `POST /paradata` : Create a paradata event for a interrogation
+	- `POST /paradata` : Create a paradata event for an interrogation
 	
 - StateData
-	- `GET /interrogation/{id}/state-data` : Retrieve the state-data of a interrogation
-	- `PUT /interrogation/{id}/state-data` : Update the state-data of a interrogation
+	- `GET /interrogations/{id}/state-data` : Retrieve the state-data of an interrogation
+	- `PUT /interrogations/{id}/state-data` : Update the state-data of an interrogation
 	- `POST /interrogations/state-data` : Get state-data for all interrogations defined in request body
 
 ## Libraries used

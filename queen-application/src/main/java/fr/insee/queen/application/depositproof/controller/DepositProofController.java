@@ -41,13 +41,13 @@ public class DepositProofController {
     private final PilotageComponent pilotageComponent;
 
     /**
-     * Generate and retrieve a deposit proof (pdf file) for a interrogation
+     * Generate and retrieve a deposit proof (pdf file) for an interrogation
      *
      * @param interrogationId interrogation id
      */
-    @Operation(summary = "Get deposit proof for a interrogation")
+    @Operation(summary = "Get deposit proof for an interrogation")
     @Parameter(name = "userId", hidden = true)
-    @GetMapping("/interrogation/{id}/deposit-proof")
+    @GetMapping("/interrogations/{id}/deposit-proof")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public ResponseEntity<FileSystemResource> generateDepositProof(@IdValid @PathVariable(value = "id") String interrogationId,
                                                                    @CurrentSecurityContext(expression = "authentication.name")

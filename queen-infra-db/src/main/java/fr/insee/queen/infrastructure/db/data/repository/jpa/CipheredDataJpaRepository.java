@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CipheredDataJpaRepository extends DataJpaRepository {
 
     /**
-     * Update data for a interrogation
+     * Update data for an interrogation
      *
      * @param interrogationId interrogation id
      * @param data json data to set
@@ -30,7 +30,7 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
     int updateData(String interrogationId, ObjectNode data);
 
     /**
-     * Update data for a interrogation
+     * Update data for an interrogation
      *
      * @param interrogationId interrogation id
      * @param collectedUpdateData partial collected data to set on current collected data

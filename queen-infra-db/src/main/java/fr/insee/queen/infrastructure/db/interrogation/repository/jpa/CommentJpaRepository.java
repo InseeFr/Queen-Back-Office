@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * JPA repository to handle a interrogation's comment
+ * JPA repository to handle an interrogation's comment
  */
 @Repository
 public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
@@ -31,7 +31,7 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
     void deleteComments(String campaignId);
 
     /**
-     * Update comment for a interrogation
+     * Update comment for an interrogation
      *
      * @param interrogationId interrogation id
      * @param comment json comment to set
@@ -43,7 +43,7 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
     int updateComment(String interrogationId, ObjectNode comment);
 
     /**
-     * Find the comment of a interrogation
+     * Find the comment of an interrogation
      *
      * @param interrogationId interrogation id
      * @return an optional of the comment (json format)
@@ -52,7 +52,7 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
     Optional<ObjectNode> findComment(String interrogationId);
 
     /**
-     * Delete comment of a interrogation
+     * Delete comment of an interrogation
      * @param interrogationId interrogation id
      */
     @Transactional

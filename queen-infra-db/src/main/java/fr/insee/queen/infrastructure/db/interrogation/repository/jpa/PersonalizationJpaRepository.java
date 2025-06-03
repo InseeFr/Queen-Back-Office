@@ -31,7 +31,7 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
     void deletePersonalizations(String campaignId);
 
     /**
-     * Update personalization for a interrogation
+     * Update personalization for an interrogation
      *
      * @param interrogationId interrogation id
      * @param personalization json personalization to set
@@ -43,7 +43,7 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
     int updatePersonalization(String interrogationId, ArrayNode personalization);
 
     /**
-     * Find the personalization of a interrogation
+     * Find the personalization of an interrogation
      *
      * @param interrogationId interrogation id
      * @return an optional of the personalization (json format)
@@ -52,7 +52,7 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
     Optional<ArrayNode> findPersonalization(String interrogationId);
 
     /**
-     * Delete personalization of a interrogation
+     * Delete personalization of an interrogation
      * @param interrogationId interrogation id
      */
     @Transactional

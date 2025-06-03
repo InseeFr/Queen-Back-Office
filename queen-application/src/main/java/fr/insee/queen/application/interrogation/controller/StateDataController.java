@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Handle the data state of a interrogation.
+ * Handle the data state of an interrogation.
  */
 @RestController
 @Tag(name = "06. Interrogations")
@@ -49,13 +49,13 @@ public class StateDataController {
     private final AuthenticationHelper authenticationUserHelper;
 
     /**
-     * Retrieve the data linked of a interrogation
+     * Retrieve the data linked of an interrogation
      *
      * @param interrogationId the id of the interrogation
      * @return {@link StateDataDto} the data linked to the interrogation
      */
-    @Operation(summary = "Get state-data for a interrogation")
-    @GetMapping("/interrogation/{id}/state-data")
+    @Operation(summary = "Get state-data for an interrogation")
+    @GetMapping("/interrogations/{id}/state-data")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public StateDataDto getStateDataByInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER);
@@ -68,8 +68,8 @@ public class StateDataController {
      * @param stateDataInputDto the value to update
      * @param interrogationId      the id of reporting unit
      */
-    @Operation(summary = "Update state-data for a interrogation")
-    @PutMapping("/interrogation/{id}/state-data")
+    @Operation(summary = "Update state-data for an interrogation")
+    @PutMapping("/interrogations/{id}/state-data")
     @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void setStateData(@IdValid @PathVariable(value = "id") String interrogationId,
                              @Valid @RequestBody StateDataInput stateDataInputDto) throws StateDataInvalidDateException, LockedResourceException {

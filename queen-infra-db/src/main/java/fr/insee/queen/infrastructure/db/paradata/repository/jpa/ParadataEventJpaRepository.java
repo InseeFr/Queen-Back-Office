@@ -17,7 +17,7 @@ import java.util.UUID;
 public interface ParadataEventJpaRepository extends JpaRepository<ParadataEventDB, UUID> {
 
     /**
-     * Create paradata for a interrogation
+     * Create paradata for an interrogation
      *
      * @param id paradata id
      * @param paradataValue paradata value (json format)

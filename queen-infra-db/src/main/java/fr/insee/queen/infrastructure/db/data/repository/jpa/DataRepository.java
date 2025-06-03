@@ -18,7 +18,7 @@ public interface DataRepository {
     void deleteDatas(String campaignId);
 
     /**
-     * Find the data of a interrogation
+     * Find the data of an interrogation
      *
      * @param interrogationId interrogation id
      * @return an optional of the data (json format)
@@ -26,13 +26,13 @@ public interface DataRepository {
     Optional<ObjectNode> findData(String interrogationId);
 
     /**
-     * Delete data of a interrogation
+     * Delete data of an interrogation
      * @param interrogationId interrogation id
      */
     void deleteByInterrogationId(String interrogationId);
 
     /**
-     * Update data for a interrogation
+     * Update data for an interrogation
      *
      * @param interrogationId interrogation id
      * @param data json data to set
@@ -41,7 +41,7 @@ public interface DataRepository {
     int updateData(String interrogationId, ObjectNode data);
 
     /**
-     * Update data for a interrogation
+     * Update data for an interrogation
      *
      * @param interrogationId interrogation id
      * @param collectedUpdateData partial collected data to set on current collected data
@@ -49,7 +49,7 @@ public interface DataRepository {
     void updateCollectedData(String interrogationId, ObjectNode collectedUpdateData);
 
     /**
-     * Save data for a interrogation
+     * Save data for an interrogation
      *
      * @param data data to save
      * @return saved entity

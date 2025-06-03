@@ -31,7 +31,7 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
     void deleteDatas(String campaignId);
 
     /**
-     * Find the data of a interrogation
+     * Find the data of an interrogation
      *
      * @param interrogationId interrogation id
      * @return an optional of the data (json format)
@@ -43,7 +43,7 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
     Optional<ObjectNode> findData(String interrogationId);
 
     /**
-     * Delete data of a interrogation
+     * Delete data of an interrogation
      * @param interrogationId interrogation id
      */
     @Transactional
@@ -55,7 +55,7 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
     void deleteByInterrogationId(String interrogationId);
 
     /**
-     * Update data for a interrogation
+     * Update data for an interrogation
      *
      * @param interrogationId interrogation id
      * @param data json data to set

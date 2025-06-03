@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Nomenclature schema",
-  "description": "Validation of nomenclatures for a interrogation",
+  "description": "Validation of nomenclatures for an interrogation",
   "type": "array",
   "items": {
     "$ref": "#/$defs/nomenclature"

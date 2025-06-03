@@ -5,7 +5,7 @@ import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 
 public interface ParadataEventRepository {
     /**
-     * Create paradata for a interrogation
+     * Create paradata for an interrogation
      *
      * @param paradataValue paradata value (json format)
      * @param interrogationSummary interrogation summary

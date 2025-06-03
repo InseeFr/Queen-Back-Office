@@ -91,7 +91,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
     List<InterrogationSummary> findAllSummaryByIdIn(List<String> interrogationIds);
 
     /**
-     * Retrieve a interrogation with all details
+     * Retrieve an interrogation with all details
      *
      * @param interrogationId interrogation id
      * @return {@link Interrogation} interrogation
@@ -134,7 +134,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
     List<InterrogationProjection> findAllInterrogations();
 
     /**
-     * Retrieve a interrogation with campaign and state data linked (used for deposit proof)
+     * Retrieve an interrogation with campaign and state data linked (used for deposit proof)
      *
      * @param interrogationId interrogation id
      * @return {@link InterrogationDepositProof} interrogation

@@ -90,7 +90,7 @@ public class InterrogationController {
      * @return {@link InterrogationDto} the interrogation
      */
     @Operation(summary = "Get interrogation")
-    @GetMapping("/interrogation/{id}")
+    @GetMapping("/interrogations/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public InterrogationDto getInterrogationById(@IdValid @PathVariable(value = "id") String interrogationId) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
@@ -136,7 +136,7 @@ public class InterrogationController {
      * @return {@link InterrogationMetadataDto} the interrogation
      */
     @Operation(summary = "Get interrogation metadata")
-    @GetMapping("/interrogation/{id}/metadata")
+    @GetMapping("/interrogations/{id}/metadata")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public InterrogationMetadataDto getInterrogationMetadataById(@IdValid @PathVariable(value = "id") String interrogationId) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
@@ -151,7 +151,7 @@ public class InterrogationController {
      * @param interrogationUpdateInput interrogation form data
      */
     @Operation(summary = "Update interrogation")
-    @PutMapping("/interrogation/{id}")
+    @PutMapping("/interrogations/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     public void updateInterrogationById(@IdValid @PathVariable(value = "id") String interrogationId,
                                      @Valid @RequestBody InterrogationUpdateInput interrogationUpdateInput) throws LockedResourceException {
@@ -195,12 +195,12 @@ public class InterrogationController {
     }
 
     /**
-     * Create or update a interrogation
+     * Create or update an interrogation
      *
      * @param campaignId             campaign id
      * @param interrogationCreationInput interrogation data for creation
      */
-    @Operation(summary = "Create/Update a interrogation")
+    @Operation(summary = "Create/Update an interrogation")
     @PostMapping("/campaign/{id}/interrogation")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public ResponseEntity<Void> createUpdateInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
@@ -217,7 +217,7 @@ public class InterrogationController {
     }
 
     @Operation(summary = "Update interrogation updated data/state-data")
-    @PatchMapping("/interrogation/{id}")
+    @PatchMapping("/interrogations/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void updateInterrogationDataStateDataById(@IdValid @PathVariable(value = "id") String interrogationId,
                                                   @Valid @RequestBody InterrogationDataStateDataUpdateInput interrogationUpdateInput) throws LockedResourceException {
@@ -261,12 +261,12 @@ public class InterrogationController {
 
 
     /**
-     * Delete a interrogation
+     * Delete an interrogation
      *
      * @param interrogationId interrogation id
      */
-    @Operation(summary = "Delete a interrogation")
-    @DeleteMapping("/interrogation/{id}")
+    @Operation(summary = "Delete an interrogation")
+    @DeleteMapping("/interrogations/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {

@@ -18,7 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Handle creation of paradata events for a interrogation. Paradatas are data
+ * Handle creation of paradata events for an interrogation. Paradatas are data
  * giving additional information about how the user is filling the questionnaire
  */
 @RestController
@@ -32,11 +32,11 @@ public class ParadataEventController {
     private final PilotageComponent pilotageComponent;
 
     /**
-     * Create a paradata event for a interrogation
+     * Create a paradata event for an interrogation
      *
      * @param paradataValue paradata value
      */
-    @Operation(summary = "Create paradata event for a interrogation")
+    @Operation(summary = "Create paradata event for an interrogation")
     @PostMapping(path = "/paradata")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)

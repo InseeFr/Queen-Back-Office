@@ -32,7 +32,7 @@ class CommentIT {
 
     @Test
     void on_get_comment_return_comment() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/comment")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/comment")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -46,7 +46,7 @@ class CommentIT {
 
     @Test
     void on_get_comment_when_su_not_exist_return_404() throws Exception {
-        mockMvc.perform(get("/api/interrogation/plop/comment")
+        mockMvc.perform(get("/api/interrogations/plop/comment")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -55,7 +55,7 @@ class CommentIT {
 
     @Test
     void on_get_comment_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/interrogation/pl!op/comment")
+        mockMvc.perform(get("/api/interrogations/pl!op/comment")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -64,7 +64,7 @@ class CommentIT {
 
     @Test
     void on_get_comment_when_anonymousUser_return_401() throws Exception {
-        mockMvc.perform(get("/api/interrogation/plop/comment")
+        mockMvc.perform(get("/api/interrogations/plop/comment")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
@@ -76,7 +76,7 @@ class CommentIT {
     void on_update_comment_comment_is_updated() throws Exception {
         String interrogationId = "d98d28c2-1535-4fc8-a405-d6a554231bbc";
         String commentJson = JsonTestHelper.getResourceFileAsString("interrogation/comment.json");
-        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/comment")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/comment")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -86,7 +86,7 @@ class CommentIT {
         String content = result.getResponse().getContentAsString();
         JSONAssert.assertNotEquals(commentJson, content, JSONCompareMode.NON_EXTENSIBLE);
 
-        mockMvc.perform(put("/api/interrogation/" + interrogationId + "/comment")
+        mockMvc.perform(put("/api/interrogations/" + interrogationId + "/comment")
                         .content(commentJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -94,7 +94,7 @@ class CommentIT {
                 )
                 .andExpect(status().isOk());
 
-        result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/comment")
+        result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/comment")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -107,7 +107,7 @@ class CommentIT {
 
     @Test
     void on_update_comment_when_anonymous_user_return_401() throws Exception {
-        mockMvc.perform(put("/api/interrogation/not-exist/comment")
+        mockMvc.perform(put("/api/interrogations/not-exist/comment")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -118,7 +118,7 @@ class CommentIT {
 
     @Test
     void on_update_comment_when_su_not_exist_return_404() throws Exception {
-        mockMvc.perform(put("/api/interrogation/not-exist/comment")
+        mockMvc.perform(put("/api/interrogations/not-exist/comment")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -129,7 +129,7 @@ class CommentIT {
 
     @Test
     void on_update_comment_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(put("/api/interrogation/invalid!identifier/comment")
+        mockMvc.perform(put("/api/interrogations/invalid!identifier/comment")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -140,7 +140,7 @@ class CommentIT {
 
     @Test
     void on_update_comment_when_comment_not_json_object_node_return_400() throws Exception {
-        mockMvc.perform(put("/api/interrogation/12/comment")
+        mockMvc.perform(put("/api/interrogations/12/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))

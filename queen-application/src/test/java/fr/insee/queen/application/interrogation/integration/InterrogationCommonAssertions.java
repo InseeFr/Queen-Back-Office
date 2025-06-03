@@ -121,7 +121,7 @@ class InterrogationCommonAssertions {
                     "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
                     "questionnaireId":"simpsons"
                 }""";
-        mockMvc.perform(put("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+        mockMvc.perform(put("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(interrogationDataUpdated)
@@ -160,12 +160,12 @@ class InterrogationCommonAssertions {
 
     void on_delete_interrogation_process_deletion() throws Exception {
         String interrogationId = "517046b6-bd88-47e0-838e-00d03461f592";
-        mockMvc.perform(delete("/api/interrogation/" + interrogationId)
+        mockMvc.perform(delete("/api/interrogations/" + interrogationId)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isNoContent());
-        mockMvc.perform(get("/api/interrogation/" + interrogationId)
+        mockMvc.perform(get("/api/interrogations/" + interrogationId)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -190,7 +190,7 @@ class InterrogationCommonAssertions {
     }
 
     private void on_get_interrogation_return_interrogation(String interrogationId, String expectedResult) throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId)
+        MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId)
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )

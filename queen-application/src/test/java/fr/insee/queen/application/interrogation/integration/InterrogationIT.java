@@ -140,7 +140,7 @@ class InterrogationIT {
 
     @Test
     void on_get_interrogation_when_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/interrogation/invalidéidentifier")
+        mockMvc.perform(get("/api/interrogations/invalidéidentifier")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -149,7 +149,7 @@ class InterrogationIT {
 
     @Test
     void on_get_interrogation_when_not_exist_return_404() throws Exception {
-        mockMvc.perform(get("/api/interrogation/not-exist")
+        mockMvc.perform(get("/api/interrogations/not-exist")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -158,7 +158,7 @@ class InterrogationIT {
 
     @Test
     void on_delete_interrogation_when_identifier_invalid_return_400() throws Exception {
-        mockMvc.perform(delete("/api/interrogation/invalid!identifier")
+        mockMvc.perform(delete("/api/interrogations/invalid!identifier")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -167,7 +167,7 @@ class InterrogationIT {
 
     @Test
     void on_delete_interrogation_when_not_exist_return_404() throws Exception {
-        mockMvc.perform(delete("/api/interrogation/not-exist")
+        mockMvc.perform(delete("/api/interrogations/not-exist")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -176,7 +176,7 @@ class InterrogationIT {
 
     @Test
     void on_get_deposit_proof_return_200() throws Exception {
-        mockMvc.perform(get("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/deposit-proof")
+        mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/deposit-proof")
                         .accept(MediaType.APPLICATION_PDF)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -187,7 +187,7 @@ class InterrogationIT {
     @Test
     void on_get_interrogation_metadata_return_interrogation_metadata() throws Exception {
         String interrogationId = "538d89c2-1047-48f7-8c16-02e9f41a8093";
-        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/metadata")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/metadata")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -234,7 +234,7 @@ class InterrogationIT {
     @Test
     void on_get_interrogation_metadata_when_invalid_metadata_return_404() throws Exception {
         String interrogationId = "517046b6-bd88-47e0-838e-00d03461f592";
-        mockMvc.perform(get("/api/interrogation/" + interrogationId + "/metadata")
+        mockMvc.perform(get("/api/interrogations/" + interrogationId + "/metadata")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -243,7 +243,7 @@ class InterrogationIT {
 
     @Test
     void on_get_deposit_proof_when_not_exist_return_404() throws Exception {
-        mockMvc.perform(get("/api/interrogation/not-exist/deposit-proof")
+        mockMvc.perform(get("/api/interrogations/not-exist/deposit-proof")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -266,7 +266,7 @@ class InterrogationIT {
                 )
                 .andExpect(status().isForbidden());
 
-        mockMvc.perform(delete("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+        mockMvc.perform(delete("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
@@ -285,7 +285,7 @@ class InterrogationIT {
                         "currentPage": "2.3#5"
                     }
                 }""";
-        mockMvc.perform(patch("/api/interrogation/invalid!identifier")
+        mockMvc.perform(patch("/api/interrogations/invalid!identifier")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(interrogationDataStateData)
@@ -308,9 +308,9 @@ class InterrogationIT {
     void when_anonymous_user_access_authenticated_endpoints_return_401() throws Exception {
         List<String> getEndPoints = List.of(
                 "/api/interrogations",
-                "/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592",
-                "/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/deposit-proof",
-                "/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/metadata",
+                "/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592",
+                "/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/deposit-proof",
+                "/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/metadata",
                 "/api/campaign/VQS2021X00/interrogations",
                 "/api/interrogations/interviewer");
         for (String getEndPoint : getEndPoints) {
@@ -329,7 +329,7 @@ class InterrogationIT {
                 )
                 .andExpect(status().isUnauthorized());
 
-        mockMvc.perform(put("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+        mockMvc.perform(put("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(InterrogationCommonAssertions.INTERROGATION_DATA)
@@ -337,7 +337,7 @@ class InterrogationIT {
                 )
                 .andExpect(status().isUnauthorized());
 
-        mockMvc.perform(patch("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+        mockMvc.perform(patch("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(InterrogationCommonAssertions.INTERROGATION_DATA)
@@ -345,7 +345,7 @@ class InterrogationIT {
                 )
                 .andExpect(status().isUnauthorized());
 
-        mockMvc.perform(delete("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592")
+        mockMvc.perform(delete("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )

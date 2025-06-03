@@ -36,7 +36,7 @@ public interface InterrogationRepository {
     List<InterrogationSummary> findAllSummaryByIdIn(List<String> interrogationIds);
 
     /**
-     * Retrieve a interrogation with all details
+     * Retrieve an interrogation with all details
      *
      * @param interrogationId interrogation id
      * @return {@link Interrogation} interrogation
@@ -44,7 +44,7 @@ public interface InterrogationRepository {
     Optional<Interrogation> find(String interrogationId);
 
     /**
-     * Retrieve a interrogation with campaign and state data linked (used for deposit proof)
+     * Retrieve an interrogation with campaign and state data linked (used for deposit proof)
      *
      * @param interrogationId interrogation id
      * @return {@link InterrogationDepositProof} interrogation
@@ -96,7 +96,7 @@ public interface InterrogationRepository {
     void create(Interrogation interrogation);
 
     /**
-     * Update personalization of a interrogation
+     * Update personalization of an interrogation
      *
      * @param interrogationId interrogation id
      * @param personalization personalization value
@@ -104,7 +104,7 @@ public interface InterrogationRepository {
     void savePersonalization(String interrogationId, ArrayNode personalization);
 
     /**
-     * Save comment of a interrogation
+     * Save comment of an interrogation
      *
      * @param interrogationId interrogation id
      * @param comment comment value
@@ -112,7 +112,7 @@ public interface InterrogationRepository {
     void saveComment(String interrogationId, ObjectNode comment);
 
     /**
-     * Save data of a interrogation
+     * Save data of an interrogation
      *
      * @param interrogationId interrogation id
      * @param data data value
@@ -120,14 +120,14 @@ public interface InterrogationRepository {
     void saveData(String interrogationId, ObjectNode data);
 
     /**
-     * Save partial collected data for a interrogation
+     * Save partial collected data for an interrogation
      * @param interrogationId interrogation id
      * @param partialCollectedDataNode partial data value
      */
     void updateCollectedData(String interrogationId, ObjectNode partialCollectedDataNode);
 
     /**
-     * Find the comment of a interrogation
+     * Find the comment of an interrogation
      *
      * @param interrogationId interrogation id
      * @return the comment value
@@ -135,7 +135,7 @@ public interface InterrogationRepository {
     Optional<ObjectNode> findComment(String interrogationId);
 
     /**
-     * Find the data of a interrogation
+     * Find the data of an interrogation
      *
      * @param interrogationId interrogation id
      * @return the data value
@@ -143,7 +143,7 @@ public interface InterrogationRepository {
     Optional<ObjectNode> findData(String interrogationId);
 
     /**
-     * Get the personalization of a interrogation
+     * Get the personalization of an interrogation
      *
      * @param interrogationId interrogation id
      * @return the personalization value
@@ -151,7 +151,7 @@ public interface InterrogationRepository {
     InterrogationPersonalization getInterrogationPersonalization(String interrogationId);
 
     /**
-     * Get the personalization of a interrogation
+     * Get the personalization of an interrogation
      *
      * @param interrogationId interrogation id
      * @return the personalization value

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PilotageComponent {
     /**
-     * Check if the current user has defined roles for a interrogation
+     * Check if the current user has defined roles for an interrogation
      *
      * @param interrogationId the interrogation the user want to access
      * @param roles        the roles the current user should have to access the interrogation

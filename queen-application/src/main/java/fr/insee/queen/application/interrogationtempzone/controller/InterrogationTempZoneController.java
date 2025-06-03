@@ -34,7 +34,7 @@ public class InterrogationTempZoneController {
     private final InterrogationTempZoneService interrogationTempZoneService;
 
     /**
-     * Create a interrogation to the temp zone area
+     * Create an interrogation to the temp zone area
      *
      * @param interrogationId interrogation id
      * @param interrogation   interrogation json
@@ -43,7 +43,7 @@ public class InterrogationTempZoneController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                     schema = @Schema(ref = SchemaType.Names.INTERROGATION_TEMP_ZONE))))
     @Parameter(name = "userId", hidden = true)
-    @PostMapping("/interrogation/{id}/temp-zone")
+    @PostMapping("/interrogations/{id}/temp-zone")
     @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void postInterrogationByIdInTempZone(@IdValid @PathVariable(value = "id") String interrogationId,

@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 /**
- * These endpoints handle the questionnaire form data of a interrogation
+ * These endpoints handle the questionnaire form data of an interrogation
  */
 @RestController
 @Tag(name = "06. Interrogations")
@@ -50,13 +50,13 @@ public class DataController {
     private final AuthenticationHelper authenticationUserHelper;
 
     /**
-     * Retrieve the questionnaire form data of a interrogation
+     * Retrieve the questionnaire form data of an interrogation
      *
      * @param interrogationId the id of reporting unit
-     * @return {@link String} the questionnaire form data of a interrogation
+     * @return {@link String} the questionnaire form data of an interrogation
      */
-    @Operation(summary = "Get data for a interrogation")
-    @GetMapping("/interrogation/{id}/data")
+    @Operation(summary = "Get data for an interrogation")
+    @GetMapping("/interrogations/{id}/data")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.DATA))})
     public ObjectNode getDataByInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
@@ -96,15 +96,15 @@ public class DataController {
 
 
     /**
-     * Update the questionnaire form data of a interrogation
+     * Update the questionnaire form data of an interrogation
      *
      * @param dataValue    the questionnaire form data to update
      * @param interrogationId the id of the interrogation
      */
-    @Operation(summary = "Update data for a interrogation",
+    @Operation(summary = "Update data for an interrogation",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                     schema = @Schema(ref = SchemaType.Names.DATA))))
-    @PutMapping("/interrogation/{id}/data")
+    @PutMapping("/interrogations/{id}/data")
     @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void updateData(
             @NotNull

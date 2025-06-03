@@ -17,7 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * These endpoints handle the comment filled by a interrogation at the nd of the questionnaire*
+ * These endpoints handle the comment filled by an interrogation at the nd of the questionnaire*
  */
 
 @ConditionalOnExpression(value = "${feature.comments.enabled} == true")
@@ -38,8 +38,8 @@ public class CommentController {
      * @param interrogationId the id of interrogation
      * @return {@link String} the comment linked to the interrogation
      */
-    @Operation(summary = "Get comment for a interrogation")
-    @GetMapping("/interrogation/{id}/comment")
+    @Operation(summary = "Get comment for an interrogation")
+    @GetMapping("/interrogations/{id}/comment")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public ObjectNode getCommentByInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER);
@@ -52,8 +52,8 @@ public class CommentController {
      * @param commentValue the value to update
      * @param interrogationId the id of the interrogation
      */
-    @Operation(summary = "Update comment for a interrogation")
-    @PutMapping("/interrogation/{id}/comment")
+    @Operation(summary = "Update comment for an interrogation")
+    @PutMapping("/interrogations/{id}/comment")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public void setComment(@NotNull @RequestBody ObjectNode commentValue,
                            @IdValid @PathVariable(value = "id") String interrogationId) {

@@ -25,7 +25,7 @@ public class DataCommonAssertions {
 
 
     void on_get_data_return_data() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/data")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -38,7 +38,7 @@ public class DataCommonAssertions {
     }
 
     void on_get_data_when_su_not_exist_return_404() throws Exception {
-        mockMvc.perform(get("/api/interrogation/plop/data")
+        mockMvc.perform(get("/api/interrogations/plop/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -46,7 +46,7 @@ public class DataCommonAssertions {
     }
 
     void on_get_data_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(get("/api/interrogation/plop$/data")
+        mockMvc.perform(get("/api/interrogations/plop$/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -65,7 +65,7 @@ public class DataCommonAssertions {
                 .andReturn();
 
         for(String interrogationId : interrogationIds) {
-            MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/data")
+            MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/data")
                             .accept(MediaType.APPLICATION_JSON)
                             .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                     )
@@ -76,7 +76,7 @@ public class DataCommonAssertions {
             JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
         }
 
-        MvcResult result = mockMvc.perform(get("/api/interrogation/c8142dcc-c133-49aa-a969-bb9828190a2c/data")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/c8142dcc-c133-49aa-a969-bb9828190a2c/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -90,7 +90,7 @@ public class DataCommonAssertions {
     void on_update_data_data_is_updated() throws Exception {
         String interrogationId = "d98d28c2-1535-4fc8-a405-d6a554231bbc";
         String dataJson = JsonTestHelper.getResourceFileAsString("interrogation/data.json");
-        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/data")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -100,7 +100,7 @@ public class DataCommonAssertions {
         String content = result.getResponse().getContentAsString();
         JSONAssert.assertNotEquals(dataJson, content, JSONCompareMode.NON_EXTENSIBLE);
 
-        mockMvc.perform(put("/api/interrogation/" + interrogationId + "/data")
+        mockMvc.perform(put("/api/interrogations/" + interrogationId + "/data")
                         .content(dataJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ public class DataCommonAssertions {
                 )
                 .andExpect(status().isOk());
 
-        result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/data")
+        result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 )
@@ -120,7 +120,7 @@ public class DataCommonAssertions {
     }
 
     void on_update_data_when_su_not_exist_return_404() throws Exception {
-        mockMvc.perform(put("/api/interrogation/not-exist/data")
+        mockMvc.perform(put("/api/interrogations/not-exist/data")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -130,7 +130,7 @@ public class DataCommonAssertions {
     }
 
     void on_update_data_when_su_id_invalid_return_400() throws Exception {
-        mockMvc.perform(put("/api/interrogation/invalid$identifier/data")
+        mockMvc.perform(put("/api/interrogations/invalid$identifier/data")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -140,7 +140,7 @@ public class DataCommonAssertions {
     }
 
     void on_update_data_when_data_not_json_object_node_return_400() throws Exception {
-        mockMvc.perform(put("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc/data")
+        mockMvc.perform(put("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc/data")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -150,7 +150,7 @@ public class DataCommonAssertions {
     }
 
     void on_get_data_when_anonymous_user_return_401() throws Exception {
-        mockMvc.perform(get("/api/interrogation/pl_op/data")
+        mockMvc.perform(get("/api/interrogations/pl_op/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
@@ -158,7 +158,7 @@ public class DataCommonAssertions {
     }
 
     void on_update_data_when_anonymous_user_return_401() throws Exception {
-        mockMvc.perform(put("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc/data")
+        mockMvc.perform(put("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc/data")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -216,14 +216,14 @@ public class DataCommonAssertions {
             }""", collectedVarToUpdate, newCollectedVar, stateData);
 
         // check it works when already collected data
-        mockMvc.perform(patch("/api/interrogation/" + interrogationId)
+        mockMvc.perform(patch("/api/interrogations/" + interrogationId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(interrogationDataStateData)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
                 ).andExpect(status().isOk());
 
-        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/data")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
@@ -284,7 +284,7 @@ public class DataCommonAssertions {
                 "stateData": %s
             }""", collectedVar1, collectedVar2, stateData);
 
-        mockMvc.perform(patch("/api/interrogation/" + interrogationId)
+        mockMvc.perform(patch("/api/interrogations/" + interrogationId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(interrogationDataStateData)
@@ -292,7 +292,7 @@ public class DataCommonAssertions {
                 )
                 .andExpect(status().isOk());
 
-        MvcResult result = mockMvc.perform(get("/api/interrogation/" + interrogationId + "/data")
+        MvcResult result = mockMvc.perform(get("/api/interrogations/" + interrogationId + "/data")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
@@ -313,7 +313,7 @@ public class DataCommonAssertions {
     }
 
     void updateCollectedDataError02() throws Exception {
-        mockMvc.perform(patch("/api/interrogation/invalid$identifier")
+        mockMvc.perform(patch("/api/interrogations/invalid$identifier")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -323,7 +323,7 @@ public class DataCommonAssertions {
     }
 
     void updateCollectedDataError03() throws Exception {
-        mockMvc.perform(patch("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc")
+        mockMvc.perform(patch("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc")
                         .content("[]")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -333,7 +333,7 @@ public class DataCommonAssertions {
     }
 
     void updateCollectedDataError04() throws Exception {
-        mockMvc.perform(patch("/api/interrogation/d98d28c2-1535-4fc8-a405-d6a554231bbc")
+        mockMvc.perform(patch("/api/interrogations/d98d28c2-1535-4fc8-a405-d6a554231bbc")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

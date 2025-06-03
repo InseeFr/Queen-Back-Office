@@ -56,7 +56,7 @@ class InterrogationsTempZoneIT {
                     "currentPage": "2.3"
                   }
                 }""";
-        mockMvc.perform(post("/api/interrogation/" + interrogationId + "/temp-zone")
+        mockMvc.perform(post("/api/interrogations/" + interrogationId + "/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tempZoneInput)
@@ -143,7 +143,7 @@ class InterrogationsTempZoneIT {
     void on_create_interrogation_when_non_interviewer_then_return_403() throws Exception {
         // no control on questionnaire id ...
         String tempZoneInput = "{}";
-        mockMvc.perform(post("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/temp-zone")
+        mockMvc.perform(post("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tempZoneInput)
@@ -156,7 +156,7 @@ class InterrogationsTempZoneIT {
     void on_create_interrogation_when_anonymous_user_then_return_401() throws Exception {
         // no control on questionnaire id ...
         String tempZoneInput = "{}";
-        mockMvc.perform(post("/api/interrogation/517046b6-bd88-47e0-838e-00d03461f592/temp-zone")
+        mockMvc.perform(post("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/temp-zone")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tempZoneInput)
