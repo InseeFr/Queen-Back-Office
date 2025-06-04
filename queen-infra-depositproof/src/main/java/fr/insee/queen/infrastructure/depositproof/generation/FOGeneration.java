@@ -49,7 +49,7 @@ public class FOGeneration {
         TransformerFactory tFactory = new TransformerFactoryImpl();
         tFactory.setURIResolver(new ClasspathURIResolver());
         tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "file");
         Transformer transformer = tFactory.newTransformer(new StreamSource(xslSheet));
         transformer.setURIResolver(new ClasspathURIResolver());
         transformer.setParameter(UNITE, userId);
