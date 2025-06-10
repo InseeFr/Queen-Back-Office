@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Service
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class StateDataApiService implements StateDataService {
 
     private final StateDataRepository stateDataRepository;
+    private final Clock clock;
 
     public static final String NOT_FOUND_MESSAGE = "State data not found for survey unit %s";
     public static final String INVALID_DATE_MESSAGE = "Date for state data is invalid";
@@ -36,6 +39,12 @@ public class StateDataApiService implements StateDataService {
     @Transactional
     public void saveStateData(String surveyUnitId, StateData stateData) throws StateDataInvalidDateException {
         Optional<StateData> previousStateData = stateDataRepository.find(surveyUnitId);
+
+        if(stateData.date() == null) {
+            long timestamp = ZonedDateTime.now(clock).toInstant().toEpochMilli();
+            stateData = new StateData(stateData.state(), timestamp, stateData.currentPage());
+        }
+
         if (previousStateData.isEmpty()) {
             stateDataRepository.save(surveyUnitId, stateData);
             return;

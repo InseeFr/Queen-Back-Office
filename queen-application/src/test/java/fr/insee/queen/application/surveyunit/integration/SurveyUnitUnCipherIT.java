@@ -1,5 +1,6 @@
 package fr.insee.queen.application.surveyunit.integration;
 
+import fr.insee.queen.application.configuration.FixedTimeConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(classes = {
+        FixedTimeConfiguration.class
+})
 @AutoConfigureMockMvc
 /* Disable the "Add at least one assertion to this test case." (sic)
    The sonar rule is not smart enough to inspect common test class

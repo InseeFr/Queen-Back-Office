@@ -54,7 +54,7 @@ class SurveyUnitControllerTest {
     @DisplayName("Should throw exception when role is reviewer and campaign is sensitive")
     void testDiffUpdateSurveyUnitException() {
         // given
-        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, 1L, "2.0"));
+        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT,  "2.0"));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER));
         SurveyUnitSummary surveyUnitSummary = surveyUnitFakeService.getSummaryById(SurveyUnitFakeService.SURVEY_UNIT3_ID);
         assertThat(surveyUnitSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -71,7 +71,7 @@ class SurveyUnitControllerTest {
     void testDiffUpdateSurveyUnitException02(String surveyUnitId) {
 
         // given
-        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, 1L, "2.0"));
+        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0"));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         SurveyUnitSummary surveyUnitSummary = surveyUnitFakeService.getSummaryById(surveyUnitId);
         assertThat(surveyUnitSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -90,7 +90,7 @@ class SurveyUnitControllerTest {
     @DisplayName("Should update survey unit when campaign is sensitive and role is admin/webclient")
     void testDiffUpdateSurveyUnit04() throws LockedResourceException {
         // given
-        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, 1L, "2.0"));
+        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT,  "2.0"));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
         SurveyUnitSummary surveyUnitSummary = surveyUnitFakeService.getSummaryById(SurveyUnitFakeService.SURVEY_UNIT3_ID);
         assertThat(surveyUnitSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -104,7 +104,6 @@ class SurveyUnitControllerTest {
         assertThat(surveyUnitUpdated.id()).isEqualTo(SurveyUnitFakeService.SURVEY_UNIT3_ID);
         assertThat(surveyUnitUpdated.stateData().state()).isEqualTo(StateDataType.valueOf(suInput.stateData().state().name()));
         assertThat(surveyUnitUpdated.stateData().currentPage()).isEqualTo(suInput.stateData().currentPage());
-        assertThat(surveyUnitUpdated.stateData().date()).isEqualTo(suInput.stateData().date());
         assertThat(surveyUnitUpdated.data()).isEqualTo(suInput.data());
     }
 
@@ -113,7 +112,7 @@ class SurveyUnitControllerTest {
     @DisplayName("Should update survey unit when campaign is sensitive and role is interviewer/survey-unit")
     void testDiffUpdateSurveyUnit05(Authentication auth) throws LockedResourceException {
         // given
-        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, 1L, "2.0"));
+        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0"));
         authenticatedUserHelper.setAuthenticationUser(auth);
         SurveyUnitSummary surveyUnitSummary = surveyUnitFakeService.getSummaryById(SurveyUnitFakeService.SURVEY_UNIT3_ID);
         assertThat(surveyUnitSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -127,7 +126,6 @@ class SurveyUnitControllerTest {
         assertThat(surveyUnitUpdated.id()).isEqualTo(SurveyUnitFakeService.SURVEY_UNIT3_ID);
         assertThat(surveyUnitUpdated.stateData().state()).isEqualTo(StateDataType.valueOf(suInput.stateData().state().name()));
         assertThat(surveyUnitUpdated.stateData().currentPage()).isEqualTo(suInput.stateData().currentPage());
-        assertThat(surveyUnitUpdated.stateData().date()).isEqualTo(suInput.stateData().date());
         assertThat(surveyUnitUpdated.data()).isEqualTo(suInput.data());
     }
 
@@ -135,7 +133,7 @@ class SurveyUnitControllerTest {
     @DisplayName("Should update survey unit when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
     void testDiffUpdateSurveyUnit06() throws LockedResourceException {
         // given
-        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, 1L, "2.0"));
+        SurveyUnitDataStateDataUpdateInput suInput = new SurveyUnitDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0"));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         SurveyUnitSummary surveyUnitSummary = surveyUnitFakeService.getSummaryById(SurveyUnitFakeService.SURVEY_UNIT3_ID);
         assertThat(surveyUnitSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -152,7 +150,6 @@ class SurveyUnitControllerTest {
         assertThat(surveyUnitUpdated.id()).isEqualTo(SurveyUnitFakeService.SURVEY_UNIT3_ID);
         assertThat(surveyUnitUpdated.stateData().state()).isEqualTo(StateDataType.valueOf(suInput.stateData().state().name()));
         assertThat(surveyUnitUpdated.stateData().currentPage()).isEqualTo(suInput.stateData().currentPage());
-        assertThat(surveyUnitUpdated.stateData().date()).isEqualTo(suInput.stateData().date());
         assertThat(surveyUnitUpdated.data()).isEqualTo(suInput.data());
     }
 
