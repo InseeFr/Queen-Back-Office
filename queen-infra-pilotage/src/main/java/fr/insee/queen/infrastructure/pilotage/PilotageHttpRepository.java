@@ -104,17 +104,19 @@ public class PilotageHttpRepository implements PilotageRepository {
     public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
         StringBuilder uriPilotageFilter = new StringBuilder();
         String campaignId = interrogation.campaign().getId();
-
+        String params;
         if (Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
             log.debug("Current campaignId {} requires an alternative habilitation service {} ", campaignId, alternativeHabilitationServiceURL);
             uriPilotageFilter.append(alternativeHabilitationServiceURL);
+            params = String.format("?id=%s&role=%s&campaign=%s&idep=%s", interrogation.surveyUnitId(), role.getExpectedRole(), campaignId, idep);
         } else {
             uriPilotageFilter
                     .append(pilotageUrl)
                     .append(API_HABILITATION);
+            params = String.format("?id=%s&role=%s&idep=%s", interrogation.id(), role.getExpectedRole(), idep);
         }
 
-        uriPilotageFilter.append(String.format("?id=%s&role=%s&campaign=%s&idep=%s", interrogation.id(), role.getExpectedRole(), campaignId, idep));
+        uriPilotageFilter.append(params);
 
         try {
             ResponseEntity<PilotageHabilitation> response =

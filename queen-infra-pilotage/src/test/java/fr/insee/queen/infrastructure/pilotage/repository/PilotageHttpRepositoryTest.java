@@ -264,7 +264,6 @@ class PilotageHttpRepositoryTest {
                         assertThat(PilotageHttpRepository.API_HABILITATION).isEqualTo(request.getURI().getPath()))
                 .andExpect(queryParam("id", interrogationId))
                 .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("campaign", campaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
@@ -281,16 +280,17 @@ class PilotageHttpRepositoryTest {
     @Test
     void testHabilitation02() {
         String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
+        String surveyUnitId = "su-id";
         String idep = "idep";
         String matchedRegexCampaignId = "EDT-campaign-id";
         PilotageRole role = PilotageRole.REVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(matchedRegexCampaignId, "label", CampaignSensitivity.NORMAL));
+        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, surveyUnitId, "questionnaire-id", new CampaignSummary(matchedRegexCampaignId, "label", CampaignSensitivity.NORMAL));
 
         String habilitationResponse = "{ \"habilitated\": \"true\" }";
         mockServer.expect(request ->
                         assertThat(alternativeHabilitationServiceURL)
                                 .isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost() + request.getURI().getPath()))
-                .andExpect(queryParam("id", interrogationId))
+                .andExpect(queryParam("id", surveyUnitId))
                 .andExpect(queryParam("role", role.getExpectedRole()))
                 .andExpect(queryParam("campaign", matchedRegexCampaignId))
                 .andExpect(queryParam("idep", idep))
@@ -319,7 +319,6 @@ class PilotageHttpRepositoryTest {
                         assertThat(PilotageHttpRepository.API_HABILITATION).isEqualTo(request.getURI().getPath()))
                 .andExpect(queryParam("id", interrogationId))
                 .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("campaign", campaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
@@ -345,7 +344,6 @@ class PilotageHttpRepositoryTest {
                         assertThat(PilotageHttpRepository.API_HABILITATION).isEqualTo(request.getURI().getPath()))
                 .andExpect(queryParam("id", interrogationId))
                 .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("campaign", campaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED)
@@ -371,7 +369,6 @@ class PilotageHttpRepositoryTest {
                         assertThat(PilotageHttpRepository.API_HABILITATION).isEqualTo(request.getURI().getPath()))
                 .andExpect(queryParam("id", interrogationId))
                 .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("campaign", campaignId))
                 .andExpect(queryParam("idep", idep))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
