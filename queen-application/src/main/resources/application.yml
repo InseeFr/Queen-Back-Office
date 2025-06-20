@@ -12,18 +12,18 @@ application:
     webclient:
     reviewer-alternative:
     survey-unit:
-  corsOrigins:
-  # Folder where to store temp files.
-  # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
-  # Use a folder with permissions for the app only
-  temp-folder:
+  corsOrigins: https://test.com #mandatory
+    # define folder where temp files will be created
+    # /!\ do not use the OS default temp folder or java.io.tmpdir as it causes security issues
+    # give only access rights to this folder to the user executing the tomcat process
+  temp-folder: /opt/app/app-temp
 
 feature:
   sensitive-data:
     enabled: false
     encryptionSecretKey:
   oidc:
-    enabled: true
+    enabled: false
     auth-server-host: https://auth-server.host
     auth-server-url: ${feature.oidc.auth-server-host}/auth
     client-id: my-client-id
@@ -44,7 +44,11 @@ feature:
     enabled: false
   interviewer-mode:
     enabled: false
-
+  events:
+    scheduler:
+      enabled: true
+    consumer:
+      enabled: true
 spring:
   docker:
     compose:
@@ -87,6 +91,11 @@ spring:
     contexts: prod
     defaultSchema: public
     change-log: classpath:db/master.xml
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 springdoc:
   swagger-ui:
