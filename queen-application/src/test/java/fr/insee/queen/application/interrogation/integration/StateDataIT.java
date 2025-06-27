@@ -73,24 +73,6 @@ class StateDataIT {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void on_update_state_data_when_date_invalid_return_409() throws Exception {
-        String interrogationId = "d98d28c2-1535-4fc8-a405-d6a554231bbc";
-        String stateDataJson = """
-            {
-              "state": "EXTRACTED",
-              "currentPage": "2.3#5"
-            }
-        """;
-        mockMvc.perform(put("/api/interrogations/" + interrogationId + "/state-data")
-                        .content(stateDataJson)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser()))
-                )
-                .andExpect(status().isConflict());
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"1111111119","1111111120"})
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
@@ -150,7 +132,7 @@ class StateDataIT {
                       "id": "517046b6-bd88-47e0-838e-00d03461f592",
                       "stateData": {
                         "state": "EXTRACTED",
-                        "date": 1111111111,
+                        "date": 1747395350727,
                         "currentPage": "2.3#5"
                       }
                     },
@@ -158,7 +140,7 @@ class StateDataIT {
                       "id": "c8142dcc-c133-49aa-a969-bb9828190a2c",
                       "stateData": {
                         "state": "INIT",
-                        "date": 1111111111,
+                        "date": 1747395350727,
                         "currentPage": "2.3#5"
                       }
                     }

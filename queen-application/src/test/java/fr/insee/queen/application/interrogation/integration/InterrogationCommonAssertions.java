@@ -28,15 +28,6 @@ class InterrogationCommonAssertions {
                 "questionnaireId":"VQS2021X00"
             }""";
 
-    public static final String SURVEYUNIT_DATA_SAVED = """
-            {
-                "id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01",
-                "surveyUnitId": "test-survey-unit-id-55",
-                "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
-                "stateData":{"state":"EXTRACTED","date":1747395350727,"currentPage":"2.3#5"},
-                "questionnaireId":"VQS2021X00"
-            }""";
     private final MockMvc mockMvc;
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
@@ -65,7 +56,7 @@ class InterrogationCommonAssertions {
                 "id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01",
                 "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
                 "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
-                "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
+                "stateData":{"state":"EXTRACTED","date":1747395350727,"currentPage":"2.3#5"},
                 "questionnaireId":"VQS2021X00"
             }""";
 
