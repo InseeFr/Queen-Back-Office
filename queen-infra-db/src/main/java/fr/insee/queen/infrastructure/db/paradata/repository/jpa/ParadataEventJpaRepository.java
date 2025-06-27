@@ -17,33 +17,33 @@ import java.util.UUID;
 public interface ParadataEventJpaRepository extends JpaRepository<ParadataEventDB, UUID> {
 
     /**
-     * Create paradata for a survey unit
+     * Create paradata for an interrogation
      *
      * @param id paradata id
      * @param paradataValue paradata value (json format)
-     * @param surveyUnitId survey unit id
+     * @param interrogationId interrogation id
      */
     @Transactional
     @Modifying
     @Query(value = """
-            INSERT INTO paradata_event (id, value, survey_unit_id)
-            VALUES (:id, :paradataValue\\:\\:jsonb, :surveyUnitId)""", nativeQuery = true)
-    void createParadataEvent(UUID id, ObjectNode paradataValue, String surveyUnitId);
+            INSERT INTO paradata_event (id, value, interrogation_id, survey_unit_id)
+            VALUES (:id, :paradataValue\\:\\:jsonb, :interrogationId, :surveyUnitId)""", nativeQuery = true)
+    void createParadataEvent(UUID id, ObjectNode paradataValue, String interrogationId, String surveyUnitId);
 
     /**
-     * Delete all survey unit's paradatas for a campaign
+     * Delete all interrogation's paradatas for a campaign
      * @param campaignId campaign id
      */
     @Transactional
     @Modifying
     @Query(value = """
-            delete from paradata_event where survey_unit_id in (
-                select id from survey_unit
+            delete from paradata_event where interrogation_id in (
+                select id from interrogation
                     where campaign_id = :campaignId
             )""", nativeQuery = true)
-    void deleteBySurveyUnitCampaignId(String campaignId);
+    void deleteByInterrogationCampaignId(String campaignId);
 
     @Transactional
     @Modifying
-    void deleteBySurveyUnitId(String surveyUnitId);
+    void deleteByInterrogationId(String interrogationId);
 }

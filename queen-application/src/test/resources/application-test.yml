@@ -16,11 +16,6 @@ feature:
     realm: my-realm
     principal-attribute: username
     additional-realm: additional-realm
-  dataset:
-    # create demo dataset on startup
-    load-on-start: false
-    # display api endpoint to create dataset
-    display-endpoint: true
   swagger:
     enabled: false
   pilotage:

@@ -25,7 +25,7 @@ class ParadataEventControllerTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
-    public void init() {
+    void init() {
         paradataEventService = new ParadataEventFakeService();
         pilotageComponent = new PilotageFakeComponent();
         controller = new ParadataEventController(paradataEventService, pilotageComponent);
@@ -35,7 +35,7 @@ class ParadataEventControllerTest {
     @DisplayName("On creating paradata when paradata ok save call is triggered")
     void addParadata01() throws JsonProcessingException {
         ObjectNode paradata = mapper.readValue("""
-                {"idSU": "11", "object": {}}
+                {"idInterrogation": "11", "object": {}}
                 """, ObjectNode.class);
         controller.addParadata(paradata);
         assertThat(pilotageComponent.isChecked()).isTrue();

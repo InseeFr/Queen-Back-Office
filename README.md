@@ -97,12 +97,6 @@ feature:
   oidc:
     enabled: false
 
-  dataset:
-    # create demo dataset on startup
-    load-on-start: true
-    # display api endpoint to create dataset
-    display-endpoint: true
-
   # enable swagger
   swagger:
     enabled: true
@@ -160,12 +154,6 @@ feature:
     principal-attribute: id-claim
     role-claim: role-claim
 
-  dataset:
-    # create demo dataset on startup
-    load-on-start: false
-    # display api endpoint to create dataset
-    display-endpoint: false
-
   # enable swagger
   swagger:
     enabled: true
@@ -206,23 +194,23 @@ feature:
 	- `GET /campaign/{idCampaign}/questionnaire-id` : Retrieve all the questionnaire ids for a campaign
 	- `POST /questionnaire-models` : Create a new questionnaire
 
-- SurveyUnit
-	- `GET /survey-units` : Retrieve all survey units id 
-	- `GET /survey-unit/{id}` : Retrieve the survey unit
-	- `GET /survey-unit/{id}/deposit-prof` : Generate and retrieve a deposit proof (pdf file) for a survey unit
-	- `GET /campaign/{id}/survey-units` : Retrieve all the survey units of a campaign
-	- `PUT /survey-unit/{id}` : Update a survey unit
-    - `GET /survey-units/interviewer` : Retrieve all the survey units of the current interviewer
-	- `POST /campaign/{id}/survey-unit` : Create or update a survey unit
-	- `DELETE /survey-unit/{id}` : Delete a survey unit
+- Interrogation
+	- `GET /interrogations` : Retrieve all interrogations id 
+	- `GET /interrogations/{id}` : Retrieve the interrogation
+	- `GET /interrogations/{id}/deposit-prof` : Generate and retrieve a deposit proof (pdf file) for an interrogation
+	- `GET /campaign/{id}/interrogations` : Retrieve all the interrogations of a campaign
+	- `PUT /interrogations/{id}` : Update an interrogation
+    - `GET /interrogations/interviewer` : Retrieve all the interrogations of the current interviewer
+	- `POST /campaign/{id}/interrogation` : Create or update an interrogation
+	- `DELETE /interrogations/{id}` : Delete an interrogation
 
 - Data
-	- `GET /survey-unit/{id}/data` : Retrieve the data of a survey unit
-	- `PUT /survey-unit/{id}/data` : Update the data of a survey unit
+	- `GET /interrogations/{id}/data` : Retrieve the data of an interrogation
+	- `PUT /interrogations/{id}/data` : Update the data of an interrogation
 
 - Comment
-	- `GET /survey-unit/{id}/comment` : Retrieve the comment of a survey unit
-	- `PUT /survey-unit/{id}/comment` : Update the comment of a survey unit
+	- `GET /interrogations/{id}/comment` : Retrieve the comment of an interrogation
+	- `PUT /interrogations/{id}/comment` : Update the comment of an interrogation
 
 - Nomenclatures
 	- `GET /questionnaire/{id}/required-nomenclatures` : Retrieve all required nomenclatures of a questionnaire
@@ -232,23 +220,20 @@ feature:
     - `GET /nomenclatures` : Retrieve all nomenclatures ids
 
 - Personalization
-	- `GET /survey-unit/{id}/personalization` : Retrieve the personalization of a survey unit
-	- `PUT /survey-unit/{id}/personalization` : Update the personalization of a survey unit
+	- `GET /interrogations/{id}/personalization` : Retrieve the personalization of an interrogation
+	- `PUT /interrogations/{id}/personalization` : Update the personalization of an interrogation
 	
 - Metadata
 	- `GET /campaign/{id}/metadata` : Retrieve campaign metadata
 	- `GET /questionnaire/{id}/metadata` : Retrieve campaign metadata
 
 - Paradata
-	- `POST /paradata` : Create a paradata event for a survey unit
+	- `POST /paradata` : Create a paradata event for an interrogation
 	
 - StateData
-	- `GET /survey-unit/{id}/state-data` : Retrieve the state-data of a survey unit
-	- `PUT /survey-unit/{id}/state-data` : Update the state-data of a survey unit
-	- `POST /survey-units/state-data` : Get state-data for all survey-units defined in request body
-	
-- DataSet
-	- `POST /create-dataset` : Create dataset for demo environments
+	- `GET /interrogations/{id}/state-data` : Retrieve the state-data of an interrogation
+	- `PUT /interrogations/{id}/state-data` : Update the state-data of an interrogation
+	- `POST /interrogations/state-data` : Get state-data for all interrogations defined in request body
 
 ## Libraries used
 - spring-boot-data-jpa

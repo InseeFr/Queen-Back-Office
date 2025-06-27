@@ -7,7 +7,7 @@ import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
-import fr.insee.queen.domain.surveyunit.gateway.SurveyUnitRepository;
+import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
@@ -25,7 +25,7 @@ import java.util.Set;
 @Slf4j
 public class CampaignApiService implements CampaignService {
     private final CampaignRepository campaignRepository;
-    private final SurveyUnitRepository surveyUnitRepository;
+    private final InterrogationRepository interrogationRepository;
     private final QuestionnaireModelRepository questionnaireModelRepository;
     private final CampaignExistenceService campaignExistenceService;
     private final CacheManager cacheManager;
@@ -43,12 +43,12 @@ public class CampaignApiService implements CampaignService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(CacheName.CAMPAIGN_EXIST),
-            @CacheEvict(value = CacheName.SURVEY_UNIT_EXIST, allEntries = true),
-            @CacheEvict(value = CacheName.SURVEY_UNIT_SUMMARY, allEntries = true)
+            @CacheEvict(value = CacheName.INTERROGATION_EXIST, allEntries = true),
+            @CacheEvict(value = CacheName.INTERROGATION_SUMMARY, allEntries = true)
     })
     @Override
     public void delete(String campaignId) {
-        surveyUnitRepository.deleteSurveyUnits(campaignId);
+        interrogationRepository.deleteInterrogations(campaignId);
 
         CampaignSummary campaignSummary = campaignRepository.
                 findWithQuestionnaireIds(campaignId)

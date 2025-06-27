@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Data schema",
-  "description": "Validation of survey unit data",
+  "description": "Validation of interrogation data",
   "type": "object",
   "additionalProperties": true,
   "properties": {

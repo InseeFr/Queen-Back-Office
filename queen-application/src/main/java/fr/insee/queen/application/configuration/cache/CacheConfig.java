@@ -75,8 +75,8 @@ public class CacheConfig {
     }
 
     @Bean
-    protected CaffeineCache surveyUnitExistenceCache() {
-        return new CaffeineCache(CacheName.SURVEY_UNIT_EXIST,
+    protected CaffeineCache interrogationExistenceCache() {
+        return new CaffeineCache(CacheName.INTERROGATION_EXIST,
                 Caffeine.newBuilder()
                         .initialCapacity(2000)
                         .maximumSize(20000)
@@ -85,8 +85,8 @@ public class CacheConfig {
     }
 
     @Bean
-    protected CaffeineCache surveyUnitCampaignCache() {
-        return new CaffeineCache(CacheName.SURVEY_UNIT_SUMMARY,
+    protected CaffeineCache interrogationCampaignCache() {
+        return new CaffeineCache(CacheName.INTERROGATION_SUMMARY,
                 Caffeine.newBuilder()
                         .initialCapacity(2000)
                         .maximumSize(20000)

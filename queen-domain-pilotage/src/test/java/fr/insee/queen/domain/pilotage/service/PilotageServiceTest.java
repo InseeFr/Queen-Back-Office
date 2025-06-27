@@ -7,8 +7,8 @@ import fr.insee.queen.domain.campaign.service.dummy.QuestionnaireModelFakeServic
 import fr.insee.queen.domain.pilotage.infrastructure.dummy.PilotageFakeRepository;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
-import fr.insee.queen.domain.surveyunit.service.dummy.SurveyUnitFakeService;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
+import fr.insee.queen.domain.interrogation.service.dummy.InterrogationFakeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,11 +26,11 @@ class PilotageServiceTest {
 
     @BeforeEach
     void init() {
-        SurveyUnitFakeService surveyUnitService = new SurveyUnitFakeService();
+        InterrogationFakeService interrogationService = new InterrogationFakeService();
         pilotageRepository = new PilotageFakeRepository();
         campaignExistenceService = new CampaignExistenceFakeService();
         questionnaireModelFakeService = new QuestionnaireModelFakeService();
-        pilotageService = new PilotageApiService(surveyUnitService, campaignExistenceService, pilotageRepository, questionnaireModelFakeService);
+        pilotageService = new PilotageApiService(interrogationService, campaignExistenceService, pilotageRepository, questionnaireModelFakeService);
     }
 
     @Test
@@ -69,7 +69,7 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On check habilitation, when role == INTERVIEWER return true")
     void testHasHabilitation_01() {
-        SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
+        InterrogationSummary su = new InterrogationSummary("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01", "su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
         boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.INTERVIEWER, "idep");
         assertThat(hasHabilitation).isTrue();
     }
@@ -77,33 +77,33 @@ class PilotageServiceTest {
     @Test
     @DisplayName("On check habilitation, when role == REVIEWER return true")
     void testHasHabilitation_02() {
-        SurveyUnitSummary su = new SurveyUnitSummary("su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
+        InterrogationSummary su = new InterrogationSummary("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01", "su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
         boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.REVIEWER, "idep");
         assertThat(hasHabilitation).isTrue();
     }
 
     @Test
-    @DisplayName("On retrieving survey units by campaign, when current survey unit is null return empty collection")
-    void testGetSurveyUnitsByCampaign_01() {
-        pilotageRepository.setNullCurrentSurveyUnit(true);
-        List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign("campaign-id");
-        assertThat(surveyUnits).isEmpty();
+    @DisplayName("On retrieving interrogations by campaign, when current interrogation is null return empty collection")
+    void testGetInterrogationsByCampaign_01() {
+        pilotageRepository.setNullCurrentInterrogation(true);
+        List<InterrogationSummary> interrogations = pilotageService.getInterrogationsByCampaign("campaign-id");
+        assertThat(interrogations).isEmpty();
     }
 
     @Test
-    @DisplayName("On retrieving survey units by campaign check campaign existence")
-    void testGetSurveyUnitsByCampaign_02() {
-        pilotageRepository.setNullCurrentSurveyUnit(true);
-        pilotageService.getSurveyUnitsByCampaign("campaign-id");
+    @DisplayName("On retrieving interrogations by campaign check campaign existence")
+    void testGetInterrogationsByCampaign_02() {
+        pilotageRepository.setNullCurrentInterrogation(true);
+        pilotageService.getInterrogationsByCampaign("campaign-id");
         assertThat(campaignExistenceService.isCheckCampaignExist()).isTrue();
     }
 
     @Test
-    @DisplayName("On retrieving survey units by campaign, return survey units for a campaign")
-    void testGetSurveyUnitsByCampaign_03() {
-        List<SurveyUnitSummary> surveyUnits = pilotageService.getSurveyUnitsByCampaign(PilotageFakeRepository.CURRENT_SU_CAMPAIGN1_ID);
-        assertThat(surveyUnits).hasSize(2);
-        assertThat(surveyUnits.get(0).id()).isEqualTo(PilotageFakeRepository.SURVEY_UNIT1_ID);
-        assertThat(surveyUnits.get(1).id()).isEqualTo(PilotageFakeRepository.SURVEY_UNIT2_ID);
+    @DisplayName("On retrieving interrogations by campaign, return interrogations for a campaign")
+    void testGetInterrogationsByCampaign_03() {
+        List<InterrogationSummary> interrogations = pilotageService.getInterrogationsByCampaign(PilotageFakeRepository.CURRENT_SU_CAMPAIGN1_ID);
+        assertThat(interrogations).hasSize(2);
+        assertThat(interrogations.get(0).id()).isEqualTo(PilotageFakeRepository.INTERROGATION1_ID);
+        assertThat(interrogations.get(1).id()).isEqualTo(PilotageFakeRepository.INTERROGATION3_ID);
     }
 }

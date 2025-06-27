@@ -197,18 +197,18 @@ class JsonValidatorComponentTest {
     }
 
     @Test
-    @DisplayName("when validating valid survey unit temp zone, no errors returned")
+    @DisplayName("when validating valid interrogation temp zone, no errors returned")
     void testTempZone01() throws IOException {
-        String surveyUnitTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/surveyunittempzone/valid-tempzone.json");
-        JsonNode surveyUnitTempZoneNode = mapper.readValue(surveyUnitTempZoneJson, JsonNode.class);
-        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, surveyUnitTempZoneNode);
+        String interrogationTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/interrogationtempzone/valid-tempzone.json");
+        JsonNode interrogationTempZoneNode = mapper.readValue(interrogationTempZoneJson, JsonNode.class);
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.INTERROGATION_TEMP_ZONE, interrogationTempZoneNode);
         assertThat(errors).isEmpty();
     }
 
     @Test
-    @DisplayName("when validating survey unit temp zone with missing attributes, return json schema errors")
+    @DisplayName("when validating interrogation temp zone with missing attributes, return json schema errors")
     void testTempZone02() {
-        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, JsonNodeFactory.instance.objectNode());
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.INTERROGATION_TEMP_ZONE, JsonNodeFactory.instance.objectNode());
         assertThat(errors).hasSize(3);
 
         ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
@@ -224,11 +224,11 @@ class JsonValidatorComponentTest {
     }
 
     @Test
-    @DisplayName("when validating survey unit temp zone with missing stateData attributes, return json schema errors")
+    @DisplayName("when validating interrogation temp zone with missing stateData attributes, return json schema errors")
     void testTempZone03() throws IOException {
-        String surveyUnitTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/surveyunittempzone/invalid-missing-statedata-attributes-tempzone.json");
-        JsonNode surveyUnitTempZoneNode = mapper.readValue(surveyUnitTempZoneJson, JsonNode.class);
-        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, surveyUnitTempZoneNode);
+        String interrogationTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/interrogationtempzone/invalid-missing-statedata-attributes-tempzone.json");
+        JsonNode interrogationTempZoneNode = mapper.readValue(interrogationTempZoneJson, JsonNode.class);
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.INTERROGATION_TEMP_ZONE, interrogationTempZoneNode);
         assertThat(errors).hasSize(3);
 
         ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
@@ -244,11 +244,11 @@ class JsonValidatorComponentTest {
     }
 
     @Test
-    @DisplayName("when validating survey unit temp zone with incorrect types, return json schema errors")
+    @DisplayName("when validating interrogation temp zone with incorrect types, return json schema errors")
     void testTempZone04() throws IOException {
-        String surveyUnitTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/surveyunittempzone/invalid-types.json");
-        JsonNode surveyUnitTempZoneNode = mapper.readValue(surveyUnitTempZoneJson, JsonNode.class);
-        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, surveyUnitTempZoneNode);
+        String interrogationTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/interrogationtempzone/invalid-types.json");
+        JsonNode interrogationTempZoneNode = mapper.readValue(interrogationTempZoneJson, JsonNode.class);
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.INTERROGATION_TEMP_ZONE, interrogationTempZoneNode);
         assertThat(errors).hasSize(7);
 
         ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
@@ -276,11 +276,11 @@ class JsonValidatorComponentTest {
     }
 
     @Test
-    @DisplayName("when validating survey unit temp zone with incorrect attributes length, return json schema errors")
+    @DisplayName("when validating interrogation temp zone with incorrect attributes length, return json schema errors")
     void testTempZone05() throws IOException {
-        String surveyUnitTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/surveyunittempzone/invalid-lengths.json");
-        JsonNode surveyUnitTempZoneNode = mapper.readValue(surveyUnitTempZoneJson, JsonNode.class);
-        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.SURVEY_UNIT_TEMP_ZONE, surveyUnitTempZoneNode);
+        String interrogationTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/interrogationtempzone/invalid-lengths.json");
+        JsonNode surveyUnitTempZoneNode = mapper.readValue(interrogationTempZoneJson, JsonNode.class);
+        Set<ValidationMessage> errors = validatorComponent.validate(SchemaType.INTERROGATION_TEMP_ZONE, surveyUnitTempZoneNode);
         assertThat(errors).hasSize(2);
 
         ValidationMessage[] messages = errors.toArray(ValidationMessage[]::new);
