@@ -7,8 +7,10 @@ import fr.insee.queen.domain.interrogation.model.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InterrogationFakeDao implements InterrogationRepository {
 
@@ -20,6 +22,9 @@ public class InterrogationFakeDao implements InterrogationRepository {
 
     @Setter
     private InterrogationPersonalization interrogationPersonalization;
+
+    @Setter
+    private List<InterrogationSummary> interrogationSummaries = new ArrayList<>();
 
     @Setter
     private boolean interrogationExist = true;
@@ -36,7 +41,8 @@ public class InterrogationFakeDao implements InterrogationRepository {
 
     @Override
     public List<InterrogationSummary> findAllSummaryBySurveyUnitId(String surveyUnitId) {
-        return List.of();
+        return interrogationSummaries.stream().filter(
+                i -> i.surveyUnitId().equals(surveyUnitId)).toList();
     }
 
     @Override
