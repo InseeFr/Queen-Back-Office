@@ -74,6 +74,11 @@ public class InterrogationApiService implements InterrogationService {
     }
 
     @Override
+    public List<InterrogationSummary> findSummariesBySurveyUnitId(String surveyUnitId) {
+        return interrogationRepository.findAllSummaryBySurveyUnitId(surveyUnitId);
+    }
+
+    @Override
     public List<Interrogation> findByIds(List<String> interrogationIds) {
         return interrogationRepository.find(interrogationIds);
     }

@@ -35,6 +35,11 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
+    public List<InterrogationSummary> findAllSummaryBySurveyUnitId(String surveyUnitId) {
+        return List.of();
+    }
+
+    @Override
     public List<InterrogationSummary> findAllSummaryByIdIn(List<String> interrogationIds) {
         return null;
     }

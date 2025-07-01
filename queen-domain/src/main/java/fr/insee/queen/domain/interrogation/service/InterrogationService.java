@@ -18,6 +18,8 @@ public interface InterrogationService {
 
     List<InterrogationSummary> findSummariesByCampaignId(String campaignId);
 
+    List<InterrogationSummary> findSummariesBySurveyUnitId(String surveyUnitId);
+
     List<String> findAllInterrogationIds();
 
     void updateInterrogation(Interrogation interrogation);

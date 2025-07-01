@@ -58,6 +58,11 @@ public class InterrogationFakeService implements InterrogationService {
     }
 
     @Override
+    public List<InterrogationSummary> findSummariesBySurveyUnitId(String surveyUnitId) {
+        return interrogationSummaries;
+    }
+
+    @Override
     public List<String> findAllInterrogationIds() {
         return null;
     }
