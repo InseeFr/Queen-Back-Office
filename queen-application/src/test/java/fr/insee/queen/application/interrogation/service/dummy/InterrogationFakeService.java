@@ -111,6 +111,12 @@ public class InterrogationFakeService implements InterrogationService {
     }
 
     @Override
+    public List<InterrogationSummary> findSummariesBySurveyUnitId(String surveyUnitId) {
+        return interrogationSummaries.stream().filter(interrogation ->
+                interrogation.surveyUnitId().equals(surveyUnitId)).toList();
+    }
+
+    @Override
     public List<String> findAllInterrogationIds() {
         return null;
     }

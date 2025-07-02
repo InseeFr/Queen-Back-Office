@@ -271,6 +271,39 @@ class InterrogationIT {
                         .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
                 .andExpect(status().isForbidden());
+
+        mockMvc.perform(get("/api/survey-units/survey-unit-id1/interrogations")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Should return interrogations by surveyUnit")
+    void on_get_interrogations_return_interrogations_by_survey_unit() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String expectedFirstResult = """
+        {
+                "interrogationId":"517046b6-bd88-47e0-838e-00d03461f592",
+                "campaignId":"SIMPSONS2020X00"
+        }""";
+        mockMvc.perform(get("/api/survey-units/survey-unit-11/interrogations")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("state", StateDataTypeInput.EXTRACTED.name())
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(1)))
+                // extract and check first element
+                .andExpect(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    JsonNode rootNode = mapper.readTree(responseContent);
+                    JsonNode firstContent = rootNode.get(0);
+                    JsonNode expectedNode = mapper.readTree(expectedFirstResult);
+                    assertThat(firstContent).isEqualTo(expectedNode);
+                });
     }
 
     @Test

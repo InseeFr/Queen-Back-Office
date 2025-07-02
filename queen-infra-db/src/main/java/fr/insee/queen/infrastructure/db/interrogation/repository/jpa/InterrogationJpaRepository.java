@@ -245,4 +245,23 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
     @Modifying
     @Query("delete from InterrogationDB s where s.campaign.id=:campaignId")
     void deleteInterrogations(String campaignId);
+
+    /**
+     * Find all interrogation summary by survey-unit
+     *
+     * @param surveyUnitId
+     * @return List of {@link InterrogationSummary} interrogation summary
+     */
+    @Query("""
+            select new fr.insee.queen.domain.interrogation.model.InterrogationSummary(
+                s.id,
+                s.surveyUnitId,
+                s.questionnaireModel.id,
+                new fr.insee.queen.domain.campaign.model.CampaignSummary(
+                    s.campaign.id,
+                    s.campaign.label,
+                    s.campaign.sensitivity)
+            )
+            from InterrogationDB s where s.surveyUnitId=:surveyUnitId""")
+    List<InterrogationSummary> findAllSummaryBySurveyUnitId(String surveyUnitId);
 }

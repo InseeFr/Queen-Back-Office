@@ -2,6 +2,7 @@ package fr.insee.queen.application.interrogation.controller;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationBySurveyUnitDto;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
 import fr.insee.queen.application.interrogation.controller.dummy.MetadataFakeConverter;
 import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
@@ -26,6 +27,8 @@ import org.springframework.security.core.Authentication;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.springframework.security.access.AccessDeniedException;
+
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -405,6 +408,32 @@ class InterrogationControllerTest {
         assertThat(interrogationDto.personalization()).isEqualTo(interrogation.personalization());
         assertThat(interrogationDto.stateData()).isNull();
         assertThat(interrogationDto.questionnaireId()).isEqualTo(interrogation.questionnaireId());
+    }
+
+    @Test
+    @DisplayName("Should return interrogations by survey-unit")
+    void testGetInterrogationsBySurveyUnitId() {
+        // when
+        List<InterrogationBySurveyUnitDto> interrogations = interrogationController.getInterrogationsBySurveyUnit("survey-unit-id1");
+
+        // then
+        assertThat(interrogations).isNotNull()
+                .hasSize(1);
+        InterrogationBySurveyUnitDto interrogation = interrogations.getFirst();
+        assertThat(interrogation).isNotNull();
+        assertThat(interrogation.interrogationId()).isEqualTo(InterrogationFakeService.INTERROGATION1_ID);
+        assertThat(interrogation.campaignId()).isEqualTo("campaign-id");
+    }
+
+    @Test
+    @DisplayName("Should return empty list  if survey-unit unknown")
+    void testGetInterrogationsBySurveyUnitId2() {
+        // when
+        List<InterrogationBySurveyUnitDto> interrogations = interrogationController.getInterrogationsBySurveyUnit("survey-unit-unknown");
+
+        // then
+        assertThat(interrogations).isNotNull()
+                .isEmpty();
     }
 
     private static Stream<Arguments> provideInterviewerAndSuUsers() {

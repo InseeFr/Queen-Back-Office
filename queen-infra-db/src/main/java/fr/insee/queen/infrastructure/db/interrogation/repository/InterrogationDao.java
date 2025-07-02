@@ -58,6 +58,11 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
+    public List<InterrogationSummary> findAllSummaryBySurveyUnitId(String surveyUnitId) {
+        return crudRepository.findAllSummaryBySurveyUnitId(surveyUnitId);
+    }
+
+    @Override
     public List<InterrogationSummary> findAllSummaryByIdIn(List<String> interrogationIds) {
         return crudRepository.findAllSummaryByIdIn(interrogationIds);
     }

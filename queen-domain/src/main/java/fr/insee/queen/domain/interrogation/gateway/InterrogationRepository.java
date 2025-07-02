@@ -28,6 +28,14 @@ public interface InterrogationRepository {
     List<InterrogationSummary> findAllSummaryByCampaignId(String campaignId);
 
     /**
+     * Find all interrogation summary by survey-unit
+     *
+     * @param surveyUnitId
+     * @return List of {@link InterrogationSummary} interrogation summary
+     */
+    List<InterrogationSummary> findAllSummaryBySurveyUnitId(String surveyUnitId);
+
+    /**
      * Find all interrogation summary by interrogation ids
      *
      * @param interrogationIds interrogations we want to retrieve

@@ -3,6 +3,7 @@ package fr.insee.queen.application.interrogation.controller;
 import fr.insee.queen.application.campaign.component.MetadataConverter;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationBySurveyUnitDto;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationStateDto;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
@@ -80,6 +81,24 @@ public class InterrogationController {
                 .getInterrogations(campaignId, stateDataType)
                 .stream()
                 .map(InterrogationStateDto::fromModel)
+                .toList();
+    }
+
+    /**
+     * Retrieve interrogations filtered by survey-unit
+     *
+     * @param surveyUnitId
+     * @return all {@link InterrogationBySurveyUnitDto}
+     */
+    @Operation(summary = "Retrieve interrogations by survey-unit")
+    @GetMapping("/survey-units/{id}/interrogations")
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    public List<InterrogationBySurveyUnitDto> getInterrogationsBySurveyUnit(
+            @IdValid @PathVariable("id") String surveyUnitId) {
+        return interrogationService
+                .findSummariesBySurveyUnitId(surveyUnitId)
+                .stream()
+                .map(InterrogationBySurveyUnitDto::fromModel)
                 .toList();
     }
 

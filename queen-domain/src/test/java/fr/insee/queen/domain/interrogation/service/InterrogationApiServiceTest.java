@@ -3,6 +3,7 @@ package fr.insee.queen.domain.interrogation.service;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -20,6 +21,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.NoOpCacheManager;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -221,5 +223,20 @@ class InterrogationApiServiceTest {
 
     static Stream<ObjectNode> nullOrEmpTyData() {
         return Stream.of(null, JsonNodeFactory.instance.objectNode());
+    }
+
+    @Test
+    @DisplayName("Retrieve one interrogation summary by surveyUnitId")
+    void findSummariesBySurveyUnitId() {
+        CampaignSummary campaignSummary = new CampaignSummary("campaignId", "label", null);
+        InterrogationSummary interrogationSummary =
+                new InterrogationSummary("id","survey-unit-id1", "questionnaireId", campaignSummary);
+        InterrogationSummary interrogationSummary2 =
+                new InterrogationSummary("id","survey-unit-id2", "questionnaireId", campaignSummary);
+        interrogationFakeDao.setInterrogationSummaries(List.of(interrogationSummary, interrogationSummary2));
+
+        List<InterrogationSummary> interrogationSummaries = interrogationApiService.findSummariesBySurveyUnitId("survey-unit-id1");
+        assertThat(interrogationSummaries).hasSize(1);
+        assertThat(interrogationSummaries.getFirst().surveyUnitId()).isEqualTo("survey-unit-id1");
     }
 }
