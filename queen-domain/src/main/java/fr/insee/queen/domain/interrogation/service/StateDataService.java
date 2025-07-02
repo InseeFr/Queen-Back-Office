@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface StateDataService {
     StateData getStateData(String interrogationId);
 
-    void saveStateData(String interrogationId, StateData stateData) throws StateDataInvalidDateException;
+    void saveStateData(String interrogationId, StateData stateData, boolean verifyDate) throws StateDataInvalidDateException;
 
     Optional<StateData> findStateData(String interrogationId);
 }
