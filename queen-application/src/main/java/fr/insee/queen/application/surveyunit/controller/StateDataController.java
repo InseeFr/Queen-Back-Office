@@ -78,7 +78,7 @@ public class StateDataController {
 
         // if campaign sensitivity is OFF, update data
         if(surveyUnitSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
-            stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
+            stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto), false);
             return;
         }
 
@@ -86,7 +86,7 @@ public class StateDataController {
 
         // admin can do everything
         if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
-            stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
+            stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto), false);
             return;
         }
 
@@ -99,7 +99,7 @@ public class StateDataController {
                             || StateDataType.VALIDATED.equals(state));
 
             if (validatedState.isEmpty()) {
-                stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto));
+                stateDataService.saveStateData(surveyUnitId, StateDataInput.toModel(stateDataInputDto), false);
                 return;
             }
             throw new LockedResourceException(surveyUnitId);

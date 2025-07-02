@@ -37,7 +37,7 @@ public class StateDataApiService implements StateDataService {
 
     @Override
     @Transactional
-    public void saveStateData(String surveyUnitId, StateData stateData) throws StateDataInvalidDateException {
+    public void saveStateData(String surveyUnitId, StateData stateData , boolean verifyDate) throws StateDataInvalidDateException {
         Optional<StateData> previousStateData = stateDataRepository.find(surveyUnitId);
 
         if(stateData.date() == null) {
@@ -50,13 +50,16 @@ public class StateDataApiService implements StateDataService {
             return;
         }
 
-        // update only if incoming state-data is newer
-        Long previousDate = previousStateData.get().date();
-        Long newDate = stateData.date();
+        // update only if incoming state-data is newer and verifyDate is true
+        if (verifyDate) {
+            Long previousDate = previousStateData.get().date();
+            Long newDate = stateData.date();
 
-        if (previousDate != null && newDate.compareTo(previousDate) < 0) {
-            throw new StateDataInvalidDateException(INVALID_DATE_MESSAGE);
+            if (previousDate != null && newDate.compareTo(previousDate) < 0) {
+                throw new StateDataInvalidDateException(INVALID_DATE_MESSAGE);
+            }
         }
+
         stateDataRepository.save(surveyUnitId, stateData);
     }
 }
