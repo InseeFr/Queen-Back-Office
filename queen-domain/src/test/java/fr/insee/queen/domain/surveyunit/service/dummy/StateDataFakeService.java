@@ -23,7 +23,7 @@ public class StateDataFakeService implements StateDataService {
     }
 
     @Override
-    public void saveStateData(String surveyUnitId, StateData stateData) throws StateDataInvalidDateException {
+    public void saveStateData(String surveyUnitId, StateData stateData, boolean verifyDate) throws StateDataInvalidDateException {
         if(isDateInvalid) {
             throw new StateDataInvalidDateException(ERROR_MESSAGE);
         }

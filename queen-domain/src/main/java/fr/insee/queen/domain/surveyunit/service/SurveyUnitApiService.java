@@ -105,7 +105,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
             return;
         }
         try {
-            stateDataService.saveStateData(surveyUnit.id(), newStateData);
+            stateDataService.saveStateData(surveyUnit.id(), newStateData, true);
         } catch (StateDataInvalidDateException ex) {
             // in the case of survey unit update, a problem with state data does not require to
             // rollback the other updates on survey unit
@@ -121,7 +121,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
         }
 
         try {
-            stateDataService.saveStateData(surveyUnitId, stateData);
+            stateDataService.saveStateData(surveyUnitId, stateData, false);
         } catch (StateDataInvalidDateException ex) {
             // in the case of survey unit update, a problem with state collectedDataToUpdate does not require to
             // rollback the other updates on survey unit
@@ -138,7 +138,7 @@ public class SurveyUnitApiService implements SurveyUnitService {
         surveyUnitRepository.create(surveyUnit);
         StateData stateData = surveyUnit.stateData();
         if(stateData != null) {
-            stateDataService.saveStateData(surveyUnit.id(), surveyUnit.stateData());
+            stateDataService.saveStateData(surveyUnit.id(), surveyUnit.stateData(), false);
         }
     }
 

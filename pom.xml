@@ -10,7 +10,7 @@
     <description>Modules for queen back-office</description>
 
     <properties>
-        <revision>4.8.7</revision>
+        <revision>4.8.8</revision>
         <changelist></changelist>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
@@ -30,7 +30,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>3.5.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
