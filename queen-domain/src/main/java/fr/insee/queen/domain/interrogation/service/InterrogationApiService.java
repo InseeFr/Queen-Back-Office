@@ -110,7 +110,7 @@ public class InterrogationApiService implements InterrogationService {
             return;
         }
         try {
-            stateDataService.saveStateData(interrogation.id(), newStateData);
+            stateDataService.saveStateData(interrogation.id(), newStateData, true);
         } catch (StateDataInvalidDateException ex) {
             // in the case of interrogation update, a problem with state data does not require to
             // rollback the other updates on interrogation
@@ -126,7 +126,7 @@ public class InterrogationApiService implements InterrogationService {
         }
 
         try {
-            stateDataService.saveStateData(interrogationId, stateData);
+            stateDataService.saveStateData(interrogationId, stateData, false);
         } catch (StateDataInvalidDateException ex) {
             // in the case of interrogation update, a problem with state collectedDataToUpdate does not require to
             // rollback the other updates on interrogation
@@ -143,7 +143,7 @@ public class InterrogationApiService implements InterrogationService {
         interrogationRepository.create(interrogation);
         StateData stateData = interrogation.stateData();
         if(stateData != null) {
-            stateDataService.saveStateData(interrogation.id(), interrogation.stateData());
+            stateDataService.saveStateData(interrogation.id(), interrogation.stateData(), false);
         }
     }
 

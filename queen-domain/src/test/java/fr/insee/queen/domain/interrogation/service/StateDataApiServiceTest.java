@@ -93,7 +93,7 @@ class StateDataApiServiceTest {
     void testSave04() throws StateDataInvalidDateException {
         StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 800000L, "5");
         assertThat(stateDataUpdate.date()).isLessThanOrEqualTo(stateDataDao.getStateDataReturned().date());
-        stateDataService.saveStateData(surveyUnitId, stateDataUpdate, false);
+        stateDataService.saveStateData(interrogationId, stateDataUpdate, false);
         assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
     }
 }
