@@ -290,7 +290,7 @@ class PilotageHttpRepositoryTest {
         mockServer.expect(request ->
                         assertThat(alternativeHabilitationServiceURL)
                                 .isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost() + request.getURI().getPath()))
-                .andExpect(queryParam("id", surveyUnitId))
+                .andExpect(queryParam("id", interrogationId))
                 .andExpect(queryParam("role", role.getExpectedRole()))
                 .andExpect(queryParam("campaign", matchedRegexCampaignId))
                 .andExpect(queryParam("idep", idep))

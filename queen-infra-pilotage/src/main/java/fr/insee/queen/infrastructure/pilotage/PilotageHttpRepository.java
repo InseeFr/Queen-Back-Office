@@ -108,7 +108,7 @@ public class PilotageHttpRepository implements PilotageRepository {
         if (Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
             log.debug("Current campaignId {} requires an alternative habilitation service {} ", campaignId, alternativeHabilitationServiceURL);
             uriPilotageFilter.append(alternativeHabilitationServiceURL);
-            params = String.format("?id=%s&role=%s&campaign=%s&idep=%s", interrogation.surveyUnitId(), role.getExpectedRole(), campaignId, idep);
+            params = String.format("?id=%s&role=%s&campaign=%s&idep=%s", interrogation.id(), role.getExpectedRole(), campaignId, idep);
         } else {
             uriPilotageFilter
                     .append(pilotageUrl)
