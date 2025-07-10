@@ -228,10 +228,12 @@ public class InterrogationController {
         if (interrogationService.existsById(interrogationCreationInput.id())) {
             log.info("Update interrogation with id {}", interrogationCreationInput.id());
             interrogationService.updateInterrogation(interrogation);
+            log.debug("Interrogation with id {} updated", interrogationCreationInput.id());
             return new ResponseEntity<>(HttpStatus.OK);
         }
         log.info("Create interrogation with id {}", interrogationCreationInput.id());
         interrogationService.createInterrogation(interrogation);
+        log.debug("Interrogation with id {} created", interrogationCreationInput.id());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
