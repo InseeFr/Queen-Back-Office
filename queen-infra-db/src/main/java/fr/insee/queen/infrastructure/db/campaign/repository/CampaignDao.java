@@ -140,4 +140,9 @@ public class CampaignDao implements CampaignRepository {
     public Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId) {
         return jpaRepository.findMetadataByQuestionnaireId(questionnaireId);
     }
+
+    @Override
+    public List<String> getAllCampaignIds() {
+        return jpaRepository.findAllCampaignIds();
+    }
 }

@@ -15,4 +15,6 @@ public interface CampaignService {
     void updateCampaign(Campaign campaignData);
 
     Campaign getCampaign(String campaignId);
+
+    List<String> getAllCampaignIds();
 }

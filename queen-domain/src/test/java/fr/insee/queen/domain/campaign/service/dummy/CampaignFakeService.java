@@ -45,4 +45,9 @@ public class CampaignFakeService implements CampaignService {
     public Campaign getCampaign(String campaignId) {
         return null;
     }
+
+    @Override
+    public List<String> getAllCampaignIds() {
+        return List.of(CAMPAIGN1_ID);
+    }
 }
