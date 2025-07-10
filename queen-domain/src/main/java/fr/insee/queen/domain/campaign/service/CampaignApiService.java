@@ -36,6 +36,11 @@ public class CampaignApiService implements CampaignService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaignId)));
     }
 
+    @Override
+    public List<String> getAllCampaignIds() {
+        return campaignRepository.getAllCampaignIds();
+    }
+
     public List<CampaignSummary> getAllCampaigns() {
         return campaignRepository.getAllWithQuestionnaireIds();
     }

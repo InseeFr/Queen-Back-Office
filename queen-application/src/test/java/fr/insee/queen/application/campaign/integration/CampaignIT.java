@@ -24,8 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Set;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -52,6 +51,19 @@ class CampaignIT {
                 .andExpect(jsonPath("$[?(@.id == 'VQS2021X00')].questionnaireIds[*]").value(containsInAnyOrder("VQS2021X00")))
                 .andExpect(jsonPath("$[?(@.id == 'LOG2021X11Web')].questionnaireIds[*]").value(containsInAnyOrder("LOG2021X11Web")))
                 .andExpect(jsonPath("$[?(@.id == 'LOG2021X11Tel')].questionnaireIds[*]").value(containsInAnyOrder("LOG2021X11Tel")));
+    }
+
+    @Test
+    void on_get_campaigns_ids_return_json_campaigns() throws Exception {
+        mockMvc.perform(get("/api/campaigns/ids")
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(4)))
+                .andExpect(jsonPath("$[0].id", is("SIMPSONS2020X00")))
+                .andExpect(jsonPath("$[1].id", is("VQS2021X00")))
+                .andExpect(jsonPath("$[2].id", is("LOG2021X11Web")))
+                .andExpect(jsonPath("$[3].id", is("LOG2021X11Tel")));
     }
 
     @Test

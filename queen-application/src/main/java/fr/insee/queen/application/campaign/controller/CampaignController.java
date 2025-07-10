@@ -4,6 +4,7 @@ import fr.insee.queen.application.campaign.dto.input.CampaignCreationData;
 import fr.insee.queen.application.campaign.dto.input.CampaignCreationDataV2;
 import fr.insee.queen.application.campaign.dto.output.CampaignDto;
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
+import fr.insee.queen.application.campaign.dto.output.CampaignIdsDto;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.web.validation.IdValid;
@@ -45,6 +46,20 @@ public class CampaignController {
     public List<CampaignSummaryDto> getListCampaign() {
         return campaignService.getAllCampaigns()
                 .stream().map(CampaignSummaryDto::fromModel)
+                .toList();
+    }
+
+    /**
+     * Retrieve all campaigns ids
+     *
+     * @return List of all {@link CampaignIdsDto}
+     */
+    @Operation(summary = "Get list of all campaigns ids")
+    @GetMapping(path = "/campaigns/ids")
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    public List<CampaignIdsDto> getListCampaignsIds() {
+        return campaignService.getAllCampaignIds()
+                .stream().map(CampaignIdsDto::fromModel)
                 .toList();
     }
 
