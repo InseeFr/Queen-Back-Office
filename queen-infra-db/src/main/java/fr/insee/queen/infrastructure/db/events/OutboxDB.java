@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "events")
+@Table(name = "outbox")
 @Getter
 @Setter
 @NoArgsConstructor
-public class EventsDB {
+public class OutboxDB {
     @Id
     @Column(length = 50)
     private UUID id;
@@ -34,7 +34,7 @@ public class EventsDB {
     @Column(name = "updated_date", nullable = true, updatable = true)
     private LocalDateTime updatedDate;
 
-    public EventsDB(UUID id, ObjectNode value) {
+    public OutboxDB(UUID id, ObjectNode value) {
         super();
         this.id = id;
         this.value = value;
