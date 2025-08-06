@@ -1,7 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.repository.jpa;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignSummaryRow;
 import org.springframework.data.jpa.repository.JpaRepository;
