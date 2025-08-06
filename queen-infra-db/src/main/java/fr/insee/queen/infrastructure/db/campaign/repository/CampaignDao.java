@@ -74,17 +74,17 @@ public class CampaignDao implements CampaignRepository {
     public List<CampaignSummary> getAllWithQuestionnaireIds() {
         return jpaRepository.findAllCampaignSummaryRows().stream()
                 .collect(Collectors.groupingBy(
-                        CampaignSummaryRow::getCampaignId,
+                        CampaignSummaryRow::campaignId,
                         Collectors.collectingAndThen(Collectors.toList(), rows -> {
                             CampaignSummaryRow first = rows.getFirst();
                             Set<String> questionnaireIds = rows.stream()
-                                    .map(CampaignSummaryRow::getQuestionnaireId)
+                                    .map(CampaignSummaryRow::questionnaireId)
                                     .filter(Objects::nonNull) // éviter les null si pas de questionnaire
                                     .collect(Collectors.toSet());
                             return new CampaignSummary(
-                                    first.getCampaignId(),
-                                    first.getLabel(),
-                                    first.getSensitivity(),
+                                    first.campaignId(),
+                                    first.label(),
+                                    first.sensitivity(),
                                     questionnaireIds
                             );
                         })
