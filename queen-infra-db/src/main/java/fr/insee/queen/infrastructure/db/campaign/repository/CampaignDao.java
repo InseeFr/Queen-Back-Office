@@ -6,6 +6,7 @@ import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
+import fr.insee.queen.infrastructure.db.campaign.entity.CampaignSummaryRow;
 import fr.insee.queen.infrastructure.db.campaign.entity.MetadataDB;
 import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
@@ -14,9 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -73,18 +72,29 @@ public class CampaignDao implements CampaignRepository {
 
     @Override
     public List<CampaignSummary> getAllWithQuestionnaireIds() {
-        return jpaRepository.findAllWithQuestionnaireModels().stream()
-                .map(campaign -> new CampaignSummary(
-                        campaign.getId(),
-                        campaign.getLabel(),
-                        campaign.getSensitivity(),
-                        campaign.getQuestionnaireModels()
-                                .stream()
-                                .map(QuestionnaireModelDB::getId)
-                                .collect(Collectors.toSet()))
-                )
+        return jpaRepository.findAllCampaignSummaryRows().stream()
+                .collect(Collectors.groupingBy(
+                        CampaignSummaryRow::getCampaignId,
+                        Collectors.collectingAndThen(Collectors.toList(), rows -> {
+                            CampaignSummaryRow first = rows.getFirst();
+                            Set<String> questionnaireIds = rows.stream()
+                                    .map(CampaignSummaryRow::getQuestionnaireId)
+                                    .filter(Objects::nonNull) // éviter les null si pas de questionnaire
+                                    .collect(Collectors.toSet());
+                            return new CampaignSummary(
+                                    first.getCampaignId(),
+                                    first.getLabel(),
+                                    first.getSensitivity(),
+                                    questionnaireIds
+                            );
+                        })
+                ))
+                .values()
+                .stream()
                 .toList();
     }
+
+
 
     @Override
     public void delete(String campaignId) {
