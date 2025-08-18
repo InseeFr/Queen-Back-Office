@@ -2,6 +2,7 @@ package fr.insee.queen.infrastructure.db.campaign.repository.jpa;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
+import fr.insee.queen.infrastructure.db.campaign.entity.CampaignSummaryRow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,12 +16,15 @@ import java.util.Optional;
 @Repository
 public interface CampaignJpaRepository extends JpaRepository<CampaignDB, String> {
 
-    /**
-     * Retrieve all campaigns
-     * @return {@link CampaignDB} all campaigns
-     */
-    @Query("select c from CampaignDB c left join fetch c.metadata left join fetch c.questionnaireModels")
-    List<CampaignDB> findAllWithQuestionnaireModels();
+
+    @Query("""
+    select new fr.insee.queen.infrastructure.db.campaign.entity.CampaignSummaryRow(
+        c.id, c.label, c.sensitivity, q.id
+    )
+    from CampaignDB c
+    left join c.questionnaireModels q
+    """)
+    List<CampaignSummaryRow> findAllCampaignSummaryRows();
 
     /**
      * Retrieve campaign by id
@@ -50,4 +54,11 @@ public interface CampaignJpaRepository extends JpaRepository<CampaignDB, String>
             from CampaignDB c INNER JOIN c.questionnaireModels qm
             where qm.id=:questionnaireId""")
     Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
+
+    /**
+     * Retrieve all campaigns ids
+     * @return {@link String} all campaigns ids
+     */
+    @Query("SELECT c.id FROM CampaignDB c")
+    List<String> findAllCampaignIds();
 }

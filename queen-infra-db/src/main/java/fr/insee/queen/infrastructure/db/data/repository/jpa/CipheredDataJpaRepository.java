@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CipheredDataJpaRepository extends DataJpaRepository {
 
     /**
-     * Update data for a survey unit
+     * Update data for an interrogation
      *
-     * @param surveyUnitId survey unit id
+     * @param interrogationId interrogation id
      * @param data json data to set
      * @return number of updated rows
      */
@@ -25,14 +25,14 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
         value = """
             update data
                 set value = pgp_sym_encrypt(:data\\:\\:text, current_setting('data.encryption.key'), 's2k-count=65536')
-                where survey_unit_id = :surveyUnitId"""
+                where interrogation_id = :interrogationId"""
     )
-    int updateData(String surveyUnitId, ObjectNode data);
+    int updateData(String interrogationId, ObjectNode data);
 
     /**
-     * Update data for a survey unit
+     * Update data for an interrogation
      *
-     * @param surveyUnitId survey unit id
+     * @param interrogationId interrogation id
      * @param collectedUpdateData partial collected data to set on current collected data
      */
     @Transactional
@@ -45,7 +45,7 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
             FROM
                 data
             WHERE
-                survey_unit_id = :surveyUnitId
+                interrogation_id = :interrogationId
         )
         UPDATE data
         SET value = pgp_sym_encrypt(
@@ -59,19 +59,19 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
                     )
         FROM decrypted_data
         WHERE data.id = decrypted_data.id
-          AND data.survey_unit_id = :surveyUnitId;
+          AND data.interrogation_id = :interrogationId;
     """, nativeQuery = true)
-    void updateCollectedData(String surveyUnitId, ObjectNode collectedUpdateData);
+    void updateCollectedData(String interrogationId, ObjectNode collectedUpdateData);
 
     @Transactional
     @Modifying
     @Query(value = """
         UPDATE data
             SET value = pgp_sym_encrypt('{}', current_setting('data.encryption.key'), 's2k-count=65536')
-            WHERE survey_unit_id IN (
+            WHERE interrogation_id IN (
                 SELECT su.id
-                FROM survey_unit su
-                INNER JOIN state_data sd ON sd.survey_unit_id = su.id
+                FROM interrogation su
+                INNER JOIN state_data sd ON sd.interrogation_id = su.id
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND sd.date BETWEEN :startTimestamp AND :endTimestamp
             );

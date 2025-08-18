@@ -1,16 +1,14 @@
 package fr.insee.queen.domain.paradata.gateway;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import java.util.UUID;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 
 public interface ParadataEventRepository {
     /**
-     * Create paradata for a survey unit
+     * Create paradata for an interrogation
      *
-     * @param id paradata id
      * @param paradataValue paradata value (json format)
-     * @param surveyUnitId survey unit id
+     * @param interrogationSummary interrogation summary
      */
-    void createParadataEvent(UUID id, ObjectNode paradataValue, String surveyUnitId);
+    void createParadataEvent(InterrogationSummary interrogationSummary, ObjectNode paradataValue);
 }

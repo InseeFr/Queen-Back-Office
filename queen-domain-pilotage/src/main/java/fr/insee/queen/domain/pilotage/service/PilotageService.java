@@ -1,8 +1,8 @@
 package fr.insee.queen.domain.pilotage.service;
 
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.interrogation.model.Interrogation;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 
 import java.util.List;
 
@@ -16,17 +16,17 @@ public interface PilotageService {
     boolean isClosed(String campaignId);
 
     /**
-     * Retrieve survey unit list of a campaign
+     * Retrieve interrogation list of a campaign
      * @param campaignId campaign id
-     * @return List of {@link SurveyUnitSummary} survey units of the campaign
+     * @return List of {@link InterrogationSummary} interrogations of the campaign
      */
-    List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId);
+    List<InterrogationSummary> getInterrogationsByCampaign(String campaignId);
 
     /**
-     * Retrieve survey unit list for an interviewer
-     * @return List of {@link SurveyUnit} survey units of the campaign
+     * Retrieve interrogation list for an interviewer
+     * @return List of {@link Interrogation} interrogations of the campaign
      */
-    List<SurveyUnit> getInterviewerSurveyUnits();
+    List<Interrogation> getInterviewerInterrogations();
 
     /**
      * Retrieve campaigns the user has access to as an interviewer
@@ -35,11 +35,11 @@ public interface PilotageService {
     List<PilotageCampaign> getInterviewerCampaigns();
 
     /**
-     * Check if a user has the habilitation to perform actions on a survey unit in a campaign with a specified role
-     * @param surveyUnit survey unit (with campaign) we want to check the habilitation
+     * Check if a user has the habilitation to perform actions on an interrogation in a campaign with a specified role
+     * @param interrogation interrogation (with campaign) we want to check the habilitation
      * @param role role in which the user want to perform actions
      * @param idep user id
      * @return true if habilitation is granted, false otherwise
      */
-    boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep);
+    boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep);
 }

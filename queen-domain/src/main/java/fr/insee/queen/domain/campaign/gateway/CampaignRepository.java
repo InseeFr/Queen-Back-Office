@@ -77,4 +77,11 @@ public interface CampaignRepository {
      * @param campaignId campaign id
      */
     Optional<Campaign> findCampaign(String campaignId);
+
+    /**
+     * Retrieve all campaigns ids
+     *
+     * @return List of {@link String} campaigns ids
+     */
+    List<String> getAllCampaignIds();
 }

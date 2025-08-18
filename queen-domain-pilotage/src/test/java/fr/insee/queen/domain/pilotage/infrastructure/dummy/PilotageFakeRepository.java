@@ -2,9 +2,9 @@ package fr.insee.queen.domain.pilotage.infrastructure.dummy;
 
 import fr.insee.queen.domain.pilotage.gateway.PilotageRepository;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
-import fr.insee.queen.domain.pilotage.model.PilotageSurveyUnit;
+import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,9 +15,9 @@ public class PilotageFakeRepository implements PilotageRepository {
     public static final String INTERVIEWER_CAMPAIGN1_ID = "interviewer-campaign1";
     public static final String CURRENT_SU_CAMPAIGN1_ID = "campaign-id";
 
-    public static final String SURVEY_UNIT1_ID = "pilotage-su-1";
-    public static final String SURVEY_UNIT2_ID = "pilotage-su-2";
-    public static final String SURVEY_UNIT3_ID = "pilotage-su-2";
+    public static final String INTERROGATION1_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
+    public static final String INTERROGATION2_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa02";
+    public static final String INTERROGATION3_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa03";
 
     @Getter
     private boolean wentThroughIsClosedCampaign = false;
@@ -26,7 +26,7 @@ public class PilotageFakeRepository implements PilotageRepository {
     @Setter
     private boolean nullInterviewerCampaigns = false;
     @Setter
-    private boolean nullCurrentSurveyUnit = false;
+    private boolean nullCurrentInterrogation = false;
 
     @Override
     public boolean isClosed(String campaignId) {
@@ -35,14 +35,14 @@ public class PilotageFakeRepository implements PilotageRepository {
     }
 
     @Override
-    public List<PilotageSurveyUnit> getSurveyUnits() {
-        if (nullCurrentSurveyUnit) {
+    public List<PilotageInterrogation> getInterrogations() {
+        if (nullCurrentInterrogation) {
             return null;
         }
         return List.of(
-                new PilotageSurveyUnit(SURVEY_UNIT1_ID, CURRENT_SU_CAMPAIGN1_ID),
-                new PilotageSurveyUnit(SURVEY_UNIT2_ID, "campaign-id2"),
-                new PilotageSurveyUnit(SURVEY_UNIT3_ID, CURRENT_SU_CAMPAIGN1_ID)
+                new PilotageInterrogation(INTERROGATION1_ID, CURRENT_SU_CAMPAIGN1_ID),
+                new PilotageInterrogation(INTERROGATION2_ID, "campaign-id2"),
+                new PilotageInterrogation(INTERROGATION3_ID, CURRENT_SU_CAMPAIGN1_ID)
         );
     }
 
@@ -58,7 +58,7 @@ public class PilotageFakeRepository implements PilotageRepository {
     }
 
     @Override
-    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
+    public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
         this.wentThroughHasHabilitation = true;
         return true;
     }

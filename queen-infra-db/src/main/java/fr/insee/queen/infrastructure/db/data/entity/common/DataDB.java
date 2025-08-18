@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.data.entity.common;
 
-import fr.insee.queen.infrastructure.db.surveyunit.entity.SurveyUnitDB;
+import fr.insee.queen.infrastructure.db.interrogation.entity.InterrogationDB;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,9 +23,9 @@ public abstract class DataDB {
     private UUID id;
 
     /**
-     * The SurveyUnit associated
+     * The Interrogation associated
      */
     @OneToOne
-    @JoinColumn(name = "survey_unit_id", referencedColumnName = "id")
-    private SurveyUnitDB surveyUnit;
+    @JoinColumn(name = "interrogation_id", referencedColumnName = "id")
+    private InterrogationDB interrogation;
 }

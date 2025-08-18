@@ -6,10 +6,10 @@ import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.PilotageService;
-import fr.insee.queen.domain.surveyunit.model.StateData;
-import fr.insee.queen.domain.surveyunit.model.StateDataType;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
+import fr.insee.queen.domain.interrogation.model.StateData;
+import fr.insee.queen.domain.interrogation.model.StateDataType;
+import fr.insee.queen.domain.interrogation.model.Interrogation;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,18 +29,18 @@ public class PilotageFakeService implements PilotageService {
     @Getter
     private int wentThroughHasHabilitation = 0;
     @Setter
-    private boolean hasEmptySurveyUnits = false;
+    private boolean hasEmptyInterrogations = false;
 
     public static final String CAMPAIGN1_ID = "interviewerCampaign1";
-    public static final String SURVEY_UNIT1_ID = "pilotage-s1";
-    public static final String SURVEY_UNIT2_ID = "pilotage-s2";
+    public static final String INTERROGATION1_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
+    public static final String INTERROGATION2_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa02";
 
     public final CampaignSummary campaignSummary = new CampaignSummary("campaign-id", "label", CampaignSensitivity.NORMAL);
 
     @Getter
-    private final List<SurveyUnitSummary> surveyUnitSummaries = List.of(
-            new SurveyUnitSummary(SURVEY_UNIT1_ID, "questionnaire-id", campaignSummary),
-            new SurveyUnitSummary("s2", "questionnaire-id", campaignSummary)
+    private final List<InterrogationSummary> interrogationSummaries = List.of(
+            new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id1", "questionnaire-id", campaignSummary),
+            new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id2", "questionnaire-id", campaignSummary)
     );
 
     @Getter
@@ -55,25 +55,25 @@ public class PilotageFakeService implements PilotageService {
     }
 
     @Override
-    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId) {
-        if (this.hasEmptySurveyUnits) {
+    public List<InterrogationSummary> getInterrogationsByCampaign(String campaignId) {
+        if (this.hasEmptyInterrogations) {
             return new ArrayList<>();
         }
-        return surveyUnitSummaries;
+        return interrogationSummaries;
     }
 
     @Override
-    public List<SurveyUnit> getInterviewerSurveyUnits() {
-        if (this.hasEmptySurveyUnits) {
+    public List<Interrogation> getInterviewerInterrogations() {
+        if (this.hasEmptyInterrogations) {
             return new ArrayList<>();
         }
         return List.of(
-                new SurveyUnit(SURVEY_UNIT1_ID, "campaign-id", "questionnaire-id",
+                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "campaign-id", "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(),
                         JsonNodeFactory.instance.objectNode(),
                         JsonNodeFactory.instance.objectNode(),
                         new StateData(StateDataType.INIT, 0L, "2#3")),
-                new SurveyUnit(SURVEY_UNIT2_ID, "campaign-id", "questionnaire-id",
+                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "campaign-id", "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(),
                         JsonNodeFactory.instance.objectNode(),
                         JsonNodeFactory.instance.objectNode(),
@@ -88,7 +88,7 @@ public class PilotageFakeService implements PilotageService {
     }
 
     @Override
-    public boolean hasHabilitation(SurveyUnitSummary surveyUnit, PilotageRole role, String idep) {
+    public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
         wentThroughHasHabilitation++;
         return this.hasHabilitation;
     }

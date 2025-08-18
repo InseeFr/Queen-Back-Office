@@ -5,9 +5,9 @@ import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.PilotageService;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnit;
-import fr.insee.queen.domain.surveyunit.model.SurveyUnitSummary;
-import fr.insee.queen.domain.surveyunit.service.SurveyUnitService;
+import fr.insee.queen.domain.interrogation.model.Interrogation;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
+import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -25,7 +25,7 @@ import java.util.List;
 public class PilotageApiComponent implements PilotageComponent {
     private final PilotageService pilotageService;
     private final AuthenticationHelper authHelper;
-    private final SurveyUnitService surveyUnitService;
+    private final InterrogationService interrogationService;
 
     @Override
     public boolean isClosed(String campaignId) {
@@ -33,8 +33,8 @@ public class PilotageApiComponent implements PilotageComponent {
     }
 
     @Override
-    public List<SurveyUnitSummary> getSurveyUnitsByCampaign(String campaignId) {
-        return pilotageService.getSurveyUnitsByCampaign(campaignId);
+    public List<InterrogationSummary> getInterrogationsByCampaign(String campaignId) {
+        return pilotageService.getInterrogationsByCampaign(campaignId);
     }
 
     @Override
@@ -45,13 +45,13 @@ public class PilotageApiComponent implements PilotageComponent {
     }
 
     @Override
-    public List<SurveyUnit> getInterviewerSurveyUnits() {
-        return pilotageService.getInterviewerSurveyUnits();
+    public List<Interrogation> getInterviewerInterrogations() {
+        return pilotageService.getInterviewerInterrogations();
     }
 
     @Override
-    public void checkHabilitations(String surveyUnitId, PilotageRole... rolesToCheck) {
-        SurveyUnitSummary surveyUnit = surveyUnitService.getSummaryById(surveyUnitId);
+    public void checkHabilitations(String interrogationId, PilotageRole... rolesToCheck) {
+        InterrogationSummary interrogation = interrogationService.getSummaryById(interrogationId);
         Authentication auth = authHelper.getAuthenticationPrincipal();
 
         List<String> userRoles = auth.getAuthorities().stream()
@@ -65,11 +65,11 @@ public class PilotageApiComponent implements PilotageComponent {
         }
 
         for (PilotageRole roleToCheck : rolesToCheck) {
-            if (pilotageService.hasHabilitation(surveyUnit, roleToCheck, userId)) {
-                log.info("Habilitation granted: user {} has access to survey-unit {} with role {}", userId, surveyUnit.id(), roleToCheck);
+            if (pilotageService.hasHabilitation(interrogation, roleToCheck, userId)) {
+                log.info("Habilitation granted: user {} has access to interrogation {} with role {}", userId, interrogation.id(), roleToCheck);
                 return;
             }
         }
-        throw new HabilitationException(String.format("Habilitation denied: user %s has not access to survey-unit %s with roles %s", userId, surveyUnit.id(), Arrays.toString(rolesToCheck)));
+        throw new HabilitationException(String.format("Habilitation denied: user %s has not access to interrogation %s with roles %s", userId, interrogation.id(), Arrays.toString(rolesToCheck)));
     }
 }
