@@ -25,7 +25,7 @@ feature:
     enabled: false
     encryptionSecretKey:
   oidc:
-    enabled: false
+    enabled: true
     auth-server-host: https://auth-server.host
     auth-server-url: ${feature.oidc.auth-server-host}/auth
     client-id: my-client-id
