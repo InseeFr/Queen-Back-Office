@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Repository
-public interface EventsJpaRepository extends JpaRepository<OutboxDB, UUID>  {
+public interface EventsJpaRepository<O, U> extends JpaRepository<OutboxDB, UUID>  {
 
     @Transactional
     @Modifying

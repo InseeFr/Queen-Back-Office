@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 @AllArgsConstructor
 public class EventsDao implements EventsRepository {
-    private final EventsJpaRepository jpaRepository;
+    private final EventsJpaRepository<OutboxDB, UUID> jpaRepository;
 
     @Override
     public void createEvent(UUID id, ObjectNode paradataValue) {
