@@ -2,7 +2,6 @@ package fr.insee.queen.application.events.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.events.service.EventsService;
-import fr.insee.queen.domain.paradata.service.ParadataEventService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class EventsController {
     @Operation(summary = "Create an events")
     @PostMapping("/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addEvents(@NotNull @RequestBody ObjectNode event){
+    public void addEvent(@NotNull @RequestBody ObjectNode event){
         eventsService.createEvent(event);
     }
 
