@@ -26,17 +26,14 @@ public class OutboxDB {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private ObjectNode value;
+    private ObjectNode payload;
 
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    @Column(name = "updated_date", nullable = true, updatable = true)
-    private LocalDateTime updatedDate;
-
     public OutboxDB(UUID id, ObjectNode value) {
         super();
         this.id = id;
-        this.value = value;
+        this.payload = value;
     }
 }
