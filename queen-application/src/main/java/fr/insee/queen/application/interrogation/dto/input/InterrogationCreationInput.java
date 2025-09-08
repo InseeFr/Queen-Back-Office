@@ -19,7 +19,6 @@ public record InterrogationCreationInput(
         String surveyUnitId,
         @NotNull
         String questionnaireId,
-        @NotNull
         @Schema(ref = SchemaType.Names.PERSONALIZATION)
         @JsonValid(SchemaType.PERSONALIZATION)
         ArrayNode personalization,

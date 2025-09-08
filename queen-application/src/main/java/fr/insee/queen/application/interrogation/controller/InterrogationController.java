@@ -220,7 +220,7 @@ public class InterrogationController {
      * @param interrogationCreationInput interrogation data for creation
      */
     @Operation(summary = "Create/Update an interrogation")
-    @PostMapping("/campaign/{id}/interrogation")
+    @PostMapping({"/campaign/{id}/interrogation", "/campaigns/{id}/interrogation"})
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public ResponseEntity<Void> createUpdateInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
                                                        @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
