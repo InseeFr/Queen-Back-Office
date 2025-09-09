@@ -122,8 +122,10 @@ public class InterrogationDao implements InterrogationRepository {
         InterrogationDB interrogationDB = new InterrogationDB(interrogation.id(), interrogation.surveyUnitId(), campaign, questionnaire);
         DataDB dataDB = dataFactory.buildData(interrogation.data(), interrogationDB);
         CommentDB commentDB = new CommentDB(interrogation.comment(), interrogationDB);
-        PersonalizationDB personalizationDB = new PersonalizationDB(interrogation.personalization(), interrogationDB);
-        interrogationDB.setPersonalization(personalizationDB);
+        if (interrogation.personalization() != null) {
+            PersonalizationDB personalizationDB = new PersonalizationDB(interrogation.personalization(), interrogationDB);
+            interrogationDB.setPersonalization(personalizationDB);
+        }
         interrogationDB.setComment(commentDB);
         interrogationDB.setData(dataDB);
         crudRepository.save(interrogationDB);
