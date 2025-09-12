@@ -47,3 +47,5 @@ logging:
 feature:
   dataset:
     load-on-start: false
+    sensitive-data:
+      enabled: false
