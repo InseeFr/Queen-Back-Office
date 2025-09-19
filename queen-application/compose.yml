@@ -2,6 +2,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
     profiles:
+      - all
       - keycloak
     environment:
       KEYCLOAK_ADMIN: administrator
@@ -17,6 +18,7 @@ services:
   queen-db:
     image: postgres:14.15
     profiles:
+      - all
       - queen-db
     environment:
       - POSTGRES_USER=${QUEEN_DB_USER}
@@ -34,6 +36,7 @@ services:
   queen-db-ciphered:
     image: postgres:14.15
     profiles:
+      - all
       - queen-db-ciphered
     environment:
       - POSTGRES_USER=${QUEEN_DB_USER}
