@@ -10,10 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       branch: ${{ steps.extract_branch.outputs.branch }}
+      clean_branch: ${{ steps.extract_branch.outputs.clean_branch }}
     steps:
       - name: Extract branch name
         shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
+        # create two outputs:
+        # - branch: for checkout
+        # - clean_branch: branch where '/' are replaced by '-' (for tagging docker image)
+        run: |
+          BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})
+          echo "branch=$BRANCH_NAME" >>$GITHUB_OUTPUT
+          echo "clean_branch=$(echo $BRANCH_NAME | tr '/' '-')" >>$GITHUB_OUTPUT
         id: extract_branch
 
       - uses: actions/checkout@v4
@@ -54,5 +61,5 @@ jobs:
           name: inseefr/queen-back-office
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          tags: "snapshot-${{ needs.build-snapshot.outputs.branch }}"
+          tags: "snapshot-${{ needs.build-snapshot.outputs.clean_branch }}"
           workdir: queen-application
