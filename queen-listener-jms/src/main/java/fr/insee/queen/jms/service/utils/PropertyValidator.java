@@ -1,5 +1,6 @@
 package fr.insee.queen.jms.service.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import fr.insee.queen.jms.exception.PropertyException;
 
 import java.util.UUID;
@@ -18,30 +19,18 @@ public class PropertyValidator {
             "Property %s should not be empty";
 
     /**
-     * @param propertyName the property name
-     * @param property the property to check
+     * @param node the node
+     * @param field the key for node
      * @throws PropertyException exception raised when property is invalid
-     * value is not a string
      */
-    public static void checkPropertyValue(String propertyName, String property) throws PropertyException {
-        if(property == null || property.isBlank()) {
-            throw new PropertyException(
-                    String.format(PROPERTY_NOT_EMPTY, propertyName)
-            );
-        }
+    public static String textValue(JsonNode node, String field) throws PropertyException {
+        JsonNode n = node.get(field);
+        return (n != null && n.isTextual()) ? n.asText() : null;
     }
 
     /**
-     * @param propertyName the property name
-     * @param property the property to check
+     * @param s the string test
      * @throws PropertyException exception raised when property is invalid
-     * value is not a string
      */
-    public static void checkPropertyValue(String propertyName, UUID property) throws PropertyException {
-        if(property == null) {
-            throw new PropertyException(
-                    String.format(PROPERTY_NOT_EMPTY, propertyName)
-            );
-        }
-    }
+    public static boolean isBlank(String s) throws PropertyException { return s == null || s.isBlank(); }
 }

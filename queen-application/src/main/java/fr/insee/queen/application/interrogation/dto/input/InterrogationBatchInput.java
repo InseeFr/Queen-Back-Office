@@ -33,6 +33,7 @@ public record InterrogationBatchInput(
                 interrogation.personalization(),
                 interrogation.data(),
                 null,
+                null,
                 null);
     }
 }

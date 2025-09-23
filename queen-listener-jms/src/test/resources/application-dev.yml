@@ -1,14 +1,10 @@
-# artemis, pulsar
-broker:
-  name:
-
 spring:
   application:
     name: queen-listener-jms
   datasource:
-    url: jdbc:postgresql://<URL>:5432/queen
-    username:
-    password:
+    url: jdbc:postgresql://localhost:5432/queen
+    username: insee
+    password: lille
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 2
@@ -17,6 +13,7 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
+#      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
@@ -31,17 +28,25 @@ spring:
         auto: validate
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+#    contexts: prod
+#    defaultSchema: public
+#    change-log: classpath:db/master.xml
+    contexts: test
+    defaultSchema: public
+    change-log: classpath:db/integration-test-async.xml
   artemis:
     mode: native
-    broker-url:
-    user:
-    password:
+    broker-url: (tcp://localhost:61616)?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
+    user: insee
+    password: lille
     pool:
       enabled: true
       max-connections: 50
   jms:
     listener:
-      command-queue:
+      command-queue: queue-ue
 logging:
   level:
     fr:
@@ -51,5 +56,3 @@ logging:
 feature:
   dataset:
     load-on-start: false
-    sensitive-data:
-      enabled: false
