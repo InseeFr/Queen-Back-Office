@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/schema.process-message.json",
+  "title": "Command Message",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "_id",
+    "processInstanceID",
+    "inProgress",
+    "payload",
+    "CampaignID",
+    "correlationID",
+    "questionnaireID",
+    "done",
+    "dateCreation",
+    "replyTo"
+  ],
+  "properties": {
+    "_id": {
+      "type": "object",
+      "properties": {
+        "$oid": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "description": "Identifiant unique MongoDB de type ObjectId (24 caractères hexadécimaux)."
+        }
+      },
+      "required": ["$oid"]
+    },
+    "processInstanceID": { "type": "string", "format": "uuid" },
+    "inProgress": { "type": "boolean" },
+    "payload": {
+      "type": "string",
+      "description": "Chaîne JSON stringifiée (aucune validation de contenu)."
+    },
+    "CampaignID": { "type": "string" },
+    "correlationID": { "type": "string", "format": "uuid" },
+    "questionnaireID": { "type": "string" },
+    "done": { "type": "boolean" },
+    "dateCreation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$date"],
+      "properties": {
+        "$date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Horodatage ISO 8601 (UTC)."
+        }
+      }
+    },
+    "replyTo": { "type": "string" }
+  }
+}

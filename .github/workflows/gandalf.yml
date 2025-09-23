@@ -1,0 +1,23 @@
+name: Thou shall not pass !!! (Check version & run tests)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Running tests
+        run: mvn test --no-transfer-progress
+
+      - name: install model filiere
+        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.0.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
+
