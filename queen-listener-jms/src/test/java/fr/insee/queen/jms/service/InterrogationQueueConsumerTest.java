@@ -1,6 +1,7 @@
 package fr.insee.queen.jms.service;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.domain.interrogation.model.InterrogationCommand;
@@ -67,7 +68,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should create interrogation when message is valid")
-    void ok() throws JMSException {
+    void ok() throws JMSException, JsonProcessingException {
         // Given
         String message = String.format(defaultBody, correlationId, interrogationId, questionnaireId, surveyUnitId);
         when(commandMessage.getBody(String.class)).thenReturn(message);
@@ -96,7 +97,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should log error when no correlation id in command message")
-    void shouldLogErrorWhenNoCorrelationId(CapturedOutput output) throws JMSException {
+    void shouldLogErrorWhenNoCorrelationId(CapturedOutput output) throws JMSException, JsonProcessingException {
         String message = """
         {
             "replyTo": "queueResponse",
@@ -118,7 +119,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should log error when no reply to in command message")
-    void shouldLogErrorWhenNoReplyTo(CapturedOutput output) throws JMSException {
+    void shouldLogErrorWhenNoReplyTo(CapturedOutput output) throws JMSException, JsonProcessingException {
         String message = """
         {
             "correlationID": "%s",
@@ -138,7 +139,7 @@ class InterrogationQueueConsumerTest {
         checkInvalidMessageError(noReplyToMessage, "replyTo", output);
     }
 
-    private void checkInvalidMessageError(String invalidMessage, String invalidPropertyName, CapturedOutput output) throws JMSException {
+    private void checkInvalidMessageError(String invalidMessage, String invalidPropertyName, CapturedOutput output) throws JMSException, JsonProcessingException {
         // Given
         when(commandMessage.getBody(String.class)).thenReturn(invalidMessage);
 
@@ -153,7 +154,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should log error when invalid json in command message")
-    void shouldLogErrorWhenInvalidJsonMessage(CapturedOutput output) throws JMSException {
+    void shouldLogErrorWhenInvalidJsonMessage(CapturedOutput output) throws JMSException, JsonProcessingException {
         // Given
         when(commandMessage.getBody(String.class)).thenReturn("invalid json");
 
@@ -167,7 +168,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should log error when jms exception")
-    void shouldLogErrorWhenJMSException(CapturedOutput output) throws JMSException {
+    void shouldLogErrorWhenJMSException(CapturedOutput output) throws JMSException, JsonProcessingException {
         // Given
         String exceptionMessage = "jms exception";
         when(commandMessage.getBody(String.class)).thenThrow(new JMSException(exceptionMessage));
@@ -182,7 +183,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should send business error when questionnaire id is invalid")
-    void shouldLogErrorWhenInvalidQuestionnaireId() throws JMSException {
+    void shouldLogErrorWhenInvalidQuestionnaireId() throws JMSException, JsonProcessingException {
         // Given
         String invalidMessage = """
         {
@@ -219,7 +220,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should publisher send business error when survey unit id is invalid")
-    void shouldLogErrorWhenInvalidSurveyUnitId() throws JMSException {
+    void shouldLogErrorWhenInvalidSurveyUnitId() throws JMSException, JsonProcessingException {
         // Given
         String invalidMessage = """
         {
@@ -256,7 +257,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should publisher send business error when interrogation command exception")
-    void shouldSendBusinessErrorWhenSurveyUnitCommandException() throws JMSException {
+    void shouldSendBusinessErrorWhenSurveyUnitCommandException() throws JMSException, JsonProcessingException {
         // Given
         interrogationCommandFakeService.setShouldThrowInterrogationCommandException(true);
         String messageFormat = """
@@ -292,7 +293,7 @@ class InterrogationQueueConsumerTest {
 
     @Test
     @DisplayName("Should publisher send business error when interrogation command exception")
-    void shouldSendTechnicalErrorWhenRuntimeException() throws JMSException {
+    void shouldSendTechnicalErrorWhenRuntimeException() throws JMSException, JsonProcessingException {
         // Given
         interrogationCommandFakeService.setShouldThrowRuntimeException(true);
         String message = String.format(defaultBody, correlationId, interrogationId, questionnaireId, surveyUnitId);

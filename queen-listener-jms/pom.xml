@@ -51,6 +51,13 @@
         </dependency>
 
         <dependency>
+            <groupId>fr.insee</groupId>
+            <artifactId>modelefiliere</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+<!--        Artemis-->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-artemis</artifactId>
         </dependency>
@@ -60,38 +67,76 @@
             <artifactId>pooled-jms</artifactId>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.apache.activemq</groupId>-->
+<!--            <artifactId>artemis-jms-server</artifactId>-->
+<!--            <version>2.33.0</version>-->
+<!--        </dependency>-->
+
+<!--Pulsar        -->
         <dependency>
-            <groupId>fr.insee</groupId>
-            <artifactId>modelefiliere</artifactId>
-            <version>1.1.0</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-jms-server</artifactId>
-            <version>2.33.0</version>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>pulsar-jms</artifactId>
+            <version>7.0.15</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.pulsar</groupId>
+                    <artifactId>pulsar-client-original</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.pulsar</groupId>
+                    <artifactId>pulsar-client-admin-original</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>javax.ws.rs-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>javax.annotation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.apache.pulsar</groupId>
+            <artifactId>pulsar-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pulsar</groupId>
+            <artifactId>pulsar-client-admin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pulsar</groupId>
+            <artifactId>pulsar-common</artifactId>
+        </dependency>
+
     </dependencies>
 
-     <build>
-         <plugins>
-             <!-- Installe le JAR local dans le repo Maven (~/.m2) au début du build -->
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-install-plugin</artifactId>
-                 <version>3.1.1</version>
-             </plugin>
-             <plugin>
-                 <groupId>org.springframework.boot</groupId>
-                 <artifactId>spring-boot-maven-plugin</artifactId>
-                 <executions>
-                     <execution>
-                         <goals>
-                             <goal>build-info</goal>
-                         </goals>
-                     </execution>
-                 </executions>
-             </plugin>
-         </plugins>
-     </build>
+    <build>
+        <plugins>
+            <!-- Installe le JAR local dans le repo Maven (~/.m2) au début du build -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>3.1.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

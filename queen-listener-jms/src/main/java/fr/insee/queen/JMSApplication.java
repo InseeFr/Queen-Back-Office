@@ -30,6 +30,6 @@ public class JMSApplication {
 
         @EventListener
         public void handleApplicationReady(ApplicationReadyEvent event) {
-                log.debug("=============== Queen Listener JMS has successfully started. ===============");
+                log.info("=============== Queen listener JMS has successfully started. ===============");
         }
 }
