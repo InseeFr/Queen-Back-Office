@@ -43,7 +43,7 @@ class InterrogationIT {
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(16)));
+                .andExpect(jsonPath("$.size()", is(17)));
     }
 
     @Test
@@ -383,5 +383,39 @@ class InterrogationIT {
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createUpdateInterrogation_shouldWorkOnSingularUrl() throws Exception {
+        String data = """
+        {
+            "id":"fa667899-7698-433c-8eb1-2eb47bd7a727",
+            "surveyUnitId": "survey-unit-test",
+            "data":{},
+            "comment":{"COMMENT":"acomment"},
+            "questionnaireId":"simpsons"
+        }""";
+        mockMvc.perform(post("/api/campaign/SIMPSONS2020X00/interrogation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                        .content(data))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createUpdateInterrogation_shouldWorkOnPluralUrl() throws Exception {
+        String data = """
+        {
+            "id":"e83776d1-3a0a-41e5-b1ef-555b107bb3f3",
+            "surveyUnitId": "survey-unit-test",
+            "data":{},
+            "comment":{"COMMENT":"acomment"},
+            "questionnaireId":"simpsons"
+        }""";
+        mockMvc.perform(post("/api/campaigns/SIMPSONS2020X00/interrogation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                        .content(data))
+                .andExpect(status().isCreated());
     }
 }

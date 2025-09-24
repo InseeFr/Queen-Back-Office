@@ -8,11 +8,10 @@ import fr.insee.queen.application.web.validation.json.JsonValid;
 import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 @Schema(name = "InterrogationCreation")
-public record InterrogationCreationInput(
+public record InterrogationBatchInput(
         @IdValid
         String id,
         @IdValid
@@ -24,20 +23,16 @@ public record InterrogationCreationInput(
         ArrayNode personalization,
         @NotNull
         @Schema(ref = SchemaType.Names.DATA)
-        ObjectNode data,
-        @NotNull
-        ObjectNode comment,
-        @Valid
-        StateDataInput stateData) {
+        ObjectNode data) {
 
-    public static Interrogation toModel(InterrogationCreationInput interrogation, String campaignId) {
+    public static Interrogation toModel(InterrogationBatchInput interrogation, String campaignId) {
         return new Interrogation(interrogation.id,
                 interrogation.surveyUnitId(),
                 campaignId,
                 interrogation.questionnaireId(),
                 interrogation.personalization(),
                 interrogation.data(),
-                interrogation.comment(),
-                StateDataInput.toModel(interrogation.stateData()));
+                null,
+                null);
     }
 }
