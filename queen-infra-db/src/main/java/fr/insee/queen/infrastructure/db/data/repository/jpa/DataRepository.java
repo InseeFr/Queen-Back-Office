@@ -11,25 +11,12 @@ import java.util.Optional;
 public interface DataRepository {
 
     /**
-     * Delete all interrogations data for a campaign
-     *
-     * @param campaignId campaign id
-     */
-    void deleteDatas(String campaignId);
-
-    /**
      * Find the data of an interrogation
      *
      * @param interrogationId interrogation id
      * @return an optional of the data (json format)
      */
     Optional<ObjectNode> findData(String interrogationId);
-
-    /**
-     * Delete data of an interrogation
-     * @param interrogationId interrogation id
-     */
-    void deleteByInterrogationId(String interrogationId);
 
     /**
      * Update data for an interrogation

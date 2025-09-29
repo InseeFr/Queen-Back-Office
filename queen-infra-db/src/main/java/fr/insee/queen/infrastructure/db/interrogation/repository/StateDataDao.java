@@ -49,20 +49,4 @@ public class StateDataDao implements StateDataRepository {
     public boolean exists(String interrogationId) {
         return jpaRepository.existsByInterrogationId(interrogationId);
     }
-
-    /**
-     * Delete state data for an interrogation
-     * @param interrogationId interrogation id
-     */
-    public void deleteByInterrogationId(String interrogationId) {
-        jpaRepository.deleteByInterrogationId(interrogationId);
-    }
-
-    /**
-     * Delete all interrogations state data for a campaign
-     * @param campaignId campaign id
-     */
-    public void deleteStateDatas(String campaignId) {
-        jpaRepository.deleteStateDatas(campaignId);
-    }
 }

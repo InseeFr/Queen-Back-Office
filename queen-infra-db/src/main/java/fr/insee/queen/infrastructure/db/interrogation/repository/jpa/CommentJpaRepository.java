@@ -16,19 +16,6 @@ import java.util.UUID;
  */
 @Repository
 public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
-    /**
-     * Delete all interrogations comment for a campaign
-     *
-     * @param campaignId campaign id
-     */
-    @Transactional
-    @Modifying
-    @Query(value = """
-            delete from comment where interrogation_id in (
-                select id from interrogation
-                where campaign_id = :campaignId
-            )""", nativeQuery = true)
-    void deleteComments(String campaignId);
 
     /**
      * Update comment for an interrogation
@@ -50,12 +37,4 @@ public interface CommentJpaRepository extends JpaRepository<CommentDB, UUID> {
      */
     @Query("select s.comment.value from InterrogationDB s where s.id=:interrogationId")
     Optional<ObjectNode> findComment(String interrogationId);
-
-    /**
-     * Delete comment of an interrogation
-     * @param interrogationId interrogation id
-     */
-    @Transactional
-    @Modifying
-    void deleteByInterrogationId(String interrogationId);
 }
