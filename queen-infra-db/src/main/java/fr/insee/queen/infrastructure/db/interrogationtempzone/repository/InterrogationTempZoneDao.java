@@ -24,11 +24,6 @@ public class InterrogationTempZoneDao implements InterrogationTempZoneRepository
     private final InterrogationTempZoneJpaRepository jpaRepository;
 
     @Override
-    public void delete(String interrogationId) {
-        jpaRepository.deleteByInterrogationId(interrogationId);
-    }
-
-    @Override
     public List<InterrogationTempZone> getAllInterrogations() {
         return jpaRepository.findAllProjectedBy();
     }
