@@ -16,19 +16,6 @@ import java.util.UUID;
  */
 @Repository
 public interface PersonalizationJpaRepository extends JpaRepository<PersonalizationDB, UUID> {
-    /**
-     * Delete all interrogations personalization for a campaign
-     *
-     * @param campaignId campaign id
-     */
-    @Transactional
-    @Modifying
-    @Query(value = """
-            delete from personalization where interrogation_id in (
-                select id from interrogation
-                    where campaign_id = :campaignId
-            )""", nativeQuery = true)
-    void deletePersonalizations(String campaignId);
 
     /**
      * Update personalization for an interrogation
@@ -50,12 +37,4 @@ public interface PersonalizationJpaRepository extends JpaRepository<Personalizat
      */
     @Query("select s.personalization.value from InterrogationDB s where s.id=:interrogationId")
     Optional<ArrayNode> findPersonalization(String interrogationId);
-
-    /**
-     * Delete personalization of an interrogation
-     * @param interrogationId interrogation id
-     */
-    @Transactional
-    @Modifying
-    void deleteByInterrogationId(String interrogationId);
 }

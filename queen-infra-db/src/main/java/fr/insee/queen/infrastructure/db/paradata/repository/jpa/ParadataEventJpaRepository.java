@@ -29,21 +29,4 @@ public interface ParadataEventJpaRepository extends JpaRepository<ParadataEventD
             INSERT INTO paradata_event (id, value, interrogation_id, survey_unit_id)
             VALUES (:id, :paradataValue\\:\\:jsonb, :interrogationId, :surveyUnitId)""", nativeQuery = true)
     void createParadataEvent(UUID id, ObjectNode paradataValue, String interrogationId, String surveyUnitId);
-
-    /**
-     * Delete all interrogation's paradatas for a campaign
-     * @param campaignId campaign id
-     */
-    @Transactional
-    @Modifying
-    @Query(value = """
-            delete from paradata_event where interrogation_id in (
-                select id from interrogation
-                    where campaign_id = :campaignId
-            )""", nativeQuery = true)
-    void deleteByInterrogationCampaignId(String campaignId);
-
-    @Transactional
-    @Modifying
-    void deleteByInterrogationId(String interrogationId);
 }
