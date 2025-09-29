@@ -43,18 +43,6 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
     Optional<ObjectNode> findData(String interrogationId);
 
     /**
-     * Delete data of an interrogation
-     * @param interrogationId interrogation id
-     */
-    @Transactional
-    @Modifying
-    @Query(value =
-        """
-            delete from data where interrogation_id = :interrogationId
-        """, nativeQuery = true)
-    void deleteByInterrogationId(String interrogationId);
-
-    /**
      * Update data for an interrogation
      *
      * @param interrogationId interrogation id

@@ -39,31 +39,9 @@ public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID>
     int updateStateData(String interrogationId, Long date, String currentPage, StateDataType state);
 
     /**
-     * Delete all interrogations state data linked to a campaign
-     *
-     * @param campaignId campaign id
-     */
-    @Transactional
-    @Modifying
-    @Query(value = """
-            delete from state_data where interrogation_id in (
-                select id from interrogation
-                    where campaign_id = :campaignId
-            )""", nativeQuery = true)
-    void deleteStateDatas(String campaignId);
-
-    /**
      * Check if a state data exists for an interrogation
      * @param interrogationId interrogation to check
      * @return true if state data exists, false otherwise
      */
     boolean existsByInterrogationId(String interrogationId);
-
-    /**
-     * Delete state data by interrogation
-     * @param interrogationId interrogation id
-     */
-    @Transactional
-    @Modifying
-    void deleteByInterrogationId(String interrogationId);
 }

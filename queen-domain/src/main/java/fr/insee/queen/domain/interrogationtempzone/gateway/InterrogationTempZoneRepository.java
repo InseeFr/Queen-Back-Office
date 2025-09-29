@@ -12,8 +12,6 @@ import java.util.List;
  */
 public interface InterrogationTempZoneRepository {
 
-    void delete(String interrogationId);
-
     List<InterrogationTempZone> getAllInterrogations();
 
     void save(String interrogationId, String userId, Long date, ObjectNode interrogation);
