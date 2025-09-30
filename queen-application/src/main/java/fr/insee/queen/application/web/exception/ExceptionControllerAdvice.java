@@ -91,12 +91,14 @@ public class ExceptionControllerAdvice {
      * @param status               status linked with this exception
      * @param request              request initiating the exception
      * @param overrideErrorMessage message overriding default error message from exception
-     * @param shouldGenerateLog    should generate log
+     * @param shouldGenerateStackTraceLog    should generate log
      * @return the apierror object with linked status code
      */
-    private ResponseEntity<ApiError> generateResponseError(Exception ex, HttpStatus status, WebRequest request, String overrideErrorMessage, boolean shouldGenerateLog) {
-        if(shouldGenerateLog) {
+    private ResponseEntity<ApiError> generateResponseError(Exception ex, HttpStatus status, WebRequest request, String overrideErrorMessage, boolean shouldGenerateStackTraceLog) {
+        if(shouldGenerateStackTraceLog) {
             log.error(ex.getMessage(), ex);
+        } else {
+            log.error(ex.getMessage());
         }
         String errorMessage = ex.getMessage();
         if (overrideErrorMessage != null) {
