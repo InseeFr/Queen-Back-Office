@@ -61,6 +61,19 @@ public class ExceptionControllerAdvice {
     /**
      * Global method to process the catched exception
      *
+     * @param ex      Exception catched
+     * @param status  status linked with this exception
+     * @param request request initiating the exception
+     * @param shouldGenerateLog    should generate log
+     * @return the apierror object with linked status code
+     */
+    private ResponseEntity<ApiError> generateResponseError(Exception ex, HttpStatus status, WebRequest request, boolean shouldGenerateLog) {
+        return generateResponseError(ex, status, request, null, shouldGenerateLog);
+    }
+
+    /**
+     * Global method to process the catched exception
+     *
      * @param ex                   Exception catched
      * @param status               status linked with this exception
      * @param request              request initiating the exception
@@ -68,7 +81,23 @@ public class ExceptionControllerAdvice {
      * @return the apierror object with linked status code
      */
     private ResponseEntity<ApiError> generateResponseError(Exception ex, HttpStatus status, WebRequest request, String overrideErrorMessage) {
-        log.error(ex.getMessage(), ex);
+        return generateResponseError(ex, status, request, overrideErrorMessage, true);
+    }
+
+    /**
+     * Global method to process the catched exception
+     *
+     * @param ex                   Exception catched
+     * @param status               status linked with this exception
+     * @param request              request initiating the exception
+     * @param overrideErrorMessage message overriding default error message from exception
+     * @param shouldGenerateLog    should generate log
+     * @return the apierror object with linked status code
+     */
+    private ResponseEntity<ApiError> generateResponseError(Exception ex, HttpStatus status, WebRequest request, String overrideErrorMessage, boolean shouldGenerateLog) {
+        if(shouldGenerateLog) {
+            log.error(ex.getMessage(), ex);
+        }
         String errorMessage = ex.getMessage();
         if (overrideErrorMessage != null) {
             errorMessage = overrideErrorMessage;
@@ -121,7 +150,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiError> noEntityFoundException(EntityNotFoundException e, WebRequest request) {
-        return generateResponseError(e, HttpStatus.NOT_FOUND, request);
+        return generateResponseError(e, HttpStatus.NOT_FOUND, request, false);
     }
 
     @ExceptionHandler(UpdateCollectedDataException.class)
