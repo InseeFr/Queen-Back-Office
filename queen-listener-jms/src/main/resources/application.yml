@@ -1,6 +1,12 @@
-# artemis, pulsar
-broker:
-  name:
+fr:
+  insee:
+    broker:
+      # artemis, pulsar
+      name:
+      queue:
+        interrogation:
+          request: interrogation_request
+          response: interrogation_response
 
 spring:
   application:
@@ -49,7 +55,6 @@ logging:
         queen:
           jms: INFO
 feature:
-  dataset:
-    load-on-start: false
-    sensitive-data:
-      enabled: false
+  sensitive-data:
+    enabled: false
+    encryptionSecretKey:

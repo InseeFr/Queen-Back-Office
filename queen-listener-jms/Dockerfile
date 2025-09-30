@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-alpine
+FROM gitlab-registry.insee.fr/kubernetes/images/run/java:21.0.8_9-jre-jammy-rootless
 
 WORKDIR /opt/app/
 COPY ./target/*.jar /opt/app/app.jar

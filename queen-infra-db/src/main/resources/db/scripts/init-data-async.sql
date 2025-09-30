@@ -11,17 +11,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- TOC entry 3402 (class 0 OID 16416)
--- Dependencies: 215
--- Data for Name: campaign; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-TRUNCATE TABLE public.interrogation_temp_zone, public.state_data, public.paradata_event,
-    public.data, public.comment, public.personalization, public.interrogation,
-    public.required_nomenclature, public.questionnaire_model, public.nomenclature,
-    public.metadata, public.campaign;
-
 INSERT INTO public.campaign VALUES ('GEN2025A00', 'Asynchrone test');
 
 --
