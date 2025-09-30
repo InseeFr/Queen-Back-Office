@@ -24,10 +24,10 @@ public class JMSConfiguration {
 
     @Bean
     @ConditionalOnProperty(
-            prefix = "broker",     // propriété: feature.x.enabled
+            prefix = "broker",
             name = "name",
-            havingValue = "artemis",     // facultatif si tu veux juste "présent"
-            matchIfMissing = false    // true => crée le bean si la prop est absente
+            havingValue = "artemis",
+            matchIfMissing = false
     )
     public JmsListenerContainerFactory<?> jmsListenerFactory(ConnectionFactory connectionFactory,
                                                              DefaultJmsListenerContainerFactoryConfigurer configurer) {
@@ -45,7 +45,7 @@ public class JMSConfiguration {
             havingValue = "pulsar",     // facultatif si tu veux juste "présent"
             matchIfMissing = false    // true => crée le bean si la prop est absente
     )
-    public ConnectionFactory pulsarConnectionFactory(PulsarProps props) {
+    public ConnectionFactory pulsarConnectionFactory(CustomProperties props) {
         Map<String,Object> conf = new HashMap<>();
         conf.put("brokerServiceUrl", props.getBrokerServiceUrl());
         conf.put("webServiceUrl", props.getWebServiceUrl()); // seulement si tu en as besoin

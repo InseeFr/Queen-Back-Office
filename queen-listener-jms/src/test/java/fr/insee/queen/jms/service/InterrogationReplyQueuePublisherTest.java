@@ -20,6 +20,8 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.jms.core.JmsTemplate;
 
+import java.util.Locale;
+
 @ExtendWith(OutputCaptureExtension.class)
 class InterrogationReplyQueuePublisherTest {
 
@@ -34,6 +36,7 @@ class InterrogationReplyQueuePublisherTest {
 
     @BeforeEach
     void setUp() {
+        Locale.setDefault(Locale.US);
         MockitoAnnotations.openMocks(this);
         surveyUnitReplyQueuePublisher = new InterrogationReplyQueuePublisher(objectMapper, jmsQueuePublisher);
     }

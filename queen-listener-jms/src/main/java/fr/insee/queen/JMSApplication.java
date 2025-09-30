@@ -1,6 +1,5 @@
 package fr.insee.queen;
 
-import fr.insee.queen.jms.configuration.PropertiesLogger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -25,7 +24,7 @@ public class JMSApplication {
 
         public static SpringApplicationBuilder configureApplicationBuilder(SpringApplicationBuilder springApplicationBuilder){
                 return springApplicationBuilder.sources(JMSApplication.class)
-                        .listeners(new PropertiesLogger());
+                        .listeners();
         }
 
         @EventListener
