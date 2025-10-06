@@ -45,7 +45,7 @@ public class JMSConfiguration {
             havingValue = "pulsar",
             matchIfMissing = false
     )
-    public ConnectionFactory pulsarConnectionFactory(CustomProperties props) {
+    public ConnectionFactory pulsarConnectionFactory(queen.jms.configuration.CustomProperties props) {
         Map<String,Object> conf = new HashMap<>();
         conf.put("brokerServiceUrl", props.getBrokerServiceUrl());
         conf.put("webServiceUrl", props.getWebServiceUrl());
