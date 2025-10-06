@@ -40,7 +40,7 @@ public class InterrogationQueueConsumer {
     private final InterrogationResponsePublisher replyQueuePublisher;
     private final InterrogationBatchService interrogationBatchService;
 
-    @JmsListener(destination = "${fr.insee.broker.queue.interrogation.request}")
+    @JmsListener(destination = "${broker.queue.interrogation.request}")
     public void createInterrogation(Message message, Session session) throws JMSException {
         String replyQueue=null;
         String correlationId=null;

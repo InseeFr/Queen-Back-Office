@@ -63,7 +63,7 @@ class InterrogationCacheIT {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
-                null);
+                "0c83fb82-0197-7197-8e8c-a6ce2c2dbd04");
         interrogationService.createInterrogation(interrogation);
 
         // not retrieving yet so no interrogation in cache
@@ -98,7 +98,7 @@ class InterrogationCacheIT {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
-                null);
+                "0c83fb82-0197-7197-8e8c-a6ce2c2dbd04");
         interrogationService.createInterrogation(interrogation);
 
         // not retrieving yet so no interrogation in cache
@@ -132,7 +132,7 @@ class InterrogationCacheIT {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
-                null);
+                "0c83fb82-0197-7197-8e8c-a6ce2c2dbd04");
         interrogationService.createInterrogation(interrogation);
 
         // not retrieving yet so no interrogation in cache
@@ -168,7 +168,7 @@ class InterrogationCacheIT {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
-                null);
+                "0c83fb82-0197-7197-8e8c-a6ce2c2dbd04");
         interrogationService.createInterrogation(interrogation);
 
         // not retrieving yet so no interrogation in cache

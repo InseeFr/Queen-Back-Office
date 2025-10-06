@@ -30,10 +30,10 @@ public class InterrogationBatchCommonAssertions {
         ObjectNode d2 = JsonNodeFactory.instance.objectNode().putObject("EXTERNAL");
 
         var in1 = new InterrogationBatchInput(UUID.randomUUID().toString(),"SU1","simpsonsV2",
-                JsonNodeFactory.instance.arrayNode(), d1);
+                JsonNodeFactory.instance.arrayNode(), d1, UUID.randomUUID().toString());
 
         var in2 = new InterrogationBatchInput(UUID.randomUUID().toString(),"SU2","simpsons",
-                JsonNodeFactory.instance.arrayNode(), d2);
+                JsonNodeFactory.instance.arrayNode(), d2, UUID.randomUUID().toString());
 
         String payloadCreate = om.writeValueAsString(List.of(in1, in2));
 
@@ -85,7 +85,7 @@ public class InterrogationBatchCommonAssertions {
 
         // given: re-upsert with I2 personalization = null (must delete its row)
         var in2NoPerso = new InterrogationBatchInput(in2.id(),in2.surveyUnitId(), in2.questionnaireId(),
-                null, d2);
+                null, d2, UUID.randomUUID().toString());
         String payloadUpdate = om.writeValueAsString(List.of(in1, in2NoPerso));
 
         // when: update batch

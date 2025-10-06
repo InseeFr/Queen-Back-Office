@@ -24,12 +24,13 @@ public class InterrogationBatchDao implements InterrogationBatchRepository {
     @Transactional
     public void upsertAll(List<Interrogation> interrogations) {
         final String upsertInterrogation = """
-            INSERT INTO interrogation (id, survey_unit_id, campaign_id, questionnaire_model_id)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO interrogation (id, survey_unit_id, campaign_id, questionnaire_model_id, correlation_id)
+            VALUES (?, ?, ?, ?, ?)
             ON CONFLICT (id) DO UPDATE SET
                 survey_unit_id = EXCLUDED.survey_unit_id,
                 campaign_id = EXCLUDED.campaign_id,
-                questionnaire_model_id = EXCLUDED.questionnaire_model_id
+                questionnaire_model_id = EXCLUDED.questionnaire_model_id,
+                correlation_id = EXCLUDED.correlation_id
         """;
 
         jdbc.batchUpdate(upsertInterrogation, interrogations, interrogations.size(), (preparedStatement, interrogation) -> {
@@ -37,9 +38,8 @@ public class InterrogationBatchDao implements InterrogationBatchRepository {
             preparedStatement.setString(2, interrogation.surveyUnitId());
             preparedStatement.setString(3, interrogation.campaignId());
             preparedStatement.setString(4, interrogation.questionnaireId());
+            preparedStatement.setString(5, interrogation.correlationId());
         });
-
-
 
         if(cipherEnabled) {
             upsertDataCiphered(interrogations);

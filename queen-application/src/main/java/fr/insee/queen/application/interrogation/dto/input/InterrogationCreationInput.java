@@ -28,7 +28,9 @@ public record InterrogationCreationInput(
         @NotNull
         ObjectNode comment,
         @Valid
-        StateDataInput stateData) {
+        StateDataInput stateData,
+        @NotNull
+        String correlationId) {
 
     public static Interrogation toModel(InterrogationCreationInput interrogation, String campaignId) {
         return new Interrogation(interrogation.id,
@@ -39,6 +41,6 @@ public record InterrogationCreationInput(
                 interrogation.data(),
                 interrogation.comment(),
                 StateDataInput.toModel(interrogation.stateData()),
-                null);
+                interrogation.correlationId());
     }
 }
