@@ -40,30 +40,30 @@ public class JMSConfiguration {
 
     @Bean
     @ConditionalOnProperty(
-            prefix = "broker",     // propriété: feature.x.enabled
+            prefix = "broker",
             name = "name",
-            havingValue = "pulsar",     // facultatif si tu veux juste "présent"
-            matchIfMissing = false    // true => crée le bean si la prop est absente
+            havingValue = "pulsar",
+            matchIfMissing = false
     )
     public ConnectionFactory pulsarConnectionFactory(CustomProperties props) {
         Map<String,Object> conf = new HashMap<>();
         conf.put("brokerServiceUrl", props.getBrokerServiceUrl());
-        conf.put("webServiceUrl", props.getWebServiceUrl()); // seulement si tu en as besoin
-        conf.put("enableTransaction", false); // clé importante
+        conf.put("webServiceUrl", props.getWebServiceUrl());
+        conf.put("enableTransaction", false); //
         return new PulsarConnectionFactory(conf);
     }
 
     @Bean
     @ConditionalOnProperty(
-            prefix = "broker",     // propriété: feature.x.enabled
+            prefix = "broker",
             name = "name",
-            havingValue = "pulsar",     // facultatif si tu veux juste "présent"
-            matchIfMissing = false    // true => crée le bean si la prop est absente
+            havingValue = "pulsar",
+            matchIfMissing = false
     )
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory cf) {
         DefaultJmsListenerContainerFactory f = new DefaultJmsListenerContainerFactory();
         f.setConnectionFactory(cf);
-        f.setConcurrency("1-3");               // plusieurs consumers en parallèle
+        f.setConcurrency("1-3");
         f.setSessionTransacted(false);
         // f.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE); // si ack manuel
         return f;

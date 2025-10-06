@@ -5,7 +5,6 @@ import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import fr.insee.queen.jms.model.ResponseCode;
 import fr.insee.queen.jms.service.stub.InterrogationBatchFakeService;
-import fr.insee.queen.jms.service.stub.InterrogationCommandFakeService;
 import fr.insee.queen.jms.service.stub.InterrogationFakePublisher;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -354,27 +353,6 @@ class InterrogationQueueConsumerTest {
         assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
         assertThat(replyQueue).isEqualTo("queueResponse");
         assertThat(responseMessage.code()).isEqualTo(ResponseCode.TECHNICAL_ERROR.getCode());
-    }
-
-    @Disabled
-    @Test
-    @DisplayName("Should publisher send business error when interrogation command exception")
-    void shouldSendTechnicalErrorWhenRuntimeException() throws JMSException {
-        // Given
-        interrogationBatchFakeService.setShouldThrowRuntimeException(true);
-        String message = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
-        when(commandMessage.getBody(String.class)).thenReturn(message);
-
-        // When
-        consumer.createInterrogation(commandMessage, session);
-
-        // response publisher is called
-        JMSOutputMessage responseMessage = publisher.getResponseSent();
-        String replyQueue = publisher.getReplyQueueUsed();
-        assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
-        assertThat(replyQueue).isEqualTo("queueResponse");
-        assertThat(responseMessage.code()).isEqualTo(ResponseCode.TECHNICAL_ERROR.getCode());
-        assertThat(responseMessage.message()).isEqualTo(InterrogationCommandFakeService.RUNTIME_EXCEPTION_MESSAGE);
     }
 
     private void checkInvalidMessageError(String invalidMessage, String invalidPropertyName, CapturedOutput output) throws JMSException {
