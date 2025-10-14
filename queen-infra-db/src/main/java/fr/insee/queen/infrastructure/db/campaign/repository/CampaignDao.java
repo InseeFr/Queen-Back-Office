@@ -155,4 +155,9 @@ public class CampaignDao implements CampaignRepository {
     public List<String> getAllCampaignIds() {
         return jpaRepository.findAllCampaignIds();
     }
+
+    @Override
+    public Optional<String> findCampaignIdByQuestionnaireId(String questionnaireId) {
+        return jpaRepository.findCampaignIdByQuestionnaireId(questionnaireId);
+    }
 }

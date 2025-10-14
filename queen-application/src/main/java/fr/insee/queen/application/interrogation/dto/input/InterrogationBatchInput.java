@@ -23,7 +23,11 @@ public record InterrogationBatchInput(
         ArrayNode personalization,
         @NotNull
         @Schema(ref = SchemaType.Names.DATA)
-        ObjectNode data) {
+        ObjectNode data,
+        @NotNull
+        String correlationId) {
+
+
 
     public static Interrogation toModel(InterrogationBatchInput interrogation, String campaignId) {
         return new Interrogation(interrogation.id,
@@ -33,6 +37,7 @@ public record InterrogationBatchInput(
                 interrogation.personalization(),
                 interrogation.data(),
                 null,
-                null);
+                null,
+                interrogation.correlationId());
     }
 }
