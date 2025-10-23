@@ -14,8 +14,6 @@ import fr.insee.queen.infrastructure.db.interrogation.projection.InterrogationPr
 import fr.insee.queen.infrastructure.db.interrogation.repository.jpa.*;
 import fr.insee.queen.infrastructure.db.configuration.DataFactory;
 import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
-import fr.insee.queen.infrastructure.db.interrogationtempzone.repository.jpa.InterrogationTempZoneJpaRepository;
-import fr.insee.queen.infrastructure.db.paradata.repository.jpa.ParadataEventJpaRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +37,8 @@ public class InterrogationDao implements InterrogationRepository {
     private final CommentJpaRepository commentRepository;
     private final PersonalizationJpaRepository personalizationRepository;
     private final DataRepository dataRepository;
-    private final StateDataDao stateDataDao;
     private final CampaignJpaRepository campaignRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
-    private final InterrogationTempZoneJpaRepository interrogationTempZoneRepository;
-    private final ParadataEventJpaRepository paradataEventRepository;
     private final DataFactory dataFactory;
     private final EntityManager entityManager;
 
@@ -95,23 +90,11 @@ public class InterrogationDao implements InterrogationRepository {
 
     @Override
     public void deleteInterrogations(String campaignId) {
-        dataRepository.deleteDatas(campaignId);
-        stateDataDao.deleteStateDatas(campaignId);
-        commentRepository.deleteComments(campaignId);
-        personalizationRepository.deletePersonalizations(campaignId);
-        interrogationTempZoneRepository.deleteInterrogations(campaignId);
-        paradataEventRepository.deleteByInterrogationCampaignId(campaignId);
         crudRepository.deleteInterrogations(campaignId);
     }
 
     @Override
     public void delete(String interrogationId) {
-        dataRepository.deleteByInterrogationId(interrogationId);
-        stateDataDao.deleteByInterrogationId(interrogationId);
-        commentRepository.deleteByInterrogationId(interrogationId);
-        personalizationRepository.deleteByInterrogationId(interrogationId);
-        interrogationTempZoneRepository.deleteByInterrogationId(interrogationId);
-        paradataEventRepository.deleteByInterrogationId(interrogationId);
         crudRepository.deleteById(interrogationId);
     }
 
