@@ -24,6 +24,8 @@ ALTER TABLE public.state_data RENAME COLUMN survey_unit_id TO interrogation_id;
 ALTER TABLE public.interrogation_temp_zone RENAME COLUMN survey_unit_id TO interrogation_id;
 ALTER TABLE public.interrogation_temp_zone RENAME COLUMN survey_unit TO interrogation;
 
+ALTER TABLE public.interrogation_temp_zone REPLICA IDENTITY FULL;
+
 update public."comment" set interrogation_id = i.id from interrogation i
   where i.survey_unit_id = interrogation_id;
 update public."data" set interrogation_id = i.id from interrogation i

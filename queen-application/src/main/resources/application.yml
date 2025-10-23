@@ -1,3 +1,5 @@
+server.port: 8081
+
 application:
   public-urls:
     - /swagger-ui/**
@@ -12,11 +14,11 @@ application:
     webclient:
     reviewer-alternative:
     survey-unit:
-  corsOrigins:
-  # Folder where to store temp files.
-  # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
-  # Use a folder with permissions for the app only
-  temp-folder:
+  corsOrigins: https://test.com #mandatory
+    # define folder where temp files will be created
+    # /!\ do not use the OS default temp folder or java.io.tmpdir as it causes security issues
+    # give only access rights to this folder to the user executing the tomcat process
+  temp-folder: /opt/app/app-temp
 
 feature:
   sensitive-data:
@@ -44,7 +46,6 @@ feature:
     enabled: false
   interviewer-mode:
     enabled: false
-
 spring:
   docker:
     compose:
@@ -52,9 +53,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:postgresql://localhost:5434/questionnaire
+    username: mypostgresuser2
+    password: mypostgrespassword2
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 2
@@ -87,7 +88,7 @@ spring:
     contexts: prod
     defaultSchema: public
     change-log: classpath:db/master.xml
-
+  
 springdoc:
   swagger-ui:
     oauth:
