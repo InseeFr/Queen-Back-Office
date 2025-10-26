@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@ConditionalOnProperty(name = "feature.cross-environnement-communication.endpoint", havingValue = "true")
 @RestController
 @RequestMapping(path = "/api")
 @Slf4j

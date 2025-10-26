@@ -26,6 +26,8 @@ feature:
     enabled: true
   interviewer-mode:
     enabled: true
+  cross-environnement-communication:
+    endpoint: true
 
 spring:
   docker:

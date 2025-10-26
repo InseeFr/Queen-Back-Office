@@ -46,6 +46,8 @@ feature:
     enabled: false
   interviewer-mode:
     enabled: false
+  cross-environnement-communication:
+    endpoint: false
 spring:
   docker:
     compose:
