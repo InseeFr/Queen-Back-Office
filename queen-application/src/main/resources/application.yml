@@ -48,6 +48,7 @@ feature:
     enabled: false
   cross-environnement-communication:
     endpoint: false
+    consummer: false
 spring:
   docker:
     compose:
