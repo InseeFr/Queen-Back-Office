@@ -1,4 +1,4 @@
-package queen.jms.configuration;
+package fr.insee.queen.jms.configuration;
 
 import lombok.Getter;
 import lombok.Setter;

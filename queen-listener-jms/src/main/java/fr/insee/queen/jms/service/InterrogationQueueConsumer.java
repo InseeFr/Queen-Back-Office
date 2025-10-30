@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.insee.jms.validation.JsonSchemaValidator;
 import fr.insee.jms.validation.SchemaType;
-import fr.insee.jms.validation.SchemaValidationException;
+import fr.insee.queen.jms.exception.SchemaValidationException;
 import fr.insee.modelefiliere.CommandDto;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
@@ -46,13 +46,13 @@ public class InterrogationQueueConsumer {
         String correlationId=null;
         JMSOutputMessage responseMessage;
         try {
-            String json = message.getBody(String.class);
+            String jsonString = message.getBody(String.class);
             // jakarta.jms.JMSException: Invalid JSON: Java 8 date/time type java.time.Instant not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (or disable MapperFeature.REQUIRE_HANDLERS_FOR_JAVA8_TIMES)
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);   // ISO-8601
             objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
             // ---
-            JsonNode root = objectMapper.readTree(json);
+            JsonNode root = objectMapper.readTree(jsonString);
 
             replyQueue = textValue(root, "replyTo");
             correlationId = textValue(root, "correlationID");
@@ -72,12 +72,13 @@ public class InterrogationQueueConsumer {
             ObjectNode comment = JsonNodeFactory.instance.objectNode();
 
             // TODO identifier le questionnaire de manière unique
-            ObjectNode data = objectMapper.convertValue(command.getPayload().getQuestionnaires().getFirst().getQuestionningData(), ObjectNode.class);
+//            ObjectNode data = objectMapper.convertValue(command.getPayload().getQuestionnaires().getFirst().getQuestionningData(), ObjectNode.class);
+            ObjectNode data = objectMapper.convertValue(command.getPayload().get("TODO"), ObjectNode.class);
 
             StateData stateData = null;
 
-            Interrogation interrogation = Interrogation.create(command.getPayload().getInterrogationId().toString(),
-                    command.getPayload().getSurveyUnitId().toString(),
+            Interrogation interrogation = Interrogation.create(command.getPayload().get("interrogationId").toString(),
+                    command.getPayload().get("surveyUnitId").toString(),
                     personalization,
                     comment,
                     data,

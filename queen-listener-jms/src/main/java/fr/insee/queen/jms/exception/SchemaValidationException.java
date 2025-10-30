@@ -1,4 +1,4 @@
-package fr.insee.jms.validation;
+package fr.insee.queen.jms.exception;
 
 import com.networknt.schema.ValidationMessage;
 import lombok.Getter;

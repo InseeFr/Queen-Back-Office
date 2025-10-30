@@ -15,9 +15,9 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Running tests
-        run: mvn test --no-transfer-progress
-
       - name: install model filiere
         run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+
+      - name: Running tests
+        run: mvn test --no-transfer-progress
 
