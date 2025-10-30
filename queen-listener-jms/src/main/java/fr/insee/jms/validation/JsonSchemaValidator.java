@@ -7,6 +7,7 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
+import fr.insee.queen.jms.exception.SchemaValidationException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
