@@ -44,7 +44,7 @@ services:
       - POSTGRES_DB=${QUEEN_DB_CIPHERED}
     command: ["postgres"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${QUEEN_DB_USER} -d ${QUEEN_DB} -h localhost"]
+      test: ["CMD-SHELL", "pg_isready -U ${QUEEN_DB_USER} -d ${QUEEN_DB_CIPHERED} -h localhost"]
       interval: 5s
       timeout: 10s
       retries: 10

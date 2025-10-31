@@ -102,7 +102,7 @@ public class InterrogationDao implements InterrogationRepository {
     public void create(Interrogation interrogation) {
         CampaignDB campaign = campaignRepository.getReferenceById(interrogation.campaignId());
         QuestionnaireModelDB questionnaire = questionnaireModelRepository.getReferenceById(interrogation.questionnaireId());
-        InterrogationDB interrogationDB = new InterrogationDB(interrogation.id(), interrogation.surveyUnitId(), campaign, questionnaire);
+        InterrogationDB interrogationDB = new InterrogationDB(interrogation.id(), interrogation.surveyUnitId(), campaign, questionnaire, interrogation.correlationId());
         DataDB dataDB = dataFactory.buildData(interrogation.data(), interrogationDB);
         CommentDB commentDB = new CommentDB(interrogation.comment(), interrogationDB);
         if (interrogation.personalization() != null) {
@@ -111,6 +111,7 @@ public class InterrogationDao implements InterrogationRepository {
         }
         interrogationDB.setComment(commentDB);
         interrogationDB.setData(dataDB);
+        interrogationDB.setCorrelationId(interrogation.correlationId());
         crudRepository.save(interrogationDB);
     }
 
