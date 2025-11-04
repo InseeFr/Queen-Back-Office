@@ -37,10 +37,10 @@
                 <fo:flow flow-name="region-body">
                     <!--    Blocs Logos et Libellé -->
                     
-                    <fo:block-container absolute-position="absolute" left="0mm" top="10mm" width="15mm"
-                        height="15mm">
+                    <fo:block-container absolute-position="absolute" left="-5mm" top="0mm" width="35mm"
+                        height="35mm">
                         <fo:block>
-                            <fo:external-graphic content-width="scale-to-fit" width="15mm"
+                            <fo:external-graphic content-width="scale-to-fit" width="35mm"
                                 scaling="uniform">
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="$imgPathInsee"/>
@@ -48,31 +48,19 @@
                             </fo:external-graphic> 
                         </fo:block>
                     </fo:block-container>
-                    
-                    <fo:block-container absolute-position="absolute" left="72mm" top="0mm" width="26mm"
-                        height="15mm">
+
+                    <fo:block-container absolute-position="absolute" left="160mm" top="0mm" width="25mm"
+                        height="25mm">
                         <fo:block>
-                            <fo:external-graphic content-width="scale-to-fit" width="15mm"
+                            <fo:external-graphic content-width="scale-to-fit" width="25mm"
                                 scaling="uniform">
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="$imgPathMariane"/>
                                 </xsl:attribute>
-                            </fo:external-graphic> 
-                        </fo:block>
-                    </fo:block-container>
-                    
-                    <fo:block-container absolute-position="absolute" left="160mm" top="0mm" width="10mm"
-                        height="15mm">
-                        <fo:block>
-                            <fo:external-graphic content-width="scale-to-fit" width="15mm"
-                                scaling="uniform">
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="$imgPathStatPub"/>
-                                </xsl:attribute>
                             </fo:external-graphic>
                         </fo:block>
                     </fo:block-container>
-                    
+
                     <fo:block-container absolute-position="absolute" left="10mm" top="23mm" width="150mm"
                         height="7mm">
                         <fo:block font-family="Liberation Sans" font-size="16pt" font-weight="bold"

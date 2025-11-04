@@ -11,7 +11,6 @@
     <xsl:param name="style" select="string('any')"/>
     <xsl:param name="imgPathAQuoi" select="'img/Insee_formulaire-recensement-bleunuance2.png'"/>
     <xsl:param name="imgPathMariane" select="'img/marianne.png'"/>
-    <xsl:param name="imgPathStatPub" select="'img/logo_statpub.png'"/>
     <xsl:param name="imgPathInsee" select="'img/logo4.png'"/>
 
 
