@@ -36,26 +36,26 @@
                 
                 <fo:flow flow-name="region-body">
                     <!--    Blocs Logos et Libellé -->
-                    
-                    <fo:block-container absolute-position="absolute" left="-5mm" top="0mm" width="35mm"
-                        height="35mm">
-                        <fo:block>
-                            <fo:external-graphic content-width="scale-to-fit" width="35mm"
-                                scaling="uniform">
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="$imgPathInsee"/>
-                                </xsl:attribute>
-                            </fo:external-graphic> 
-                        </fo:block>
-                    </fo:block-container>
 
-                    <fo:block-container absolute-position="absolute" left="160mm" top="0mm" width="25mm"
+                    <fo:block-container absolute-position="absolute" left="-5mm" top="0mm" width="25mm"
                         height="25mm">
                         <fo:block>
                             <fo:external-graphic content-width="scale-to-fit" width="25mm"
                                 scaling="uniform">
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="$imgPathMariane"/>
+                                </xsl:attribute>
+                            </fo:external-graphic> 
+                        </fo:block>
+                    </fo:block-container>
+
+                    <fo:block-container absolute-position="absolute" left="160mm" top="0mm" width="35mm"
+                        height="35mm">
+                        <fo:block>
+                            <fo:external-graphic content-width="scale-to-fit" width="35mm"
+                                scaling="uniform">
+                                <xsl:attribute name="src">
+                                    <xsl:value-of select="$imgPathInsee"/>
                                 </xsl:attribute>
                             </fo:external-graphic>
                         </fo:block>
@@ -183,8 +183,25 @@
     <xsl:template name="entete">
         <fo:table table-layout="fixed" width="100%">
             <fo:table-body>
+                    <xsl:if test="$surveyUnit!=''">
+                        <fo:table-row>
+                            <fo:table-cell number-columns-spanned="2">
+                                <fo:block  font-family="Liberation Sans" font-size="11pt" text-align="right">
+                                    <xsl:value-of select="$surveyUnit"/>
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                        <fo:table-row>
+                            <fo:table-cell number-columns-spanned="2">
+                                <fo:block  font-family="Liberation Sans" font-size="11pt" text-align="right">
+                                    <xsl:text>Identifiant : </xsl:text>
+                                    <xsl:value-of select="$unite"/>
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </xsl:if>
                 <fo:table-row>
-                    <fo:table-cell>
+                <fo:table-cell>
                         <fo:block  font-family="Liberation Sans" font-size="11pt">
                             <xsl:text>Questionnaire </xsl:text>
                             <xsl:choose>
@@ -200,12 +217,6 @@
                                     <xsl:text>non expédié</xsl:text>
                                 </xsl:when>
                             </xsl:choose>
-                        </fo:block>
-                    </fo:table-cell>
-                    <fo:table-cell>
-                        <fo:block  font-family="Liberation Sans" font-size="11pt" text-align="right">
-                            <xsl:text>Identifiant : </xsl:text>
-                            <xsl:value-of select="$unite"/>
                         </fo:block>
                     </fo:table-cell>
                 </fo:table-row>

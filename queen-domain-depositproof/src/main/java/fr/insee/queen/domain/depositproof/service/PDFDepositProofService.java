@@ -26,10 +26,12 @@ public class PDFDepositProofService implements DepositProofService {
     private final DepositProofGeneration depositProofGeneration;
 
     @Override
-    public PdfDepositProof generateDepositProof(String userId, String interrogationId) {
+    public PdfDepositProof generateDepositProof(String userId, String interrogationId, String surveyUnitCompositeName) {
         InterrogationDepositProof interrogation = interrogationService.getInterrogationDepositProof(interrogationId);
         String campaignId = interrogation.campaign().getId();
         String campaignLabel = interrogation.campaign().getLabel();
+        String surveyUnitId = interrogation.surveyUnitId();
+        String surveyUnitCompositeNameLabel = surveyUnitCompositeName == null ? "":surveyUnitCompositeName;
         String date = "";
 
         if (interrogation.stateData() == null) {
@@ -42,9 +44,10 @@ public class PDFDepositProofService implements DepositProofService {
                             TimeZone.getDefault().toZoneId());
             date = dateFormat.format(stateDate);
         }
-        String filename = String.format("%s_%s.pdf", campaignId, userId);
+        String filename = String.format("%s_%s_%s.pdf", campaignId, surveyUnitId, userId);
 
-        File depositProof = depositProofGeneration.generateDepositProof(date, campaignLabel, userId);
+
+        File depositProof = depositProofGeneration.generateDepositProof(date, campaignLabel, userId, surveyUnitCompositeNameLabel);
         return new PdfDepositProof(filename, depositProof);
     }
 }

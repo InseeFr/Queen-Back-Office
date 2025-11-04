@@ -8,6 +8,7 @@
     <xsl:param name="campaignLabel"/>
     <xsl:param name="date"/>
     <xsl:param name="unite"/>
+    <xsl:param name="surveyUnit"/>
     <xsl:param name="style" select="string('any')"/>
     <xsl:param name="imgPathAQuoi" select="'img/Insee_formulaire-recensement-bleunuance2.png'"/>
     <xsl:param name="imgPathMariane" select="'img/marianne.png'"/>
