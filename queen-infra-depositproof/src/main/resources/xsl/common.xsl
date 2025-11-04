@@ -49,7 +49,7 @@
                         </fo:block>
                     </fo:block-container>
 
-                    <fo:block-container absolute-position="absolute" left="160mm" top="0mm" width="35mm"
+                    <fo:block-container absolute-position="absolute" left="140mm" top="0mm" width="35mm"
                         height="35mm">
                         <fo:block>
                             <fo:external-graphic content-width="scale-to-fit" width="35mm"
@@ -83,9 +83,9 @@
                         </fo:block>
                         
                     </fo:block-container>
-                    
+
                     <!--    Blocs a quoi servent vos réponses ?  -->
-                    <fo:block-container absolute-position="absolute" left="0mm" top="80mm" width="15mm"
+                    <fo:block-container absolute-position="absolute" left="0mm" top="90mm" width="15mm"
                         height="15mm">
                         <fo:block margin="2pt">
                             <fo:external-graphic  content-width="scale-to-fit" width="15mm"
@@ -97,7 +97,7 @@
                         </fo:block>
                     </fo:block-container>
                     
-                    <fo:block-container absolute-position="absolute" left="20mm" top="87mm" width="170mm"
+                    <fo:block-container absolute-position="absolute" left="20mm" top="97mm" width="170mm"
                         height="30mm" font-family="Liberation Sans" font-size="12pt">
                         <fo:block line-height="10pt">
                             <fo:inline font-weight="bold"> A quoi servent vos réponses ?
@@ -105,7 +105,7 @@
                         </fo:block>
                     </fo:block-container>
                     
-                    <fo:block-container absolute-position="absolute" left="0mm" top="100mm" width="170mm"
+                    <fo:block-container absolute-position="absolute" left="0mm" top="110mm" width="170mm"
                         height="40mm" font-family="Liberation Sans" font-size="10pt" >
                         
                         <!-- list start -->
