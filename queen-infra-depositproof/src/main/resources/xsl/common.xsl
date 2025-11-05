@@ -191,16 +191,16 @@
                                 </fo:block>
                             </fo:table-cell>
                         </fo:table-row>
-                        <fo:table-row>
-                            <fo:table-cell number-columns-spanned="2">
-                                <fo:block  font-family="Liberation Sans" font-size="11pt" text-align="right">
-                                    <xsl:text>Identifiant : </xsl:text>
-                                    <xsl:value-of select="$unite"/>
-                                </fo:block>
-                            </fo:table-cell>
-                        </fo:table-row>
                     </xsl:if>
-                <fo:table-row>
+                    <fo:table-row>
+                                <fo:table-cell number-columns-spanned="2">
+                                    <fo:block  font-family="Liberation Sans" font-size="11pt" text-align="right">
+                                        <xsl:text>Identifiant : </xsl:text>
+                                        <xsl:value-of select="$unite"/>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                    <fo:table-row>
                 <fo:table-cell>
                         <fo:block  font-family="Liberation Sans" font-size="11pt">
                             <xsl:text>Questionnaire </xsl:text>
