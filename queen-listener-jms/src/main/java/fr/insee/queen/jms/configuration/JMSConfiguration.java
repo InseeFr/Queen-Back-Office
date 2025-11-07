@@ -38,34 +38,4 @@ public class JMSConfiguration {
         return factory;
     }
 
-//    @Bean
-//    @ConditionalOnProperty(
-//            prefix = "broker",
-//            name = "name",
-//            havingValue = "pulsar",
-//            matchIfMissing = false
-//    )
-//    public ConnectionFactory pulsarConnectionFactory(CustomProperties props) {
-//        Map<String,Object> conf = new HashMap<>();
-//        conf.put("brokerServiceUrl", props.getBrokerServiceUrl());
-//        conf.put("webServiceUrl", props.getWebServiceUrl());
-//        conf.put("enableTransaction", false); //
-//        return new PulsarConnectionFactory(conf);
-//    }
-//
-//    @Bean
-//    @ConditionalOnProperty(
-//            prefix = "broker",
-//            name = "name",
-//            havingValue = "pulsar",
-//            matchIfMissing = false
-//    )
-//    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory cf) {
-//        DefaultJmsListenerContainerFactory f = new DefaultJmsListenerContainerFactory();
-//        f.setConnectionFactory(cf);
-//        f.setConcurrency("1-3");
-//        f.setSessionTransacted(false);
-//        // f.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE); // si ack manuel
-//        return f;
-//    }
 }

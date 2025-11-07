@@ -20,7 +20,7 @@ spring:
     name: queen-listener-jms
   docker:
     compose:
-      enabled: true
+      enabled: false
       file: compose.yml
       lifecycle-management: start-and-stop
       start:

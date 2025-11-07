@@ -182,24 +182,6 @@ class PropertyValidatorTest {
             assertTrue(ex.getMessage().contains("type found : BINARY"));
         }
 
-//        @Test
-//        @DisplayName("POJO -> PropertyException with type POJO")
-//        void pojoTypeThrows() {
-//            // Create a POJO node explicitly
-//            Object pojo = new Object() { int v = 1; };
-//            ObjectNode root = MAPPER.createObjectNode();
-//            root.set("pojo", MAPPER.valueToTree(pojo)); // valueToTree returns OBJECT, not POJO, in most cases
-//            // To ensure POJO node: use POJONode directly
-//            ObjectNode node = MAPPER.createObjectNode();
-//            node.set("pojo", com.fasterxml.jackson.databind.node.POJONode.construct(pojo));
-//
-//            PropertyException ex = assertThrows(
-//                    PropertyException.class,
-//                    () -> PropertyValidator.textValue(node, "pojo")
-//            );
-//            assertTrue(ex.getMessage().contains("type found : POJO"));
-//        }
-
         @Test
         @DisplayName("MISSING node doesn't reach type check (handled earlier)")
         void missingNodeDoesNotReachTypeCheck() {

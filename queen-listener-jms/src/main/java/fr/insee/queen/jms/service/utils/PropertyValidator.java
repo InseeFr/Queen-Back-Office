@@ -9,9 +9,6 @@ import fr.insee.queen.jms.exception.PropertyException;
  */
 public class PropertyValidator {
 
-//    private PropertyValidator() {
-//        throw new IllegalArgumentException("Utility class");
-//    }
 
     public static final String PROPERTY_NOT_EMPTY =
             "Property %s should not be empty";

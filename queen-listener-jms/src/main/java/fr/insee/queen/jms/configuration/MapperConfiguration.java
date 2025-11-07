@@ -13,7 +13,11 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
 
 @Configuration
 public class MapperConfiguration {
-    @Bean // Serialize message content to json using TextMessage
+    /**
+     * Creates and configures a Jackson-based JMS message converter.
+     * @return a {@link MessageConverter} configured for JSON serialization of JMS messages using Jackson
+     */
+    @Bean
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
