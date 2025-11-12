@@ -38,11 +38,6 @@ public class CampaignFakeService implements CampaignService {
     }
 
     @Override
-    public Optional<String> findCampaignIdFromQuestionnaireId(String questionnaireId) {
-        return Optional.empty();
-    }
-
-    @Override
     public void updateCampaign(Campaign campaignData) {
         updated = true;
     }

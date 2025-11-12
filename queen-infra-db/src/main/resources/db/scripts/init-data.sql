@@ -88,22 +88,22 @@ INSERT INTO public.required_nomenclature(id_required_nomenclature, code) VALUES
 INSERT INTO public.interrogation
 (id, survey_unit_id, campaign_id, questionnaire_model_id, correlation_id)
 VALUES
-    ('517046b6-bd88-47e0-838e-00d03461f592', 'survey-unit-11',  'SIMPSONS2020X00', 'simpsons',    gen_random_uuid()::text),
-    ('d98d28c2-1535-4fc8-a405-d6a554231bbc', 'survey-unit-12',  'SIMPSONS2020X00', 'simpsons',    gen_random_uuid()::text),
-    ('c8142dcc-c133-49aa-a969-bb9828190a2c', 'survey-unit-13',  'SIMPSONS2020X00', 'simpsonsV2',  gen_random_uuid()::text),
-    ('45c78a3e-f3b6-4d69-bd58-d2ca749dd7cd', 'survey-unit-14',  'SIMPSONS2020X00', 'simpsonsV2',  gen_random_uuid()::text),
-    ('89f4df89-8e83-444f-8f43-6d964c3339d8', 'survey-unit-20',  'VQS2021X00',      'VQS2021X00',  gen_random_uuid()::text),
-    ('ae9c355c-22d3-4188-bb7e-53b7638b988b', 'survey-unit-21',  'VQS2021X00',      'VQS2021X00',  gen_random_uuid()::text),
-    ('77ae37f6-4e51-4282-adf2-e01b15e1ef09', 'survey-unit-22',  'VQS2021X00',      'VQS2021X00',  gen_random_uuid()::text),
-    ('b1771f46-6916-4234-94bc-6a4fcd626637', 'survey-unit-23',  'VQS2021X00',      'VQS2021X00',  gen_random_uuid()::text),
-    ('538d89c2-1047-48f7-8c16-02e9f41a8093', 'survey-unit-log-01', 'LOG2021X11Web','LOG2021X11Web', gen_random_uuid()::text),
-    ('d128f9bf-e933-48bd-a7e5-8892a6a92997', 'survey-unit-log-02', 'LOG2021X11Web','LOG2021X11Web', gen_random_uuid()::text),
-    ('d542db08-6d58-4665-9302-56eddf8185d2', 'survey-unit-log-03', 'LOG2021X11Web','LOG2021X11Web', gen_random_uuid()::text),
-    ('89512ef9-4f39-466b-9388-a3626167f0c3', 'survey-unit-log-01', 'LOG2021X11Tel','LOG2021X11Tel', gen_random_uuid()::text),
-    ('ec311ca8-41ec-4cbb-86ae-99745ffd93cb', 'survey-unit-log-02', 'LOG2021X11Tel','LOG2021X11Tel', gen_random_uuid()::text),
-    ('31e0537d-01ab-4402-9a59-d001d3ba00fd', 'survey-unit-log-03', 'LOG2021X11Tel','LOG2021X11Tel', gen_random_uuid()::text),
-    ('80dc2493-5258-44c5-8ec1-9c600d1df80b', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', gen_random_uuid()::text),
-    ('4f612c5d-8b60-46bd-a2de-1f0d861264db', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', gen_random_uuid()::text);
+    ('517046b6-bd88-47e0-838e-00d03461f592', 'survey-unit-11',  'SIMPSONS2020X00', 'simpsons',    null),
+    ('d98d28c2-1535-4fc8-a405-d6a554231bbc', 'survey-unit-12',  'SIMPSONS2020X00', 'simpsons',    null),
+    ('c8142dcc-c133-49aa-a969-bb9828190a2c', 'survey-unit-13',  'SIMPSONS2020X00', 'simpsonsV2',  null),
+    ('45c78a3e-f3b6-4d69-bd58-d2ca749dd7cd', 'survey-unit-14',  'SIMPSONS2020X00', 'simpsonsV2',  null),
+    ('89f4df89-8e83-444f-8f43-6d964c3339d8', 'survey-unit-20',  'VQS2021X00',      'VQS2021X00',  null),
+    ('ae9c355c-22d3-4188-bb7e-53b7638b988b', 'survey-unit-21',  'VQS2021X00',      'VQS2021X00',  null),
+    ('77ae37f6-4e51-4282-adf2-e01b15e1ef09', 'survey-unit-22',  'VQS2021X00',      'VQS2021X00',  null),
+    ('b1771f46-6916-4234-94bc-6a4fcd626637', 'survey-unit-23',  'VQS2021X00',      'VQS2021X00',  null),
+    ('538d89c2-1047-48f7-8c16-02e9f41a8093', 'survey-unit-log-01', 'LOG2021X11Web','LOG2021X11Web', null),
+    ('d128f9bf-e933-48bd-a7e5-8892a6a92997', 'survey-unit-log-02', 'LOG2021X11Web','LOG2021X11Web', null),
+    ('d542db08-6d58-4665-9302-56eddf8185d2', 'survey-unit-log-03', 'LOG2021X11Web','LOG2021X11Web', null),
+    ('89512ef9-4f39-466b-9388-a3626167f0c3', 'survey-unit-log-01', 'LOG2021X11Tel','LOG2021X11Tel', null),
+    ('ec311ca8-41ec-4cbb-86ae-99745ffd93cb', 'survey-unit-log-02', 'LOG2021X11Tel','LOG2021X11Tel', null),
+    ('31e0537d-01ab-4402-9a59-d001d3ba00fd', 'survey-unit-log-03', 'LOG2021X11Tel','LOG2021X11Tel', null),
+    ('80dc2493-5258-44c5-8ec1-9c600d1df80b', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', null),
+    ('4f612c5d-8b60-46bd-a2de-1f0d861264db', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', null);
 
 
 INSERT INTO public.comment (id, value, interrogation_id) VALUES

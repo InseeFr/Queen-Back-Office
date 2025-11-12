@@ -38,7 +38,7 @@ public class InterrogationBatchDao implements InterrogationBatchRepository {
             preparedStatement.setString(2, interrogation.surveyUnitId());
             preparedStatement.setString(3, interrogation.campaignId());
             preparedStatement.setString(4, interrogation.questionnaireId());
-            preparedStatement.setString(5, interrogation.correlationId());
+            preparedStatement.setObject(5, interrogation.correlationId());
         });
 
         if(cipherEnabled) {

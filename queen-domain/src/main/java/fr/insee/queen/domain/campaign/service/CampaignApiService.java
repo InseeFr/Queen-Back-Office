@@ -88,12 +88,6 @@ public class CampaignApiService implements CampaignService {
         campaignRepository.create(campaign);
     }
 
-    @Transactional
-    @Override
-    public Optional<String> findCampaignIdFromQuestionnaireId(String questionnaireId) {
-        return campaignRepository.findCampaignIdByQuestionnaireId(questionnaireId);
-    }
-
     @Caching(evict = {
             @CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, allEntries = true),
     })

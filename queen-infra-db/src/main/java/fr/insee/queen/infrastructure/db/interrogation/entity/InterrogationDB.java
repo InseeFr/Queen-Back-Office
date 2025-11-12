@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 /**
  * Interrogation entity
  */
@@ -56,9 +58,9 @@ public class InterrogationDB {
     private CommentDB comment;
 
     @Column(name = "correlation_id")
-    private String correlationId;
+    private UUID correlationId;
 
-    public InterrogationDB(String id, String surveyUnitId, CampaignDB campaign, QuestionnaireModelDB questionnaireModel, String correlationId) {
+    public InterrogationDB(String id, String surveyUnitId, CampaignDB campaign, QuestionnaireModelDB questionnaireModel, UUID correlationId) {
         this.id = id;
         this.surveyUnitId = surveyUnitId;
         this.campaign = campaign;

@@ -26,5 +26,5 @@
 	<include file="changelog/613_change_type_of_intero_id.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/620_surveyunit-to-interrogation.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/630_add_correlation_id.xml" relativeToChangelogFile="true"/>
-	<include file="changelog/631_add_constraint_not_null_correlation_id.xml" relativeToChangelogFile="true"/>
+<!--	<include file="changelog/631_add_constraint_not_null_correlation_id.xml" relativeToChangelogFile="true"/>-->
 </databaseChangeLog>

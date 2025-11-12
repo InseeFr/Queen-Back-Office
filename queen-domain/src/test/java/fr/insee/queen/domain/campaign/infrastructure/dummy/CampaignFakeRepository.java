@@ -60,11 +60,6 @@ public class CampaignFakeRepository implements CampaignRepository {
     }
 
     @Override
-    public Optional<String> findCampaignIdByQuestionnaireId(String questionnaireId) {
-        return Optional.empty();
-    }
-
-    @Override
     public Optional<ObjectNode> findMetadataByCampaignId(String campaignId) {
         if(metadata != null) {
             return Optional.of(metadata);
