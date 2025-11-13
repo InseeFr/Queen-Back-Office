@@ -210,14 +210,12 @@ class InterrogationQueueConsumerTest {
         consumer.createInterrogation(commandMessage, session);
 
         // Then
-        // command is created
         Interrogation interrogationBatchUsed = interrogationBatchFakeService.getInterrogationBatchUsed();
         assertThat(interrogationBatchUsed.id()).isEqualTo("a1b2c3d4-e5f6-4789-abcd-112233445566");
         assertThat(interrogationBatchUsed.surveyUnitId()).isEqualTo("0f1e2d3c-4b5a-6978-9123-abcdefabcdef");
         assertThat(interrogationBatchUsed.questionnaireId()).isNull();
         assertThat(interrogationBatchUsed.correlationId()).isNull();
 
-        // response publisher is called
         JMSOutputMessage responseMessage = publisher.getResponseSent();
         String replyQueue = publisher.getReplyQueueUsed();
         assertThat(publisher.getCorrelationIdUsed()).isEqualTo("c7f0a0b1-9d8c-4e7f-b6a5-1234567890ab");
@@ -350,7 +348,6 @@ class InterrogationQueueConsumerTest {
         // When
         consumer.createInterrogation(commandMessage, session);
 
-        // response publisher is called
         JMSOutputMessage responseMessage = publisher.getResponseSent();
         String replyQueue = publisher.getReplyQueueUsed();
         assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
@@ -366,7 +363,6 @@ class InterrogationQueueConsumerTest {
         consumer.createInterrogation(commandMessage, session);
 
         // Then
-//        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
         String expectedLogMessage = String.format(invalidPropertyName);
         assertThat(output).contains(expectedLogMessage);
     }
@@ -427,6 +423,4 @@ class InterrogationQueueConsumerTest {
         assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
         assertThat(output).contains("EntityNotFoundException");
     }
-
 }
-

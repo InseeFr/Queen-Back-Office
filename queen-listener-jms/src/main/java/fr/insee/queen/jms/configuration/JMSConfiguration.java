@@ -1,6 +1,5 @@
 package fr.insee.queen.jms.configuration;
 
-import com.datastax.oss.pulsar.jms.PulsarConnectionFactory;
 import jakarta.jms.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,10 +10,6 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import java.util.HashMap;
-import java.util.Map;
-
 
 @Slf4j
 @EnableJms

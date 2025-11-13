@@ -8,11 +8,6 @@ import fr.insee.queen.jms.exception.PropertyException;
  * if the property is not found, an exception is raised
  */
 public class PropertyValidator {
-
-
-    public static final String PROPERTY_NOT_EMPTY =
-            "Property %s should not be empty";
-
     /**
      * @param node the node
      * @param field the key for node

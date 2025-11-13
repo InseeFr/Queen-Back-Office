@@ -65,7 +65,7 @@ public class InterrogationQueueConsumer {
             );
             log.debug(command.toString());
 
-            // TODO
+            // TODO personalization
             ArrayNode personalization = objectMapper.createArrayNode();
 
             // TODO identifier le questionnaire de manière unique
@@ -78,7 +78,7 @@ public class InterrogationQueueConsumer {
                                                                                             data,
                                                                                             UUID.randomUUID()), "CampaignId");
 
-            // TODO
+            // TODO saveInterrogation
             interrogationBatchService.saveInterrogation(interrogation);
 
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.CREATED);
