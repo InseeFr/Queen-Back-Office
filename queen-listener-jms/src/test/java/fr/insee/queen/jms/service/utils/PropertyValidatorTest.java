@@ -167,7 +167,7 @@ class PropertyValidatorTest {
 
         @Test
         @DisplayName("BINARY -> PropertyException with type BINARY")
-        void binaryTypeThrows() throws Exception {
+        void binaryTypeThrows() {
             // Build a binary node via ObjectMapper (base64 in JSON becomes BINARY)
             byte[] bytes = new byte[] {1, 2, 3};
             ObjectNode node = MAPPER.createObjectNode();
