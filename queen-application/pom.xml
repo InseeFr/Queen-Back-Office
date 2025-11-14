@@ -173,33 +173,6 @@
 		</dependency>
 	</dependencies>
 
-	<profiles>
-		<profile>
-			<id>coverage</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.13</version>
-						<executions>
-							<execution>
-								<id>report-aggregate</id>
-								<goals>
-									<goal>report-aggregate</goal>
-								</goals>
-								<configuration>
-									<includeCurrentProject>true</includeCurrentProject>
-								</configuration>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 	<build>
 		<plugins>
 			<plugin>

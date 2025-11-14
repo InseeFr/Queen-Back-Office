@@ -48,8 +48,8 @@ spring:
           - queen-db-ciphered
   datasource:
     url: jdbc:postgresql://localhost:5435/queen-ciphered
-    username: mypostgresuser
-    password: mypostgrespassword
+    username: mypostgresuser2
+    password: mypostgrespassword2
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 1
