@@ -36,23 +36,11 @@
                 
                 <fo:flow flow-name="region-body">
                     <!--    Blocs Logos et Libellé -->
-                    
-                    <fo:block-container absolute-position="absolute" left="0mm" top="10mm" width="15mm"
-                        height="15mm">
+
+                    <fo:block-container absolute-position="absolute" left="-5mm" top="0mm" width="25mm"
+                        height="25mm">
                         <fo:block>
-                            <fo:external-graphic content-width="scale-to-fit" width="15mm"
-                                scaling="uniform">
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="$imgPathInsee"/>
-                                </xsl:attribute>
-                            </fo:external-graphic> 
-                        </fo:block>
-                    </fo:block-container>
-                    
-                    <fo:block-container absolute-position="absolute" left="72mm" top="0mm" width="26mm"
-                        height="15mm">
-                        <fo:block>
-                            <fo:external-graphic content-width="scale-to-fit" width="15mm"
+                            <fo:external-graphic content-width="scale-to-fit" width="25mm"
                                 scaling="uniform">
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="$imgPathMariane"/>
@@ -60,19 +48,19 @@
                             </fo:external-graphic> 
                         </fo:block>
                     </fo:block-container>
-                    
-                    <fo:block-container absolute-position="absolute" left="160mm" top="0mm" width="10mm"
-                        height="15mm">
+
+                    <fo:block-container absolute-position="absolute" left="140mm" top="0mm" width="35mm"
+                        height="35mm">
                         <fo:block>
-                            <fo:external-graphic content-width="scale-to-fit" width="15mm"
+                            <fo:external-graphic content-width="scale-to-fit" width="35mm"
                                 scaling="uniform">
                                 <xsl:attribute name="src">
-                                    <xsl:value-of select="$imgPathStatPub"/>
+                                    <xsl:value-of select="$imgPathInsee"/>
                                 </xsl:attribute>
                             </fo:external-graphic>
                         </fo:block>
                     </fo:block-container>
-                    
+
                     <fo:block-container absolute-position="absolute" left="10mm" top="23mm" width="150mm"
                         height="7mm">
                         <fo:block font-family="Liberation Sans" font-size="16pt" font-weight="bold"
@@ -95,9 +83,9 @@
                         </fo:block>
                         
                     </fo:block-container>
-                    
+
                     <!--    Blocs a quoi servent vos réponses ?  -->
-                    <fo:block-container absolute-position="absolute" left="0mm" top="80mm" width="15mm"
+                    <fo:block-container absolute-position="absolute" left="0mm" top="90mm" width="15mm"
                         height="15mm">
                         <fo:block margin="2pt">
                             <fo:external-graphic  content-width="scale-to-fit" width="15mm"
@@ -109,7 +97,7 @@
                         </fo:block>
                     </fo:block-container>
                     
-                    <fo:block-container absolute-position="absolute" left="20mm" top="87mm" width="170mm"
+                    <fo:block-container absolute-position="absolute" left="20mm" top="97mm" width="170mm"
                         height="30mm" font-family="Liberation Sans" font-size="12pt">
                         <fo:block line-height="10pt">
                             <fo:inline font-weight="bold"> A quoi servent vos réponses ?
@@ -117,7 +105,7 @@
                         </fo:block>
                     </fo:block-container>
                     
-                    <fo:block-container absolute-position="absolute" left="0mm" top="100mm" width="170mm"
+                    <fo:block-container absolute-position="absolute" left="0mm" top="110mm" width="170mm"
                         height="40mm" font-family="Liberation Sans" font-size="10pt" >
                         
                         <!-- list start -->
@@ -195,8 +183,25 @@
     <xsl:template name="entete">
         <fo:table table-layout="fixed" width="100%">
             <fo:table-body>
-                <fo:table-row>
-                    <fo:table-cell>
+                    <xsl:if test="$surveyUnit!=''">
+                        <fo:table-row>
+                            <fo:table-cell number-columns-spanned="2">
+                                <fo:block  font-family="Liberation Sans" font-size="11pt" text-align="right">
+                                    <xsl:value-of select="$surveyUnit"/>
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </xsl:if>
+                    <fo:table-row>
+                                <fo:table-cell number-columns-spanned="2">
+                                    <fo:block  font-family="Liberation Sans" font-size="11pt" text-align="right">
+                                        <xsl:text>Identifiant : </xsl:text>
+                                        <xsl:value-of select="$unite"/>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                    <fo:table-row>
+                <fo:table-cell>
                         <fo:block  font-family="Liberation Sans" font-size="11pt">
                             <xsl:text>Questionnaire </xsl:text>
                             <xsl:choose>
@@ -212,12 +217,6 @@
                                     <xsl:text>non expédié</xsl:text>
                                 </xsl:when>
                             </xsl:choose>
-                        </fo:block>
-                    </fo:table-cell>
-                    <fo:table-cell>
-                        <fo:block  font-family="Liberation Sans" font-size="11pt" text-align="right">
-                            <xsl:text>Identifiant : </xsl:text>
-                            <xsl:value-of select="$unite"/>
                         </fo:block>
                     </fo:table-cell>
                 </fo:table-row>
