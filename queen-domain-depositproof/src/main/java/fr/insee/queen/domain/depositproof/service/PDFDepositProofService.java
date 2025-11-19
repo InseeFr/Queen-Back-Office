@@ -3,18 +3,20 @@ package fr.insee.queen.domain.depositproof.service;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.depositproof.gateway.DepositProofGeneration;
 import fr.insee.queen.domain.depositproof.model.PdfDepositProof;
-import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.model.InterrogationDepositProof;
+import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.TimeZone;
 
 @Service
@@ -31,7 +33,7 @@ public class PDFDepositProofService implements DepositProofService {
         String campaignId = interrogation.campaign().getId();
         String campaignLabel = interrogation.campaign().getLabel();
         String surveyUnitId = interrogation.surveyUnitId();
-        String surveyUnitCompositeNameLabel = surveyUnitCompositeName == null ? "":surveyUnitCompositeName;
+        String surveyUnitCompositeNameLabel = decodeSurveyUnitCompositeName(surveyUnitCompositeName);
         String date = "";
 
         if (interrogation.stateData() == null) {
@@ -49,5 +51,12 @@ public class PDFDepositProofService implements DepositProofService {
 
         File depositProof = depositProofGeneration.generateDepositProof(date, campaignLabel, userId, surveyUnitCompositeNameLabel);
         return new PdfDepositProof(filename, depositProof);
+    }
+
+    static String decodeSurveyUnitCompositeName(String surveyUnitCompositeName) {
+        return surveyUnitCompositeName == null ? "" : new String(
+                Base64.getUrlDecoder().decode(surveyUnitCompositeName),
+                StandardCharsets.UTF_8
+        );
     }
 }
