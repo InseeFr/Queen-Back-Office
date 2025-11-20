@@ -19,6 +19,9 @@ application:
   temp-folder:
 
 feature:
+  cross-environment-communication:
+    emitter: false
+    consumer: false
   sensitive-data:
     enabled: false
     encryptionSecretKey:

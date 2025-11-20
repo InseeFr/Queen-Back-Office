@@ -24,6 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "fr.insee.queen.infrastructure.db.interrogation",
         "fr.insee.queen.infrastructure.db.data.entity.common",
         "fr.insee.queen.infrastructure.db.data.entity.unciphered",
+        "fr.insee.queen.infrastructure.db.events"
 })
 public class DBUncipheredConfiguration {
 }
