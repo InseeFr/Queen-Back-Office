@@ -34,8 +34,6 @@ class EventPulsarConsumerTest {
         // given
         String keyJson = "key";
 
-        Value afterValue = new Value("id-123", "{\"type\":\"QUESTIONNAIRE_INIT\",\"payload\":{}}", 123456L);
-        DebeziumEnvelope envelope = new DebeziumEnvelope(null, afterValue, null, "c", 123456L, null);
         BrokerMessage.Payload payload = new BrokerMessage.Payload("interrogation-123", null);
         BrokerMessage brokerMessage = new BrokerMessage("QUESTIONNAIRE_INIT", payload);
 
