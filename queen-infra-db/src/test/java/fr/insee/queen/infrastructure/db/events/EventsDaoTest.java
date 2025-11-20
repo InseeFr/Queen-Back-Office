@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 class EventsDaoTest {
 
     @Mock
-    private EventsJpaRepository<OutboxDB, UUID> jpaRepository;
+    private EventsJpaRepository jpaRepository;
 
     private EventsDao eventsDao;
 

@@ -29,11 +29,11 @@ public class EventPulsarConsumer {
     )
     public void listen(String json, String keyJson) {
         try {
-            DebeziumEnvelope record = objectMapper.readValue(json, DebeziumEnvelope.class);
-            if (record == null || record.after() == null) {
+            DebeziumEnvelope envelope = objectMapper.readValue(json, DebeziumEnvelope.class);
+            if (envelope == null || envelope.after() == null) {
                 return;
             }
-            BrokerMessage event = objectMapper.readValue(record.after().payload(), BrokerMessage.class);
+            BrokerMessage event = objectMapper.readValue(envelope.after().payload(), BrokerMessage.class);
             consumers.forEach(c -> {
                 if(c.shouldConsume(event.type())){
                     c.consume(event.type(), event.payload());

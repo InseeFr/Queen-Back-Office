@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.infrastructure.broker.debezium.DebeziumEnvelope;
 import fr.insee.queen.infrastructure.broker.debezium.Value;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,18 +28,10 @@ class EventPulsarConsumerTest {
     @Mock
     private ObjectMapper objectMapper;
 
-    private EventPulsarConsumer eventPulsarConsumer;
-
-    @BeforeEach
-    void init() {
-        eventPulsarConsumer = new EventPulsarConsumer(List.of(consumer1, consumer2));
-    }
-
     @Test
     @DisplayName("When receiving a valid message, then consumers are notified")
     void testListen_ValidMessage_ConsumersNotified() throws JsonProcessingException {
         // given
-        String json = "{\"after\":{\"payload\":\"{\\\"type\\\":\\\"QUESTIONNAIRE_INIT\\\"}\"}}";
         String keyJson = "key";
 
         Value afterValue = new Value("id-123", "{\"type\":\"QUESTIONNAIRE_INIT\",\"payload\":{}}", 123456L);
@@ -49,13 +40,11 @@ class EventPulsarConsumerTest {
         BrokerMessage brokerMessage = new BrokerMessage("QUESTIONNAIRE_INIT", payload);
 
         ObjectMapper realObjectMapper = new ObjectMapper();
-        eventPulsarConsumer = new EventPulsarConsumer(List.of(consumer1, consumer2));
 
         when(consumer1.shouldConsume("QUESTIONNAIRE_INIT")).thenReturn(true);
         when(consumer2.shouldConsume("QUESTIONNAIRE_INIT")).thenReturn(false);
 
         // when
-        String actualJson = realObjectMapper.writeValueAsString(envelope);
         String actualPayload = realObjectMapper.writeValueAsString(brokerMessage);
 
         EventPulsarConsumer consumerWithRealMapper = new EventPulsarConsumer(List.of(consumer1, consumer2));
@@ -73,12 +62,11 @@ class EventPulsarConsumerTest {
 
     @Test
     @DisplayName("When receiving a message with null record, then no consumer is called")
-    void testListen_NullRecord_NoConsumerCalled() throws JsonProcessingException {
+    void testListen_NullRecord_NoConsumerCalled() {
         // given
         String json = "null";
         String keyJson = "key";
 
-        ObjectMapper realObjectMapper = new ObjectMapper();
         EventPulsarConsumer consumerWithRealMapper = new EventPulsarConsumer(List.of(consumer1, consumer2));
 
         // when
