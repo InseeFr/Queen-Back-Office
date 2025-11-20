@@ -127,8 +127,8 @@ public class PilotageApiService implements PilotageService {
     public List<PilotageCampaign> getInterviewerCampaigns() {
         List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns();
         if (campaigns == null) {
-            log.error("Pilotage API does not have a body (was expecting a campaign list)");
-            throw new PilotageApiException();
+            log.error("Current user does not have campaigns in pilotage");
+            return List.of();
         }
 
         return campaigns.stream()
