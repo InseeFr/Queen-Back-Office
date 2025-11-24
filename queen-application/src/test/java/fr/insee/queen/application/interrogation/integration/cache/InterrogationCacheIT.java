@@ -62,6 +62,7 @@ class InterrogationCacheIT {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         interrogationService.createInterrogation(interrogation);
 
@@ -96,6 +97,7 @@ class InterrogationCacheIT {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         interrogationService.createInterrogation(interrogation);
 
@@ -129,6 +131,7 @@ class InterrogationCacheIT {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         interrogationService.createInterrogation(interrogation);
 
@@ -164,6 +167,7 @@ class InterrogationCacheIT {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null);
         interrogationService.createInterrogation(interrogation);
 
