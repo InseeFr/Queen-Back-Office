@@ -3,6 +3,7 @@ package fr.insee.queen.infrastructure.depositproof.generation;
 import fr.insee.queen.infrastructure.depositproof.exception.DepositProofException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.io.ResourceResolverFactory;
@@ -44,7 +45,12 @@ public class FoToPDF {
                     ResourceResolverFactory.createInternalResourceResolver(
                             folderBase,
                             new ClasspathResourceResolver()));
-            Fop fop = fopFactory.newFop(MIME_PDF, out);
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            foUserAgent.setProducer("Insee");
+            foUserAgent.setCreator("PDF Service");
+            foUserAgent.setTitle("PDF document");
+
+            Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
             TransformerFactory factory = TransformerFactory.newInstance();
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
