@@ -3,7 +3,7 @@ package fr.insee.queen.application.crossenvironmentcommunication.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.application.crossenvironmentcommunication.controller.dto.EventDto;
+import fr.insee.queen.infrastructure.broker.dto.EventDto;
 import fr.insee.queen.domain.event.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

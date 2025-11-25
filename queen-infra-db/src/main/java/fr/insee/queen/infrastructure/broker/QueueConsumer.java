@@ -3,6 +3,8 @@ package fr.insee.queen.infrastructure.broker;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.infrastructure.broker.debezium.CDCEnvelope;
+import fr.insee.queen.infrastructure.broker.dto.EventDto;
+import fr.insee.queen.infrastructure.db.events.EventsDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.common.schema.SchemaType;
@@ -33,10 +35,10 @@ public class QueueConsumer {
             if (envelope == null || envelope.after() == null) {
                 return;
             }
-            BrokerMessage event = objectMapper.readValue(envelope.after().payload(), BrokerMessage.class);
+            EventDto event = objectMapper.readValue(envelope.after().payload(), EventDto.class);
             consumers.forEach(c -> {
-                if(c.shouldConsume(event.type())){
-                    c.consume(event.type(), event.payload());
+                if(c.shouldConsume(event.getEventType())){
+                    c.consume(event.getEventType(), event.getPayload());
                 }
             });
         } catch (JsonProcessingException e) {

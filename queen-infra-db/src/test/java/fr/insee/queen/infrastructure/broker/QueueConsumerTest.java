@@ -1,156 +1,260 @@
 package fr.insee.queen.infrastructure.broker;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.insee.queen.infrastructure.broker.debezium.CDCEnvelope;
-import fr.insee.queen.infrastructure.broker.debezium.Value;
+import fr.insee.queen.infrastructure.broker.dto.EventDto;
+import fr.insee.queen.infrastructure.broker.dto.EventPayloadDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class QueueConsumerTest {
 
-    @Mock
+    private QueueConsumer queueConsumer;
     private MessageConsumer consumer1;
-
-    @Mock
     private MessageConsumer consumer2;
-
-    @Mock
     private ObjectMapper objectMapper;
 
+    @BeforeEach
+    void setUp() {
+        consumer1 = mock(MessageConsumer.class);
+        consumer2 = mock(MessageConsumer.class);
+        objectMapper = new ObjectMapper();
+        queueConsumer = new QueueConsumer(List.of(consumer1, consumer2));
+    }
+
     @Test
-    @DisplayName("When receiving a valid message, then consumers are notified")
-    void testListen_ValidMessage_ConsumersNotified() throws JsonProcessingException {
+    @DisplayName("On receiving valid message when consumer matches then event is consumed")
+    void testListen_ValidMessage_ConsumerMatches() {
         // given
-        String keyJson = "key";
+        when(consumer1.shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT)).thenReturn(true);
+        when(consumer2.shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT)).thenReturn(false);
 
-        BrokerMessage.Payload payload = new BrokerMessage.Payload("interrogation-123", null);
-        BrokerMessage brokerMessage = new BrokerMessage("QUESTIONNAIRE_INIT", payload);
-
-        ObjectMapper realObjectMapper = new ObjectMapper();
-
-        when(consumer1.shouldConsume("QUESTIONNAIRE_INIT")).thenReturn(true);
-        when(consumer2.shouldConsume("QUESTIONNAIRE_INIT")).thenReturn(false);
+        String json = """
+                {
+                    "before": null,
+                    "after": {
+                        "id": "123",
+                        "payload": "{\\"eventType\\":\\"QUESTIONNAIRE_INIT\\",\\"aggregateType\\":\\"QUESTIONNAIRE\\",\\"payload\\":{\\"interrogationId\\":\\"1\\",\\"mode\\":\\"CAPI\\"}}",
+                        "created_date": 1234567890
+                    },
+                    "source": null,
+                    "op": "c",
+                    "ts_ms": 1234567890
+                }
+                """;
 
         // when
-        String actualPayload = realObjectMapper.writeValueAsString(brokerMessage);
-
-        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
-        CDCEnvelope testEnvelope = new CDCEnvelope(null, new Value("id-123", actualPayload, 123456L), null, "c", 123456L, null);
-        String testJson = realObjectMapper.writeValueAsString(testEnvelope);
-
-        consumerWithRealMapper.listen(testJson, keyJson);
+        queueConsumer.listen(json, "key");
 
         // then
-        verify(consumer1).shouldConsume("QUESTIONNAIRE_INIT");
-        verify(consumer1).consume(eq("QUESTIONNAIRE_INIT"), any(BrokerMessage.Payload.class));
-        verify(consumer2).shouldConsume("QUESTIONNAIRE_INIT");
+        verify(consumer1, times(1)).shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT);
+        verify(consumer1, times(1)).consume(eq(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT), any(EventPayloadDto.class));
+        verify(consumer2, times(1)).shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT);
         verify(consumer2, never()).consume(any(), any());
     }
 
     @Test
-    @DisplayName("When receiving a message with null record, then no consumer is called")
-    void testListen_NullRecord_NoConsumerCalled() {
+    @DisplayName("On receiving valid message when multiple consumers match then all consume event")
+    void testListen_ValidMessage_MultipleConsumersMatch() {
+        // given
+        when(consumer1.shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT)).thenReturn(true);
+        when(consumer2.shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT)).thenReturn(true);
+
+        String json = """
+                {
+                    "before": null,
+                    "after": {
+                        "id": "123",
+                        "payload": "{\\"eventType\\":\\"QUESTIONNAIRE_INIT\\",\\"aggregateType\\":\\"QUESTIONNAIRE\\",\\"payload\\":{\\"interrogationId\\":\\"1\\",\\"mode\\":\\"CAPI\\"}}",
+                        "created_date": 1234567890
+                    },
+                    "source": null,
+                    "op": "c",
+                    "ts_ms": 1234567890
+                }
+                """;
+
+        // when
+        queueConsumer.listen(json, "key");
+
+        // then
+        verify(consumer1, times(1)).consume(eq(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT), any(EventPayloadDto.class));
+        verify(consumer2, times(1)).consume(eq(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT), any(EventPayloadDto.class));
+    }
+
+    @Test
+    @DisplayName("On receiving valid message when no consumer matches then no consumption occurs")
+    void testListen_ValidMessage_NoConsumerMatches() {
+        // given
+        when(consumer1.shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT)).thenReturn(false);
+        when(consumer2.shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT)).thenReturn(false);
+
+        String json = """
+                {
+                    "before": null,
+                    "after": {
+                        "id": "123",
+                        "payload": "{\\"eventType\\":\\"QUESTIONNAIRE_INIT\\",\\"aggregateType\\":\\"QUESTIONNAIRE\\",\\"payload\\":{\\"interrogationId\\":\\"1\\",\\"mode\\":\\"CAPI\\"}}",
+                        "created_date": 1234567890
+                    },
+                    "source": null,
+                    "op": "c",
+                    "ts_ms": 1234567890
+                }
+                """;
+
+        // when
+        queueConsumer.listen(json, "key");
+
+        // then
+        verify(consumer1, never()).consume(any(), any());
+        verify(consumer2, never()).consume(any(), any());
+    }
+
+    @Test
+    @DisplayName("On receiving message when envelope is null then no consumption occurs")
+    void testListen_NullEnvelope() {
         // given
         String json = "null";
-        String keyJson = "key";
-
-        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
 
         // when
-        consumerWithRealMapper.listen(json, keyJson);
+        queueConsumer.listen(json, "key");
 
         // then
         verify(consumer1, never()).shouldConsume(any());
-        verify(consumer1, never()).consume(any(), any());
         verify(consumer2, never()).shouldConsume(any());
+        verify(consumer1, never()).consume(any(), any());
         verify(consumer2, never()).consume(any(), any());
     }
 
     @Test
-    @DisplayName("When receiving a message with null after, then no consumer is called")
-    void testListen_NullAfter_NoConsumerCalled() throws JsonProcessingException {
+    @DisplayName("On receiving message when after field is null then no consumption occurs")
+    void testListen_NullAfterField() {
         // given
-        CDCEnvelope envelope = new CDCEnvelope(null, null, null, "c", 123456L, null);
-        ObjectMapper realObjectMapper = new ObjectMapper();
-        String json = realObjectMapper.writeValueAsString(envelope);
-        String keyJson = "key";
-
-        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
+        String json = """
+                {
+                    "before": null,
+                    "after": null,
+                    "source": null,
+                    "op": "d",
+                    "ts_ms": 1234567890
+                }
+                """;
 
         // when
-        consumerWithRealMapper.listen(json, keyJson);
+        queueConsumer.listen(json, "key");
 
         // then
         verify(consumer1, never()).shouldConsume(any());
-        verify(consumer1, never()).consume(any(), any());
         verify(consumer2, never()).shouldConsume(any());
-        verify(consumer2, never()).consume(any(), any());
-    }
-
-    @Test
-    @DisplayName("When multiple consumers should consume, then all are notified")
-    void testListen_MultipleConsumers_AllNotified() throws JsonProcessingException {
-        // given
-        BrokerMessage.Payload payload = new BrokerMessage.Payload("interrogation-456", null);
-        BrokerMessage brokerMessage = new BrokerMessage("QUESTIONNAIRE_COMPLETE", payload);
-
-        ObjectMapper realObjectMapper = new ObjectMapper();
-        String actualPayload = realObjectMapper.writeValueAsString(brokerMessage);
-        CDCEnvelope envelope = new CDCEnvelope(null, new Value("id-456", actualPayload, 123456L), null, "c", 123456L, null);
-        String json = realObjectMapper.writeValueAsString(envelope);
-        String keyJson = "key";
-
-        when(consumer1.shouldConsume("QUESTIONNAIRE_COMPLETE")).thenReturn(true);
-        when(consumer2.shouldConsume("QUESTIONNAIRE_COMPLETE")).thenReturn(true);
-
-        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
-
-        // when
-        consumerWithRealMapper.listen(json, keyJson);
-
-        // then
-        verify(consumer1).shouldConsume("QUESTIONNAIRE_COMPLETE");
-        verify(consumer1).consume(eq("QUESTIONNAIRE_COMPLETE"), any(BrokerMessage.Payload.class));
-        verify(consumer2).shouldConsume("QUESTIONNAIRE_COMPLETE");
-        verify(consumer2).consume(eq("QUESTIONNAIRE_COMPLETE"), any(BrokerMessage.Payload.class));
-    }
-
-    @Test
-    @DisplayName("When no consumer should consume, then no consume is called")
-    void testListen_NoConsumerShouldConsume_NoConsumeCall() throws JsonProcessingException {
-        // given
-        BrokerMessage.Payload payload = new BrokerMessage.Payload("interrogation-789", null);
-        BrokerMessage brokerMessage = new BrokerMessage("UNKNOWN_EVENT", payload);
-
-        ObjectMapper realObjectMapper = new ObjectMapper();
-        String actualPayload = realObjectMapper.writeValueAsString(brokerMessage);
-        CDCEnvelope envelope = new CDCEnvelope(null, new Value("id-789", actualPayload, 123456L), null, "c", 123456L, null);
-        String json = realObjectMapper.writeValueAsString(envelope);
-        String keyJson = "key";
-
-        when(consumer1.shouldConsume("UNKNOWN_EVENT")).thenReturn(false);
-        when(consumer2.shouldConsume("UNKNOWN_EVENT")).thenReturn(false);
-
-        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
-
-        // when
-        consumerWithRealMapper.listen(json, keyJson);
-
-        // then
-        verify(consumer1).shouldConsume("UNKNOWN_EVENT");
         verify(consumer1, never()).consume(any(), any());
-        verify(consumer2).shouldConsume("UNKNOWN_EVENT");
         verify(consumer2, never()).consume(any(), any());
+    }
+
+    @Test
+    @DisplayName("On receiving invalid JSON then error is logged and no consumption occurs")
+    void testListen_InvalidJson() {
+        // given
+        String invalidJson = "{ invalid json }";
+
+        // when
+        queueConsumer.listen(invalidJson, "key");
+
+        // then
+        verify(consumer1, never()).shouldConsume(any());
+        verify(consumer2, never()).shouldConsume(any());
+        verify(consumer1, never()).consume(any(), any());
+        verify(consumer2, never()).consume(any(), any());
+    }
+
+    @Test
+    @DisplayName("On receiving message with invalid event payload then error is logged and no consumption occurs")
+    void testListen_InvalidEventPayload() {
+        // given
+        String json = """
+                {
+                    "before": null,
+                    "after": {
+                        "id": "123",
+                        "payload": "{ invalid event json }",
+                        "created_date": 1234567890
+                    },
+                    "source": null,
+                    "op": "c",
+                    "ts_ms": 1234567890
+                }
+                """;
+
+        // when
+        queueConsumer.listen(json, "key");
+
+        // then
+        verify(consumer1, never()).shouldConsume(any());
+        verify(consumer2, never()).shouldConsume(any());
+        verify(consumer1, never()).consume(any(), any());
+        verify(consumer2, never()).consume(any(), any());
+    }
+
+    @Test
+    @DisplayName("On receiving valid message then payload is correctly passed to consumer")
+    void testListen_PayloadCorrectlyPassed() {
+        // given
+        when(consumer1.shouldConsume(EventDto.EventTypeEnum.QUESTIONNAIRE_COMPLETED)).thenReturn(true);
+
+        String json = """
+                {
+                    "before": null,
+                    "after": {
+                        "id": "456",
+                        "payload": "{\\"eventType\\":\\"QUESTIONNAIRE_COMPLETED\\",\\"aggregateType\\":\\"QUESTIONNAIRE\\",\\"payload\\":{\\"interrogationId\\":\\"2\\",\\"mode\\":\\"CAWI\\"}}",
+                        "created_date": 1234567890
+                    },
+                    "source": null,
+                    "op": "c",
+                    "ts_ms": 1234567890
+                }
+                """;
+
+        // when
+        queueConsumer.listen(json, "key");
+
+        // then
+        ArgumentCaptor<EventPayloadDto> payloadCaptor = ArgumentCaptor.forClass(EventPayloadDto.class);
+        verify(consumer1).consume(eq(EventDto.EventTypeEnum.QUESTIONNAIRE_COMPLETED), payloadCaptor.capture());
+
+        EventPayloadDto capturedPayload = payloadCaptor.getValue();
+        assertThat(capturedPayload).isNotNull();
+        assertThat(capturedPayload.getInterrogationId()).isEqualTo("2");
+        assertThat(capturedPayload.getMode().getValue()).isEqualTo("CAWI");
+    }
+
+    @Test
+    @DisplayName("On receiving message when empty consumer list then no error occurs")
+    void testListen_EmptyConsumerList() {
+        // given
+        QueueConsumer emptyConsumerQueue = new QueueConsumer(List.of());
+
+        String json = """
+                {
+                    "before": null,
+                    "after": {
+                        "id": "123",
+                        "payload": "{\\"eventType\\":\\"QUESTIONNAIRE_INIT\\",\\"aggregateType\\":\\"QUESTIONNAIRE\\",\\"payload\\":{\\"interrogationId\\":\\"1\\",\\"mode\\":\\"CAPI\\"}}",
+                        "created_date": 1234567890
+                    },
+                    "source": null,
+                    "op": "c",
+                    "ts_ms": 1234567890
+                }
+                """;
+
+        // when & then (should not throw exception)
+        emptyConsumerQueue.listen(json, "key");
     }
 }

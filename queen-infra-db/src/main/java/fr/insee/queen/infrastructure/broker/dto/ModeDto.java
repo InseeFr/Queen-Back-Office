@@ -1,4 +1,4 @@
-package fr.insee.queen.application.crossenvironmentcommunication.controller.dto;
+package fr.insee.queen.infrastructure.broker.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonValue;

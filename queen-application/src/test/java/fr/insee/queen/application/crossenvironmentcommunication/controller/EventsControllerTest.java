@@ -2,9 +2,9 @@ package fr.insee.queen.application.crossenvironmentcommunication.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.application.crossenvironmentcommunication.controller.dto.EventDto;
-import fr.insee.queen.application.crossenvironmentcommunication.controller.dto.EventPayloadDto;
-import fr.insee.queen.application.crossenvironmentcommunication.controller.dto.ModeDto;
+import fr.insee.queen.infrastructure.broker.dto.EventDto;
+import fr.insee.queen.infrastructure.broker.dto.EventPayloadDto;
+import fr.insee.queen.infrastructure.broker.dto.ModeDto;
 import fr.insee.queen.domain.event.service.EventService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
