@@ -2,7 +2,7 @@ package fr.insee.queen.infrastructure.broker;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.insee.queen.infrastructure.broker.debezium.DebeziumEnvelope;
+import fr.insee.queen.infrastructure.broker.debezium.CDCEnvelope;
 import fr.insee.queen.infrastructure.broker.debezium.Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class EventPulsarConsumerTest {
+class QueueConsumerTest {
 
     @Mock
     private MessageConsumer consumer1;
@@ -45,8 +45,8 @@ class EventPulsarConsumerTest {
         // when
         String actualPayload = realObjectMapper.writeValueAsString(brokerMessage);
 
-        EventPulsarConsumer consumerWithRealMapper = new EventPulsarConsumer(List.of(consumer1, consumer2));
-        DebeziumEnvelope testEnvelope = new DebeziumEnvelope(null, new Value("id-123", actualPayload, 123456L), null, "c", 123456L, null);
+        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
+        CDCEnvelope testEnvelope = new CDCEnvelope(null, new Value("id-123", actualPayload, 123456L), null, "c", 123456L, null);
         String testJson = realObjectMapper.writeValueAsString(testEnvelope);
 
         consumerWithRealMapper.listen(testJson, keyJson);
@@ -65,7 +65,7 @@ class EventPulsarConsumerTest {
         String json = "null";
         String keyJson = "key";
 
-        EventPulsarConsumer consumerWithRealMapper = new EventPulsarConsumer(List.of(consumer1, consumer2));
+        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
 
         // when
         consumerWithRealMapper.listen(json, keyJson);
@@ -81,12 +81,12 @@ class EventPulsarConsumerTest {
     @DisplayName("When receiving a message with null after, then no consumer is called")
     void testListen_NullAfter_NoConsumerCalled() throws JsonProcessingException {
         // given
-        DebeziumEnvelope envelope = new DebeziumEnvelope(null, null, null, "c", 123456L, null);
+        CDCEnvelope envelope = new CDCEnvelope(null, null, null, "c", 123456L, null);
         ObjectMapper realObjectMapper = new ObjectMapper();
         String json = realObjectMapper.writeValueAsString(envelope);
         String keyJson = "key";
 
-        EventPulsarConsumer consumerWithRealMapper = new EventPulsarConsumer(List.of(consumer1, consumer2));
+        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
 
         // when
         consumerWithRealMapper.listen(json, keyJson);
@@ -107,14 +107,14 @@ class EventPulsarConsumerTest {
 
         ObjectMapper realObjectMapper = new ObjectMapper();
         String actualPayload = realObjectMapper.writeValueAsString(brokerMessage);
-        DebeziumEnvelope envelope = new DebeziumEnvelope(null, new Value("id-456", actualPayload, 123456L), null, "c", 123456L, null);
+        CDCEnvelope envelope = new CDCEnvelope(null, new Value("id-456", actualPayload, 123456L), null, "c", 123456L, null);
         String json = realObjectMapper.writeValueAsString(envelope);
         String keyJson = "key";
 
         when(consumer1.shouldConsume("QUESTIONNAIRE_COMPLETE")).thenReturn(true);
         when(consumer2.shouldConsume("QUESTIONNAIRE_COMPLETE")).thenReturn(true);
 
-        EventPulsarConsumer consumerWithRealMapper = new EventPulsarConsumer(List.of(consumer1, consumer2));
+        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
 
         // when
         consumerWithRealMapper.listen(json, keyJson);
@@ -135,14 +135,14 @@ class EventPulsarConsumerTest {
 
         ObjectMapper realObjectMapper = new ObjectMapper();
         String actualPayload = realObjectMapper.writeValueAsString(brokerMessage);
-        DebeziumEnvelope envelope = new DebeziumEnvelope(null, new Value("id-789", actualPayload, 123456L), null, "c", 123456L, null);
+        CDCEnvelope envelope = new CDCEnvelope(null, new Value("id-789", actualPayload, 123456L), null, "c", 123456L, null);
         String json = realObjectMapper.writeValueAsString(envelope);
         String keyJson = "key";
 
         when(consumer1.shouldConsume("UNKNOWN_EVENT")).thenReturn(false);
         when(consumer2.shouldConsume("UNKNOWN_EVENT")).thenReturn(false);
 
-        EventPulsarConsumer consumerWithRealMapper = new EventPulsarConsumer(List.of(consumer1, consumer2));
+        QueueConsumer consumerWithRealMapper = new QueueConsumer(List.of(consumer1, consumer2));
 
         // when
         consumerWithRealMapper.listen(json, keyJson);

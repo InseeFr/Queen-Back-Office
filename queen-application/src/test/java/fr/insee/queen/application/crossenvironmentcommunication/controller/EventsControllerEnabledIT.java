@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -52,10 +53,11 @@ class EventsControllerEnabledIT {
         // given
         String eventJson = """
                 {
-                    "type": "survey-unit-created",
-                    "id": "123",
-                    "data": {
-                        "name": "Test Survey"
+                    "eventType": "QUESTIONNAIRE_INIT",
+                    "aggregateType": "QUESTIONNAIRE",
+                    "payload": {
+                        "interrogationId": "1",
+                        "mode": "CAPI"
                     }
                 }
                 """;
@@ -64,6 +66,7 @@ class EventsControllerEnabledIT {
         mockMvc.perform(post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(eventJson))
+                .andDo(print())
                 .andExpect(status().isCreated());
 
         verify(eventService).saveEvent(any());

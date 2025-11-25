@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class EventPulsarConsumerConditionalIT {
+class QueueConsumerConditionalIT {
 
     @TestConfiguration
     static class TestConfig {
@@ -35,7 +35,7 @@ class EventPulsarConsumerConditionalIT {
     }
 
     @Nested
-    @SpringBootTest(classes = {EventPulsarConsumer.class, TestConfig.class})
+    @SpringBootTest(classes = {QueueConsumer.class, TestConfig.class})
     @TestPropertySource(properties = "feature.cross-environment-communication.consumer=true")
     @DisplayName("When property is true")
     class WhenPropertyIsTrue {
@@ -46,24 +46,24 @@ class EventPulsarConsumerConditionalIT {
         @Test
         @DisplayName("Then EventPulsarConsumer bean is created")
         void testBeanCreated() {
-            assertThat(context.containsBean("eventPulsarConsumer")).isTrue();
-            EventPulsarConsumer consumer = context.getBean(EventPulsarConsumer.class);
+            assertThat(context.containsBean("queueConsumer")).isTrue();
+            QueueConsumer consumer = context.getBean(QueueConsumer.class);
             assertThat(consumer).isNotNull();
         }
 
         @Test
         @DisplayName("Then EventPulsarConsumer has access to MessageConsumers")
         void testConsumersInjected() {
-            assertThat(context.containsBean("eventPulsarConsumer")).isTrue();
+            assertThat(context.containsBean("queueConsumer")).isTrue();
             assertThat(context.containsBean("testConsumer")).isTrue();
 
-            EventPulsarConsumer pulsarConsumer = context.getBean(EventPulsarConsumer.class);
+            QueueConsumer pulsarConsumer = context.getBean(QueueConsumer.class);
             assertThat(pulsarConsumer).isNotNull();
         }
     }
 
     @Nested
-    @SpringBootTest(classes = {EventPulsarConsumer.class, TestConfig.class})
+    @SpringBootTest(classes = {QueueConsumer.class, TestConfig.class})
     @TestPropertySource(properties = "feature.cross-environment-communication.consumer=false")
     @DisplayName("When property is false")
     class WhenPropertyIsFalse {
@@ -74,14 +74,14 @@ class EventPulsarConsumerConditionalIT {
         @Test
         @DisplayName("Then EventPulsarConsumer bean is not created")
         void testBeanNotCreated() {
-            assertThat(context.containsBean("eventPulsarConsumer")).isFalse();
-            assertThatThrownBy(() -> context.getBean(EventPulsarConsumer.class))
+            assertThat(context.containsBean("queueConsumer")).isFalse();
+            assertThatThrownBy(() -> context.getBean(QueueConsumer.class))
                     .isInstanceOf(NoSuchBeanDefinitionException.class);
         }
     }
 
     @Nested
-    @SpringBootTest(classes = {EventPulsarConsumer.class, TestConfig.class})
+    @SpringBootTest(classes = {QueueConsumer.class, TestConfig.class})
     @DisplayName("When property is not set")
     class WhenPropertyNotSet {
 
@@ -91,8 +91,8 @@ class EventPulsarConsumerConditionalIT {
         @Test
         @DisplayName("Then EventPulsarConsumer bean is not created")
         void testBeanNotCreated() {
-            assertThat(context.containsBean("eventPulsarConsumer")).isFalse();
-            assertThatThrownBy(() -> context.getBean(EventPulsarConsumer.class))
+            assertThat(context.containsBean("queueConsumer")).isFalse();
+            assertThatThrownBy(() -> context.getBean(QueueConsumer.class))
                     .isInstanceOf(NoSuchBeanDefinitionException.class);
         }
     }

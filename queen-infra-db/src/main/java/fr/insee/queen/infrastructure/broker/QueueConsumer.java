@@ -2,7 +2,7 @@ package fr.insee.queen.infrastructure.broker;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.insee.queen.infrastructure.broker.debezium.DebeziumEnvelope;
+import fr.insee.queen.infrastructure.broker.debezium.CDCEnvelope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.common.schema.SchemaType;
@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class EventPulsarConsumer {
+public class QueueConsumer {
 
     private final List<MessageConsumer> consumers;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -29,7 +29,7 @@ public class EventPulsarConsumer {
     )
     public void listen(String json, String keyJson) {
         try {
-            DebeziumEnvelope envelope = objectMapper.readValue(json, DebeziumEnvelope.class);
+            CDCEnvelope envelope = objectMapper.readValue(json, CDCEnvelope.class);
             if (envelope == null || envelope.after() == null) {
                 return;
             }

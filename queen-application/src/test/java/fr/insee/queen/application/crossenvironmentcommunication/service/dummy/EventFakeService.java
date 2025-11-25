@@ -16,4 +16,9 @@ public class EventFakeService implements EventService {
         this.saved = true;
         this.savedEvent = event;
     }
+
+    public void reset() {
+        this.saved = false;
+        this.savedEvent = null;
+    }
 }
