@@ -10,6 +10,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.*;
 
 class QueueConsumerTest {
@@ -252,6 +253,6 @@ class QueueConsumerTest {
                 """;
 
         // when & then (should not throw exception)
-        emptyConsumerQueue.listen(json, "key");
+        assertThatCode(() -> emptyConsumerQueue.listen(json, "key")).doesNotThrowAnyException();
     }
 }
