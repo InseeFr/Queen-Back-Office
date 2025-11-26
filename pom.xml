@@ -26,6 +26,7 @@
         <sonar.java.binaries>target</sonar.java.binaries>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../queen-application/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.coverage.exclusions>**/fr/insee/queen/infrastructure/broker/dto/**</sonar.coverage.exclusions>
+        <sonar.cpd.exclusions>**/fr/insee/queen/infrastructure/broker/dto/**</sonar.cpd.exclusions>
     </properties>
 
     <parent>
