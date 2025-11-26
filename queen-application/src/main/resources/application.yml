@@ -12,18 +12,21 @@ application:
     webclient:
     reviewer-alternative:
     survey-unit:
-  corsOrigins:
+  corsOrigins: https://test.com
   # Folder where to store temp files.
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
   # Use a folder with permissions for the app only
-  temp-folder:
+  temp-folder: ./tmp
 
 feature:
+  cross-environment-communication:
+    emitter: false
+    consumer: false
   sensitive-data:
     enabled: false
     encryptionSecretKey:
   oidc:
-    enabled: true
+    enabled: false
     auth-server-host: https://auth-server.host
     auth-server-url: ${feature.oidc.auth-server-host}/auth
     client-id: my-client-id
@@ -52,9 +55,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:postgresql://localhost:5434/questionnaire
+    username: mypostgresuser2
+    password: mypostgrespassword2
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 2
