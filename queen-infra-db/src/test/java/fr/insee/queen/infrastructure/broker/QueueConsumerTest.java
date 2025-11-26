@@ -1,6 +1,5 @@
 package fr.insee.queen.infrastructure.broker;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.infrastructure.broker.dto.EventDto;
 import fr.insee.queen.infrastructure.broker.dto.EventPayloadDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,13 +17,11 @@ class QueueConsumerTest {
     private QueueConsumer queueConsumer;
     private MessageConsumer consumer1;
     private MessageConsumer consumer2;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         consumer1 = mock(MessageConsumer.class);
         consumer2 = mock(MessageConsumer.class);
-        objectMapper = new ObjectMapper();
         queueConsumer = new QueueConsumer(List.of(consumer1, consumer2));
     }
 

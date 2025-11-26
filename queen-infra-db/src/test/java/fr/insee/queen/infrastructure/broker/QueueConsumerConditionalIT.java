@@ -2,8 +2,6 @@ package fr.insee.queen.infrastructure.broker;
 
 import fr.insee.queen.infrastructure.broker.dto.EventDto;
 import fr.insee.queen.infrastructure.broker.dto.EventPayloadDto;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

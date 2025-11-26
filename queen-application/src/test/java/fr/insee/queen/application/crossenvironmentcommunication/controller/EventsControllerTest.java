@@ -76,8 +76,7 @@ class EventsControllerTest {
         Set<ConstraintViolation<EventDto>> violations = validator.validate(event);
 
         // then
-        assertThat(violations).isNotEmpty();
-        assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("eventType"));
+        assertThat(violations).isNotEmpty().anyMatch(v -> v.getPropertyPath().toString().equals("eventType"));
         verify(eventService, never()).saveEvent(any());
     }
 
@@ -95,8 +94,7 @@ class EventsControllerTest {
         Set<ConstraintViolation<EventDto>> violations = validator.validate(event);
 
         // then
-        assertThat(violations).isNotEmpty();
-        assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("aggregateType"));
+        assertThat(violations).isNotEmpty().anyMatch(v -> v.getPropertyPath().toString().equals("aggregateType"));
         verify(eventService, never()).saveEvent(any());
     }
 
@@ -114,8 +112,7 @@ class EventsControllerTest {
         Set<ConstraintViolation<EventDto>> violations = validator.validate(event);
 
         // then
-        assertThat(violations).isNotEmpty();
-        assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("payload"));
+        assertThat(violations).isNotEmpty().anyMatch(v -> v.getPropertyPath().toString().equals("payload"));
         verify(eventService, never()).saveEvent(any());
     }
 
