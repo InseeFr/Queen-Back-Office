@@ -44,8 +44,15 @@ class InterviewerControllerTest {
     @Test
     @DisplayName("On retrieving interrogations for a campaign, when interrogations are empty")
     void testGetInterrogationsCampaign02() {
+        // Given
         pilotageComponent.setHasEmptyInterrogations(true);
-    }
+        // When
+        List<InterrogationByCampaignDto> result = interviewerController.getListInterrogationByCampaign("campaign-id");
+        // Then
+        assertThat(result)
+                .isNotNull()
+                .isEmpty();
+   }
 
     @Test
     @DisplayName("On retrieving interrogations for an interviewer, return interrogations found")
