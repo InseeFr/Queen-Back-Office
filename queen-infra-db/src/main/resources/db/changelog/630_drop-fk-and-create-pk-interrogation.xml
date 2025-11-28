@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="drop-fk-and-add-pk-interrogation" author="farid">
+        <!-- 1. Remove the foreign key on interrogation_id -->
+        <dropForeignKeyConstraint
+                baseTableName="interrogation_temp_zone"
+                constraintName="FK_interrogation" />
+
+        <!-- 2. Create the new primary key on id -->
+        <addPrimaryKey
+                tableName="interrogation_temp_zone"
+                columnNames="id"
+                constraintName="PK_interrogation_temp_zone" />
+    </changeSet>
+</databaseChangeLog>
