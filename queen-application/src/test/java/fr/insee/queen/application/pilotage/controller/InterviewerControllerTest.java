@@ -1,10 +1,9 @@
 package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
-import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationByCampaignDto;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
-import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class InterviewerControllerTest {
     private PilotageFakeComponent pilotageComponent;
