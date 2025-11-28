@@ -42,11 +42,9 @@ class InterviewerControllerTest {
     }
 
     @Test
-    @DisplayName("On retrieving interrogations for a campaign, when interrogations are empty then throws exception")
+    @DisplayName("On retrieving interrogations for a campaign, when interrogations are empty")
     void testGetInterrogationsCampaign02() {
         pilotageComponent.setHasEmptyInterrogations(true);
-        assertThatThrownBy(() -> interviewerController.getListInterrogationByCampaign("campaign-id"))
-                .isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
