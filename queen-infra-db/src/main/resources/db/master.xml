@@ -26,6 +26,5 @@
 	<include file="changelog/613_change_type_of_intero_id.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/620_surveyunit-to-interrogation.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/630_drop-fk-and-create-pk-interrogation.xml" relativeToChangelogFile="true"/>
-    <include file="changelog/620_surveyunit-to-interrogation.sql" relativeToChangelogFile="true"/>
     <include file="changelog/700_events.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
