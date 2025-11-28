@@ -87,10 +87,6 @@ public class InterviewerController {
         // get interrogations of a campaign from the pilotage api
         List<InterrogationSummary> interrogations = pilotageComponent.getInterrogationsByCampaign(campaignId);
 
-        if (interrogations.isEmpty()) {
-            throw new EntityNotFoundException(String.format("No interrogations for the campaign with id %s", campaignId));
-        }
-
         return interrogations.stream()
                 .map(InterrogationByCampaignDto::fromModel)
                 .toList();
