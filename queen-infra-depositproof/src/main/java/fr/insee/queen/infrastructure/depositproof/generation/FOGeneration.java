@@ -23,16 +23,17 @@ public class FOGeneration {
     public static final String UNITE = "unite";
     public static final String TITRE = "campaignLabel";
     public static final String DATE = "date";
+    public static final String SURVEY_UNIT = "surveyUnit";
     private final String tempFolder;
 
-    public File generateFo(String date, String campaignLabel, String userId) throws IOException {
+    public File generateFo(String date, String campaignLabel, String userId, String surveyUnitCompositeName) throws IOException {
         Path tempDirectoryPath = Path.of(tempFolder);
         File outputFile = Files.createTempFile(tempDirectoryPath, UUID.randomUUID().toString(), ".fo").toFile();
         log.info(outputFile.getAbsolutePath());
         try (InputStream inputStream = getInputStreamFromPath("/xsl/empty.xml");
              OutputStream outputStream = new FileOutputStream(outputFile);
              InputStream xsl = getInputStreamFromPath("/xsl/common.xsl")) {
-            xslGenerateFo(inputStream, xsl, outputStream, date, campaignLabel, userId);
+            xslGenerateFo(inputStream, xsl, outputStream, date, campaignLabel, userId, surveyUnitCompositeName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new DepositProofException();
@@ -45,7 +46,8 @@ public class FOGeneration {
                                OutputStream outputStream,
                                String date,
                                String campaignLabel,
-                               String userId) throws TransformerException {
+                               String userId,
+                               String surveyUnitCompositeName) throws TransformerException {
         TransformerFactory tFactory = new TransformerFactoryImpl();
         tFactory.setURIResolver(new ClasspathURIResolver());
         tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -55,6 +57,7 @@ public class FOGeneration {
         transformer.setParameter(UNITE, userId);
         transformer.setParameter(TITRE, campaignLabel);
         transformer.setParameter(DATE, date);
+        transformer.setParameter(SURVEY_UNIT, surveyUnitCompositeName);
         transformer.transform(new StreamSource(input), new StreamResult(outputStream));
     }
 

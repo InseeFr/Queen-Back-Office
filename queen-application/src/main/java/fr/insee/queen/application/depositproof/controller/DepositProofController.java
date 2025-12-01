@@ -19,12 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 
 /**
@@ -50,11 +50,11 @@ public class DepositProofController {
     @GetMapping("/interrogations/{id}/deposit-proof")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public ResponseEntity<FileSystemResource> generateDepositProof(@IdValid @PathVariable(value = "id") String interrogationId,
-                                                                   @CurrentSecurityContext(expression = "authentication.name")
-                                     String userId) {
+                                                                   @CurrentSecurityContext(expression = "authentication.name") String userId,
+                                                                   @RequestParam(name = "surveyUnitCompositeName", required = false) String surveyUnitCompositeName) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
 
-        PdfDepositProof depositProof = depositProofService.generateDepositProof(userId, interrogationId);
+        PdfDepositProof depositProof = depositProofService.generateDepositProof(userId, interrogationId, surveyUnitCompositeName);
         File pdfFile = depositProof.depositProof();
         long fileLength = pdfFile.length();
 
