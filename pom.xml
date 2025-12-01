@@ -10,7 +10,7 @@
     <description>Modules for queen back-office</description>
 
     <properties>
-        <revision>5.5.1</revision>
+        <revision>5.6.0</revision>
         <changelist></changelist>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
@@ -24,8 +24,10 @@
         <sonar.organization>inseefr</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.java.binaries>target</sonar.java.binaries>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../queen-application/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.coverage.exclusions>**/fr/insee/queen/infrastructure/broker/dto/**</sonar.coverage.exclusions>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.exclusions>
+            **/queen-domain/**, **/fr/insee/queen/domain/**, **/fr/insee/queen/infrastructure/broker/dto/**
+        </sonar.coverage.exclusions>
         <sonar.cpd.exclusions>**/fr/insee/queen/infrastructure/broker/dto/**</sonar.cpd.exclusions>
     </properties>
 
@@ -44,6 +46,8 @@
         <module>queen-domain-pilotage</module>
         <module>queen-infra-pilotage</module>
         <module>queen-infra-depositproof</module>
+        <module>queen-listener-jms</module>
+        <module>coverage-report</module>
     </modules>
 
     <dependencies>

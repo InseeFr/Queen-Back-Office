@@ -1,0 +1,59 @@
+#----------------------------------------------------------------------------
+#  (\___/) (\_(\
+#  (='.'=) (=':') Conteneurisation
+#  (")_(") (,(")(")
+#
+# Commandes :
+# PODMAN INSEE
+# - podman --log-level=debug compose -f compose.yml --env-file .env --project-name queen-listener-jms --profile all up -d
+# - podman --log-level=debug compose -f compose.yml --env-file .env --project-name queen-listener-jms --profile activemq up -d
+# - podman --log-level=debug compose -f compose.yml --env-file .env --project-name queen-listener-jms --profile all down
+# - podman --log-level=debug compose -f compose.yml --env-file .env --project-name queen-listener-jms --profile activemq down
+
+# mvn clean verify -Pcoverage --no-transfer-progress -Dspring.docker.compose.enabled=false
+
+# mvn test -Dspring.docker.compose.enabled=false
+
+# podman --log-level=debug compose -f compose.yml --env-file .env --project-name queen-back-office --profile all up -d
+
+x-activemq-volumes: &activemq-volumes
+  - activemq_vol:/data/activemq
+  - activemq_vol:/var/log/activemq
+  - ./containers/activemq/broker.xml:/var/lib/artemis-instance/etc-override/broker.xml
+
+services:
+
+  activemq:
+    container_name: activemq
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_ACTIVEMQ}
+    profiles:
+      - all
+      - activemq
+    environment:
+      ARTEMIS_USER: ${ARTEMIS_USER}
+      ARTEMIS_PASSWORD: ${ARTEMIS_PASSWORD}
+    volumes: *activemq-volumes
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+
+  queen-db:
+    image: postgres:14.15
+    profiles:
+      - all
+      - queen-db
+    environment:
+      - POSTGRES_USER=${QUEEN_DB_USER}
+      - POSTGRES_PASSWORD=${QUEEN_DB_PASSWORD}
+      - POSTGRES_DB=${QUEEN_DB}
+    command: ["postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${QUEEN_DB_USER} -d ${QUEEN_DB} -h localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - ${QUEEN_DB_PORT}:5432
+
+volumes:
+  activemq_vol:

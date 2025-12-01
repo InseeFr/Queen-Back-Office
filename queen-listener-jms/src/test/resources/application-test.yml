@@ -1,0 +1,89 @@
+broker:
+  # artemis, pulsar
+  name: artemis
+  queue:
+    interrogation:
+      request: interrogation_request
+      response: interrogation_response
+  # Pulsar endpoints (standalone defaults)
+  pulsar:
+    webServiceUrl: http://localhost:8080
+    brokerServiceUrl: pulsar://localhost:6650
+
+
+# JMS destination (maps to a Pulsar topic)
+app:
+  queue: persistent://public/default/demo-queue
+
+spring:
+  application:
+    name: queen-listener-jms
+  docker:
+    compose:
+      enabled: true
+      file: compose.yml
+      lifecycle-management: start-and-stop
+      start:
+        command: up
+      stop:
+        command: down
+        timeout: 1m
+        arguments: -v
+      skip:
+        in-tests: false
+      profiles:
+        active:
+          - all
+  datasource:
+    url: jdbc:postgresql://localhost:5434/queen
+    username: mypostgresuser2
+    password: mypostgrespassword2
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 2
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      #      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      id:
+        new_generator_mappings: true
+      cache:
+        use_second_level_cache: false
+        use_query_cache: false
+      generate_statistics: false
+      hbm2ddl:
+        auto: validate
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    #    contexts: prod
+    #    defaultSchema: public
+    #    change-log: classpath:db/master.xml
+    contexts: test
+    defaultSchema: public
+    change-log: classpath:db/integration-test-async.xml
+  artemis:
+    mode: native
+    broker-url: (tcp://localhost:61616)?maxReconnectAttempts=111&maxReconnectDelay=2000&jms.watchTopicAdvisories=false
+    user: insee
+    password: lille
+    pool:
+      enabled: true
+      max-connections: 50
+  jms:
+    listener:
+      command-queue: queue-ue
+
+logging:
+  level:
+    fr:
+      insee:
+        queen:
+          jms: INFO

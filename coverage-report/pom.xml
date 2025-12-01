@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>fr.insee.queen</groupId>
+        <artifactId>queen-parent</artifactId>
+        <version>${revision}${changelist}</version>
+    </parent>
+    <groupId>fr.insee.queen</groupId>
+    <artifactId>coverage-report</artifactId>
+    <packaging>pom</packaging>
+    <name>Queen Coverage Report</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-application</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-listener-jms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-infra-db</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-domain-depositproof</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-domain-pilotage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-infra-depositproof</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-infra-pilotage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.13</version>
+                        <executions>
+                            <execution>
+                                <id>report-aggregate</id>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                                <configuration>
+                                    <includeCurrentProject>true</includeCurrentProject>
+                                </configuration>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

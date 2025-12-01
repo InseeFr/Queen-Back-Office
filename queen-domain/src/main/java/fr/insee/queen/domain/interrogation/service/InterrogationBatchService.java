@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface InterrogationBatchService {
     void saveInterrogations(List<Interrogation> interrogations);
+    void saveInterrogation(Interrogation interrogation);
     void delete(List<String> interrogationIds);
 }
