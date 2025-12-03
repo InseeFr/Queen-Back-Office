@@ -1,6 +1,6 @@
 broker:
   # artemis, pulsar
-  name:
+  name: artemis
   queue:
     interrogation:
       request: interrogation_request
@@ -17,6 +17,8 @@ spring:
     hikari:
       minimum-idle: 2
       maximum-pool-size: 2
+  liquibase:
+    enabled: false
   jpa:
     open-in-view: false
     hibernate:
