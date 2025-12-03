@@ -31,6 +31,9 @@ public class OutboxDB {
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
+    @Column(name = "processed_date")
+    private LocalDateTime processedDate;
+
     public OutboxDB(UUID id, ObjectNode value) {
         super();
         this.id = id;

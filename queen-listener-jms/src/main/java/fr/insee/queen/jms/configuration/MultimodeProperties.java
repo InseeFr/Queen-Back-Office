@@ -1,0 +1,25 @@
+package fr.insee.queen.jms.configuration;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Getter
+@Setter
+@Configuration
+@ConfigurationProperties(prefix = "feature.multimode")
+public class MultimodeProperties {
+
+    private boolean enabled = false;
+
+    private Scheduler scheduler = new Scheduler();
+
+    private String topic = "multimode_events";
+
+    @Getter
+    @Setter
+    public static class Scheduler {
+        private long interval = 300000L; // 300 seconds in milliseconds
+    }
+}

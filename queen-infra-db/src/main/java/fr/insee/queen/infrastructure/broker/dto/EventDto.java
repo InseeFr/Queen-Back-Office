@@ -84,6 +84,7 @@ public class EventDto {
         }
 
         @JsonCreator
+
         public static AggregateTypeEnum fromValue(String value) {
             for (AggregateTypeEnum b : AggregateTypeEnum.values()) {
                 if (b.value.equals(value)) {

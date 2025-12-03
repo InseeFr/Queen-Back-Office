@@ -6,9 +6,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Slf4j
@@ -31,6 +33,34 @@ public class JMSConfiguration {
         configurer.configure(factory, connectionFactory);
         // You could still override some settings if necessary.
         return factory;
+    }
+
+    @Bean("jmsQueuePublisher")
+    @ConditionalOnProperty(
+            prefix = "broker",
+            name = "name",
+            havingValue = "artemis",
+            matchIfMissing = false
+    )
+    public JmsTemplate jmsQueuePublisher(ConnectionFactory connectionFactory) {
+        JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
+        jmsTemplate.setPubSubDomain(false); // Enable queue mode (point-to-point / ANYCAST)
+        log.info("JmsTemplate configured for queues (point-to-point mode)");
+        return jmsTemplate;
+    }
+
+    @Bean("topicJmsTemplate")
+    @ConditionalOnProperty(
+            prefix = "broker",
+            name = "name",
+            havingValue = "artemis",
+            matchIfMissing = false
+    )
+    public JmsTemplate topicJmsTemplate(ConnectionFactory connectionFactory) {
+        JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
+        jmsTemplate.setPubSubDomain(true); // Enable topic mode (publish/subscribe)
+        log.info("JmsTemplate configured for topics (pub/sub mode)");
+        return jmsTemplate;
     }
 
 }

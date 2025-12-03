@@ -28,4 +28,5 @@
   <include file="changelog/630_drop-fk-and-create-pk-interrogation.xml" relativeToChangelogFile="true"/>
 	<include file="changelog/630_add_correlation_id.xml" relativeToChangelogFile="true"/>
   <include file="changelog/700_events.xml" relativeToChangelogFile="true"/>
+  <include file="changelog/710_add_processed_date_to_outbox.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
