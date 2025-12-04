@@ -1,2 +1,3 @@
--- Clean up events table before each test
+-- Clean up events tables before each test
 DELETE FROM outbox;
+DELETE FROM inbox;

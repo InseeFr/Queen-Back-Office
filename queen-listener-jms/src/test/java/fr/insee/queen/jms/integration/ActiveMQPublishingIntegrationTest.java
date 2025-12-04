@@ -3,6 +3,8 @@ package fr.insee.queen.jms.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.events.EventsJpaRepository;
+import fr.insee.queen.infrastructure.db.events.InboxDB;
+import fr.insee.queen.infrastructure.db.events.InboxJpaRepository;
 import fr.insee.queen.infrastructure.db.events.OutboxDB;
 import fr.insee.queen.jms.configuration.MultimodeProperties;
 import jakarta.jms.*;
@@ -36,6 +38,9 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private EventsJpaRepository eventsJpaRepository;
+
+    @Autowired
+    private InboxJpaRepository inboxJpaRepository;
 
     @Autowired
     private MultimodeProperties multimodeProperties;
@@ -230,6 +235,151 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         assertThat(topicName).isEqualTo("multimode_events_test");
         assertThat(multimodeProperties.getPublisher().isEnabled()).isTrue();
         assertThat(multimodeProperties.getPublisher().getScheduler().getInterval()).isEqualTo(5000);
+        assertThat(multimodeProperties.getSubscriber().isEnabled()).isTrue();
+    }
+
+    @Test
+    void shouldSubscribeToTopicAndStoreInInbox() throws Exception {
+        // Given: Insert an event into the outbox
+        UUID eventId = UUID.randomUUID();
+        ObjectNode payload = createEventPayload(
+                "QUESTIONNAIRE_INIT",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", "SUB-001");
+                    builder.put("mode", "CAWI");
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // When: Wait for the scheduler to publish and subscriber to process
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Then: Verify event was stored in inbox with correlationId
+                    var inboxRecord = inboxJpaRepository.findById(eventId);
+                    assertThat(inboxRecord).isPresent();
+                });
+
+        // Verify inbox record details
+        var inboxRecord = inboxJpaRepository.findById(eventId).orElseThrow();
+        assertThat(inboxRecord.getId()).isEqualTo(eventId); // correlationId is used as inbox ID
+        assertThat(inboxRecord.getPayload()).isNotNull();
+        assertThat(inboxRecord.getCreatedDate()).isNotNull();
+
+        // Verify payload content
+        ObjectNode inboxPayload = inboxRecord.getPayload();
+        assertThat(inboxPayload.get("eventType").asText()).isEqualTo("QUESTIONNAIRE_INIT");
+        assertThat(inboxPayload.get("aggregateType").asText()).isEqualTo("QUESTIONNAIRE");
+        assertThat(inboxPayload.get("payload").get("interrogationId").asText()).isEqualTo("SUB-001");
+        assertThat(inboxPayload.get("payload").get("mode").asText()).isEqualTo("CAWI");
+        assertThat(inboxPayload.get("correlationId").asText()).isEqualTo(eventId.toString());
+
+        // Verify outbox event is also marked as processed
+        OutboxDB processed = eventsJpaRepository.findById(eventId).orElseThrow();
+        assertThat(processed.getProcessedDate()).isNotNull();
+    }
+
+    @Test
+    void shouldStoreMultipleEventsInInbox() {
+        // Given: Insert multiple events
+        int eventCount = 3;
+        List<UUID> eventIds = new ArrayList<>();
+
+        for (int i = 0; i < eventCount; i++) {
+            UUID eventId = UUID.randomUUID();
+            eventIds.add(eventId);
+
+            int finalI = i;
+            ObjectNode payload = createEventPayload(
+                    "QUESTIONNAIRE_INIT",
+                    "QUESTIONNAIRE",
+                    builder -> {
+                        builder.put("interrogationId", "MULTI-" + (finalI + 1));
+                        builder.put("mode", "CAPI");
+                    }
+            );
+
+            OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+            outboxEvent.setCreatedDate(LocalDateTime.now().minusSeconds(eventCount - i));
+            eventsJpaRepository.save(outboxEvent);
+        }
+
+        // When: Wait for all events to be processed
+        await()
+                .atMost(30, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Then: Verify all events are in inbox
+                    List<InboxDB> allInbox =
+                        inboxJpaRepository.findAllOrderByCreatedDate();
+                    assertThat(allInbox).hasSizeGreaterThanOrEqualTo(eventCount);
+                });
+
+        // Verify all event IDs are present in inbox
+        for (UUID eventId : eventIds) {
+            var inboxRecord = inboxJpaRepository.findById(eventId);
+            assertThat(inboxRecord).isPresent();
+            assertThat(inboxRecord.get().getId()).isEqualTo(eventId);
+        }
+    }
+
+    @Test
+    void shouldIgnoreDuplicateMessagesInInbox() {
+        // Given: Create a manual inbox entry first
+        UUID correlationId = UUID.randomUUID();
+        ObjectNode existingPayload = createEventPayload(
+                "QUESTIONNAIRE_INIT",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", "DUP-001");
+                    builder.put("mode", "CAWI");
+                }
+        );
+
+        InboxDB existingInbox = new InboxDB(correlationId, existingPayload);
+        inboxJpaRepository.save(existingInbox);
+
+        // Get initial count
+        long initialCount = inboxJpaRepository.count();
+
+        // When: Publish the same event to outbox (which will trigger publishing to topic)
+        ObjectNode payload = createEventPayload(
+                "QUESTIONNAIRE_INIT",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", "DUP-001");
+                    builder.put("mode", "CAWI");
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(correlationId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // Then: Wait a bit to ensure subscriber had time to process
+        await()
+                .pollDelay(5, TimeUnit.SECONDS)
+                .atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify the outbox event is marked as processed
+                    OutboxDB processed = eventsJpaRepository.findById(correlationId).orElseThrow();
+                    assertThat(processed.getProcessedDate()).isNotNull();
+                });
+
+        // Verify inbox count hasn't increased (duplicate was ignored)
+        long finalCount = inboxJpaRepository.count();
+        assertThat(finalCount).isEqualTo(initialCount);
+
+        // Verify only one record exists with this correlationId
+        var inboxRecord = inboxJpaRepository.findById(correlationId);
+        assertThat(inboxRecord).isPresent();
+        assertThat(inboxRecord.get().getPayload().get("payload").get("interrogationId").asText())
+                .isEqualTo("DUP-001");
     }
 
     /**

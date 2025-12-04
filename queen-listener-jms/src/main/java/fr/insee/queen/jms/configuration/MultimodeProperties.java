@@ -13,6 +13,8 @@ public class MultimodeProperties {
 
     private Publisher publisher = new Publisher();
 
+    private Subscriber subscriber = new Subscriber();
+
     private String topic = "multimode_events";
 
     @Getter
@@ -21,6 +23,12 @@ public class MultimodeProperties {
         private boolean enabled = false;
 
         private Scheduler scheduler = new Scheduler();
+    }
+
+    @Getter
+    @Setter
+    public static class Subscriber {
+        private boolean enabled = false;
     }
 
     @Getter

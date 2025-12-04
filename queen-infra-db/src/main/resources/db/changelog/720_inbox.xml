@@ -8,6 +8,9 @@
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false" />
             </column>
+            <column name="payload" type="jsonb">
+                <constraints nullable="false" />
+            </column>
             <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false" />
             </column>

@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class JMSConfiguration {
 
     @Bean
+    @Primary
     @ConditionalOnProperty(
             prefix = "broker",
             name = "name",
@@ -61,6 +62,23 @@ public class JMSConfiguration {
         jmsTemplate.setPubSubDomain(true); // Enable topic mode (publish/subscribe)
         log.info("JmsTemplate configured for topics (pub/sub mode)");
         return jmsTemplate;
+    }
+
+    @Bean("topicJmsListenerContainerFactory")
+    @ConditionalOnProperty(
+            prefix = "broker",
+            name = "name",
+            havingValue = "artemis",
+            matchIfMissing = false
+    )
+    public JmsListenerContainerFactory<?> topicJmsListenerContainerFactory(
+            ConnectionFactory connectionFactory,
+            DefaultJmsListenerContainerFactoryConfigurer configurer) {
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        configurer.configure(factory, connectionFactory);
+        factory.setPubSubDomain(true); // Enable topic mode for listeners
+        log.info("JmsListenerContainerFactory configured for topics (pub/sub mode)");
+        return factory;
     }
 
 }
