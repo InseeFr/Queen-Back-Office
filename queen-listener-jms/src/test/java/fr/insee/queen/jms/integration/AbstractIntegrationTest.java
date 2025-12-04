@@ -66,8 +66,9 @@ public abstract class AbstractIntegrationTest {
         registry.add("broker.queue.interrogation.response", () -> "interrogation_response");
 
         // Multimode configuration
-        registry.add("feature.multimode.enabled", () -> "true");
-        registry.add("feature.multimode.scheduler.interval", () -> "5000"); // 5 seconds for faster testing
+        registry.add("feature.multimode.publisher.enabled", () -> "true");
+        registry.add("feature.multimode.publisher.scheduler.interval", () -> "5000"); // 5 seconds for faster testing
+        registry.add("feature.multimode.publisher.scheduler.initialDelay", () -> "500"); // Start quickly in tests
         registry.add("feature.multimode.topic", () -> "multimode_events_test");
     }
 }

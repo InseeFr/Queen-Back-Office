@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@ConditionalOnProperty(prefix = "feature.multimode", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "feature.multimode.publisher", name = "enabled", havingValue = "true")
 public class MultimodePublisher {
 
     private final JmsTemplate topicJmsTemplate;

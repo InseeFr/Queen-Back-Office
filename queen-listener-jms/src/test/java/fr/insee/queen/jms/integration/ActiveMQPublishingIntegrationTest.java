@@ -118,7 +118,7 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         assertThat(receivedMessages).hasSize(1);
 
         // Verify message content
-        String receivedMessage = receivedMessages.get(0);
+        String receivedMessage = receivedMessages.getFirst();
         ObjectNode receivedPayload = objectMapper.readValue(receivedMessage, ObjectNode.class);
 
         assertThat(receivedPayload.get("eventType").asText()).isEqualTo("QUESTIONNAIRE_INIT");
@@ -211,7 +211,7 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         assertThat(messageReceived).isTrue();
         assertThat(receivedMessages).hasSize(1);
 
-        ObjectNode receivedPayload = objectMapper.readValue(receivedMessages.get(0), ObjectNode.class);
+        ObjectNode receivedPayload = objectMapper.readValue(receivedMessages.getFirst(), ObjectNode.class);
         assertThat(receivedPayload.get("eventType").asText()).isEqualTo("QUESTIONNAIRE_LEAF_STATES_UPDATED");
         assertThat(receivedPayload.get("aggregateType").asText()).isEqualTo("QUESTIONNAIRE");
 
@@ -228,8 +228,8 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         // Then: Verify topic is correctly configured
         assertThat(topicName).isNotNull();
         assertThat(topicName).isEqualTo("multimode_events_test");
-        assertThat(multimodeProperties.isEnabled()).isTrue();
-        assertThat(multimodeProperties.getScheduler().getInterval()).isEqualTo(5000);
+        assertThat(multimodeProperties.getPublisher().isEnabled()).isTrue();
+        assertThat(multimodeProperties.getPublisher().getScheduler().getInterval()).isEqualTo(5000);
     }
 
     /**

@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "feature.multimode", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "feature.multimode.publisher", name = "enabled", havingValue = "true")
 public class OutboxScheduler {
 
     private final EventsJpaRepository eventsJpaRepository;
@@ -25,7 +25,10 @@ public class OutboxScheduler {
     private final MultimodeProperties multimodeProperties;
     private final ObjectMapper objectMapper;
 
-    @Scheduled(fixedDelayString = "${feature.multimode.scheduler.interval}")
+    @Scheduled(
+            fixedDelayString = "${feature.multimode.publisher.scheduler.interval}",
+            initialDelayString = "${feature.multimode.publisher.scheduler.initialDelay:1000}"
+    )
     public void processOutboxEvents() {
         log.info("Starting outbox scheduler - checking for unprocessed events");
 

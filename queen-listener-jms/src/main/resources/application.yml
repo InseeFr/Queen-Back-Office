@@ -59,7 +59,8 @@ feature:
     enabled: false
     encryptionSecretKey:
   multimode:
-    enabled: false
-    scheduler:
-      interval: 300000 # 300 seconds in milliseconds
+    publisher:
+      enabled: false
+      scheduler:
+        interval: 300000 # 300 seconds in milliseconds
     topic: multimode_events

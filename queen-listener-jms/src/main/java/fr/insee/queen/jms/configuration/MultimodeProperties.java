@@ -11,11 +11,17 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "feature.multimode")
 public class MultimodeProperties {
 
-    private boolean enabled = false;
-
-    private Scheduler scheduler = new Scheduler();
+    private Publisher publisher = new Publisher();
 
     private String topic = "multimode_events";
+
+    @Getter
+    @Setter
+    public static class Publisher {
+        private boolean enabled = false;
+
+        private Scheduler scheduler = new Scheduler();
+    }
 
     @Getter
     @Setter
