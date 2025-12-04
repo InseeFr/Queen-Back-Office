@@ -3,7 +3,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet author="Emmanuel Demey" id="710-1">
+    <changeSet author="Emmanuel Demey" id="710-1" context="cross-env-emitter">
         <addColumn tableName="outbox">
             <column name="processed_date" type="TIMESTAMP">
                 <constraints nullable="true"/>
@@ -11,7 +11,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet author="Emmanuel Demey" id="710-2">
+    <changeSet author="Emmanuel Demey" id="710-2" context="cross-env-emitter">
         <createIndex indexName="idx_outbox_processed_date" tableName="outbox">
             <column name="processed_date"/>
         </createIndex>
