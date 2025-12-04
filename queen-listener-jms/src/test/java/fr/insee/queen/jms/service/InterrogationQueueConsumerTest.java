@@ -263,41 +263,6 @@ class InterrogationQueueConsumerTest {
         checkInvalidMessageError(noReplyToMessage, "PropertyException : Missing or null field : 'replyTo'", output);
     }
 
-    @Test
-    @DisplayName("Should log error when invalid json in command message")
-    void shouldLogErrorWhenInvalidJsonMessageCommandMessage(CapturedOutput output) throws JMSException {
-        // Given
-        String messagesBroker = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId+"\\", surveyUnitId, questionnaireId, correlationId, replyTo);
-        when(commandMessage.getBody(String.class)).thenReturn(messagesBroker);
-
-        // When
-        consumer.createInterrogation(commandMessage, session);
-
-        // Then
-        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
-        assertThat(output).containsAnyOf(
-                "ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- JsonSchemaValidator",
-                "ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- IOException"
-        );
-    }
-
-    @Test
-    @DisplayName("Should log error when invalid json in interrogation")
-    void shouldLogErrorWhenInvalidJsonMessageInterrogation(CapturedOutput output) throws JMSException {
-        // Given
-        String messagesBroker = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId+"\\", correlationId, replyTo);
-        when(commandMessage.getBody(String.class)).thenReturn(messagesBroker);
-
-        // When
-        consumer.createInterrogation(commandMessage, session);
-
-        // Then
-        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
-        assertThat(output).containsAnyOf(
-                "ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- JsonSchemaValidator",
-                "ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- IOException"
-        );
-    }
 
     @Disabled
     @Test

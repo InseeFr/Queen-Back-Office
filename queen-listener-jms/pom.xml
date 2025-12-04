@@ -78,42 +78,6 @@
             <artifactId>spring-jms</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.datastax.oss</groupId>
-            <artifactId>pulsar-jms</artifactId>
-            <version>7.0.15</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.pulsar</groupId>
-                    <artifactId>pulsar-client-original</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.pulsar</groupId>
-                    <artifactId>pulsar-client-admin-original</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.ws.rs</groupId>
-                    <artifactId>javax.ws.rs-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pulsar</groupId>
-            <artifactId>pulsar-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pulsar</groupId>
-            <artifactId>pulsar-client-admin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pulsar</groupId>
-            <artifactId>pulsar-common</artifactId>
-        </dependency>
-
         <!-- Be sure to use the same version in the gandalf.yml file -->
         <dependency>
             <groupId>fr.insee</groupId>

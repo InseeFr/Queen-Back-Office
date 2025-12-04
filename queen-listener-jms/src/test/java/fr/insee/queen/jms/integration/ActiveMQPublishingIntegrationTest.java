@@ -10,6 +10,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +27,11 @@ import static org.awaitility.Awaitility.await;
  * Integration test verifying that messages are correctly published to ActiveMQ topics
  * and can be consumed by subscribers.
  */
+@Sql(
+    scripts = "/sql/cleanup-events.sql",
+    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+    config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
+)
 class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -46,7 +53,6 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
     @BeforeEach
     void setUp() throws JMSException {
         objectMapper = new ObjectMapper();
-        eventsJpaRepository.deleteAll();
         receivedMessages = new ArrayList<>();
 
         // Setup JMS consumer for the multimode topic

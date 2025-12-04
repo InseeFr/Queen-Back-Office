@@ -1,5 +1,6 @@
 package fr.insee.queen.jms.integration;
 
+import fr.insee.queen.JMSApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -14,7 +15,7 @@ import org.testcontainers.utility.DockerImageName;
  * Base class for integration tests using Testcontainers.
  * Provides PostgreSQL and ActiveMQ Artemis containers for testing.
  */
-@SpringBootTest
+@SpringBootTest(classes = JMSApplication.class)
 @Testcontainers
 public abstract class AbstractIntegrationTest {
 
@@ -37,10 +38,17 @@ public abstract class AbstractIntegrationTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
+        // Disable Docker Compose for integration tests (we use Testcontainers instead)
+        registry.add("spring.docker.compose.enabled", () -> "false");
+
         // PostgreSQL configuration
         registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
         registry.add("spring.datasource.username", postgresContainer::getUsername);
         registry.add("spring.datasource.password", postgresContainer::getPassword);
+
+        // JPA configuration
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
+        registry.add("spring.jpa.show-sql", () -> "false");
 
         // Liquibase configuration
         registry.add("spring.liquibase.enabled", () -> "true");

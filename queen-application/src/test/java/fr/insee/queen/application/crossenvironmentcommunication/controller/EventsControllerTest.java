@@ -2,9 +2,10 @@ package fr.insee.queen.application.crossenvironmentcommunication.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.insee.queen.infrastructure.broker.dto.EventDto;
-import fr.insee.queen.infrastructure.broker.dto.EventPayloadDto;
-import fr.insee.queen.infrastructure.broker.dto.ModeDto;
+
+import fr.insee.modelefiliere.EventDto;
+import fr.insee.modelefiliere.EventPayloadDto;
+import fr.insee.modelefiliere.ModeDto;
 import fr.insee.queen.domain.event.service.EventService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -123,7 +124,7 @@ class EventsControllerTest {
         EventDto event = new EventDto(
                 EventDto.EventTypeEnum.QUESTIONNAIRE_INIT,
                 EventDto.AggregateTypeEnum.QUESTIONNAIRE,
-                new EventPayloadDto("1", ModeDto.CAPI)
+                new EventPayloadDto("1", EventPayloadDto.ModeEnum.CAPI)
         );
 
         // when
