@@ -2,6 +2,9 @@ package fr.insee.queen.jms.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.interrogation.model.StateData;
+import fr.insee.queen.domain.interrogation.model.StateDataType;
+import fr.insee.queen.domain.interrogation.service.StateDataService;
 import fr.insee.queen.infrastructure.db.events.EventsJpaRepository;
 import fr.insee.queen.infrastructure.db.events.InboxDB;
 import fr.insee.queen.infrastructure.db.events.InboxJpaRepository;
@@ -30,7 +33,7 @@ import static org.awaitility.Awaitility.await;
  * and can be consumed by subscribers.
  */
 @Sql(
-    scripts = "/sql/cleanup-events.sql",
+    scripts = "/sql/setup-multimode-moved-tests.sql",
     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
 )
@@ -47,6 +50,9 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private ConnectionFactory connectionFactory;
+
+    @Autowired
+    private StateDataService stateDataService;
 
     private ObjectMapper objectMapper;
     private Connection connection;
@@ -380,6 +386,114 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         assertThat(inboxRecord).isPresent();
         assertThat(inboxRecord.get().getPayload().get("payload").get("interrogationId").asText())
                 .isEqualTo("DUP-001");
+    }
+
+    @Test
+    void shouldProcessMultimodeMovedEventAndUpdateStateData() throws Exception {
+        // Given: Interrogation and initial state data are created by SQL script
+        String interrogationId = "MOVED-001";
+
+        // Verify initial state from SQL script
+        var initialState = stateDataService.findStateData(interrogationId);
+        assertThat(initialState).isPresent();
+        assertThat(initialState.get().state()).isEqualTo(StateDataType.INIT);
+        assertThat(initialState.get().currentPage()).isEqualTo("page1");
+
+        StateData verifiedInitialStateData = initialState.get();
+
+        // Create and publish a MULTIMODE_MOVED event
+        UUID eventId = UUID.randomUUID();
+        ObjectNode payload = createEventPayload(
+                "MULTIMODE_MOVED",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    builder.put("mode", "CAWI");
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // When: Wait for the event to be processed through the complete flow
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify event was stored in inbox
+                    var inboxRecord = inboxJpaRepository.findById(eventId);
+                    assertThat(inboxRecord).isPresent();
+
+                    // Verify StateData was updated to IS_MOVED
+                    var updatedState = stateDataService.findStateData(interrogationId);
+                    assertThat(updatedState).isPresent();
+                    assertThat(updatedState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+                });
+
+        // Then: Verify final state
+        var finalState = stateDataService.findStateData(interrogationId);
+        assertThat(finalState).isPresent();
+        assertThat(finalState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+        assertThat(finalState.get().currentPage()).isEqualTo("page1"); // Preserved from initial state
+        assertThat(finalState.get().date()).isGreaterThan(verifiedInitialStateData.date()); // Date should be updated
+
+        // Verify inbox record
+        var inboxRecord = inboxJpaRepository.findById(eventId).orElseThrow();
+        assertThat(inboxRecord.getPayload().get("eventType").asText()).isEqualTo("MULTIMODE_MOVED");
+        assertThat(inboxRecord.getPayload().get("payload").get("interrogationId").asText()).isEqualTo(interrogationId);
+
+        // Verify outbox event is marked as processed
+        OutboxDB processed = eventsJpaRepository.findById(eventId).orElseThrow();
+        assertThat(processed.getProcessedDate()).isNotNull();
+    }
+
+    @Test
+    void shouldProcessMultimodeMovedEventWhenNoExistingState() {
+        // Given: Interrogation created by SQL script without state data
+        String interrogationId = "MOVED-NEW-001";
+
+        // Verify no initial state exists (interrogation was created without state data)
+        var initialState = stateDataService.findStateData(interrogationId);
+        assertThat(initialState).isEmpty();
+
+        // Create and publish a MULTIMODE_MOVED event
+        UUID eventId = UUID.randomUUID();
+        ObjectNode payload = createEventPayload(
+                "MULTIMODE_MOVED",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    builder.put("mode", "CAPI");
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // When: Wait for the event to be processed
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify StateData was created with IS_MOVED state
+                    var createdState = stateDataService.findStateData(interrogationId);
+                    assertThat(createdState).isPresent();
+                    assertThat(createdState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+                });
+
+        // Then: Verify final state
+        var finalState = stateDataService.findStateData(interrogationId);
+        assertThat(finalState).isPresent();
+        assertThat(finalState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+        assertThat(finalState.get().currentPage()).isNull(); // No previous page
+        assertThat(finalState.get().date()).isGreaterThan(0);
+
+        // Verify inbox record
+        var inboxRecord = inboxJpaRepository.findById(eventId);
+        assertThat(inboxRecord).isPresent();
+        assertThat(inboxRecord.get().getPayload().get("eventType").asText()).isEqualTo("MULTIMODE_MOVED");
     }
 
     /**

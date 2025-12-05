@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -24,6 +25,7 @@ public class MultimodeSubscriber {
     private final InboxJpaRepository inboxJpaRepository;
     private final ObjectMapper objectMapper;
     private final MultimodeProperties multimodeProperties;
+    private final List<EventConsumer> eventConsumers;
 
     @JmsListener(
             destination = "${feature.multimode.topic}",
@@ -45,7 +47,8 @@ public class MultimodeSubscriber {
                 return;
             }
 
-            log.debug("Processing event with correlationId: {}", correlationId);
+            log.info("Processing event type {} with correlationId: {}",
+                eventDto.getEventType(), correlationId);
 
             // Check if event already exists in inbox (idempotence)
             if (inboxJpaRepository.existsById(correlationId)) {
@@ -62,6 +65,24 @@ public class MultimodeSubscriber {
             inboxJpaRepository.save(inboxRecord);
 
             log.info("Event with correlationId {} successfully stored in inbox", correlationId);
+
+            // Dispatch event to all registered consumers
+            log.debug("Dispatching event to {} consumer(s)", eventConsumers.size());
+            for (EventConsumer consumer : eventConsumers) {
+                try {
+                    log.debug("Calling consumer: {}", consumer.getClass().getSimpleName());
+                    consumer.consume(eventDto);
+                } catch (Exception e) {
+                    log.error("Error in consumer {} while processing event with correlationId: {}",
+                        consumer.getClass().getSimpleName(),
+                        correlationId,
+                        e);
+                    // Continue processing with other consumers even if one fails
+                }
+            }
+
+            log.info("Event with correlationId {} processed by {} consumer(s)",
+                correlationId, eventConsumers.size());
 
         } catch (Exception e) {
             log.error("Error processing message from topic {}", multimodeProperties.getTopic(), e);
