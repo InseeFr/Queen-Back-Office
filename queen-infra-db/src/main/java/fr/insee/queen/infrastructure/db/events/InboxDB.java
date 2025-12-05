@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -15,11 +16,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "outbox")
+@Table(name = "inbox")
 @Getter
 @Setter
 @NoArgsConstructor
-public class OutboxDB {
+public class InboxDB {
     @Id
     @Column(length = 50)
     private UUID id;
@@ -28,15 +29,13 @@ public class OutboxDB {
     @Column(columnDefinition = "jsonb")
     private ObjectNode payload;
 
+    @CreationTimestamp
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    @Column(name = "processed_date")
-    private LocalDateTime processedDate;
-
-    public OutboxDB(UUID id, ObjectNode value) {
+    public InboxDB(UUID id, ObjectNode payload) {
         super();
         this.id = id;
-        this.payload = value;
+        this.payload = payload;
     }
 }

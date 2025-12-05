@@ -87,3 +87,11 @@ logging:
       insee:
         queen:
           jms: INFO
+
+feature:
+  multimode:
+    publisher:
+      enabled: true
+      scheduler:
+        interval: 5000
+    topic: multimode_events_test

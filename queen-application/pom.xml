@@ -44,7 +44,13 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<dependency>
+        <dependency>
+            <groupId>fr.insee</groupId>
+            <artifactId>modelefiliere</artifactId>
+            <version>1.1.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
 			<groupId>fr.insee.queen</groupId>
 			<artifactId>queen-domain-depositproof</artifactId>
 			<version>${project.version}</version>
@@ -130,6 +136,25 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Testcontainers for integration tests -->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
 

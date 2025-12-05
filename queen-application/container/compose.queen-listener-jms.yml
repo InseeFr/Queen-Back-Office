@@ -1,0 +1,17 @@
+services:
+  queen-listener-jms:
+    build:
+      context: ../../queen-listener-jms
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://queen-db:5432/${QUEEN_DB}
+      - SPRING_DATASOURCE_USERNAME=${QUEEN_DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${QUEEN_DB_PASSWORD}
+      - SPRING_ARTEMIS_BROKER_URL=tcp://activemq:61616
+      - SPRING_ARTEMIS_USER=${ARTEMIS_USER}
+      - SPRING_ARTEMIS_PASSWORD=${ARTEMIS_PASSWORD}
+    depends_on:
+      queen-db:
+        condition: service_healthy
+      activemq:
+        condition: service_started
