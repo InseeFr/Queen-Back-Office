@@ -1,9 +1,9 @@
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0
+    image: ${IMAGES_REGISTRY_QUAY_IO}/${IMAGE_KEYCLOAK}
     environment:
-      KEYCLOAK_ADMIN: administrator
-      KEYCLOAK_ADMIN_PASSWORD: administrator
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HEALTH_ENABLED: "true"
       KC_LOG_LEVEL: info
     command: [ "start-dev", "--import-realm" ]

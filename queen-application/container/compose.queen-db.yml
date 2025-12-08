@@ -1,6 +1,6 @@
 services:
   queen-db:
-    image: postgres:14.15
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_POSTGRES}
     environment:
       - POSTGRES_USER=${QUEEN_DB_USER}
       - POSTGRES_PASSWORD=${QUEEN_DB_PASSWORD}
