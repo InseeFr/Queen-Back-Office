@@ -60,7 +60,7 @@ class MultimodeMovedEventConsumerTest {
         eventDto.setCorrelationId(CORRELATION_ID);
         eventDto.setPayload(payload);
 
-        StateData existingStateData = new StateData(StateDataType.INIT, 1000L, "page1");
+        StateData existingStateData = new StateData(StateDataType.INIT, 1000L, "1");
         when(stateDataService.findStateData(INTERROGATION_ID)).thenReturn(Optional.of(existingStateData));
 
         // When
@@ -72,7 +72,7 @@ class MultimodeMovedEventConsumerTest {
 
         StateData savedStateData = stateDataCaptor.getValue();
         assertThat(savedStateData.state()).isEqualTo(StateDataType.IS_MOVED);
-        assertThat(savedStateData.currentPage()).isEqualTo("page1"); // Preserved from existing state
+        assertThat(savedStateData.currentPage()).isEqualTo("1"); // Preserved from existing state
         assertThat(savedStateData.date()).isGreaterThan(0);
     }
 
@@ -149,7 +149,7 @@ class MultimodeMovedEventConsumerTest {
 
         StateData savedStateData = stateDataCaptor.getValue();
         assertThat(savedStateData.state()).isEqualTo(StateDataType.IS_MOVED);
-        assertThat(savedStateData.currentPage()).isNull(); // No previous page
+        assertThat(savedStateData.currentPage()).isEqualTo("1");
         assertThat(savedStateData.date()).isGreaterThan(0);
     }
 }

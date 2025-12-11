@@ -435,7 +435,7 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         var finalState = stateDataService.findStateData(interrogationId);
         assertThat(finalState).isPresent();
         assertThat(finalState.get().state()).isEqualTo(StateDataType.IS_MOVED);
-        assertThat(finalState.get().currentPage()).isEqualTo("page1"); // Preserved from initial state
+        assertThat(finalState.get().currentPage()).isEqualTo("1"); // Preserved from initial state
         assertThat(finalState.get().date()).isGreaterThan(verifiedInitialStateData.date()); // Date should be updated
 
         // Verify inbox record
@@ -487,7 +487,7 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         var finalState = stateDataService.findStateData(interrogationId);
         assertThat(finalState).isPresent();
         assertThat(finalState.get().state()).isEqualTo(StateDataType.IS_MOVED);
-        assertThat(finalState.get().currentPage()).isNull(); // No previous page
+        assertThat(finalState.get().currentPage()).isEqualTo("1");
         assertThat(finalState.get().date()).isGreaterThan(0);
 
         // Verify inbox record

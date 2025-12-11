@@ -56,7 +56,7 @@ public class MultimodeMovedEventConsumer implements EventConsumer {
             StateData newStateData = new StateData(
                 StateDataType.IS_MOVED,
                 currentDate,
-                currentPage
+                "1"
             );
 
             // Save the updated state data
