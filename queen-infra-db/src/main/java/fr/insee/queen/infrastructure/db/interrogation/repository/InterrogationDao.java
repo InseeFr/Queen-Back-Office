@@ -84,6 +84,13 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
+    public List<Interrogation> findAllByState(StateDataType state) {
+        return crudRepository.findAllInterrogationsByState(state).stream()
+                .map(InterrogationProjection::toModel)
+                .toList();
+    }
+
+    @Override
     public List<InterrogationState> findAllWithStateByIdIn(List<String> interrogationIds) {
         return crudRepository.findAllWithStateByIdIn(interrogationIds);
     }

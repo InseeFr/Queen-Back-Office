@@ -15,8 +15,10 @@ public abstract class AbstractIntegrationTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        // Spring Docker Compose configuration (disabled for now - start containers manually)
-        registry.add("spring.docker.compose.enabled", () -> "false");
+        // Note: Spring Boot Docker Compose automatic startup doesn't work reliably when running
+        // tests via 'mvn test -pl queen-listener-jms' from the parent directory.
+        // Start containers manually before running tests:
+        //   cd queen-listener-jms && docker compose -f compose.yml --profile all up -d
 
         // PostgreSQL configuration (from compose.queen-db.yml)
         registry.add("spring.datasource.url", () -> "jdbc:postgresql://localhost:5434/queen");

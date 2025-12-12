@@ -75,6 +75,14 @@ public interface InterrogationRepository {
     List<InterrogationState> findAllByState(String campaignId, StateDataType stateDataType);
 
     /**
+     * Find all interrogations with full details by state
+     *
+     * @param stateDataType state data type to filter
+     * @return List of {@link Interrogation} interrogations
+     */
+    List<Interrogation> findAllByState(StateDataType stateDataType);
+
+    /**
      * Find interrogations with state linked by ids
      *
      * @param interrogationIds interrogation ids

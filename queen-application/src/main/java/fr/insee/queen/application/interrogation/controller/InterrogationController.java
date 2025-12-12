@@ -53,18 +53,6 @@ public class InterrogationController {
     private final AuthenticationHelper authenticationUserHelper;
 
     /**
-     * Retrieve all interrogations id
-     *
-     * @return all ids of interrogations
-     */
-    @Operation(summary = "Get all interrogations ids")
-    @GetMapping(path = "/interrogations")
-    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public List<String> getInterrogationIds() {
-        return interrogationService.findAllInterrogationIds();
-    }
-
-    /**
      * Retrieve interrogations filtered by state
      *
      * @param campaignId campaign id
@@ -82,6 +70,39 @@ public class InterrogationController {
                 .stream()
                 .map(InterrogationStateDto::fromModel)
                 .toList();
+    }
+
+    /**
+     * Retrieve interrogations filtered by state data
+     *
+     * @param stateDataType state data type to filter (optional)
+     * @return all {@link InterrogationDto} with the specified state
+     */
+    @Operation(summary = "Retrieve interrogations filtered by state data")
+    @GetMapping("/interrogations/state-data")
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    public List<InterrogationDto> getInterrogationsByStateData(
+            @RequestParam(name="stateData", required = false) StateDataType stateDataType) {
+        if (stateDataType == null) {
+            return List.of();
+        }
+        return interrogationService
+                .getInterrogationsByState(stateDataType)
+                .stream()
+                .map(InterrogationDto::fromModel)
+                .toList();
+    }
+
+    /**
+     * Retrieve all interrogations id
+     *
+     * @return all ids of interrogations
+     */
+    @Operation(summary = "Get all interrogations ids")
+    @GetMapping(path = "/interrogations")
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    public List<String> getInterrogationIds() {
+        return interrogationService.findAllInterrogationIds();
     }
 
     /**
