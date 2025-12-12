@@ -99,6 +99,11 @@ public class InterrogationApiService implements InterrogationService {
         return interrogationRepository.findAllByState(campaignId, stateDataType);
     }
 
+    @Override
+    public List<Interrogation> getInterrogationsByState(StateDataType stateDataType) {
+        return interrogationRepository.findAllByState(stateDataType);
+    }
+
     @Transactional
     @Override
     public void updateInterrogation(Interrogation interrogation) {

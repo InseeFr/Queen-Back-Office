@@ -44,7 +44,13 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<dependency>
+        <dependency>
+            <groupId>fr.insee</groupId>
+            <artifactId>modelefiliere</artifactId>
+            <version>1.1.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
 			<groupId>fr.insee.queen</groupId>
 			<artifactId>queen-domain-depositproof</artifactId>
 			<version>${project.version}</version>

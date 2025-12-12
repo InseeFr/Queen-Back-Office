@@ -20,7 +20,9 @@ spring:
     name: queen-listener-jms
   docker:
     compose:
-      enabled: true
+      # Disabled: automatic startup doesn't work when running from parent with -pl
+      # Start containers manually: cd queen-listener-jms && docker compose -f compose.yml --profile all up -d
+      enabled: false
       file: compose.yml
       lifecycle-management: start-and-stop
       start:
@@ -87,3 +89,11 @@ logging:
       insee:
         queen:
           jms: INFO
+
+feature:
+  multimode:
+    publisher:
+      enabled: true
+      scheduler:
+        interval: 5000
+    topic: multimode_events_test

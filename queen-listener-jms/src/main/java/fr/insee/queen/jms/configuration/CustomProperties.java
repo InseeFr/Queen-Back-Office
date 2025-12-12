@@ -15,12 +15,6 @@ public class CustomProperties {
     @Value("${broker.name}")
     private String brokerName;
 
-    @Value("${broker.pulsar.webServiceUrl}") // ou web-service-url selon ta clé
-    private String webServiceUrl;
-
-    @Value("${broker.pulsar.brokerServiceUrl}") // ou broker-service-url
-    private String brokerServiceUrl;
-
     @Value("${broker.queue.interrogation.request}")
     private String queueInterrogationRequest;
 

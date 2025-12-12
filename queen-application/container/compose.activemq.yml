@@ -1,0 +1,16 @@
+x-activemq-volumes: &activemq-volumes
+  - activemq_vol:/data/activemq
+  - activemq_vol:/var/log/activemq
+  - ./containers/activemq/broker.xml:/var/lib/artemis-instance/etc-override/broker.xml
+
+services:
+  activemq:
+    container_name: activemq
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_ACTIVEMQ}
+    environment:
+      ARTEMIS_USER: ${ARTEMIS_USER}
+      ARTEMIS_PASSWORD: ${ARTEMIS_PASSWORD}
+    volumes: *activemq-volumes
+    ports:
+      - "61616:61616"
+      - "8161:8161"
