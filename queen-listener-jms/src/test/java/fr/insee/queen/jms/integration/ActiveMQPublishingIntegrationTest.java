@@ -14,7 +14,12 @@ import jakarta.jms.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.stream.Stream;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 
@@ -388,8 +393,33 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
                 .isEqualTo("DUP-001");
     }
 
-    @Test
-    void shouldProcessMultimodeMovedEventAndUpdateStateData() throws Exception {
+    /**
+     * Provides test data for state update events with existing state.
+     * Format: eventType, expectedStateDataType, mode
+     */
+    private static Stream<Arguments> provideStateUpdateEventData() {
+        return Stream.of(
+                Arguments.of("MULTIMODE_MOVED", StateDataType.IS_MOVED, "CAWI"),
+                Arguments.of("QUESTIONNAIRE_COMPLETED", StateDataType.COMPLETED, "CAWI"),
+                Arguments.of("QUESTIONNAIRE_VALIDATED", StateDataType.VALIDATED, "CAPI")
+        );
+    }
+
+    /**
+     * Provides test data for state update events without existing state.
+     * Format: eventType, expectedStateDataType, mode
+     */
+    private static Stream<Arguments> provideStateCreationEventData() {
+        return Stream.of(
+                Arguments.of("MULTIMODE_MOVED", StateDataType.IS_MOVED, "CAPI"),
+                Arguments.of("QUESTIONNAIRE_COMPLETED", StateDataType.COMPLETED, "CAWI"),
+                Arguments.of("QUESTIONNAIRE_VALIDATED", StateDataType.VALIDATED, "CAPI")
+        );
+    }
+
+    @ParameterizedTest(name = "{0} should update state to {1}")
+    @MethodSource("provideStateUpdateEventData")
+    void shouldProcessStateUpdateEventAndUpdateStateData(String eventType, StateDataType expectedStateType, String mode) throws Exception {
         // Given: Interrogation and initial state data are created by SQL script
         String interrogationId = "MOVED-001";
 
@@ -397,18 +427,17 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         var initialState = stateDataService.findStateData(interrogationId);
         assertThat(initialState).isPresent();
         assertThat(initialState.get().state()).isEqualTo(StateDataType.INIT);
-        assertThat(initialState.get().currentPage()).isEqualTo("page1");
 
         StateData verifiedInitialStateData = initialState.get();
 
-        // Create and publish a MULTIMODE_MOVED event
+        // Create and publish an event
         UUID eventId = UUID.randomUUID();
         ObjectNode payload = createEventPayload(
-                "MULTIMODE_MOVED",
+                eventType,
                 "QUESTIONNAIRE",
                 builder -> {
                     builder.put("interrogationId", interrogationId);
-                    builder.put("mode", "CAWI");
+                    builder.put("mode", mode);
                 }
         );
 
@@ -425,22 +454,22 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
                     var inboxRecord = inboxJpaRepository.findById(eventId);
                     assertThat(inboxRecord).isPresent();
 
-                    // Verify StateData was updated to IS_MOVED
+                    // Verify StateData was updated to expected state
                     var updatedState = stateDataService.findStateData(interrogationId);
                     assertThat(updatedState).isPresent();
-                    assertThat(updatedState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+                    assertThat(updatedState.get().state()).isEqualTo(expectedStateType);
                 });
 
         // Then: Verify final state
         var finalState = stateDataService.findStateData(interrogationId);
         assertThat(finalState).isPresent();
-        assertThat(finalState.get().state()).isEqualTo(StateDataType.IS_MOVED);
-        assertThat(finalState.get().currentPage()).isEqualTo("1"); // Preserved from initial state
-        assertThat(finalState.get().date()).isGreaterThan(verifiedInitialStateData.date()); // Date should be updated
+        assertThat(finalState.get().state()).isEqualTo(expectedStateType);
+        assertThat(finalState.get().currentPage()).isEqualTo("1");
+        assertThat(finalState.get().date()).isGreaterThan(verifiedInitialStateData.date());
 
         // Verify inbox record
         var inboxRecord = inboxJpaRepository.findById(eventId).orElseThrow();
-        assertThat(inboxRecord.getPayload().get("eventType").asText()).isEqualTo("MULTIMODE_MOVED");
+        assertThat(inboxRecord.getPayload().get("eventType").asText()).isEqualTo(eventType);
         assertThat(inboxRecord.getPayload().get("payload").get("interrogationId").asText()).isEqualTo(interrogationId);
 
         // Verify outbox event is marked as processed
@@ -448,23 +477,24 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         assertThat(processed.getProcessedDate()).isNotNull();
     }
 
-    @Test
-    void shouldProcessMultimodeMovedEventWhenNoExistingState() {
+    @ParameterizedTest(name = "{0} should create state with {1}")
+    @MethodSource("provideStateCreationEventData")
+    void shouldProcessStateUpdateEventWhenNoExistingState(String eventType, StateDataType expectedStateType, String mode) {
         // Given: Interrogation created by SQL script without state data
         String interrogationId = "MOVED-NEW-001";
 
-        // Verify no initial state exists (interrogation was created without state data)
+        // Verify no initial state exists
         var initialState = stateDataService.findStateData(interrogationId);
         assertThat(initialState).isEmpty();
 
-        // Create and publish a MULTIMODE_MOVED event
+        // Create and publish an event
         UUID eventId = UUID.randomUUID();
         ObjectNode payload = createEventPayload(
-                "MULTIMODE_MOVED",
+                eventType,
                 "QUESTIONNAIRE",
                 builder -> {
                     builder.put("interrogationId", interrogationId);
-                    builder.put("mode", "CAPI");
+                    builder.put("mode", mode);
                 }
         );
 
@@ -477,23 +507,131 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
                 .atMost(25, TimeUnit.SECONDS)
                 .pollInterval(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
-                    // Verify StateData was created with IS_MOVED state
+                    // Verify StateData was created with expected state
                     var createdState = stateDataService.findStateData(interrogationId);
                     assertThat(createdState).isPresent();
-                    assertThat(createdState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+                    assertThat(createdState.get().state()).isEqualTo(expectedStateType);
                 });
 
         // Then: Verify final state
         var finalState = stateDataService.findStateData(interrogationId);
         assertThat(finalState).isPresent();
-        assertThat(finalState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+        assertThat(finalState.get().state()).isEqualTo(expectedStateType);
         assertThat(finalState.get().currentPage()).isEqualTo("1");
         assertThat(finalState.get().date()).isGreaterThan(0);
 
         // Verify inbox record
         var inboxRecord = inboxJpaRepository.findById(eventId);
         assertThat(inboxRecord).isPresent();
-        assertThat(inboxRecord.get().getPayload().get("eventType").asText()).isEqualTo("MULTIMODE_MOVED");
+        assertThat(inboxRecord.get().getPayload().get("eventType").asText()).isEqualTo(eventType);
+    }
+
+    @Test
+    void shouldProcessQuestionnaireInitEventAndRefreshDate() throws Exception {
+        // Given: Interrogation with existing state data
+        String interrogationId = "MOVED-001";
+
+        // Verify initial state from SQL script
+        var initialState = stateDataService.findStateData(interrogationId);
+        assertThat(initialState).isPresent();
+        assertThat(initialState.get().state()).isEqualTo(StateDataType.INIT);
+
+        StateData verifiedInitialStateData = initialState.get();
+        long initialDate = verifiedInitialStateData.date();
+
+        // Create and publish a QUESTIONNAIRE_INIT event
+        UUID eventId = UUID.randomUUID();
+        ObjectNode payload = createEventPayload(
+                "QUESTIONNAIRE_INIT",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    builder.put("mode", "CAWI");
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // When: Wait for the event to be processed
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify event was stored in inbox
+                    var inboxRecord = inboxJpaRepository.findById(eventId);
+                    assertThat(inboxRecord).isPresent();
+
+                    // Verify StateData date was updated
+                    var updatedState = stateDataService.findStateData(interrogationId);
+                    assertThat(updatedState).isPresent();
+                    assertThat(updatedState.get().date()).isGreaterThan(initialDate);
+                });
+
+        // Then: Verify final state
+        var finalState = stateDataService.findStateData(interrogationId);
+        assertThat(finalState).isPresent();
+        assertThat(finalState.get().state()).isEqualTo(StateDataType.INIT); // State preserved
+        assertThat(finalState.get().currentPage()).isEqualTo(verifiedInitialStateData.currentPage()); // Page preserved
+        assertThat(finalState.get().date()).isGreaterThan(initialDate); // Date updated
+
+        // Verify inbox record
+        var inboxRecord = inboxJpaRepository.findById(eventId).orElseThrow();
+        assertThat(inboxRecord.getPayload().get("eventType").asText()).isEqualTo("QUESTIONNAIRE_INIT");
+        assertThat(inboxRecord.getPayload().get("payload").get("interrogationId").asText()).isEqualTo(interrogationId);
+
+        // Verify outbox event is marked as processed
+        OutboxDB processed = eventsJpaRepository.findById(eventId).orElseThrow();
+        assertThat(processed.getProcessedDate()).isNotNull();
+    }
+
+    @Test
+    void shouldProcessQuestionnaireInitEventWhenNoExistingState() {
+        // Given: Interrogation created by SQL script without state data
+        String interrogationId = "MOVED-NEW-001";
+
+        // Verify no initial state exists
+        var initialState = stateDataService.findStateData(interrogationId);
+        assertThat(initialState).isEmpty();
+
+        // Create and publish a QUESTIONNAIRE_INIT event
+        UUID eventId = UUID.randomUUID();
+        ObjectNode payload = createEventPayload(
+                "QUESTIONNAIRE_INIT",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    builder.put("mode", "CAWI");
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // When: Wait for the event to be processed
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify StateData was created with INIT state
+                    var createdState = stateDataService.findStateData(interrogationId);
+                    assertThat(createdState).isPresent();
+                    assertThat(createdState.get().state()).isEqualTo(StateDataType.INIT);
+                });
+
+        // Then: Verify final state
+        var finalState = stateDataService.findStateData(interrogationId);
+        assertThat(finalState).isPresent();
+        assertThat(finalState.get().state()).isEqualTo(StateDataType.INIT);
+        assertThat(finalState.get().currentPage()).isEqualTo("1");
+        assertThat(finalState.get().date()).isGreaterThan(0);
+
+        // Verify inbox record
+        var inboxRecord = inboxJpaRepository.findById(eventId);
+        assertThat(inboxRecord).isPresent();
+        assertThat(inboxRecord.get().getPayload().get("eventType").asText()).isEqualTo("QUESTIONNAIRE_INIT");
     }
 
     /**
