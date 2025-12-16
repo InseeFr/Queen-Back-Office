@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.insee.jms.validation.JsonSchemaValidator;
 import fr.insee.jms.validation.SchemaType;
-import fr.insee.modelefiliere.CommandDto;
+import fr.insee.modelefiliere.CommandRequestDto;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.service.InterrogationBatchService;
@@ -55,12 +55,12 @@ public class InterrogationQueueConsumer {
             JsonNode root = objectMapper.readTree(jsonString);
 
             replyQueue = textValue(root, "replyTo");
-            correlationId = textValue(root, "correlationID");
+            correlationId = textValue(root, "correlationId");
 
-            CommandDto command = JsonSchemaValidator.readAndValidateFromClasspath(
+            CommandRequestDto command = JsonSchemaValidator.readAndValidateFromClasspath(
                     root,
                     SchemaType.PROCESS_MESSAGE.getSchemaFileName(),
-                    CommandDto.class,
+                    CommandRequestDto.class,
                     objectMapper
             );
             log.debug(command.toString());

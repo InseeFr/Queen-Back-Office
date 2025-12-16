@@ -45,12 +45,11 @@ class InterrogationQueueConsumerTest {
 
     private final String defaultBody = """
                                             {
-                                              "_id": {
-                                                "$oid": "651a2f9c4d3e2b1a0f9c8d7e"
-                                              },
-                                              "processInstanceID": "9f2c9f4a-5a2b-4f0e-9a6f-2c8f0c3a1d55",
+                                              "processInstanceId": "9f2c9f4a-5a2b-4f0e-9a6f-2c8f0c3a1d55",
                                               %s
-                                              "inProgress": true,
+                                              "target": "QUESTIONNAIRE-API-WEB",
+                                              "operation": "CREATE",
+                                              "aggregateType": "INTERROGATION",
                                               "payload": {
                                                 "partitionId": "3d3f6a2b-8d4d-4d7a-9c0b-1a2b3c4d5e6f",
                                                 %s
@@ -181,12 +180,7 @@ class InterrogationQueueConsumerTest {
                                                   }
                                                 ]
                                               },
-                                              "CampaignID": "ECO-ENT-2025",
-                                              "correlationID": "%s",
-                                              "questionnaireID": "Q-ECO-ENT-2025-V1",
-                                              "done": false,
-                                              "dateCreation": "2025-10-01T13:45:30Z",
-                                              "replyTo": "%s"
+                                              "correlationId": "%s"
                                             }
                                             """;
 
@@ -251,7 +245,7 @@ class InterrogationQueueConsumerTest {
         // Given
         String invalidMessage = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, null, replyTo);
         // When and Then
-        checkInvalidMessageError(invalidMessage, "PropertyException : Missing or null field : 'correlationID'", output);
+        checkInvalidMessageError(invalidMessage, "PropertyException : Missing or null field : 'correlationId'", output);
     }
 
     @Test

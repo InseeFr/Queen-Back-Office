@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: install model filiere
-        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-2.0.0.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=2.0.0 -Dpackaging=jar -DgeneratePom=true
 
       - name: Get version
         id: version
