@@ -48,6 +48,8 @@
             <groupId>fr.insee</groupId>
             <artifactId>modelefiliere</artifactId>
             <version>1.1.2-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../modelefiliere-multimode-event-20251202.195447-1.jar</systemPath>
         </dependency>
 
         <dependency>

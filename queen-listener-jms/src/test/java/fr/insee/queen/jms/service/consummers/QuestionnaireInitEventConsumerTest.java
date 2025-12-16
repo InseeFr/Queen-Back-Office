@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +47,7 @@ class QuestionnaireInitEventConsumerTest {
     }
 
     @Test
-    void shouldRefreshDateWhenStateDataExists() throws StateDataInvalidDateException {
+    void shouldCreateInitStateForQuestionnaireInitEvent() throws StateDataInvalidDateException {
         // Given
         EventPayloadDto payload = new EventPayloadDto();
         payload.setInterrogationId(INTERROGATION_ID);
@@ -57,36 +56,6 @@ class QuestionnaireInitEventConsumerTest {
         eventDto.setEventType(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT);
         eventDto.setCorrelationId(CORRELATION_ID);
         eventDto.setPayload(payload);
-
-        // Existing state with COMPLETED state
-        StateData existingState = new StateData(StateDataType.COMPLETED, 1000L, "5");
-        when(stateDataService.findStateData(INTERROGATION_ID)).thenReturn(Optional.of(existingState));
-
-        // When
-        consumer.consume(eventDto);
-
-        // Then
-        ArgumentCaptor<StateData> stateDataCaptor = ArgumentCaptor.forClass(StateData.class);
-        verify(stateDataService).saveStateData(eq(INTERROGATION_ID), stateDataCaptor.capture(), eq(false));
-
-        StateData savedStateData = stateDataCaptor.getValue();
-        assertThat(savedStateData.state()).isEqualTo(StateDataType.COMPLETED); // State preserved
-        assertThat(savedStateData.currentPage()).isEqualTo("5"); // Page preserved
-        assertThat(savedStateData.date()).isGreaterThan(existingState.date()); // Date updated
-    }
-
-    @Test
-    void shouldCreateInitStateWhenNoStateDataExists() throws StateDataInvalidDateException {
-        // Given
-        EventPayloadDto payload = new EventPayloadDto();
-        payload.setInterrogationId(INTERROGATION_ID);
-
-        EventDto eventDto = new EventDto();
-        eventDto.setEventType(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT);
-        eventDto.setCorrelationId(CORRELATION_ID);
-        eventDto.setPayload(payload);
-
-        when(stateDataService.findStateData(INTERROGATION_ID)).thenReturn(Optional.empty());
 
         // When
         consumer.consume(eventDto);
@@ -98,7 +67,7 @@ class QuestionnaireInitEventConsumerTest {
         StateData savedStateData = stateDataCaptor.getValue();
         assertThat(savedStateData.state()).isEqualTo(StateDataType.INIT);
         assertThat(savedStateData.currentPage()).isEqualTo("1");
-        assertThat(savedStateData.date()).isGreaterThan(0);
+        assertThat(savedStateData.date()).isEqualTo(FIXED_TIME);
     }
 
     @Test
