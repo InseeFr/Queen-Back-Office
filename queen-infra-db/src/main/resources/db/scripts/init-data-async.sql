@@ -11,7 +11,7 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-INSERT INTO public.campaign VALUES ('GEN2025A00', 'Asynchrone test');
+INSERT INTO public.campaign VALUES ('GEN2025A00', 'Asynchrone test', 'NORMAL');
 
 --
 -- TOC entry 3406 (class 0 OID 16489)

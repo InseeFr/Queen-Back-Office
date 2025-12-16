@@ -25,7 +25,8 @@
 	<include file="changelog/612_add-interrogation-id.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/613_change_type_of_intero_id.sql" relativeToChangelogFile="true"/>
 	<include file="changelog/620_surveyunit-to-interrogation.sql" relativeToChangelogFile="true"/>
-  <include file="changelog/630_drop-fk-and-create-pk-interrogation.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/630_drop-fk-and-create-pk-interrogation.xml" relativeToChangelogFile="true"/>
 	<include file="changelog/630_add_correlation_id.xml" relativeToChangelogFile="true"/>
-  <include file="changelog/700_events.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/700_events.xml" relativeToChangelogFile="true"/>
+	<include file="changelog/701_add_constraint_not_null_sensitivity.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
