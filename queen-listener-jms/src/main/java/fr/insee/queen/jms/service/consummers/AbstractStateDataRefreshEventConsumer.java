@@ -67,21 +67,15 @@ public abstract class AbstractStateDataRefreshEventConsumer implements EventCons
                 );
                 log.info("Updated date for existing state {} for interrogation: {}",
                     existing.state(), interrogationId);
-            } else {
-                // No existing state, create new one with INIT
-                newStateData = new StateData(
-                    StateDataType.INIT,
-                    currentDate,
-                    "1"
-                );
-                log.info("Created new INIT state for interrogation: {}", interrogationId);
+
+                // Save the state data
+                stateDataService.saveStateData(interrogationId, newStateData, false);
+
+                log.info("{} event with correlationId {} processed successfully - interrogation {} state data refreshed",
+                        getEventType(), eventDto.getCorrelationId(), interrogationId);
             }
 
-            // Save the state data
-            stateDataService.saveStateData(interrogationId, newStateData, false);
 
-            log.info("{} event with correlationId {} processed successfully - interrogation {} state data refreshed",
-                getEventType(), eventDto.getCorrelationId(), interrogationId);
 
         } catch (StateDataInvalidDateException e) {
             log.error("Invalid date when updating state data for {} event with correlationId: {}",
