@@ -124,7 +124,7 @@ class EventsControllerTest {
         EventDto event = new EventDto(
                 EventDto.EventTypeEnum.QUESTIONNAIRE_INIT,
                 EventDto.AggregateTypeEnum.QUESTIONNAIRE,
-                new EventPayloadDto("1", EventPayloadDto.ModeEnum.CAPI)
+                new EventPayloadDto("1", ModeDto.CAPI)
         );
 
         // when
