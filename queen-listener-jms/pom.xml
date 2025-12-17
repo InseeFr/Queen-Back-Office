@@ -84,7 +84,7 @@
             <artifactId>modelefiliere</artifactId>
             <version>1.1.2-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../modelefiliere-multimode-event-20251202.195447-1.jar</systemPath>
+            <systemPath>${project.basedir}/../modelefiliere-2.0.0.jar</systemPath>
         </dependency>
 
         <dependency>

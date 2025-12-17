@@ -3,6 +3,7 @@ package fr.insee.queen.jms.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.modelefiliere.EventDto;
 import fr.insee.modelefiliere.EventPayloadDto;
+import fr.insee.modelefiliere.ModeDto;
 import fr.insee.queen.jms.configuration.MultimodeProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class MultimodePublisherTest {
 
         EventPayloadDto payload = new EventPayloadDto();
         payload.setInterrogationId("123");
-        payload.setMode(EventPayloadDto.ModeEnum.CAPI);
+        payload.setMode(ModeDto.CAPI);
 
         EventDto eventDto = new EventDto();
         eventDto.setEventType(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT);
@@ -70,7 +71,7 @@ class MultimodePublisherTest {
 
         EventPayloadDto payload = new EventPayloadDto();
         payload.setInterrogationId("123");
-        payload.setMode(EventPayloadDto.ModeEnum.CAPI);
+        payload.setMode(ModeDto.CAPI);
 
         EventDto eventDto = new EventDto();
         eventDto.setEventType(EventDto.EventTypeEnum.QUESTIONNAIRE_INIT);

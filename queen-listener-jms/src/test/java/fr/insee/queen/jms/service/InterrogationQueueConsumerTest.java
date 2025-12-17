@@ -45,17 +45,20 @@ class InterrogationQueueConsumerTest {
 
     private final String defaultBody = """
                                             {
-                                              "_id": {
-                                                "$oid": "651a2f9c4d3e2b1a0f9c8d7e"
-                                              },
-                                              "processInstanceID": "9f2c9f4a-5a2b-4f0e-9a6f-2c8f0c3a1d55",
+                                              "correlationId": "%s",
+                                              "processInstanceId": "9f2c9f4a-5a2b-4f0e-9a6f-2c8f0c3a1d55",
+                                              "target": "QUESTIONNAIRE-API-WEB",
+                                              "operation": "CREATE",
+                                              "aggregateType": "INTERROGATION",
                                               %s
-                                              "inProgress": true,
                                               "payload": {
+                                                "replyTo": "%s",
                                                 "partitionId": "3d3f6a2b-8d4d-4d7a-9c0b-1a2b3c4d5e6f",
                                                 %s
                                                 "interrogationId": "%s",
                                                 "surveyUnitId": "%s",
+                                                "campaignId": "ECO-ENT-2025",
+                                                "questionnaireId": "%s",
                                                 "originId": "552100123",
                                                 "parentId": "11111111-2222-3333-4444-555555555555",
                                                 "childIds": [
@@ -180,13 +183,7 @@ class InterrogationQueueConsumerTest {
                                                     "webConnectionId": "WEB-PORTAL-USER-001"
                                                   }
                                                 ]
-                                              },
-                                              "CampaignID": "ECO-ENT-2025",
-                                              "correlationID": "%s",
-                                              "questionnaireID": "Q-ECO-ENT-2025-V1",
-                                              "done": false,
-                                              "dateCreation": "2025-10-01T13:45:30Z",
-                                              "replyTo": "%s"
+                                              }
                                             }
                                             """;
 
@@ -203,7 +200,7 @@ class InterrogationQueueConsumerTest {
     @DisplayName("Should create interrogation when message is valid")
     void ok() throws JMSException {
         // Given
-        String ok = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String ok = String.format(defaultBody, correlationId, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireId);
         when(commandMessage.getBody(String.class)).thenReturn(ok);
 
         // When
@@ -229,7 +226,7 @@ class InterrogationQueueConsumerTest {
     void ShouldLogErrorWhenAdditionalFieldCommand(CapturedOutput output) throws JMSException {
         // Given
         additionalFieldCommand = "\"newFieldCommand\": true,";
-        String additionalFieldCommandMessage = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String additionalFieldCommandMessage = String.format(defaultBody, correlationId, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireId);
         // When and Then
         checkInvalidMessageError(additionalFieldCommandMessage, "IOException : Unrecognized field \"newFieldCommand\"", output);
     }
@@ -240,7 +237,7 @@ class InterrogationQueueConsumerTest {
     void ShouldLogErrorWhenAdditionalFieldInterrogation(CapturedOutput output) throws JMSException {
         // Given
         additionalFieldInterrogation = "\"newFieldInterrogation\": true,";
-        String additionalFieldInterrogationMessage = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String additionalFieldInterrogationMessage = String.format(defaultBody, correlationId, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireId);
         // When and Then
         checkInvalidMessageError(additionalFieldInterrogationMessage, "$.payload: property 'newFieldInterrogation' is not defined in the schema and the schema does not allow additional properties", output);
     }
@@ -249,16 +246,16 @@ class InterrogationQueueConsumerTest {
     @DisplayName("Should log error when no correlation id in command message")
     void shouldLogErrorWhenNoCorrelationId(CapturedOutput output) throws JMSException {
         // Given
-        String invalidMessage = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, null, replyTo);
+        String invalidMessage = String.format(defaultBody, null, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireId);
         // When and Then
-        checkInvalidMessageError(invalidMessage, "PropertyException : Missing or null field : 'correlationID'", output);
+        checkInvalidMessageError(invalidMessage, "PropertyException : Missing or null field : 'correlationId'", output);
     }
 
     @Test
     @DisplayName("Should log error when no reply to in command message")
     void shouldLogErrorWhenNoReplyTo(CapturedOutput output) throws JMSException {
         // Given
-        String noReplyToMessage = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, null);
+        String noReplyToMessage = String.format(defaultBody, correlationId, additionalFieldCommand, null, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireId);
         // When and Then
         checkInvalidMessageError(noReplyToMessage, "PropertyException : Missing or null field : 'replyTo'", output);
     }
@@ -285,7 +282,7 @@ class InterrogationQueueConsumerTest {
     @DisplayName("Should publisher send business error when survey unit id is invalid")
     void shouldLogErrorWhenInvalidSurveyUnitId() throws JMSException {
         // Given
-        String messageNoSurveyUnitId = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, null, questionnaireId, correlationId, replyTo);
+        String messageNoSurveyUnitId = String.format(defaultBody, correlationId, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, null, questionnaireId, questionnaireId);
         when(commandMessage.getBody(String.class)).thenReturn(messageNoSurveyUnitId);
 
         // When
@@ -307,7 +304,7 @@ class InterrogationQueueConsumerTest {
     void shouldSendBusinessErrorWhenSurveyUnitCommandException() throws JMSException {
         // Given
         interrogationBatchFakeService.setShouldThrowInterrogationBatchException(true);
-        String message = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, null, questionnaireId, correlationId, replyTo);
+        String message = String.format(defaultBody, correlationId, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, null, questionnaireId, questionnaireId);
         when(commandMessage.getBody(String.class)).thenReturn(message);
 
         // When
@@ -337,7 +334,7 @@ class InterrogationQueueConsumerTest {
     void throwInterrogationBatchException(CapturedOutput output) throws JMSException {
         // Given
         interrogationBatchFakeService.setShouldThrowInterrogationBatchException(true);
-        String msg = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String msg = String.format(defaultBody, correlationId, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireId);
         when(commandMessage.getBody(String.class)).thenReturn(msg);
 
         // When
@@ -356,7 +353,7 @@ class InterrogationQueueConsumerTest {
     void throwSchemaValidationException(CapturedOutput output) throws JMSException {
         // Given
         interrogationBatchFakeService.setShouldThrowSchemaValidationException(true);
-        String msg = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String msg = String.format(defaultBody, correlationId, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireId);
         when(commandMessage.getBody(String.class)).thenReturn(msg);
 
         // When
@@ -375,7 +372,7 @@ class InterrogationQueueConsumerTest {
     void throwEntityNotFoundException(CapturedOutput output) throws JMSException {
         // Given
         interrogationBatchFakeService.setShouldThrowEntityNotFoundException(true);
-        String msg = String.format(defaultBody, additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String msg = String.format(defaultBody, correlationId, additionalFieldCommand, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireId);
         when(commandMessage.getBody(String.class)).thenReturn(msg);
 
         // When
