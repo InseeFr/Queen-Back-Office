@@ -1,10 +1,10 @@
-package fr.insee.queen.jms.service;
+package fr.insee.queen.infrastructure.jms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.modelefiliere.EventDto;
 import fr.insee.modelefiliere.EventPayloadDto;
 import fr.insee.modelefiliere.ModeDto;
-import fr.insee.queen.jms.configuration.MultimodeProperties;
+import fr.insee.queen.infrastructure.jms.configuration.MultimodeProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MultimodePublisherTest {
+class JMSPublisherTest {
 
     @Mock
     private JmsTemplate jmsTemplate;
@@ -28,14 +28,14 @@ class MultimodePublisherTest {
     @Mock
     private MultimodeProperties multimodeProperties;
 
-    private MultimodePublisher multimodePublisher;
+    private JMSPublisher jmsPublisher;
 
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        multimodePublisher = new MultimodePublisher(jmsTemplate, multimodeProperties, objectMapper);
+        jmsPublisher = new JMSPublisher(jmsTemplate, multimodeProperties, objectMapper);
     }
 
     @Test
@@ -56,7 +56,7 @@ class MultimodePublisherTest {
         when(multimodeProperties.getTopic()).thenReturn(topicName);
 
         // When
-        multimodePublisher.publishEvent(eventDto, correlationId);
+        jmsPublisher.publish(eventDto, correlationId);
 
         // Then
         verify(jmsTemplate, times(1)).convertAndSend(eq(topicName), anyString());
@@ -82,7 +82,7 @@ class MultimodePublisherTest {
         doThrow(new RuntimeException("JMS error")).when(jmsTemplate).convertAndSend(anyString(), anyString());
 
         // When/Then
-        assertThatThrownBy(() -> multimodePublisher.publishEvent(eventDto, correlationId))
+        assertThatThrownBy(() -> jmsPublisher.publish(eventDto, correlationId))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Failed to publish event to topic");
 
@@ -105,7 +105,7 @@ class MultimodePublisherTest {
         when(multimodeProperties.getTopic()).thenReturn(topicName);
 
         // When
-        multimodePublisher.publishEvent(eventDto, correlationId);
+        jmsPublisher.publish(eventDto, correlationId);
 
         // Then
         verify(jmsTemplate, times(1)).convertAndSend(eq(topicName), anyString());

@@ -9,7 +9,7 @@ import fr.insee.queen.infrastructure.db.events.EventsJpaRepository;
 import fr.insee.queen.infrastructure.db.events.InboxDB;
 import fr.insee.queen.infrastructure.db.events.InboxJpaRepository;
 import fr.insee.queen.infrastructure.db.events.OutboxDB;
-import fr.insee.queen.jms.configuration.MultimodeProperties;
+import fr.insee.queen.infrastructure.jms.configuration.MultimodeProperties;
 import jakarta.jms.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,9 +1,10 @@
-package fr.insee.queen.jms.service;
+package fr.insee.queen.infrastructure.jms;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.modelefiliere.EventDto;
-import fr.insee.queen.jms.configuration.MultimodeProperties;
+import fr.insee.queen.domain.messaging.port.serverside.Publisher;
+import fr.insee.queen.infrastructure.jms.configuration.MultimodeProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,15 +16,15 @@ import java.util.UUID;
 @Slf4j
 @Service
 @ConditionalOnProperty(prefix = "feature.multimode.publisher", name = "enabled", havingValue = "true")
-public class MultimodePublisher {
+public class JMSPublisher implements Publisher {
 
     private final JmsTemplate topicJmsTemplate;
     private final MultimodeProperties multimodeProperties;
     private final ObjectMapper objectMapper;
 
-    public MultimodePublisher(@Qualifier("topicJmsTemplate") JmsTemplate topicJmsTemplate,
-                              MultimodeProperties multimodeProperties,
-                              ObjectMapper objectMapper) {
+    public JMSPublisher(@Qualifier("topicJmsTemplate") JmsTemplate topicJmsTemplate,
+                        MultimodeProperties multimodeProperties,
+                        ObjectMapper objectMapper) {
         this.topicJmsTemplate = topicJmsTemplate;
         this.multimodeProperties = multimodeProperties;
         this.objectMapper = objectMapper;
@@ -35,7 +36,8 @@ public class MultimodePublisher {
      * @param eventDto      The event to publish
      * @param correlationId The correlation ID (typically the outbox record UUID)
      */
-    public void publishEvent(EventDto eventDto, UUID correlationId) {
+    @Override
+    public void publish(EventDto eventDto, UUID correlationId) {
         String topicName = multimodeProperties.getTopic();
         log.info("Publishing event to topic: {} with correlationId: {}", topicName, correlationId);
 

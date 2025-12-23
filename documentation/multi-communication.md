@@ -105,24 +105,31 @@ Represents a record in the inbox table.
 
 ### 4. Publisher (Emitter)
 
-#### MultimodePublisher
-**Package:** `fr.insee.queen.jms.service`
+#### Publisher Interface
+**Package:** `fr.insee.queen.domain.messaging.port.serverside`
 
-**File:** `queen-listener-jms/src/main/java/fr/insee/queen/jms/service/MultimodePublisher.java`
+**File:** `queen-domain/src/main/java/fr/insee/queen/domain/messaging/port/serverside/Publisher.java`
 
-**Role:** Publishes EventDto to the ActiveMQ topic.
-
-**Activation:** `@ConditionalOnProperty(prefix = "feature.multimode.publisher", name = "enabled", havingValue = "true")`
+**Role:** Domain interface for publishing events.
 
 **Methods:**
-- `publishEvent(EventDto eventDto, UUID correlationId)`: Publishes an event with its correlationId
+- `publish(EventDto eventDto, UUID correlationId)`: Publishes an event with its correlationId
+
+#### JMSPublisher
+**Package:** `fr.insee.queen.infrastructure.jms`
+
+**File:** `queen-infra-jms/src/main/java/fr/insee/queen/infrastructure/jms/JMSPublisher.java`
+
+**Role:** JMS implementation of the Publisher interface. Publishes EventDto to the ActiveMQ topic.
+
+**Activation:** `@ConditionalOnProperty(prefix = "feature.multimode.publisher", name = "enabled", havingValue = "true")`
 
 #### OutboxScheduler
 **Package:** `fr.insee.queen.jms.service`
 
 **File:** `queen-listener-jms/src/main/java/fr/insee/queen/jms/service/OutboxScheduler.java`
 
-**Role:** Scheduler that periodically retrieves unprocessed events from the outbox table and publishes them via MultimodePublisher.
+**Role:** Scheduler that periodically retrieves unprocessed events from the outbox table and publishes them via the Publisher interface.
 
 **Configuration:**
 - Default interval: 300 seconds (5 minutes)
@@ -315,8 +322,8 @@ Exchanged messages follow the `EventDto` structure from the `modelefiliere` modu
 1. **Business Logic** → Creates a record in the `outbox` table
 2. **OutboxScheduler** (every 5 minutes):
    - Retrieves unprocessed events
-   - Calls `MultimodePublisher.publishEvent()`
-3. **MultimodePublisher**:
+   - Calls `Publisher.publish()`
+3. **JMSPublisher**:
    - Serializes EventDto to JSON
    - Publishes to ActiveMQ topic with correlationId
    - Returns to scheduler

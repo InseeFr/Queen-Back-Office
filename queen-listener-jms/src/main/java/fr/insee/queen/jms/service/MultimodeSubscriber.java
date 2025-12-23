@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.modelefiliere.EventDto;
 import fr.insee.queen.infrastructure.db.events.InboxDB;
 import fr.insee.queen.infrastructure.db.events.InboxJpaRepository;
-import fr.insee.queen.jms.configuration.MultimodeProperties;
+import fr.insee.queen.infrastructure.jms.configuration.MultimodeProperties;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import lombok.RequiredArgsConstructor;

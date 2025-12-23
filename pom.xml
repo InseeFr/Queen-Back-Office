@@ -46,6 +46,7 @@
         <module>queen-domain-pilotage</module>
         <module>queen-infra-pilotage</module>
         <module>queen-infra-depositproof</module>
+        <module>queen-infra-jms</module>
         <module>queen-listener-jms</module>
         <module>coverage-report</module>
     </modules>

@@ -1,4 +1,4 @@
-package fr.insee.queen.jms.configuration;
+package fr.insee.queen.infrastructure.jms.configuration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

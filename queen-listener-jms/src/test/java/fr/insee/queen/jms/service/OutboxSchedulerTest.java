@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.modelefiliere.EventDto;
 import fr.insee.queen.infrastructure.db.events.EventsJpaRepository;
 import fr.insee.queen.infrastructure.db.events.OutboxDB;
-import fr.insee.queen.jms.configuration.MultimodeProperties;
+import fr.insee.queen.domain.messaging.port.serverside.Publisher;
+import fr.insee.queen.infrastructure.jms.configuration.MultimodeProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +32,7 @@ class OutboxSchedulerTest {
     private EventsJpaRepository eventsJpaRepository;
 
     @Mock
-    private MultimodePublisher multimodePublisher;
+    private Publisher publisher;
 
     @Mock
     private MultimodeProperties multimodeProperties;
@@ -43,7 +44,7 @@ class OutboxSchedulerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        outboxScheduler = new OutboxScheduler(eventsJpaRepository, multimodePublisher, multimodeProperties, objectMapper);
+        outboxScheduler = new OutboxScheduler(eventsJpaRepository, publisher, multimodeProperties, objectMapper);
     }
 
     @Test
@@ -67,7 +68,7 @@ class OutboxSchedulerTest {
 
         // Then
         verify(eventsJpaRepository, times(1)).findUnprocessedEvents();
-        verify(multimodePublisher, times(2)).publishEvent(any(EventDto.class), any(UUID.class));
+        verify(publisher, times(2)).publish(any(EventDto.class), any(UUID.class));
         verify(eventsJpaRepository, times(1)).markAsProcessed(eq(eventId1), any(LocalDateTime.class));
         verify(eventsJpaRepository, times(1)).markAsProcessed(eq(eventId2), any(LocalDateTime.class));
     }
@@ -82,7 +83,7 @@ class OutboxSchedulerTest {
 
         // Then
         verify(eventsJpaRepository, times(1)).findUnprocessedEvents();
-        verify(multimodePublisher, never()).publishEvent(any(EventDto.class), any(UUID.class));
+        verify(publisher, never()).publish(any(EventDto.class), any(UUID.class));
         verify(eventsJpaRepository, never()).markAsProcessed(any(), any());
     }
 
@@ -101,15 +102,15 @@ class OutboxSchedulerTest {
         List<OutboxDB> unprocessedEvents = Arrays.asList(event1, event2);
 
         when(eventsJpaRepository.findUnprocessedEvents()).thenReturn(unprocessedEvents);
-        doThrow(new RuntimeException("Publish failed")).when(multimodePublisher).publishEvent(any(EventDto.class), eq(eventId1));
+        doThrow(new RuntimeException("Publish failed")).when(publisher).publish(any(EventDto.class), eq(eventId1));
 
         // When
         outboxScheduler.processOutboxEvents();
 
         // Then
         verify(eventsJpaRepository, times(1)).findUnprocessedEvents();
-        verify(multimodePublisher, times(1)).publishEvent(any(EventDto.class), eq(eventId1));
-        verify(multimodePublisher, times(1)).publishEvent(any(EventDto.class), eq(eventId2)); // Should still process second event
+        verify(publisher, times(1)).publish(any(EventDto.class), eq(eventId1));
+        verify(publisher, times(1)).publish(any(EventDto.class), eq(eventId2)); // Should still process second event
         verify(eventsJpaRepository, never()).markAsProcessed(eq(eventId1), any()); // First event should not be marked
         verify(eventsJpaRepository, times(1)).markAsProcessed(eq(eventId2), any(LocalDateTime.class)); // Second event should be marked
     }
@@ -124,7 +125,7 @@ class OutboxSchedulerTest {
 
         // Then
         verify(eventsJpaRepository, times(1)).findUnprocessedEvents();
-        verify(multimodePublisher, never()).publishEvent(any(EventDto.class), any(UUID.class));
+        verify(publisher, never()).publish(any(EventDto.class), any(UUID.class));
         verify(eventsJpaRepository, never()).markAsProcessed(any(), any());
     }
 

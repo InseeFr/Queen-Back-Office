@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.modelefiliere.EventDto;
 import fr.insee.queen.infrastructure.db.events.EventsJpaRepository;
 import fr.insee.queen.infrastructure.db.events.OutboxDB;
-import fr.insee.queen.jms.configuration.MultimodeProperties;
+import fr.insee.queen.domain.messaging.port.serverside.Publisher;
+import fr.insee.queen.infrastructure.jms.configuration.MultimodeProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,7 +22,7 @@ import java.util.List;
 public class OutboxScheduler {
 
     private final EventsJpaRepository eventsJpaRepository;
-    private final MultimodePublisher multimodePublisher;
+    private final Publisher publisher;
     private final MultimodeProperties multimodeProperties;
     private final ObjectMapper objectMapper;
 
@@ -50,7 +51,7 @@ public class OutboxScheduler {
                     EventDto eventDto = objectMapper.treeToValue(event.getPayload(), EventDto.class);
 
                     // Publish event to ActiveMQ with correlationId = outbox record UUID
-                    multimodePublisher.publishEvent(eventDto, event.getId());
+                    publisher.publish(eventDto, event.getId());
 
                     // Mark event as processed
                     eventsJpaRepository.markAsProcessed(event.getId(), LocalDateTime.now());
