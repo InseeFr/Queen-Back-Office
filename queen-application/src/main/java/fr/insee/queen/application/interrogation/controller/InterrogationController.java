@@ -21,6 +21,7 @@ import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.StateDataService;
 import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
+import fr.insee.queen.domain.synchronisation.service.SynchronisationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -51,6 +52,7 @@ public class InterrogationController {
     private final MetadataConverter metadataConverter;
     private final StateDataService stateDataService;
     private final AuthenticationHelper authenticationUserHelper;
+    private final SynchronisationService synchronisationService;
 
     /**
      * Retrieve interrogations filtered by state
@@ -313,5 +315,18 @@ public class InterrogationController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
         interrogationService.delete(interrogationId);
+    }
+
+    /**
+     * Synchronize an interrogation
+     *
+     * @param interrogationId interrogation id
+     */
+    @Operation(summary = "Synchronize an interrogation")
+    @PostMapping("/interrogations/{id}/synchronize")
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    @ResponseStatus(HttpStatus.OK)
+    public void synchronizeInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
+        synchronisationService.synchronise(interrogationId);
     }
 }

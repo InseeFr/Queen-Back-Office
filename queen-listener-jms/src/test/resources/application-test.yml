@@ -20,22 +20,16 @@ spring:
     name: queen-listener-jms
   docker:
     compose:
-      # Disabled: automatic startup doesn't work when running from parent with -pl
-      # Start containers manually: cd queen-listener-jms && docker compose -f compose.yml --profile all up -d
-      enabled: false
-      file: compose.yml
+      enabled: true
+      file: compose.test.yml
       lifecycle-management: start-and-stop
       start:
         command: up
       stop:
         command: down
         timeout: 1m
-        arguments: -v
       skip:
         in-tests: false
-      profiles:
-        active:
-          - all
   datasource:
     url: jdbc:postgresql://localhost:5434/queen
     username: mypostgresuser2

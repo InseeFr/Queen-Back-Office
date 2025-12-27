@@ -26,6 +26,15 @@ public interface StateDataJpaRepository extends JpaRepository<StateDataDB, UUID>
     Optional<StateData> findByInterrogationId(String interrogationId);
 
     /**
+     * Find state data entity with leaf states for an interrogation
+     *
+     * @param interrogationId interrogation id
+     * @return {@link Optional<StateDataDB>} state data entity of the interrogation
+     */
+    @Query("SELECT s FROM StateDataDB s LEFT JOIN FETCH s.leafStates WHERE s.interrogation.id = :interrogationId")
+    Optional<StateDataDB> findEntityByInterrogationId(String interrogationId);
+
+    /**
      * Update state data of an interrogation
      * @param interrogationId interrogation to update
      * @param date state date

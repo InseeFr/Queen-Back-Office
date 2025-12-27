@@ -40,5 +40,19 @@ services:
       - all
       - queen-listener-jms
 
+  queen-db-remote:
+    extends:
+      file: ./container/compose.synchronisation.yml
+      service: queen-db-remote
+    profiles:
+      - synchronisation
+
+  queen-remote:
+    extends:
+      file: ./container/compose.synchronisation.yml
+      service: queen-remote
+    profiles:
+      - synchronisation
+
 volumes:
   activemq_vol:

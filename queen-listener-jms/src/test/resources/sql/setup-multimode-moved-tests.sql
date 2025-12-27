@@ -23,6 +23,6 @@ VALUES
     ('MOVED-001', 'SU-MOVED-001', 'TEST-CAMPAIGN', 'test-questionnaire', null),
     ('MOVED-NEW-001', 'SU-MOVED-NEW-001', 'TEST-CAMPAIGN', 'test-questionnaire', null);
 
--- Insert initial state data for MOVED-001 (with INIT state and page1)
+-- Insert initial state data for MOVED-001 (with INIT state and page 1)
 INSERT INTO state_data(id, current_page, date, state, interrogation_id)
-VALUES (gen_random_uuid(), 'page1', extract(epoch from now()) * 1000, 'INIT', 'MOVED-001');
+VALUES (gen_random_uuid(), '1', extract(epoch from now()) * 1000, 'INIT', 'MOVED-001');

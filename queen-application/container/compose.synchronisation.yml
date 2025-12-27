@@ -1,0 +1,46 @@
+services:
+  queen-db-remote:
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_POSTGRES}
+    environment:
+      - POSTGRES_USER=queenremote
+      - POSTGRES_PASSWORD=queenremote
+      - POSTGRES_DB=queen-remote
+    command: ["postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U queenremote -d queen-remote -h localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "5436:5432"
+    volumes:
+      - ../src/test/resources/db/init-remote-data.sql:/docker-entrypoint-initdb.d/init-remote-data.sql:ro
+
+  queen-remote:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    depends_on:
+      queen-db-remote:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://queen-db-remote:5432/queen-remote
+      - SPRING_DATASOURCE_USERNAME=queenremote
+      - SPRING_DATASOURCE_PASSWORD=queenremote
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - FEATURE_OIDC_ENABLED=false
+      - FEATURE_PILOTAGE_ENABLED=false
+      - FEATURE_SWAGGER_ENABLED=false
+      - SPRING_LIQUIBASE_ENABLED=true
+      - SPRING_LIQUIBASE_CONTEXTS=test
+      - SPRING_LIQUIBASE_CHANGE_LOG=classpath:db/integration-test.xml
+      - APPLICATION_CORSORIGINS=*
+      - APPLICATION_TEMP_FOLDER=/opt/app/temp-files
+    ports:
+      - "8081:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/healthcheck || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s

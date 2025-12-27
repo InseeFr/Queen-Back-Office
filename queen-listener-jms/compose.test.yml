@@ -19,6 +19,12 @@ services:
     environment:
       ARTEMIS_USER: ${ARTEMIS_USER:-insee}
       ARTEMIS_PASSWORD: ${ARTEMIS_PASSWORD:-lille}
+    healthcheck:
+      test: ["CMD-SHELL", "/var/lib/artemis-instance/bin/artemis check node --user $${ARTEMIS_USER} --password $${ARTEMIS_PASSWORD} || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 15
+      start_period: 30s
     ports:
       - "61616:61616"
       - "8161:8161"

@@ -634,6 +634,199 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         assertThat(inboxRecord.get().getPayload().get("eventType").asText()).isEqualTo("QUESTIONNAIRE_INIT");
     }
 
+    @Test
+    void shouldProcessQuestionnaireLeafStatesUpdatedEventAndPersistLeafStates() {
+        // Given: Interrogation with existing state data (created by SQL script)
+        String interrogationId = "MOVED-001";
+
+        // Verify initial state from SQL script
+        var initialState = stateDataService.findStateData(interrogationId);
+        assertThat(initialState).isPresent();
+        assertThat(initialState.get().state()).isEqualTo(StateDataType.INIT);
+        assertThat(initialState.get().leafStates()).isEmpty();
+
+        long initialDate = initialState.get().date();
+
+        // Create and publish a QUESTIONNAIRE_LEAF_STATES_UPDATED event with leafStates
+        UUID eventId = UUID.randomUUID();
+        long leafStateDate1 = System.currentTimeMillis() - 10000;
+        long leafStateDate2 = System.currentTimeMillis() - 5000;
+
+        ObjectNode payload = createEventPayload(
+                "QUESTIONNAIRE_LEAF_STATES_UPDATED",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    builder.put("mode", "CAWI");
+
+                    // Add leafStates array
+                    var leafStatesArray = objectMapper.createArrayNode();
+
+                    var leafState1 = objectMapper.createObjectNode();
+                    leafState1.put("state", "INIT");
+                    leafState1.put("date", java.time.Instant.ofEpochMilli(leafStateDate1).toString());
+                    leafStatesArray.add(leafState1);
+
+                    var leafState2 = objectMapper.createObjectNode();
+                    leafState2.put("state", "COMPLETED");
+                    leafState2.put("date", java.time.Instant.ofEpochMilli(leafStateDate2).toString());
+                    leafStatesArray.add(leafState2);
+
+                    builder.set("leafStates", leafStatesArray);
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // When: Wait for the event to be processed
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify event was stored in inbox
+                    var inboxRecord = inboxJpaRepository.findById(eventId);
+                    assertThat(inboxRecord).isPresent();
+
+                    // Verify StateData was updated with leafStates
+                    var updatedState = stateDataService.findStateData(interrogationId);
+                    assertThat(updatedState).isPresent();
+                    assertThat(updatedState.get().leafStates()).hasSize(2);
+                });
+
+        // Then: Verify final state
+        var finalState = stateDataService.findStateData(interrogationId);
+        assertThat(finalState).isPresent();
+
+        // State type should be preserved (INIT)
+        assertThat(finalState.get().state()).isEqualTo(StateDataType.INIT);
+
+        // CurrentPage should be preserved
+        assertThat(finalState.get().currentPage()).isEqualTo("1");
+
+        // Date should be updated
+        assertThat(finalState.get().date()).isGreaterThan(initialDate);
+
+        // LeafStates should be persisted
+        var leafStates = finalState.get().leafStates();
+        assertThat(leafStates).hasSize(2);
+
+        assertThat(leafStates.get(0).state()).isEqualTo("INIT");
+        assertThat(leafStates.get(0).date()).isEqualTo(leafStateDate1);
+
+        assertThat(leafStates.get(1).state()).isEqualTo("COMPLETED");
+        assertThat(leafStates.get(1).date()).isEqualTo(leafStateDate2);
+
+        // Verify inbox record
+        var finalInboxRecord = inboxJpaRepository.findById(eventId).orElseThrow();
+        assertThat(finalInboxRecord.getPayload().get("eventType").asText()).isEqualTo("QUESTIONNAIRE_LEAF_STATES_UPDATED");
+        assertThat(finalInboxRecord.getPayload().get("payload").get("interrogationId").asText()).isEqualTo(interrogationId);
+
+        // Verify outbox event is marked as processed
+        OutboxDB processed = eventsJpaRepository.findById(eventId).orElseThrow();
+        assertThat(processed.getProcessedDate()).isNotNull();
+    }
+
+    @Test
+    void shouldReplaceExistingLeafStatesWhenNewEventReceived() {
+        // Given: Interrogation with existing state data (created by SQL script)
+        String interrogationId = "MOVED-001";
+
+        // First, send an event with initial leafStates
+        UUID firstEventId = UUID.randomUUID();
+        long firstLeafStateDate = System.currentTimeMillis() - 20000;
+
+        ObjectNode firstPayload = createEventPayload(
+                "QUESTIONNAIRE_LEAF_STATES_UPDATED",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    var leafStatesArray = objectMapper.createArrayNode();
+                    var leafState = objectMapper.createObjectNode();
+                    leafState.put("state", "INIT");
+                    leafState.put("date", java.time.Instant.ofEpochMilli(firstLeafStateDate).toString());
+                    leafStatesArray.add(leafState);
+                    builder.set("leafStates", leafStatesArray);
+                }
+        );
+
+        OutboxDB firstOutboxEvent = new OutboxDB(firstEventId, firstPayload);
+        firstOutboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(firstOutboxEvent);
+
+        // Wait for first event to be processed
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    var state = stateDataService.findStateData(interrogationId);
+                    assertThat(state).isPresent();
+                    assertThat(state.get().leafStates()).hasSize(1);
+                });
+
+        // When: Send a second event with different leafStates
+        UUID secondEventId = UUID.randomUUID();
+        long secondLeafStateDate1 = System.currentTimeMillis() - 5000;
+        long secondLeafStateDate2 = System.currentTimeMillis() - 2000;
+        long secondLeafStateDate3 = System.currentTimeMillis();
+
+        ObjectNode secondPayload = createEventPayload(
+                "QUESTIONNAIRE_LEAF_STATES_UPDATED",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    var leafStatesArray = objectMapper.createArrayNode();
+
+                    var leafState1 = objectMapper.createObjectNode();
+                    leafState1.put("state", "INIT");
+                    leafState1.put("date", java.time.Instant.ofEpochMilli(secondLeafStateDate1).toString());
+                    leafStatesArray.add(leafState1);
+
+                    var leafState2 = objectMapper.createObjectNode();
+                    leafState2.put("state", "COMPLETED");
+                    leafState2.put("date", java.time.Instant.ofEpochMilli(secondLeafStateDate2).toString());
+                    leafStatesArray.add(leafState2);
+
+                    var leafState3 = objectMapper.createObjectNode();
+                    leafState3.put("state", "COMPLETED");
+                    leafState3.put("date", java.time.Instant.ofEpochMilli(secondLeafStateDate3).toString());
+                    leafStatesArray.add(leafState3);
+
+                    builder.set("leafStates", leafStatesArray);
+                }
+        );
+
+        OutboxDB secondOutboxEvent = new OutboxDB(secondEventId, secondPayload);
+        secondOutboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(secondOutboxEvent);
+
+        // Then: Wait for second event to be fully processed (inbox + consumer)
+        await()
+                .atMost(30, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify second event is in inbox
+                    var inboxRecord = inboxJpaRepository.findById(secondEventId);
+                    assertThat(inboxRecord).isPresent();
+
+                    // Verify leafStates are replaced (not appended)
+                    var state = stateDataService.findStateData(interrogationId);
+                    assertThat(state).isPresent();
+                    // Should have 3 leafStates now (replaced, not appended)
+                    assertThat(state.get().leafStates()).hasSize(3);
+                });
+
+        var finalState = stateDataService.findStateData(interrogationId);
+        assertThat(finalState).isPresent();
+
+        var leafStates = finalState.get().leafStates();
+        assertThat(leafStates).hasSize(3);
+        assertThat(leafStates.get(0).state()).isEqualTo("INIT");
+        assertThat(leafStates.get(1).state()).isEqualTo("COMPLETED");
+        assertThat(leafStates.get(2).state()).isEqualTo("COMPLETED");
+    }
+
     /**
      * Creates an event payload following the Event Sourcing pattern.
      * Structure: {
