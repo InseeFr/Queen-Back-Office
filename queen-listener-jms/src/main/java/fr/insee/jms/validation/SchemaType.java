@@ -8,7 +8,7 @@ public enum SchemaType {
     INTERROGATION(Names.INTERROGATION);
 
     public static class Names {
-        public static final String PROCESS_MESSAGE = "/modele-filiere-spec/Command.json";
+        public static final String PROCESS_MESSAGE = "/modele-filiere-spec/CommandRequest.json";
         public static final String INTERROGATION = "/modele-filiere-spec/Interrogation.json";
         private Names() {
 

@@ -54,6 +54,63 @@ A Dockerfile is present on this root project to deploy a container. You can [get
 
 [Helm chart repository](https://github.com/InseeFr/Helm-Charts/) is available for the queen backoffice/db/frontend
 
+## ActiveMQ & JMS Listener
+
+Queen-Back-Office includes a JMS listener module (`queen-listener-jms`) that processes messages via ActiveMQ Artemis.
+
+### Running ActiveMQ with Docker Compose
+
+From the `queen-application` directory, you can launch ActiveMQ and related services using Docker Compose profiles:
+
+#### Launch ActiveMQ only:
+```shell
+docker compose --profile activemq up -d
+```
+
+#### Launch the full JMS stack (ActiveMQ + PostgreSQL + JMS Listener):
+```shell
+docker compose --profile activemq --profile queen-listener-jms up -d
+```
+
+This will start:
+- **activemq**: ActiveMQ Artemis message broker
+- **queen-db**: PostgreSQL database
+- **queen-listener-jms**: JMS consumer service
+
+### ActiveMQ Web Console
+
+Once ActiveMQ is running, you can access the web console for monitoring and debugging:
+
+**URL:** http://localhost:8161
+
+**Default credentials:**
+- Username: `insee`
+- Password: `lille`
+
+### JMS Queues
+
+The application uses the following queues (configured in `application.yml`):
+- **Request queue:** `interrogation_request`
+- **Response queue:** `interrogation_response`
+
+### Configuration
+
+The JMS listener can be configured in `queen-listener-jms/src/main/resources/application.yml`:
+
+```yaml
+broker:
+  name: artemis  # Broker type (artemis)
+  queue:
+    interrogation:
+      request: interrogation_request
+      response: interrogation_response
+
+spring:
+  artemis:
+    broker-url: tcp://localhost:61616
+    user: insee
+    password: lille
+```
 
 ## Liquibase
 Liquibase is enabled by default and run changelogs if needed.

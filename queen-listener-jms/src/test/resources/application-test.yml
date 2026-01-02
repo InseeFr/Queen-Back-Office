@@ -21,19 +21,15 @@ spring:
   docker:
     compose:
       enabled: true
-      file: compose.yml
+      file: compose.test.yml
       lifecycle-management: start-and-stop
       start:
         command: up
       stop:
         command: down
         timeout: 1m
-        arguments: -v
       skip:
         in-tests: false
-      profiles:
-        active:
-          - all
   datasource:
     url: jdbc:postgresql://localhost:5434/queen
     username: mypostgresuser2
@@ -87,3 +83,11 @@ logging:
       insee:
         queen:
           jms: INFO
+
+feature:
+  multimode:
+    publisher:
+      enabled: true
+      scheduler:
+        interval: 5000
+    topic: multimode_events_test

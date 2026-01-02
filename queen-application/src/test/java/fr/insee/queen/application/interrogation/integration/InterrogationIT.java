@@ -43,7 +43,7 @@ class InterrogationIT {
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(17)));
+                .andExpect(jsonPath("$.size()", is(18)));
     }
 
     @Test
@@ -76,6 +76,39 @@ class InterrogationIT {
                     JsonNode rootNode = mapper.readTree(responseContent);
                     JsonNode firstContent = rootNode.get(0);
                     JsonNode expectedNode = mapper.readTree(expectedFirstResult);
+                    assertThat(firstContent).isEqualTo(expectedNode);
+                });
+    }
+
+    @Test
+    @DisplayName("Should return all interrogations with IS_MOVED state")
+    void on_get_moved_interrogations_return_moved_interrogations() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String expectedResult = """
+        {
+                "id":"a1b2c3d4-5678-90ab-cdef-1234567890ab",
+                "questionnaireId":"simpsons",
+                "data":{"EXTERNAL":{"LAST_BROADCAST":"15/03/2000"},"COLLECTED":{"MOVED":true}},
+                "personalization":[],
+                "comment":{"COMMENT":"moved comment"},
+                "stateData":{
+                    "state":"IS_MOVED",
+                    "date":1200000000,
+                    "currentPage":"1"
+                }
+        }""";
+        mockMvc.perform(get("/api/interrogations/state-data?stateData=IS_MOVED")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(1)))
+                .andExpect(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    JsonNode rootNode = mapper.readTree(responseContent);
+                    JsonNode firstContent = rootNode.get(0);
+                    JsonNode expectedNode = mapper.readTree(expectedResult);
                     assertThat(firstContent).isEqualTo(expectedNode);
                 });
     }
