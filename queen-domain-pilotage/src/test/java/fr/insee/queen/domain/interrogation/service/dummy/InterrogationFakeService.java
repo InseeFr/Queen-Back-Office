@@ -139,4 +139,9 @@ public class InterrogationFakeService implements InterrogationService {
     public List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType) {
         return null;
     }
+
+    @Override
+    public List<Interrogation> getInterrogationsByState(StateDataType stateDataType) {
+        return null;
+    }
 }

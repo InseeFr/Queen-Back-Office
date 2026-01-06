@@ -44,7 +44,15 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<dependency>
+        <dependency>
+            <groupId>fr.insee</groupId>
+            <artifactId>modelefiliere</artifactId>
+            <version>2.2.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../modelefiliere-2.2.0.jar</systemPath>
+        </dependency>
+
+        <dependency>
 			<groupId>fr.insee.queen</groupId>
 			<artifactId>queen-domain-depositproof</artifactId>
 			<version>${project.version}</version>
@@ -130,6 +138,13 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-wiremock</artifactId>
+			<version>4.1.4</version>
 			<scope>test</scope>
 		</dependency>
 

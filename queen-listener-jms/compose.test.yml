@@ -1,0 +1,30 @@
+services:
+  queen-db:
+    image: ${IMAGES_REGISTRY_DOCKER_IO:-docker.io}/${IMAGE_POSTGRES:-postgres:14.15}
+    environment:
+      - POSTGRES_USER=${QUEEN_DB_USER:-mypostgresuser2}
+      - POSTGRES_PASSWORD=${QUEEN_DB_PASSWORD:-mypostgrespassword2}
+      - POSTGRES_DB=${QUEEN_DB:-queen}
+    command: ["postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${QUEEN_DB_USER:-mypostgresuser2} -d ${QUEEN_DB:-queen} -h localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "${QUEEN_DB_PORT:-5434}:5432"
+
+  activemq:
+    image: ${IMAGES_REGISTRY_DOCKER_IO:-docker.io}/${IMAGE_ACTIVEMQ:-apache/activemq-artemis:2.32.0-alpine}
+    environment:
+      ARTEMIS_USER: ${ARTEMIS_USER:-insee}
+      ARTEMIS_PASSWORD: ${ARTEMIS_PASSWORD:-lille}
+    healthcheck:
+      test: ["CMD-SHELL", "/var/lib/artemis-instance/bin/artemis check node --user $${ARTEMIS_USER} --password $${ARTEMIS_PASSWORD} || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 15
+      start_period: 30s
+    ports:
+      - "61616:61616"
+      - "8161:8161"

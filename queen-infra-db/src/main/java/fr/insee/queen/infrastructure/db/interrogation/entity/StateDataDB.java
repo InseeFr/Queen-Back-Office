@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -48,10 +50,23 @@ public class StateDataDB {
     @JoinColumn(name = "interrogation_id", referencedColumnName = "id")
     private fr.insee.queen.infrastructure.db.interrogation.entity.InterrogationDB interrogation;
 
+    /**
+     * The leaf states linked to this StateData
+     */
+    @OneToMany(mappedBy = "stateData", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<LeafStateDB> leafStates = new ArrayList<>();
+
     public StateDataDB(StateDataType state, Long date, String currentPage, fr.insee.queen.infrastructure.db.interrogation.entity.InterrogationDB interrogation) {
         this.state = state;
         this.date = date;
         this.currentPage = currentPage;
         this.interrogation = interrogation;
+    }
+
+    public void setLeafStates(List<LeafStateDB> leafStates) {
+        this.leafStates.clear();
+        if (leafStates != null) {
+            this.leafStates.addAll(leafStates);
+        }
     }
 }

@@ -1,11 +1,11 @@
-FROM gitlab-registry.insee.fr/kubernetes/images/run/java:21.0.8_9-jre-jammy-rootless
+FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /opt/app/
 COPY ./target/*.jar /opt/app/app.jar
 
 # Setup a non-root user context (security)
-RUN addgroup -g 1000 tomcatgroup
-RUN adduser -D -s / -u 1000 tomcatuser -G tomcatgroup
+RUN groupadd -g 1000 tomcatgroup
+RUN useradd -r -u 1000 -g tomcatgroup tomcatuser
 RUN mkdir /opt/app/temp-files
 RUN chown -R 1000:1000 /opt/app
 

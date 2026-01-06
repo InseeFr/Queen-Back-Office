@@ -47,6 +47,9 @@ feature:
     enabled: false
   interviewer-mode:
     enabled: false
+  synchronisation:
+    enabled: false
+    queen-url:
 
 spring:
   docker:

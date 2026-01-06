@@ -1,0 +1,38 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Emmanuel Demey" id="730-1">
+        <createTable tableName="leaf_state">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="state" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state_data_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Emmanuel Demey" id="730-2">
+        <addForeignKeyConstraint
+                baseTableName="leaf_state"
+                baseColumnNames="state_data_id"
+                referencedTableName="state_data"
+                referencedColumnNames="id"
+                constraintName="FK_leaf_state_state_data"
+                onDelete="CASCADE"
+                deferrable="false"
+                initiallyDeferred="false"/>
+    </changeSet>
+    <changeSet author="Emmanuel Demey" id="730-3">
+        <createIndex tableName="leaf_state" indexName="idx_leaf_state_state_data">
+            <column name="state_data_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

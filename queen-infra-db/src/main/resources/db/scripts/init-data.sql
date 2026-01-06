@@ -103,7 +103,8 @@ VALUES
     ('ec311ca8-41ec-4cbb-86ae-99745ffd93cb', 'survey-unit-log-02', 'LOG2021X11Tel','LOG2021X11Tel', null),
     ('31e0537d-01ab-4402-9a59-d001d3ba00fd', 'survey-unit-log-03', 'LOG2021X11Tel','LOG2021X11Tel', null),
     ('80dc2493-5258-44c5-8ec1-9c600d1df80b', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', null),
-    ('4f612c5d-8b60-46bd-a2de-1f0d861264db', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', null);
+    ('4f612c5d-8b60-46bd-a2de-1f0d861264db', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', null),
+    ('a1b2c3d4-5678-90ab-cdef-1234567890ab', 'survey-unit-moved-01', 'SIMPSONS2020X00', 'simpsons', null);
 
 
 INSERT INTO public.comment (id, value, interrogation_id) VALUES
@@ -122,7 +123,8 @@ INSERT INTO public.comment (id, value, interrogation_id) VALUES
   ('70ee3af3-fd2c-4745-b0bb-73124fa016b8', '{}', 'ec311ca8-41ec-4cbb-86ae-99745ffd93cb'),
   ('833b5a5d-845e-4b3e-a725-d444907ee476', '{}', '31e0537d-01ab-4402-9a59-d001d3ba00fd'),
   ('692a1749-e293-4bcf-8456-4fb8edc9a5a8', '{}', '80dc2493-5258-44c5-8ec1-9c600d1df80b'),
-  ('692a1749-e293-4bcf-8456-4fb8edc9a5a9', '{}', '4f612c5d-8b60-46bd-a2de-1f0d861264db');
+  ('692a1749-e293-4bcf-8456-4fb8edc9a5a9', '{}', '4f612c5d-8b60-46bd-a2de-1f0d861264db'),
+  ('b1c2d3e4-5678-90ab-cdef-1234567890ab', '{"COMMENT": "moved comment"}', 'a1b2c3d4-5678-90ab-cdef-1234567890ab');
 
 INSERT INTO public.paradata_event (id, value, interrogation_id, survey_unit_id) VALUES
   ('ff45a68e-4f76-4875-b4f7-80730d3a6e35', '{"idInterrogation": "89f4df89-8e83-444f-8f43-6d964c3339d8"}', '89f4df89-8e83-444f-8f43-6d964c3339d8', '20'),
@@ -164,7 +166,8 @@ INSERT INTO public.personalization (id, value, interrogation_id) VALUES
   ('1683a6ff-3c40-47c8-8862-9c685c6f5e88', '[]', 'd542db08-6d58-4665-9302-56eddf8185d2'),
   ('7c4b7cfb-7b22-43d1-84f3-07eb808a33ce', '[]', '89512ef9-4f39-466b-9388-a3626167f0c3'),
   ('9910a916-d270-47f7-9c30-19c456323831', '[]', 'ec311ca8-41ec-4cbb-86ae-99745ffd93cb'),
-  ('8b377092-33da-4494-a5fc-d2825d755e2c', '[]', '31e0537d-01ab-4402-9a59-d001d3ba00fd');
+  ('8b377092-33da-4494-a5fc-d2825d755e2c', '[]', '31e0537d-01ab-4402-9a59-d001d3ba00fd'),
+  ('c1d2e3f4-5678-90ab-cdef-1234567890ab', '[]', 'a1b2c3d4-5678-90ab-cdef-1234567890ab');
 
 -- 5. state_data : adaptation du champ interrogation_id
 INSERT INTO public.state_data (id, current_page, date, state, interrogation_id) VALUES
@@ -181,7 +184,8 @@ INSERT INTO public.state_data (id, current_page, date, state, interrogation_id) 
   ('f024ca52-95e5-4d4d-a15f-6111c68ff83e', '1', 900000000, 'INIT', 'd542db08-6d58-4665-9302-56eddf8185d2'),
   ('ffa9847f-c2fa-4b50-a017-afcbf6a9c205', '1', 900000000, 'INIT', '89512ef9-4f39-466b-9388-a3626167f0c3'),
   ('9affeeb6-84f8-4f8c-bc7d-31b27202c8ab', '1', 900000000, 'INIT', 'ec311ca8-41ec-4cbb-86ae-99745ffd93cb'),
-  ('e75e53d5-66a4-4ab9-922a-a84e5709e8c9', '1', 900000000, 'INIT', '31e0537d-01ab-4402-9a59-d001d3ba00fd');
+  ('e75e53d5-66a4-4ab9-922a-a84e5709e8c9', '1', 900000000, 'INIT', '31e0537d-01ab-4402-9a59-d001d3ba00fd'),
+  ('d1e2f3a4-5678-90ab-cdef-1234567890ab', '1', 1200000000, 'IS_MOVED', 'a1b2c3d4-5678-90ab-cdef-1234567890ab');
 
 --
 -- TOC entry 3410 (class 0 OID 16540)
@@ -270,7 +274,10 @@ DECLARE
             ''ec311ca8-41ec-4cbb-86ae-99745ffd93cb''],
       ARRAY[''d51e29b9-b27b-4159-957c-6bb54d811a20'',
             ''{}'',
-            ''31e0537d-01ab-4402-9a59-d001d3ba00fd'']
+            ''31e0537d-01ab-4402-9a59-d001d3ba00fd''],
+      ARRAY[''e1f2a3b4-5678-90ab-cdef-1234567890ab'',
+            ''{"EXTERNAL": {"LAST_BROADCAST": "15/03/2000"}, "COLLECTED": {"MOVED": true}}'',
+            ''a1b2c3d4-5678-90ab-cdef-1234567890ab'']
   ];
   line text[];
 BEGIN

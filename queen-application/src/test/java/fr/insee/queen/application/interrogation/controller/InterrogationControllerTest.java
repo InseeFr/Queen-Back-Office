@@ -10,6 +10,7 @@ import fr.insee.queen.application.interrogation.dto.input.*;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
 import fr.insee.queen.application.interrogation.service.dummy.StateDataFakeService;
 import fr.insee.queen.application.interrogation.service.dummy.InterrogationFakeService;
+import fr.insee.queen.application.interrogation.service.dummy.SynchronisationFakeService;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.dummy.AuthenticationFakeHelper;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
@@ -41,6 +42,7 @@ class InterrogationControllerTest {
     private StateDataFakeService stateDataService;
     private AuthenticationFakeHelper authenticatedUserHelper;
     private AuthenticatedUserTestHelper authenticationUserProvider;
+    private SynchronisationFakeService synchronisationFakeService;
 
     @BeforeEach
     void init() {
@@ -50,7 +52,8 @@ class InterrogationControllerTest {
         interrogationFakeService = new InterrogationFakeService();
         stateDataService = new StateDataFakeService();
         authenticatedUserHelper = new AuthenticationFakeHelper();
-        interrogationController = new InterrogationController(interrogationFakeService, pilotageComponent, metadataConverter, stateDataService, authenticatedUserHelper);
+        synchronisationFakeService = new SynchronisationFakeService();
+        interrogationController = new InterrogationController(interrogationFakeService, pilotageComponent, metadataConverter, stateDataService, authenticatedUserHelper, synchronisationFakeService);
     }
 
     @Test
