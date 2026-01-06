@@ -3,11 +3,15 @@ package fr.insee.queen.domain.synchronisation.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.modelefiliere.EventDto;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
+
+import java.util.UUID;
 import fr.insee.queen.domain.interrogation.gateway.StateDataRepository;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
+import fr.insee.queen.domain.messaging.port.serverside.Publisher;
 import fr.insee.queen.domain.synchronisation.gateway.SynchronisationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +34,9 @@ class SynchronisationApiServiceTest {
     @Mock
     private StateDataRepository stateDataRepository;
 
+    @Mock
+    private Publisher publisher;
+
     private SynchronisationApiService synchronisationApiService;
 
     private ObjectMapper objectMapper;
@@ -39,7 +46,8 @@ class SynchronisationApiServiceTest {
         synchronisationApiService = new SynchronisationApiService(
                 synchronisationRepository,
                 interrogationRepository,
-                stateDataRepository
+                stateDataRepository,
+                publisher
         );
         objectMapper = new ObjectMapper();
     }
@@ -76,6 +84,7 @@ class SynchronisationApiServiceTest {
         verify(synchronisationRepository).synchronise(interrogationId);
         verify(interrogationRepository).saveData(interrogationId, data);
         verify(stateDataRepository).save(interrogationId, stateData);
+        verify(publisher).publish(any(EventDto.class), any(UUID.class));
     }
 
     @Test
@@ -92,6 +101,7 @@ class SynchronisationApiServiceTest {
         verify(synchronisationRepository).synchronise(interrogationId);
         verifyNoInteractions(interrogationRepository);
         verifyNoInteractions(stateDataRepository);
+        verifyNoInteractions(publisher);
     }
 
     @Test
@@ -122,6 +132,7 @@ class SynchronisationApiServiceTest {
         verify(synchronisationRepository).synchronise(interrogationId);
         verify(interrogationRepository, never()).saveData(anyString(), any());
         verify(stateDataRepository).save(interrogationId, stateData);
+        verify(publisher).publish(any(EventDto.class), any(UUID.class));
     }
 
     @Test
@@ -153,5 +164,6 @@ class SynchronisationApiServiceTest {
         verify(synchronisationRepository).synchronise(interrogationId);
         verify(interrogationRepository).saveData(interrogationId, data);
         verify(stateDataRepository, never()).save(anyString(), any());
+        verify(publisher).publish(any(EventDto.class), any(UUID.class));
     }
 }

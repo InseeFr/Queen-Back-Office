@@ -694,13 +694,13 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
                     assertThat(updatedState).isPresent();
                     assertThat(updatedState.get().leafStates()).hasSize(2);
                 });
+    
+            // Then: Verify final state
+            var finalState = stateDataService.findStateData(interrogationId);
+            assertThat(finalState).isPresent();
 
-        // Then: Verify final state
-        var finalState = stateDataService.findStateData(interrogationId);
-        assertThat(finalState).isPresent();
-
-        // State type should be preserved (INIT)
-        assertThat(finalState.get().state()).isEqualTo(StateDataType.INIT);
+            // State type should be preserved (INIT)
+            assertThat(finalState.get().state()).isEqualTo(StateDataType.INIT);
 
         // CurrentPage should be preserved
         assertThat(finalState.get().currentPage()).isEqualTo("1");
