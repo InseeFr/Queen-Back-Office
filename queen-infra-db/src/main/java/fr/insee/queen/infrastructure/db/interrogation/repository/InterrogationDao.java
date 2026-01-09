@@ -34,7 +34,6 @@ import java.util.Optional;
 public class InterrogationDao implements InterrogationRepository {
 
     private final InterrogationJpaRepository crudRepository;
-    private final CommentJpaRepository commentRepository;
     private final PersonalizationJpaRepository personalizationRepository;
     private final DataRepository dataRepository;
     private final CampaignJpaRepository campaignRepository;
@@ -80,7 +79,10 @@ public class InterrogationDao implements InterrogationRepository {
 
     @Override
     public List<InterrogationState> findAllByState(String campaignId, StateDataType state) {
-        return crudRepository.findAllByState(campaignId, state);
+        if(state == null) {
+            return crudRepository.findAllByCampaignWithoutState(campaignId);
+        }
+        return crudRepository.findAllByCampaignAndState(campaignId, state);
     }
 
     @Override
@@ -104,12 +106,10 @@ public class InterrogationDao implements InterrogationRepository {
         QuestionnaireModelDB questionnaire = questionnaireModelRepository.getReferenceById(interrogation.questionnaireId());
         InterrogationDB interrogationDB = new InterrogationDB(interrogation.id(), interrogation.surveyUnitId(), campaign, questionnaire, interrogation.correlationId());
         DataDB dataDB = dataFactory.buildData(interrogation.data(), interrogationDB);
-        CommentDB commentDB = new CommentDB(interrogation.comment(), interrogationDB);
         if (interrogation.personalization() != null) {
             PersonalizationDB personalizationDB = new PersonalizationDB(interrogation.personalization(), interrogationDB);
             interrogationDB.setPersonalization(personalizationDB);
         }
-        interrogationDB.setComment(commentDB);
         interrogationDB.setData(dataDB);
         interrogationDB.setCorrelationId(interrogation.correlationId());
         crudRepository.save(interrogationDB);
@@ -130,20 +130,6 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public void saveComment(String interrogationId, ObjectNode comment) {
-        if (comment == null) {
-            return;
-        }
-
-        int countUpdated = commentRepository.updateComment(interrogationId, comment);
-        if (countUpdated == 0) {
-            InterrogationDB interrogation = crudRepository.getReferenceById(interrogationId);
-            CommentDB commentDB = new CommentDB(comment, interrogation);
-            commentRepository.save(commentDB);
-        }
-    }
-
-    @Override
     public void saveData(String interrogationId, ObjectNode data) {
         if (data == null) {
             return;
@@ -159,11 +145,6 @@ public class InterrogationDao implements InterrogationRepository {
     @Override
     public void updateCollectedData(String interrogationId, ObjectNode partialCollectedDataNode) {
         dataRepository.updateCollectedData(interrogationId, partialCollectedDataNode);
-    }
-
-    @Override
-    public Optional<ObjectNode> findComment(String interrogationId) {
-        return commentRepository.findComment(interrogationId);
     }
 
     @Override
@@ -191,7 +172,6 @@ public class InterrogationDao implements InterrogationRepository {
         String interrogationId = interrogation.id();
         save(interrogation.id(), interrogation.surveyUnitId(), interrogation.campaignId(), interrogation.questionnaireId());
         savePersonalization(interrogationId, interrogation.personalization());
-        saveComment(interrogationId, interrogation.comment());
         saveData(interrogationId, interrogation.data());
     }
 

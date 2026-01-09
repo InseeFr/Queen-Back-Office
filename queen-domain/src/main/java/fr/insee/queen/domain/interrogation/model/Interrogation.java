@@ -13,29 +13,28 @@ public record Interrogation(
         String questionnaireId,
         ArrayNode personalization,
         ObjectNode data,
-        ObjectNode comment,
         StateData stateData,
         UUID correlationId) {
     public static Interrogation create(String id, String surveyUnitId, ArrayNode personalization,
-                                    ObjectNode comment, ObjectNode data,
+                                    ObjectNode data,
                                     StateData stateData) {
         return new Interrogation(id, surveyUnitId, null,
                 null, personalization, data,
-                comment, stateData, null);
+                stateData, null);
     }
 
     public static Interrogation createForUpdate(String id, String surveyUnitId, ArrayNode personalization,
-                                             ObjectNode comment, ObjectNode data,
+                                             ObjectNode data,
                                              StateData stateData) {
         return new Interrogation(id, surveyUnitId, null, null,
-                personalization, data, comment, stateData, null);
+                personalization, data, stateData, null);
     }
 
     public static Interrogation createFromAsync(String id, String surveyUnitId, ArrayNode personalization,
-                                       ObjectNode comment, ObjectNode data,
+                                       ObjectNode data,
                                        StateData stateData, UUID  correlationId) {
         return new Interrogation(id, surveyUnitId, null,
                 null, personalization, data,
-                comment, stateData, correlationId);
+                stateData, correlationId);
     }
 }

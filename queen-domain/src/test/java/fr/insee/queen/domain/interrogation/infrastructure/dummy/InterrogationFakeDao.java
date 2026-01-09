@@ -98,11 +98,6 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
-    public void saveComment(String interrogationId, ObjectNode comment) {
-        // not used at this moment for unit tests
-    }
-
-    @Override
     public void saveData(String interrogationId, ObjectNode data) {
         // not used at this moment for unit tests
     }
@@ -110,11 +105,6 @@ public class InterrogationFakeDao implements InterrogationRepository {
     @Override
     public void updateCollectedData(String interrogationId, ObjectNode partialCollectedDataNode) {
         // not used at this moment for unit tests
-    }
-
-    @Override
-    public Optional<ObjectNode> findComment(String interrogationId) {
-        return Optional.empty();
     }
 
     @Override

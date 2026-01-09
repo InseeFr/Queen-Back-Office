@@ -23,7 +23,7 @@ class InterrogationCommonAssertions {
                 "id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01",
                 "surveyUnitId": "test-survey-unit-id-55",
                 "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},
                 "stateData":{"state":"EXTRACTED","currentPage":"2.3#5"},
                 "questionnaireId":"VQS2021X00",
                 "correlationId":"0c83fb82-0197-7197-8e8c-a6ce2c2dbd04"
@@ -56,7 +56,7 @@ class InterrogationCommonAssertions {
             {
                 "id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01",
                 "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},
                 "stateData":{"state":"EXTRACTED","date":1747395350727,"currentPage":"2.3#5"},
                 "questionnaireId":"VQS2021X00"
             }""";
@@ -78,7 +78,7 @@ class InterrogationCommonAssertions {
                     "id":"517046b6-bd88-47e0-838e-00d03461f592",
                     "surveyUnitId": "survey-unit-id12",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED"},
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},
                     "stateData":{"state":"EXTRACTED","currentPage":"2.3#5"},
                     "questionnaireId":"simpsonsV2",
                     "correlationId":"0c83fb82-0197-7197-8e8c-a6ce2c2dbd04"
@@ -90,7 +90,7 @@ class InterrogationCommonAssertions {
                 {
                     "id":"517046b6-bd88-47e0-838e-00d03461f592",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED"},
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},
                     "stateData":{"state":"EXTRACTED","date":1747395350727,"currentPage":"2.3#5"},
                     "questionnaireId":"simpsonsV2"
                 }""";
@@ -110,7 +110,7 @@ class InterrogationCommonAssertions {
                 {
                     "id":"517046b6-bd88-47e0-838e-00d03461f592",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"COMMENT UPDATED 2"},
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},
                     "stateData":{"state":"EXTRACTED","date":1111111111,"currentPage":"2.3#5"},
                     "questionnaireId":"simpsons"
                 }""";
@@ -131,7 +131,7 @@ class InterrogationCommonAssertions {
                     "id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01",
                     "surveyUnitId": "survey-unit-id",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},
                     "questionnaireId":"VQS2021X00",
                     "correlationId":"0c83fb82-0197-7197-8e8c-a6ce2c2dbd04"
                 }""";
@@ -139,7 +139,7 @@ class InterrogationCommonAssertions {
                 {
                     "id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},
                     "questionnaireId":"VQS2021X00"
                 }""";
         mockMvc.perform(post("/api/campaign/VQS2021X00/interrogation")

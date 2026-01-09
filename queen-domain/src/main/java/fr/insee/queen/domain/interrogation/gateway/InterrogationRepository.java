@@ -90,7 +90,7 @@ public interface InterrogationRepository {
     void deleteInterrogations(String campaignId);
 
     /**
-     * Delete interrogation (with data/paradatas/state-data/comment/interrogation temp zone)
+     * Delete interrogation (with data/paradatas/state-data/interrogation temp zone)
      *
      * @param interrogationId interrogation id
      */
@@ -112,14 +112,6 @@ public interface InterrogationRepository {
     void savePersonalization(String interrogationId, ArrayNode personalization);
 
     /**
-     * Save comment of an interrogation
-     *
-     * @param interrogationId interrogation id
-     * @param comment comment value
-     */
-    void saveComment(String interrogationId, ObjectNode comment);
-
-    /**
      * Save data of an interrogation
      *
      * @param interrogationId interrogation id
@@ -133,14 +125,6 @@ public interface InterrogationRepository {
      * @param partialCollectedDataNode partial data value
      */
     void updateCollectedData(String interrogationId, ObjectNode partialCollectedDataNode);
-
-    /**
-     * Find the comment of an interrogation
-     *
-     * @param interrogationId interrogation id
-     * @return the comment value
-     */
-    Optional<ObjectNode> findComment(String interrogationId);
 
     /**
      * Find the data of an interrogation
@@ -175,7 +159,7 @@ public interface InterrogationRepository {
     boolean exists(String interrogationId);
 
     /**
-     * Update interrogation infos (data/state-data/comment/personalization)
+     * Update interrogation infos (data/state-data/personalization)
      * @param interrogation interrogation to update
      */
     void update(Interrogation interrogation);

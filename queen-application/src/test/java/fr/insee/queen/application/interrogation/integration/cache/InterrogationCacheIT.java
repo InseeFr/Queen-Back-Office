@@ -61,7 +61,6 @@ class InterrogationCacheIT {
                 "LOG2021X11Tel",
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
                 null,
                 null);
         interrogationService.createInterrogation(interrogation);
@@ -96,7 +95,6 @@ class InterrogationCacheIT {
                 "LOG2021X11Tel",
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
                 null,
                 null);
         interrogationService.createInterrogation(interrogation);
@@ -129,7 +127,6 @@ class InterrogationCacheIT {
                 "LOG2021X11Tel",
                 "LOG2021X11Tel",
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
                 null);
@@ -165,7 +162,6 @@ class InterrogationCacheIT {
                 campaignId,
                 "LOG2021X11Tel",
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
                 null);
