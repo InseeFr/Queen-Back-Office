@@ -1,6 +1,5 @@
 package fr.insee.queen.jms.service.stub;
 
-import com.networknt.schema.ValidationMessage;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.service.InterrogationBatchService;
@@ -59,7 +58,6 @@ public class InterrogationBatchFakeService implements InterrogationBatchService 
         interrogationBatchUsed = Interrogation.create(interrogations.getFirst().id(),
                 interrogations.getFirst().surveyUnitId(),
                 interrogations.getFirst().personalization(),
-                interrogations.getFirst().comment(),
                 interrogations.getFirst().data(),
                 interrogations.getFirst().stateData());
     }

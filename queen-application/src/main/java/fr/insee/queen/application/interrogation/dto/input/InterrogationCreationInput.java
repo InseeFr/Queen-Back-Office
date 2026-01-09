@@ -25,8 +25,6 @@ public record InterrogationCreationInput(
         @NotNull
         @Schema(ref = SchemaType.Names.DATA)
         ObjectNode data,
-        @NotNull
-        ObjectNode comment,
         @Valid
         StateDataInput stateData) {
 
@@ -37,7 +35,6 @@ public record InterrogationCreationInput(
                 interrogation.questionnaireId(),
                 interrogation.personalization(),
                 interrogation.data(),
-                interrogation.comment(),
                 StateDataInput.toModel(interrogation.stateData()),
                 null);
     }

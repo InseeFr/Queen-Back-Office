@@ -71,12 +71,10 @@ public class PilotageFakeService implements PilotageService {
                 new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "campaign-id", "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(),
                         JsonNodeFactory.instance.objectNode(),
-                        JsonNodeFactory.instance.objectNode(),
                         new StateData(StateDataType.INIT, 0L, "2#3"),
                         null),
                 new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "campaign-id", "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(),
-                        JsonNodeFactory.instance.objectNode(),
                         JsonNodeFactory.instance.objectNode(),
                         new StateData(StateDataType.INIT, 0L, "2#3"),
                         null)

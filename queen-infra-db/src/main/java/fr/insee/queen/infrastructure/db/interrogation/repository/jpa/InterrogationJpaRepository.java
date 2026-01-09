@@ -104,12 +104,11 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.questionnaireModel.id,
                 s.personalization.value,
                 s.data.value,
-                s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
                 s.stateData.currentPage
             )
-            from InterrogationDB s left join s.personalization left join s.data left join s.comment left join s.stateData where s.id=:interrogationId""")
+            from InterrogationDB s left join s.personalization left join s.data left join s.stateData where s.id=:interrogationId""")
     Optional<InterrogationProjection> findOneById(String interrogationId);
 
     /**
@@ -125,12 +124,11 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.questionnaireModel.id,
                 s.personalization.value,
                 s.data.value,
-                s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
                 s.stateData.currentPage
             )
-            from InterrogationDB s left join s.personalization left join s.data left join s.comment left join s.stateData order by s.id asc""")
+            from InterrogationDB s left join s.personalization left join s.data left join s.stateData order by s.id asc""")
     List<InterrogationProjection> findAllInterrogations();
 
     /**
@@ -166,11 +164,10 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
     Optional<List<String>> findAllIds();
 
     /**
-     * Find all interrogations by state
+     * Find all interrogations by campaign when no state
      *
      * @param campaignId campaign id
-     * @param stateDataType state data used for filtering
-     * @return List of interrogations by state
+     * @return List of interrogations by campaign when no state
      */
     @Query("""
             select new fr.insee.queen.domain.interrogation.model.InterrogationState(
@@ -187,7 +184,26 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
             from InterrogationDB s left join s.stateData st
             where st.state = :stateDataType
             and s.campaign.id = :campaignId""")
-    List<InterrogationState> findAllByState(String campaignId, StateDataType stateDataType);
+    List<InterrogationState> findAllByCampaignAndState(String campaignId, StateDataType stateDataType);
+
+    /**
+     * Find all interrogations by campaign when no state
+     *
+     * @param campaignId campaign id
+     * @return List of interrogations by campaign when no state
+     */
+    @Query("""
+            select new fr.insee.queen.domain.interrogation.model.InterrogationState(
+                s.id,
+                s.surveyUnitId,
+                s.questionnaireModel.id,
+                s.campaign.id,
+                null
+            )
+            from InterrogationDB s left join s.stateData st
+            where st is null
+            and s.campaign.id = :campaignId""")
+    List<InterrogationState> findAllByCampaignWithoutState(String campaignId);
 
     /**
      * Search interrogations by ids
@@ -202,7 +218,6 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.questionnaireModel.id,
                 s.personalization.value,
                 s.data.value,
-                s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
                 s.stateData.currentPage
@@ -210,7 +225,6 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
             from InterrogationDB s
             left join s.personalization
             left join s.data
-            left join s.comment
             left join s.stateData
             where s.id in :interrogationIds
             order by s.id asc""")

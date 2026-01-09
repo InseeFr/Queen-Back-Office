@@ -17,15 +17,13 @@ public record InterrogationUpdateInput(
         @Schema(ref = SchemaType.Names.DATA)
         @JsonValid(SchemaType.DATA)
         ObjectNode data,
-        ObjectNode comment,
         @Valid
         StateDataForInterrogationUpdateInput stateData) {
 
     public static Interrogation toModel(String interrogationId, InterrogationUpdateInput interrogation) {
         ArrayNode personalization = interrogation.personalization();
-        ObjectNode comment = interrogation.comment();
         ObjectNode data = interrogation.data();
-        return Interrogation.createForUpdate(interrogationId, null, personalization, comment, data,
+        return Interrogation.createForUpdate(interrogationId, null, personalization, data,
                 StateDataForInterrogationUpdateInput.toModel(interrogation.stateData()));
     }
 }

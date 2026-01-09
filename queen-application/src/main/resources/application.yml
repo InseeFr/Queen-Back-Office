@@ -43,8 +43,6 @@ feature:
       campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
   cache:
     enabled: true
-  comments:
-    enabled: false
   interviewer-mode:
     enabled: false
 

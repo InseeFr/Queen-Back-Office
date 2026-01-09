@@ -115,7 +115,7 @@ class InterrogationIT {
                 {
                     "id":"test-interrogation2",
                     "personalization":[{"name":"whoAnswers33","value":"MrDupond"},{"name":"whoAnswers2","value":""}],
-                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},"comment":{"COMMENT":"acomment"},
+                    "data":{"EXTERNAL":{"LAST_BROADCAST":"12/07/1998"}},
                     "questionnaireId":"simpsons"
                 }""";
         mockMvc.perform(post("/api/campaign/VQS2021X00/interrogation")
@@ -392,7 +392,6 @@ class InterrogationIT {
             "id":"fa667899-7698-433c-8eb1-2eb47bd7a727",
             "surveyUnitId": "survey-unit-test",
             "data":{},
-            "comment":{"COMMENT":"acomment"},
             "questionnaireId":"simpsons",
             "correlationId":"0c83fb82-0197-7197-8e8c-a6ce2c2dbd04"
         }""";
@@ -410,7 +409,6 @@ class InterrogationIT {
             "id":"e83776d1-3a0a-41e5-b1ef-555b107bb3f3",
             "surveyUnitId": "survey-unit-test",
             "data":{},
-            "comment":{"COMMENT":"acomment"},
             "questionnaireId":"simpsons",
             "correlationId":"0c83fb82-0197-7197-8e8c-a6ce2c2dbd04"
             

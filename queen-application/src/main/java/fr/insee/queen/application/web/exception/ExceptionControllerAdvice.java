@@ -11,6 +11,7 @@ import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuest
 import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.interrogation.service.exception.InterrogationAlreadyExistException;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.domain.interrogation.service.exception.MetadataValueNotFoundException;
@@ -196,6 +197,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(EntityAlreadyExistException.class)
     public ResponseEntity<ApiError> entityAlreadyExistException(EntityAlreadyExistException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(InterrogationAlreadyExistException.class)
+    public ResponseEntity<ApiError> interrogationAlreadyExistException(InterrogationAlreadyExistException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler(IntegrationComponentException.class)

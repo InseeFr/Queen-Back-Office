@@ -58,7 +58,6 @@ class InterrogationApiServiceTest {
         Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
         interrogationFakeDao.setInterrogationExist(false);
@@ -74,7 +73,6 @@ class InterrogationApiServiceTest {
         Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
         assertThatThrownBy(() -> interrogationApiService.createInterrogation(interrogation))
@@ -87,7 +85,6 @@ class InterrogationApiServiceTest {
     void testCreate04() throws StateDataInvalidDateException {
         Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
                 null);
@@ -104,7 +101,6 @@ class InterrogationApiServiceTest {
         Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
         interrogationFakeDao.setInterrogationExist(false);
@@ -119,7 +115,6 @@ class InterrogationApiServiceTest {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
         Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
@@ -137,7 +132,6 @@ class InterrogationApiServiceTest {
         Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
                 null,
                 null);
         interrogationApiService.updateInterrogation(interrogation);
@@ -152,7 +146,6 @@ class InterrogationApiServiceTest {
         Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
-                JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
         interrogationApiService.updateInterrogation(interrogation);
@@ -166,7 +159,6 @@ class InterrogationApiServiceTest {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
         Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);

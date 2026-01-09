@@ -13,7 +13,6 @@ public record InterrogationProjection(
         String questionnaireId,
         ArrayNode personalization,
         ObjectNode data,
-        ObjectNode comment,
         StateDataType state,
         Long date,
         String currentPage) {
@@ -29,7 +28,6 @@ public record InterrogationProjection(
                 projection.questionnaireId(),
                 projection.personalization(),
                 projection.data(),
-                projection.comment(),
                 stateDataModel,
                 null);
     }

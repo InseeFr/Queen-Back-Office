@@ -54,9 +54,6 @@ public class InterrogationDB {
     @OneToOne(mappedBy = "interrogation", cascade = CascadeType.ALL)
     private DataDB data;
 
-    @OneToOne(mappedBy = "interrogation", cascade = CascadeType.ALL)
-    private CommentDB comment;
-
     @Column(name = "correlation_id")
     private UUID correlationId;
 

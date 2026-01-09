@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
 import fr.insee.queen.domain.campaign.service.MetadataService;
 import fr.insee.queen.domain.common.cache.CacheName;
-import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.*;
+import fr.insee.queen.domain.interrogation.service.exception.InterrogationAlreadyExistException;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +57,7 @@ public class InterrogationApiService implements InterrogationService {
     @Override
     public void throwExceptionIfInterrogationExist(String interrogationId) {
         if (existsById(interrogationId)) {
-            throw new EntityAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, interrogationId));
+            throw new InterrogationAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, interrogationId));
         }
     }
 

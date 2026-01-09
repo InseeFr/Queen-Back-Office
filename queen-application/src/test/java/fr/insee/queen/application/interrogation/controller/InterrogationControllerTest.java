@@ -161,7 +161,7 @@ class InterrogationControllerTest {
     void testUpdateInterrogation01() throws LockedResourceException {
         // given
         StateDataForInterrogationUpdateInput stateData = new StateDataForInterrogationUpdateInput(null, 123456789L, "2.3");
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, stateData);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, stateData);
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION1_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.NORMAL);
 
@@ -178,7 +178,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation and transform state-data to null if input state data is null")
     void testUpdateInterrogation02() throws LockedResourceException {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null);
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION1_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.NORMAL);
 
@@ -195,7 +195,7 @@ class InterrogationControllerTest {
     @DisplayName("Should throw exception when role is reviewer and campaign is sensitive")
     void testUpdateInterrogationException() {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -211,7 +211,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation when campaign is sensitive and role is admin/webclient")
     void testUpdateInterrogation04() throws LockedResourceException {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -229,7 +229,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
     void testUpdateInterrogation06() throws LockedResourceException {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -251,7 +251,7 @@ class InterrogationControllerTest {
     @DisplayName("Should throw exception when campaign is sensitive, role is interviewer and state is EXTRACTED/VALIDATED")
     void testUpdateInterrogationException02(String interrogationId) {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(interrogationId);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -283,7 +283,6 @@ class InterrogationControllerTest {
         assertThat(pilotageComponent.isChecked()).isTrue();
         assertThat(interrogationDto.id()).isEqualTo(interrogation.id());
         assertThat(interrogationDto.data()).isEqualTo(interrogation.data());
-        assertThat(interrogationDto.comment()).isEqualTo(interrogation.comment());
         assertThat(interrogationDto.personalization()).isEqualTo(interrogation.personalization());
         assertThat(interrogationDto.stateData().state()).isEqualTo(interrogation.stateData().state());
         assertThat(interrogationDto.stateData().currentPage()).isEqualTo(interrogation.stateData().currentPage());
@@ -322,7 +321,6 @@ class InterrogationControllerTest {
         assertThat(pilotageComponent.isChecked()).isTrue();
         assertThat(interrogationDto.id()).isEqualTo(interrogation.id());
         assertThat(interrogationDto.data()).isEqualTo(interrogation.data());
-        assertThat(interrogationDto.comment()).isEqualTo(interrogation.comment());
         assertThat(interrogationDto.personalization()).isEqualTo(interrogation.personalization());
         assertThat(interrogationDto.stateData().state()).isEqualTo(interrogation.stateData().state());
         assertThat(interrogationDto.stateData().currentPage()).isEqualTo(interrogation.stateData().currentPage());
@@ -348,7 +346,6 @@ class InterrogationControllerTest {
         assertThat(pilotageComponent.isChecked()).isTrue();
         assertThat(interrogationDto.id()).isEqualTo(interrogation.id());
         assertThat(interrogationDto.data()).isEqualTo(interrogation.data());
-        assertThat(interrogationDto.comment()).isEqualTo(interrogation.comment());
         assertThat(interrogationDto.personalization()).isEqualTo(interrogation.personalization());
         assertThat(interrogationDto.stateData().state()).isEqualTo(interrogation.stateData().state());
         assertThat(interrogationDto.stateData().currentPage()).isEqualTo(interrogation.stateData().currentPage());
@@ -377,7 +374,6 @@ class InterrogationControllerTest {
         assertThat(interrogationDto.id()).isEqualTo(interrogation.id());
         assertThat(interrogationDto.data()).isNotEqualTo(interrogation.data());
         assertThat(interrogationDto.data()).isEqualTo(JsonNodeFactory.instance.objectNode());
-        assertThat(interrogationDto.comment()).isEqualTo(interrogation.comment());
         assertThat(interrogationDto.personalization()).isEqualTo(interrogation.personalization());
         assertThat(interrogationDto.stateData().state()).isEqualTo(interrogation.stateData().state());
         assertThat(interrogationDto.stateData().currentPage()).isEqualTo(interrogation.stateData().currentPage());
@@ -404,7 +400,6 @@ class InterrogationControllerTest {
         assertThat(pilotageComponent.isChecked()).isTrue();
         assertThat(interrogationDto.id()).isEqualTo(interrogation.id());
         assertThat(interrogationDto.data()).isEqualTo(interrogation.data());
-        assertThat(interrogationDto.comment()).isEqualTo(interrogation.comment());
         assertThat(interrogationDto.personalization()).isEqualTo(interrogation.personalization());
         assertThat(interrogationDto.stateData()).isNull();
         assertThat(interrogationDto.questionnaireId()).isEqualTo(interrogation.questionnaireId());

@@ -29,4 +29,5 @@
 	<include file="changelog/630_add_correlation_id.xml" relativeToChangelogFile="true"/>
     <include file="changelog/700_events.xml" relativeToChangelogFile="true"/>
 	<include file="changelog/701_add_constraint_not_null_sensitivity.xml" relativeToChangelogFile="true" />
+	<include file="changelog/702_drop_comment_table.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

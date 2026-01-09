@@ -36,7 +36,6 @@
       }
     }
   },
-  "comment": "commentaire",
   "stateData": {
     "state": "INITIALIZATION",
     "date": null,

@@ -6,12 +6,12 @@
 -- Data for Name: campaign; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-TRUNCATE TABLE public.interrogation_temp_zone, public.state_data, public.paradata_event,
-    public.data, public.comment, public.personalization, public.interrogation,
-    public.required_nomenclature, public.questionnaire_model, public.nomenclature,
-    public.metadata, public.campaign;
+TRUNCATE TABLE interrogation_temp_zone, state_data, paradata_event,
+    data, personalization, interrogation,
+    required_nomenclature, questionnaire_model, nomenclature,
+    metadata, campaign;
 
-INSERT INTO public.campaign(id, label, sensitivity) VALUES
+INSERT INTO campaign(id, label, sensitivity) VALUES
   ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'NORMAL'),
   ('VQS2021X00', 'Everyday life and health survey 2021', 'NORMAL'),
   ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'SENSITIVE'),
@@ -23,7 +23,7 @@ INSERT INTO public.campaign(id, label, sensitivity) VALUES
 -- Data for Name: metadata; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.metadata(id, value, campaign_id) VALUES 
+INSERT INTO metadata(id, value, campaign_id) VALUES 
   ('6ce93fc8-1abd-4da3-b251-805943948954', '{}', 'SIMPSONS2020X00'),
   ('0fb58fa2-e26a-4a68-9ca7-6ec63bb2fb71', '{}', 'VQS2021X00'),
   ('09a6cf03-2998-4451-9cc0-522b7c7f423a', '{  "logos": [{"url": "https://insee.fr/logo1.png","label": "logo1"},{"url":"https://insee.fr/logo2.png","label":"logo2"},{"url":"https://insee.fr/logo3.png","label":"logo3"}],"variables": [{"name": "Enq_LibelleEnquete", "value": "Enquête logement pour la recette technique"}, {"name": "Enq_ObjectifsCourts", "value": "Cette enquête permet de connaître votre logement mais surtout nos applis"}, {"name": "Enq_CaractereObligatoire", "value": true}, {"name": "Enq_NumeroVisa", "value": "2021A054EC"}, {"name": "Enq_MinistereTutelle", "value": "de l''Économie, des Finances et de la Relance"}, {"name": "Enq_ParutionJo", "value": true}, {"name": "Enq_DateParutionJo", "value": "23/11/2020"}, {"name": "Enq_RespOperationnel", "value": "L’Institut national de la statistique et des études économiques (Insee)"}, {"name": "Enq_RespTraitement", "value": "l''Insee"}, {"name": "Enq_AnneeVisa", "value": "2021"}, {"name": "Loi_statistique", "value": "https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000888573"}, {"name": "Loi_rgpd", "value": "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32016R0679"}, {"name": "Loi_informatique", "value": "https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000886460"}], "inseeContext": "household"}', 'LOG2021X11Web'),
@@ -34,7 +34,7 @@ INSERT INTO public.metadata(id, value, campaign_id) VALUES
 -- Dependencies: 214
 -- Data for Name: nomenclature; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-INSERT INTO public.nomenclature(id, label, value) VALUES
+INSERT INTO nomenclature(id, label, value) VALUES
   ('L_PAYSNAIS', 'pays', '[{"id": "001", "label": "FRANCE", "codenum": "250", "codealpha": "FRA", "libelle_cog": "FRANCE"}, {"id": "002", "label": "BELGIQUE", "codenum": "056", "codealpha": "BEL", "libelle_cog": "BELGIQUE"}]'),
   ('L_DEPNAIS', 'départements français', '[{"id": "01", "label": "AIN (01)"}, {"id": "02", "label": "AISNE (02)"}]'),
   ('cog-communes', 'communes françaises', '[{"id": "10002", "label": "Ailleville", "nccenr": "Ailleville"}, {"id": "10003", "label": "Aix-en-Othe", "nccenr": "Aix-en-Othe"}]'),
@@ -48,7 +48,7 @@ INSERT INTO public.nomenclature(id, label, value) VALUES
 -- Data for Name: questionnaire_model; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.questionnaire_model(id, label, value, campaign_id) VALUES
+INSERT INTO questionnaire_model(id, label, value, campaign_id) VALUES
   ('QmWithoutCamp', 'Questionnaire with no campaign', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', NULL),
   ('simpsons', 'Questionnaire about the Simpsons tv show', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'SIMPSONS2020X00'),
   ('simpsonsV2', 'Questionnaire about the Simpsons tv show version 2', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'SIMPSONS2020X00'),
@@ -61,7 +61,7 @@ INSERT INTO public.questionnaire_model(id, label, value, campaign_id) VALUES
 -- Dependencies: 218
 -- Data for Name: required_nomenclature; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-INSERT INTO public.required_nomenclature(id_required_nomenclature, code) VALUES
+INSERT INTO required_nomenclature(id_required_nomenclature, code) VALUES
   ('QmWithoutCamp', 'cities2019'),
   ('simpsons', 'cities2019'),
   ('simpsons', 'regions2019'),
@@ -85,7 +85,7 @@ INSERT INTO public.required_nomenclature(id_required_nomenclature, code) VALUES
 
 -- Inserts adaptés avec UUIDv7 explicites pour la table interrogation et mapping sur les autres tables
 
-INSERT INTO public.interrogation
+INSERT INTO interrogation
 (id, survey_unit_id, campaign_id, questionnaire_model_id, correlation_id)
 VALUES
     ('517046b6-bd88-47e0-838e-00d03461f592', 'survey-unit-11',  'SIMPSONS2020X00', 'simpsons',    null),
@@ -105,26 +105,7 @@ VALUES
     ('80dc2493-5258-44c5-8ec1-9c600d1df80b', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', null),
     ('4f612c5d-8b60-46bd-a2de-1f0d861264db', 'survey-unit-diff-data', 'LOG2021X11Tel','LOG2021X11Tel', null);
 
-
-INSERT INTO public.comment (id, value, interrogation_id) VALUES
-  ('a78366f8-8653-448a-8754-53a3135a2137', '{"COMMENT": "un commentaire"}', '517046b6-bd88-47e0-838e-00d03461f592'),
-  ('7d87278a-c6fc-4989-829c-9867864ef74b', '{}', 'd98d28c2-1535-4fc8-a405-d6a554231bbc'),
-  ('67945983-430a-4b34-99e4-86ee75e0e27a', '{}', 'c8142dcc-c133-49aa-a969-bb9828190a2c'),
-  ('56bfe7ef-1ea6-49a4-bd37-d46ddee36fcc', '{}', '45c78a3e-f3b6-4d69-bd58-d2ca749dd7cd'),
-  ('ee175940-8f81-4d52-8e72-1734e8f3f0fe', '{}', '89f4df89-8e83-444f-8f43-6d964c3339d8'),
-  ('86f7a230-1408-4569-b663-9817840ab7da', '{}', 'ae9c355c-22d3-4188-bb7e-53b7638b988b'),
-  ('c0bc2f92-be6b-4ebd-b353-a04d05f6d314', '{}', '77ae37f6-4e51-4282-adf2-e01b15e1ef09'),
-  ('692a1749-e293-4bcf-8456-4fb8edc9a5a7', '{}', 'b1771f46-6916-4234-94bc-6a4fcd626637'),
-  ('53912a39-0e87-4f3c-804b-32910a2c1e6e', '{}', '538d89c2-1047-48f7-8c16-02e9f41a8093'),
-  ('c42ebc95-f35c-4a34-be61-5b1e9c1a37fe', '{}', 'd128f9bf-e933-48bd-a7e5-8892a6a92997'),
-  ('d8b683e0-850e-487f-bc8d-6f3c9440e32b', '{}', 'd542db08-6d58-4665-9302-56eddf8185d2'),
-  ('d6f92b88-0b80-41dc-a1b3-e69b2fb71846', '{}', '89512ef9-4f39-466b-9388-a3626167f0c3'),
-  ('70ee3af3-fd2c-4745-b0bb-73124fa016b8', '{}', 'ec311ca8-41ec-4cbb-86ae-99745ffd93cb'),
-  ('833b5a5d-845e-4b3e-a725-d444907ee476', '{}', '31e0537d-01ab-4402-9a59-d001d3ba00fd'),
-  ('692a1749-e293-4bcf-8456-4fb8edc9a5a8', '{}', '80dc2493-5258-44c5-8ec1-9c600d1df80b'),
-  ('692a1749-e293-4bcf-8456-4fb8edc9a5a9', '{}', '4f612c5d-8b60-46bd-a2de-1f0d861264db');
-
-INSERT INTO public.paradata_event (id, value, interrogation_id, survey_unit_id) VALUES
+INSERT INTO paradata_event (id, value, interrogation_id, survey_unit_id) VALUES
   ('ff45a68e-4f76-4875-b4f7-80730d3a6e35', '{"idInterrogation": "89f4df89-8e83-444f-8f43-6d964c3339d8"}', '89f4df89-8e83-444f-8f43-6d964c3339d8', '20'),
   ('cd0917a0-2239-425f-9395-5a87f875b060', '{"idInterrogation": "89f4df89-8e83-444f-8f43-6d964c3339d8"}', '89f4df89-8e83-444f-8f43-6d964c3339d8', '20'),
   ('e01d5d4b-fb01-403b-b4b3-d3841e0d12c9', '{"idInterrogation": "ae9c355c-22d3-4188-bb7e-53b7638b988b"}', 'ae9c355c-22d3-4188-bb7e-53b7638b988b', '21'),
@@ -148,7 +129,7 @@ INSERT INTO public.paradata_event (id, value, interrogation_id, survey_unit_id) 
 
 
 -- 4. personalization : adaptation du champ interrogation_id
-INSERT INTO public.personalization (id, value, interrogation_id) VALUES
+INSERT INTO personalization (id, value, interrogation_id) VALUES
   ('22fda6de-c0c0-4b3c-b10c-2a2b705644c7', '[{"name": "whoAnswers1", "value": "Mr Dupond"}, {"name": "whoAnswers2", "value": ""}]', '517046b6-bd88-47e0-838e-00d03461f592'),
   ('86ee92ff-0d5d-4034-8cfb-a29f81384918', '[]', 'd98d28c2-1535-4fc8-a405-d6a554231bbc'),
   ('6fcbbd84-3464-4290-b8fc-cdf0082ee339', '[]', 'c8142dcc-c133-49aa-a969-bb9828190a2c'),
@@ -167,7 +148,7 @@ INSERT INTO public.personalization (id, value, interrogation_id) VALUES
   ('8b377092-33da-4494-a5fc-d2825d755e2c', '[]', '31e0537d-01ab-4402-9a59-d001d3ba00fd');
 
 -- 5. state_data : adaptation du champ interrogation_id
-INSERT INTO public.state_data (id, current_page, date, state, interrogation_id) VALUES
+INSERT INTO state_data (id, current_page, date, state, interrogation_id) VALUES
   ('f55c7388-0724-4b3e-9c78-536ee2dee5f6', '2.3#5', 1111111111, 'EXTRACTED', '517046b6-bd88-47e0-838e-00d03461f592'),
   ('c11f8aae-5201-4a16-89d8-5f8b4c6ab942', '2.3#5', 1111111115, 'EXTRACTED', 'd98d28c2-1535-4fc8-a405-d6a554231bbc'),
   ('1fe17624-70d0-48e2-ba50-041cc23cbeeb', '2.3#5', 1111111119, 'EXTRACTED', 'c8142dcc-c133-49aa-a969-bb9828190a2c'),
@@ -189,7 +170,7 @@ INSERT INTO public.state_data (id, current_page, date, state, interrogation_id) 
 -- Data for Name: interrogation_temp_zone; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.interrogation_temp_zone(id, interrogation_id, user_id, "date", interrogation) VALUES
+INSERT INTO interrogation_temp_zone(id, interrogation_id, user_id, "date", interrogation) VALUES
   ('42858b14-2a0c-4d17-afd0-f50a0f9a8dd5', '517046b6-bd88-47e0-838e-00d03461f592', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-11"}'),
   ('6fcbbd84-3464-4290-b8fc-cdf0082ee339', 'd98d28c2-1535-4fc8-a405-d6a554231bbc', 'user-id', 900000000, '{"data": {"EXTERNAL": {"ADR": "Rue des Plantes","NUMTH": "1"}},"comment": {},"personalization": [],"questionnaireId": "questionnaire-12"}');
 
@@ -277,9 +258,9 @@ BEGIN
   FOREACH line SLICE 1 IN ARRAY datas_to_insert LOOP
     -- line[1] = id, line[2] = json value, line[3] = interrogation_id.
     IF is_encrypted() = 1 THEN
-      INSERT INTO public.data (id, value, interrogation_id, encrypted) VALUES ( line[1]::uuid, encrypt(line[2]), line[3], is_encrypted());
+      INSERT INTO data (id, value, interrogation_id, encrypted) VALUES ( line[1]::uuid, encrypt(line[2]), line[3], is_encrypted());
     ELSE
-      INSERT INTO public.data (id, value, interrogation_id, encrypted) VALUES ( line[1]::uuid, line[2]::jsonb, line[3], is_encrypted());
+      INSERT INTO data (id, value, interrogation_id, encrypted) VALUES ( line[1]::uuid, line[2]::jsonb, line[3], is_encrypted());
     END IF;
   END LOOP;
 END ';

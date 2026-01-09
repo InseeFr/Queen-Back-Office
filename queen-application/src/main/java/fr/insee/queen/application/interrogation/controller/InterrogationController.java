@@ -76,7 +76,7 @@ public class InterrogationController {
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public List<InterrogationStateDto> getInterrogationsByState(
             @IdValid @PathVariable("id") String campaignId,
-            @RequestParam(name="state") StateDataType stateDataType) {
+            @RequestParam(required = false, name="state") StateDataType stateDataType) {
         return interrogationService
                 .getInterrogations(campaignId, stateDataType)
                 .stream()
@@ -223,7 +223,7 @@ public class InterrogationController {
     @PostMapping({"/campaign/{id}/interrogation", "/campaigns/{id}/interrogation"})
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public ResponseEntity<Void> createUpdateInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
-                                                       @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
+                                                          @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
         Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, campaignId);
         if (interrogationService.existsById(interrogationCreationInput.id())) {
             log.info("Update interrogation with id {}", interrogationCreationInput.id());
@@ -235,6 +235,23 @@ public class InterrogationController {
         interrogationService.createInterrogation(interrogation);
         log.debug("Interrogation with id {} created", interrogationCreationInput.id());
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    /**
+     * Create or update an interrogation
+     *
+     * @param campaignId             campaign id
+     * @param interrogationCreationInput interrogation data for creation
+     */
+    @Operation(summary = "Create an interrogation")
+    @PostMapping({"/campaigns/{id}/interrogations/create"})
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    public void createInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
+                                                          @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
+        Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, campaignId);
+        log.info("Create interrogation with id {}", interrogationCreationInput.id());
+        interrogationService.createInterrogation(interrogation);
+        log.debug("Interrogation with id {} created", interrogationCreationInput.id());
     }
 
     @Operation(summary = "Update interrogation updated data/state-data")
