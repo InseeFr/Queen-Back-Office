@@ -159,7 +159,7 @@ public class PilotageHttpRepository implements PilotageRepository {
 
 
     private String buildPaperHabilitationUrl(String interrogationId) {
-        return UriComponentsBuilder.fromHttpUrl(pilotageUrl)
+        return UriComponentsBuilder.fromUriString(pilotageUrl)
                 .path("/api/permissions/check")
                 .queryParam("id", interrogationId)
                 .queryParam("permission", "INTERROGATION_PAPER_DATA_EDIT")
