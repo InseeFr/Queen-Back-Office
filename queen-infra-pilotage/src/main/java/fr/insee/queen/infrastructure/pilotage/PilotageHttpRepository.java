@@ -1,10 +1,7 @@
 package fr.insee.queen.infrastructure.pilotage;
 
 import fr.insee.queen.domain.pilotage.gateway.PilotageRepository;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaignEnabled;
-import fr.insee.queen.domain.pilotage.model.PilotageHabilitation;
-import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
+import fr.insee.queen.domain.pilotage.model.*;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
@@ -15,6 +12,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +34,8 @@ public class PilotageHttpRepository implements PilotageRepository {
     @Value("${feature.pilotage.alternative-habilitation.campaignids-regex}")
     private final String campaignIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
+    @Value("${feature.paper-form-input.mode:WEB}")
+    private InputModeEnum inputMode;
 
     @Override
     public boolean isClosed(String campaignId) {
@@ -102,50 +102,119 @@ public class PilotageHttpRepository implements PilotageRepository {
 
     @Override
     public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
-        StringBuilder uriPilotageFilter = new StringBuilder();
-        String campaignId = interrogation.campaign().getId();
-        String params;
-        if (Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
-            log.debug("Current campaignId {} requires an alternative habilitation service {} ", campaignId, alternativeHabilitationServiceURL);
-            uriPilotageFilter.append(alternativeHabilitationServiceURL);
-            params = String.format("?id=%s&role=%s&campaign=%s&idep=%s", interrogation.id(), role.getExpectedRole(), campaignId, idep);
-        } else {
-            uriPilotageFilter
-                    .append(pilotageUrl)
-                    .append(API_HABILITATION);
-            params = String.format("?id=%s&role=%s&idep=%s", interrogation.id(), role.getExpectedRole(), idep);
+        if (InputModeEnum.PAPER.equals(inputMode)) {
+            return hasPaperHabilitation(interrogation);
         }
+        return hasWebHabilitation(interrogation, role, idep);
+    }
 
-        uriPilotageFilter.append(params);
-
+    private boolean hasPaperHabilitation(InterrogationSummary interrogation) {
         try {
+            String url = buildPaperHabilitationUrl(interrogation.id());
+
+            log.debug("Checking PAPER permission for interrogation {} via {}", interrogation.id(), url);
+
+            ResponseEntity<Boolean> response = restTemplate.exchange(
+                    url, HttpMethod.GET, HttpEntity.EMPTY, Boolean.class
+            );
+
+            boolean authorized = Boolean.TRUE.equals(response.getBody());
+            log.debug("Habilitation PAPER for interrogation {} : {}", interrogation.id(),
+                    authorized ? "granted" : "denied");
+
+            return authorized;
+
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            return handleUnauthorized(ex, interrogation.id());
+        } catch (RestClientException ex) {
+            throw generateException(ex);
+        }
+    }
+
+    private boolean hasWebHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
+        try {
+            String url = buildWebHabilitationUrl(interrogation, role, idep);
+
             ResponseEntity<PilotageHabilitation> response =
-                    restTemplate.exchange(uriPilotageFilter.toString(), HttpMethod.GET,
-                            HttpEntity.EMPTY,
-                            PilotageHabilitation.class);
+                    restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, PilotageHabilitation.class);
 
             PilotageHabilitation habilitation = response.getBody();
-
             if (habilitation == null) {
-                log.error("Pilotage API does not have a body (was expecting a boolean value)");
+                log.error("Pilotage API returned null body");
                 throw new PilotageApiException();
             }
 
+            log.debug("Habilitation of user {} with role {} to access interrogation {} : {}",
+                    idep, role.name(), interrogation.id(),
+                    habilitation.habilitated() ? "granted" : "denied");
 
-            log.debug("Habilitation of user {} with role {} to access interrogation {} : {}", idep, role.name(),
-                    interrogation.id(), habilitation.habilitated() ? "granted" : "denied");
             return habilitation.habilitated();
+
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            HttpStatusCode status = ex.getStatusCode();
-            if (status.equals(HttpStatus.UNAUTHORIZED)) {
-                log.debug("Habilitation of user {} with role {} to access interrogation {} denied.",
-                        idep, role.name(), interrogation.id());
-                return false;
-            }
-            throw generateException(ex);
-        } catch(RestClientException ex) {
+            return handleUnauthorized(ex, interrogation.id(), role, idep);
+        } catch (RestClientException ex) {
             throw generateException(ex);
         }
+    }
+
+
+    private String buildPaperHabilitationUrl(String interrogationId) {
+        return UriComponentsBuilder.fromHttpUrl(pilotageUrl)
+                .path("/api/permissions/check")
+                .queryParam("id", interrogationId)
+                .queryParam("permission", "INTERROGATION_PAPER_DATA_EDIT")
+                .toUriString();
+    }
+
+    private String buildWebHabilitationUrl(InterrogationSummary interrogation,
+                                           PilotageRole role,
+                                           String idep) {
+        String campaignId = interrogation.campaign().getId();
+
+        if (Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
+            log.debug("Campaign {} uses alternative habilitation service {}", campaignId,
+                    alternativeHabilitationServiceURL);
+
+            return String.format(
+                    "%s?id=%s&role=%s&campaign=%s&idep=%s",
+                    alternativeHabilitationServiceURL,
+                    interrogation.id(),
+                    role.getExpectedRole(),
+                    campaignId,
+                    idep
+            );
+        }
+
+        return String.format(
+                "%s%s?id=%s&role=%s&idep=%s",
+                pilotageUrl,
+                API_HABILITATION,
+                interrogation.id(),
+                role.getExpectedRole(),
+                idep
+        );
+    }
+
+    private boolean handleUnauthorized(HttpStatusCodeException ex, String interrogationId) {
+        if (ex.getStatusCode().equals(HttpStatus.UNAUTHORIZED)
+                || ex.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+            log.debug("Habilitation denied (HTTP {}) for interrogation {}",
+                    ex.getStatusCode(), interrogationId);
+            return false;
+        }
+        throw generateException(ex);
+    }
+
+    private boolean handleUnauthorized(HttpStatusCodeException ex,
+                                       String interrogationId,
+                                       PilotageRole role,
+                                       String idep) {
+        if (ex.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+            log.debug("Habilitation of user {} with role {} to access interrogation {} denied.",
+                    idep, role.name(), interrogationId);
+            return false;
+        }
+        throw generateException(ex);
     }
 
     private PilotageApiException generateException(Exception ex) {
