@@ -19,7 +19,7 @@ application:
   temp-folder: ./tmp
 
 feature:
-  paper-form-input:
+  collection:
     mode: WEB
   cross-environment-communication:
     emitter: false

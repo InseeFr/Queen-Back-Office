@@ -34,7 +34,7 @@ public class PilotageHttpRepository implements PilotageRepository {
     @Value("${feature.pilotage.alternative-habilitation.campaignids-regex}")
     private final String campaignIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
-    @Value("${feature.paper-form-input.mode:WEB}")
+    @Value("${feature.collection.mode:WEB}")
     private InputModeEnum inputMode;
 
     @Override
