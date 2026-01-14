@@ -4,6 +4,7 @@ import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
 import fr.insee.queen.domain.campaign.service.dummy.QuestionnaireModelFakeService;
+import fr.insee.queen.domain.habilitation.HabilitationFakeService;
 import fr.insee.queen.domain.pilotage.infrastructure.dummy.PilotageFakeRepository;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class PilotageServiceTest {
     private PilotageApiService pilotageService;
     private CampaignExistenceFakeService campaignExistenceService;
+    private HabilitationFakeService habilitationFakeService;
     private PilotageFakeRepository pilotageRepository;
     private QuestionnaireModelFakeService questionnaireModelFakeService;
 
@@ -30,7 +32,8 @@ class PilotageServiceTest {
         pilotageRepository = new PilotageFakeRepository();
         campaignExistenceService = new CampaignExistenceFakeService();
         questionnaireModelFakeService = new QuestionnaireModelFakeService();
-        pilotageService = new PilotageApiService(interrogationService, campaignExistenceService, pilotageRepository, questionnaireModelFakeService);
+        habilitationFakeService = new HabilitationFakeService();
+        pilotageService = new PilotageApiService(interrogationService, habilitationFakeService, campaignExistenceService, pilotageRepository, questionnaireModelFakeService);
     }
 
     @Test
@@ -105,5 +108,19 @@ class PilotageServiceTest {
         assertThat(interrogations).hasSize(2);
         assertThat(interrogations.get(0).id()).isEqualTo(PilotageFakeRepository.INTERROGATION1_ID);
         assertThat(interrogations.get(1).id()).isEqualTo(PilotageFakeRepository.INTERROGATION3_ID);
+    }
+
+    @Test
+    @DisplayName("On check habilitation, should return false when habilitation service denies access")
+    void testHasHabilitation_Denied() {
+        // Given
+        habilitationFakeService.setHabilitationResult(false); // On force le refus
+        InterrogationSummary su = new InterrogationSummary("id", "su-id", "q-id", new CampaignSummary("c-id", "label", CampaignSensitivity.NORMAL));
+
+        // When
+        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.INTERVIEWER, "idep");
+
+        // Then
+        assertThat(hasHabilitation).isFalse();
     }
 }

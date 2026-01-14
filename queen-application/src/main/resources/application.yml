@@ -1,4 +1,6 @@
 application:
+  collection:
+    environment: WEB
   public-urls:
     - /swagger-ui/**
     - /v3/api-docs/**
@@ -19,8 +21,6 @@ application:
   temp-folder: ./tmp
 
 feature:
-  collection:
-    mode: WEB
   cross-environment-communication:
     emitter: false
     consumer: false

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PilotageApiService implements PilotageService {
     private final InterrogationService interrogationService;
+    private final HabilitationService habilitationService;
     private final CampaignExistenceService campaignExistenceService;
     private final PilotageRepository pilotageRepository;
     private final QuestionnaireModelService questionnaireModelService;
@@ -148,6 +149,6 @@ public class PilotageApiService implements PilotageService {
     @Override
     @Cacheable(value = CacheName.HABILITATION, key = "{#interrogation.id, #interrogation.campaign.id, #role, #idep}")
     public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
-        return pilotageRepository.hasHabilitation(interrogation, role, idep);
+        return habilitationService.hasHabilitation(interrogation, role, idep);
     }
 }

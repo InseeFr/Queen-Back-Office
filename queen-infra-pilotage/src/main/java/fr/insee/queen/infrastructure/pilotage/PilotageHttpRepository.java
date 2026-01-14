@@ -35,7 +35,7 @@ public class PilotageHttpRepository implements PilotageRepository {
     private final String campaignIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
     @Value("${feature.collection.mode:WEB}")
-    private InputModeEnum inputMode;
+    private final InputModeEnum inputMode;
 
     @Override
     public boolean isClosed(String campaignId) {
@@ -101,16 +101,9 @@ public class PilotageHttpRepository implements PilotageRepository {
     }
 
     @Override
-    public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
-        if (InputModeEnum.PAPER.equals(inputMode)) {
-            return hasPaperHabilitation(interrogation);
-        }
-        return hasWebHabilitation(interrogation, role, idep);
-    }
-
-    private boolean hasPaperHabilitation(InterrogationSummary interrogation) {
+    public boolean hasPermission(InterrogationSummary interrogation, PermissionEnum permission) {
         try {
-            String url = buildPaperHabilitationUrl(interrogation.id());
+            String url = buildPaperHabilitationUrl(interrogation.id(), permission);
 
             log.debug("Checking PAPER permission for interrogation {} via {}", interrogation.id(), url);
 
@@ -131,7 +124,8 @@ public class PilotageHttpRepository implements PilotageRepository {
         }
     }
 
-    private boolean hasWebHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
+    @Override
+    public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
         try {
             String url = buildWebHabilitationUrl(interrogation, role, idep);
 
@@ -158,11 +152,11 @@ public class PilotageHttpRepository implements PilotageRepository {
     }
 
 
-    private String buildPaperHabilitationUrl(String interrogationId) {
+    private String buildPaperHabilitationUrl(String interrogationId, PermissionEnum permission) {
         return UriComponentsBuilder.fromUriString(pilotageUrl)
                 .path("/api/permissions/check")
                 .queryParam("id", interrogationId)
-                .queryParam("permission", "INTERROGATION_PAPER_DATA_EDIT")
+                .queryParam("permission", permission)
                 .toUriString();
     }
 
