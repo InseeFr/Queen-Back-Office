@@ -26,8 +26,6 @@ public class PilotageFakeService implements PilotageService {
     private boolean hasHabilitation = true;
     @Getter
     private boolean wentThroughInterviewerCampaigns = false;
-    @Getter
-    private int wentThroughHasHabilitation = 0;
     @Setter
     private boolean hasEmptyInterrogations = false;
 
@@ -87,11 +85,5 @@ public class PilotageFakeService implements PilotageService {
     public List<PilotageCampaign> getInterviewerCampaigns() {
         wentThroughInterviewerCampaigns = true;
         return campaignsForInterviewer;
-    }
-
-    @Override
-    public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
-        wentThroughHasHabilitation++;
-        return this.hasHabilitation;
     }
 }

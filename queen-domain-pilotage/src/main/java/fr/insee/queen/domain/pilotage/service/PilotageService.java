@@ -33,14 +33,4 @@ public interface PilotageService {
      * @return List of {@link PilotageCampaign} authorized campaigns
      */
     List<PilotageCampaign> getInterviewerCampaigns();
-
-    /**
-     * Checks if the specified user is authorized to access the given interrogation.
-     *
-     * @param interrogation the summary of the interrogation to check (contains campaign context)
-     * @param role          the role associated with the user for this check
-     * @param idep          the unique identifier of the user
-     * @return {@code true} if the user is authorized to access the interrogation; {@code false} otherwise
-     */
-    boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep);
 }

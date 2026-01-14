@@ -1,10 +1,12 @@
 package fr.insee.queen.domain.pilotage.service;
 
+import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import fr.insee.queen.domain.pilotage.gateway.PilotageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +18,7 @@ public class HabilitationWebService implements HabilitationService {
     private final PilotageRepository pilotageRepository;
 
     @Override
+    @Cacheable(value = CacheName.HABILITATION, key = "{#interrogation.id, #interrogation.campaign.id, #role, #idep}")
     public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
         return pilotageRepository.hasHabilitation(interrogation, role, idep);
     }
