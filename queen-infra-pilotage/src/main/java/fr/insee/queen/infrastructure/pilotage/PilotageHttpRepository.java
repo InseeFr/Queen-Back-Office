@@ -35,7 +35,7 @@ public class PilotageHttpRepository implements PilotageRepository {
     private final String campaignIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
     @Value("${feature.collection.mode:WEB}")
-    private final InputModeEnum inputMode;
+    private final CollectionEnvironmentEnum inputMode;
 
     @Override
     public boolean isClosed(String campaignId) {

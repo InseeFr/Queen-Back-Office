@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.pilotage.repository;
 
-import fr.insee.queen.domain.pilotage.model.InputModeEnum;
+import fr.insee.queen.domain.pilotage.model.CollectionEnvironmentEnum;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
@@ -47,7 +47,7 @@ class PilotageHttpRepositoryTest {
                 alternativeHabilitationServiceURL,
                 campaignIdRegexWithAlternativeHabilitationService,
                 restTemplate,
-                InputModeEnum.WEB
+                CollectionEnvironmentEnum.WEB
         );
     }
 
