@@ -3,13 +3,12 @@ package fr.insee.queen.application.pilotage.service.dummy;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
-import fr.insee.queen.domain.pilotage.service.PilotageRole;
-import fr.insee.queen.domain.pilotage.service.PilotageService;
-import fr.insee.queen.domain.interrogation.model.StateData;
-import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
+import fr.insee.queen.domain.interrogation.model.StateData;
+import fr.insee.queen.domain.interrogation.model.StateDataType;
+import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.pilotage.service.PilotageService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,8 +25,6 @@ public class PilotageFakeService implements PilotageService {
     private boolean hasHabilitation = true;
     @Getter
     private boolean wentThroughInterviewerCampaigns = false;
-    @Getter
-    private int wentThroughHasHabilitation = 0;
     @Setter
     private boolean hasEmptyInterrogations = false;
 
@@ -87,11 +84,5 @@ public class PilotageFakeService implements PilotageService {
     public List<PilotageCampaign> getInterviewerCampaigns() {
         wentThroughInterviewerCampaigns = true;
         return campaignsForInterviewer;
-    }
-
-    @Override
-    public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
-        wentThroughHasHabilitation++;
-        return this.hasHabilitation;
     }
 }

@@ -1,6 +1,7 @@
 package fr.insee.queen.domain.pilotage.infrastructure.dummy;
 
 import fr.insee.queen.domain.pilotage.gateway.PilotageRepository;
+import fr.insee.queen.domain.pilotage.model.PermissionEnum;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
@@ -59,8 +60,12 @@ public class PilotageFakeRepository implements PilotageRepository {
 
     @Override
     public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
-        this.wentThroughHasHabilitation = true;
-        return true;
+        return false;
+    }
+
+    @Override
+    public boolean hasPermission(InterrogationSummary interrogation, PermissionEnum permission) {
+        return false;
     }
 
 }

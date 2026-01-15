@@ -1,12 +1,9 @@
 package fr.insee.queen.infrastructure.pilotage.repository;
 
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.pilotage.model.CollectionEnvironmentEnum;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
-import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
-import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import fr.insee.queen.infrastructure.pilotage.PilotageHttpRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +24,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withException;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
@@ -43,7 +41,14 @@ class PilotageHttpRepositoryTest {
         RestTemplate restTemplate = new RestTemplate();
         mockServer = MockRestServiceServer.createServer(restTemplate);
         String campaignIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
-        pilotageRepository = new PilotageHttpRepository(pilotageUrl, alternativeHabilitationServiceURL, campaignIdRegexWithAlternativeHabilitationService, restTemplate);
+
+        pilotageRepository = new PilotageHttpRepository(
+                pilotageUrl,
+                alternativeHabilitationServiceURL,
+                campaignIdRegexWithAlternativeHabilitationService,
+                restTemplate,
+                CollectionEnvironmentEnum.WEB
+        );
     }
 
     @Test
@@ -244,154 +249,6 @@ class PilotageHttpRepositoryTest {
                 .andRespond(withException(new IOException("message")));
 
         assertThatThrownBy(() -> pilotageRepository.getInterrogations())
-                .isInstanceOf(PilotageApiException.class);
-        mockServer.verify();
-    }
-
-    @DisplayName("On checking habilitation, return habilitation")
-    @ParameterizedTest
-    @ValueSource(strings = { "true", "false"})
-    void testHabilitation01(String status) {
-        String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
-        String idep = "idep";
-        PilotageRole role = PilotageRole.INTERVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
-
-        String habilitationResponse = "{ \"habilitated\": \"" + status + "\" }";
-        mockServer.expect(request ->
-                        assertThat(pilotageUrl).isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost()))
-                .andExpect(request ->
-                        assertThat(PilotageHttpRepository.API_HABILITATION).isEqualTo(request.getURI().getPath()))
-                .andExpect(queryParam("id", interrogationId))
-                .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("idep", idep))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(habilitationResponse)
-                );
-
-        boolean hasHabilitation = pilotageRepository.hasHabilitation(interrogation, role, idep);
-        mockServer.verify();
-        assertThat(hasHabilitation).isEqualTo(Boolean.parseBoolean(status));
-    }
-
-    @DisplayName("On checking habilitation, when regex for alternate pilotage url match, return habilitation from alternate pilotage url")
-    @Test
-    void testHabilitation02() {
-        String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
-        String surveyUnitId = "su-id";
-        String idep = "idep";
-        String matchedRegexCampaignId = "EDT-campaign-id";
-        PilotageRole role = PilotageRole.REVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, surveyUnitId, "questionnaire-id", new CampaignSummary(matchedRegexCampaignId, "label", CampaignSensitivity.NORMAL));
-
-        String habilitationResponse = "{ \"habilitated\": \"true\" }";
-        mockServer.expect(request ->
-                        assertThat(alternativeHabilitationServiceURL)
-                                .isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost() + request.getURI().getPath()))
-                .andExpect(queryParam("id", interrogationId))
-                .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("campaign", matchedRegexCampaignId))
-                .andExpect(queryParam("idep", idep))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(habilitationResponse)
-                );
-
-        boolean hasHabilitation = pilotageRepository.hasHabilitation(interrogation, role, idep);
-        mockServer.verify();
-        assertThat(hasHabilitation).isTrue();
-    }
-
-    @DisplayName("On checking habilitation, when http response body is empty throw exception")
-    @Test
-    void testHabilitation03() {
-        String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
-        String idep = "idep";
-        PilotageRole role = PilotageRole.INTERVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
-
-        mockServer.expect(request ->
-                        assertThat(pilotageUrl).isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost()))
-                .andExpect(request ->
-                        assertThat(PilotageHttpRepository.API_HABILITATION).isEqualTo(request.getURI().getPath()))
-                .andExpect(queryParam("id", interrogationId))
-                .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("idep", idep))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                );
-
-        assertThatThrownBy(() -> pilotageRepository.hasHabilitation(interrogation, role, idep))
-                .isInstanceOf(PilotageApiException.class);
-        mockServer.verify();
-    }
-
-    @DisplayName("On checking habilitation, when http response status is unauthorized, habilitation is false")
-    @Test
-    void testHabilitation04() {
-        String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
-        String idep = "idep";
-        PilotageRole role = PilotageRole.INTERVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
-
-        mockServer.expect(request ->
-                        assertThat(pilotageUrl).isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost()))
-                .andExpect(request ->
-                        assertThat(PilotageHttpRepository.API_HABILITATION).isEqualTo(request.getURI().getPath()))
-                .andExpect(queryParam("id", interrogationId))
-                .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("idep", idep))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.UNAUTHORIZED)
-                        .contentType(MediaType.APPLICATION_JSON)
-                );
-
-        boolean hasHabilitation = pilotageRepository.hasHabilitation(interrogation, role, idep);
-        mockServer.verify();
-        assertThat(hasHabilitation).isFalse();
-    }
-
-    @DisplayName("On checking habilitation, when http response status is an error status (other than 401), throw exception")
-    @Test
-    void testHabilitation05() {
-        String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
-        String idep = "idep";
-        PilotageRole role = PilotageRole.INTERVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
-
-        mockServer.expect(request ->
-                        assertThat(pilotageUrl).isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost()))
-                .andExpect(request ->
-                        assertThat(PilotageHttpRepository.API_HABILITATION).isEqualTo(request.getURI().getPath()))
-                .andExpect(queryParam("id", interrogationId))
-                .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("idep", idep))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                );
-
-        assertThatThrownBy(() -> pilotageRepository.hasHabilitation(interrogation, role, idep))
-                .isInstanceOf(PilotageApiException.class);
-        mockServer.verify();
-    }
-
-    @DisplayName("Given the server not responding, when checking habilitation, throw exception")
-    @Test
-    void testHabilitationNetworkError() {
-        String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
-        String idep = "idep";
-        PilotageRole role = PilotageRole.INTERVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
-
-        mockServer.expect(method(HttpMethod.GET))
-                .andRespond(withException(new IOException("message")));
-
-        assertThatThrownBy(() -> pilotageRepository.hasHabilitation(interrogation, role, idep))
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }

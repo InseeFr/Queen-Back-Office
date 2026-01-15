@@ -33,13 +33,4 @@ public interface PilotageService {
      * @return List of {@link PilotageCampaign} authorized campaigns
      */
     List<PilotageCampaign> getInterviewerCampaigns();
-
-    /**
-     * Check if a user has the habilitation to perform actions on an interrogation in a campaign with a specified role
-     * @param interrogation interrogation (with campaign) we want to check the habilitation
-     * @param role role in which the user want to perform actions
-     * @param idep user id
-     * @return true if habilitation is granted, false otherwise
-     */
-    boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep);
 }

@@ -144,10 +144,4 @@ public class PilotageApiService implements PilotageService {
                 .filter(Objects::nonNull)
                 .toList();
     }
-
-    @Override
-    @Cacheable(value = CacheName.HABILITATION, key = "{#interrogation.id, #interrogation.campaign.id, #role, #idep}")
-    public boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep) {
-        return pilotageRepository.hasHabilitation(interrogation, role, idep);
-    }
 }

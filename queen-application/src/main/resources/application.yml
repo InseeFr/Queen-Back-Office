@@ -1,4 +1,6 @@
 application:
+  collection:
+    environment: WEB
   public-urls:
     - /swagger-ui/**
     - /v3/api-docs/**
