@@ -107,18 +107,17 @@ public class PilotageHttpRepository implements PilotageRepository {
 
             log.debug("Checking PAPER permission for interrogation {} via {}", interrogation.id(), url);
 
-            ResponseEntity<Boolean> response = restTemplate.exchange(
-                    url, HttpMethod.GET, HttpEntity.EMPTY, Boolean.class
+            restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    Void.class
             );
 
-            boolean authorized = Boolean.TRUE.equals(response.getBody());
-            log.debug("Habilitation PAPER for interrogation {} : {}", interrogation.id(),
-                    authorized ? "granted" : "denied");
-
-            return authorized;
-
+            log.debug("Habilitation PAPER for interrogation {} : granted", interrogation.id());
+            return true;
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            return handleUnauthorized(ex, interrogation.id());
+            return handleDenied(ex, interrogation.id());
         } catch (RestClientException ex) {
             throw generateException(ex);
         }
@@ -145,7 +144,7 @@ public class PilotageHttpRepository implements PilotageRepository {
             return habilitation.habilitated();
 
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            return handleUnauthorized(ex, interrogation.id(), role, idep);
+            return handleDenied(ex, interrogation.id(), role, idep);
         } catch (RestClientException ex) {
             throw generateException(ex);
         }
@@ -189,7 +188,7 @@ public class PilotageHttpRepository implements PilotageRepository {
         );
     }
 
-    private boolean handleUnauthorized(HttpStatusCodeException ex, String interrogationId) {
+    private boolean handleDenied(HttpStatusCodeException ex, String interrogationId) {
         if (ex.getStatusCode().equals(HttpStatus.UNAUTHORIZED)
                 || ex.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
             log.debug("Habilitation denied (HTTP {}) for interrogation {}",
@@ -199,10 +198,10 @@ public class PilotageHttpRepository implements PilotageRepository {
         throw generateException(ex);
     }
 
-    private boolean handleUnauthorized(HttpStatusCodeException ex,
-                                       String interrogationId,
-                                       PilotageRole role,
-                                       String idep) {
+    private boolean handleDenied(HttpStatusCodeException ex,
+                                 String interrogationId,
+                                 PilotageRole role,
+                                 String idep) {
         if (ex.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
             log.debug("Habilitation of user {} with role {} to access interrogation {} denied.",
                     idep, role.name(), interrogationId);
