@@ -46,7 +46,7 @@ class PilotageHttpRepositoryPermissionTest {
     }
 
     @Test
-    @DisplayName("Should return true when Permission API returns true")
+    @DisplayName("Should return true when Permission API returns 200 http status")
     void testHasPermission_Granted() throws URISyntaxException {
         String interrogationId = "interrogation-id";
         PermissionEnum permission = PermissionEnum.values()[0];
@@ -54,33 +54,13 @@ class PilotageHttpRepositoryPermissionTest {
         mockServer.expect(requestTo(new URI(pilotageUrl + "/api/permissions/check?id=" + interrogationId + "&permission=" + permission)))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("true"));
+                        .contentType(MediaType.APPLICATION_JSON));
 
         InterrogationSummary summary = new InterrogationSummary(interrogationId, "su-id", "q-id", null);
         boolean result = pilotageRepository.hasPermission(summary, permission);
 
         mockServer.verify();
         assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("Should return false when Permission API returns false")
-    void testHasPermission_DeniedByBoolean() throws URISyntaxException {
-        String interrogationId = "interrogation-id";
-        PermissionEnum permission = PermissionEnum.values()[0];
-
-        mockServer.expect(requestTo(new URI(pilotageUrl + "/api/permissions/check?id=" + interrogationId + "&permission=" + permission)))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("false"));
-
-        InterrogationSummary summary = new InterrogationSummary(interrogationId, "su-id", "q-id", null);
-        boolean result = pilotageRepository.hasPermission(summary, permission);
-
-        mockServer.verify();
-        assertThat(result).isFalse();
     }
 
     @Test
