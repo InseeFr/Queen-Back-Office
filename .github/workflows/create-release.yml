@@ -17,7 +17,7 @@ jobs:
           java-version: '21'
 
       - name: install model filiere
-        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+        run: mvn install:install-file -Dfile="$(pwd)/modelefiliere-2.2.0.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=2.2.0 -Dpackaging=jar -DgeneratePom=true
 
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
           java-version: '21'
 
       - name: install model filiere
-        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+        run: mvn install:install-file -Dfile="$(pwd)/modelefiliere-2.2.0.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=2.2.0 -Dpackaging=jar -DgeneratePom=true
 
       - uses: actions/checkout@v4
       - name: Build app
