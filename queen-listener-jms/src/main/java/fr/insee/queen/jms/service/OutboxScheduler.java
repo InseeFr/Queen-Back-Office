@@ -5,7 +5,6 @@ import fr.insee.modelefiliere.EventDto;
 import fr.insee.queen.infrastructure.db.events.EventsJpaRepository;
 import fr.insee.queen.infrastructure.db.events.OutboxDB;
 import fr.insee.queen.domain.messaging.port.serverside.Publisher;
-import fr.insee.queen.infrastructure.jms.configuration.MultimodeProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,7 +22,6 @@ public class OutboxScheduler {
 
     private final EventsJpaRepository eventsJpaRepository;
     private final Publisher publisher;
-    private final MultimodeProperties multimodeProperties;
     private final ObjectMapper objectMapper;
 
     @Scheduled(

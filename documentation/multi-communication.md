@@ -177,17 +177,6 @@ Represents a record in the inbox table.
 
 ### 7. Liquibase Context Management
 
-#### LiquibaseContextCustomizer
-**Package:** `fr.insee.queen.application.configuration`
-
-**File:** `queen-application/src/main/java/fr/insee/queen/application/configuration/LiquibaseContextCustomizer.java`
-
-**Role:** Dynamically configures Liquibase contexts based on configuration properties.
-
-**Behavior:**
-- If `feature.cross-environment-communication.emitter=true` → Activates `cross-env-emitter` context → Creates `outbox` table
-- If `feature.cross-environment-communication.consumer=true` → Activates `cross-env-consumer` context → Creates `inbox` table
-
 ## Configuration
 
 ### Configuration Properties
