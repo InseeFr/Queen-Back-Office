@@ -132,13 +132,18 @@ public class InterrogationFakeService implements InterrogationService {
     @Override
     public List<Interrogation> findAllInterrogations() {
         return List.of(
-                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "campaign-id", "questionnaire-id", null, null, null, null, null),
-                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "campaign-id", "questionnaire-id", null, null, null, null, null)
+                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "campaign-id", "questionnaire-id", null, null, null, null, null, null),
+                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "campaign-id", "questionnaire-id", null, null, null, null, null, null)
         );
     }
 
     @Override
     public List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType) {
+        return null;
+    }
+
+    @Override
+    public List<Interrogation> getInterrogationsByState(StateDataType stateDataType) {
         return null;
     }
 }

@@ -34,6 +34,7 @@ public record InterrogationBatchInput(
                 interrogation.data(),
                 null,
                 null,
+                null,
                 null);
     }
 }

@@ -49,6 +49,9 @@ feature:
     enabled: false
   interviewer-mode:
     enabled: false
+  synchronisation:
+    enabled: false
+    queen-url:
 
 spring:
   docker:
@@ -57,7 +60,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:postgresql://localhost:5434/questionnaire
+    url: jdbc:postgresql://localhost:5434/queen
     username: mypostgresuser2
     password: mypostgrespassword2
     driver-class-name: org.postgresql.Driver

@@ -10,6 +10,7 @@ import fr.insee.queen.application.interrogation.dto.input.*;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
 import fr.insee.queen.application.interrogation.service.dummy.StateDataFakeService;
 import fr.insee.queen.application.interrogation.service.dummy.InterrogationFakeService;
+import fr.insee.queen.application.interrogation.service.dummy.SynchronisationFakeService;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.dummy.AuthenticationFakeHelper;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
@@ -41,6 +42,7 @@ class InterrogationControllerTest {
     private StateDataFakeService stateDataService;
     private AuthenticationFakeHelper authenticatedUserHelper;
     private AuthenticatedUserTestHelper authenticationUserProvider;
+    private SynchronisationFakeService synchronisationFakeService;
 
     @BeforeEach
     void init() {
@@ -50,7 +52,8 @@ class InterrogationControllerTest {
         interrogationFakeService = new InterrogationFakeService();
         stateDataService = new StateDataFakeService();
         authenticatedUserHelper = new AuthenticationFakeHelper();
-        interrogationController = new InterrogationController(interrogationFakeService, pilotageComponent, metadataConverter, stateDataService, authenticatedUserHelper);
+        synchronisationFakeService = new SynchronisationFakeService();
+        interrogationController = new InterrogationController(interrogationFakeService, pilotageComponent, metadataConverter, stateDataService, authenticatedUserHelper, synchronisationFakeService);
     }
 
     @Test
@@ -161,7 +164,7 @@ class InterrogationControllerTest {
     void testUpdateInterrogation01() throws LockedResourceException {
         // given
         StateDataForInterrogationUpdateInput stateData = new StateDataForInterrogationUpdateInput(null, 123456789L, "2.3");
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, stateData);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, stateData, null);
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION1_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.NORMAL);
 
@@ -178,7 +181,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation and transform state-data to null if input state data is null")
     void testUpdateInterrogation02() throws LockedResourceException {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null, null);
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION1_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.NORMAL);
 
@@ -195,7 +198,7 @@ class InterrogationControllerTest {
     @DisplayName("Should throw exception when role is reviewer and campaign is sensitive")
     void testUpdateInterrogationException() {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -211,7 +214,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation when campaign is sensitive and role is admin/webclient")
     void testUpdateInterrogation04() throws LockedResourceException {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -229,7 +232,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
     void testUpdateInterrogation06() throws LockedResourceException {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -251,7 +254,7 @@ class InterrogationControllerTest {
     @DisplayName("Should throw exception when campaign is sensitive, role is interviewer and state is EXTRACTED/VALIDATED")
     void testUpdateInterrogationException02(String interrogationId) {
         // given
-        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null);
+        InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, null, null);
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(interrogationId);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);

@@ -107,7 +107,8 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
-                s.stateData.currentPage
+                s.stateData.currentPage,
+                s.locked
             )
             from InterrogationDB s left join s.personalization left join s.data left join s.comment left join s.stateData where s.id=:interrogationId""")
     Optional<InterrogationProjection> findOneById(String interrogationId);
@@ -128,7 +129,8 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
-                s.stateData.currentPage
+                s.stateData.currentPage,
+                s.locked
             )
             from InterrogationDB s left join s.personalization left join s.data left join s.comment left join s.stateData order by s.id asc""")
     List<InterrogationProjection> findAllInterrogations();
@@ -190,6 +192,35 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
     List<InterrogationState> findAllByState(String campaignId, StateDataType stateDataType);
 
     /**
+     * Find all interrogations with full details by state
+     *
+     * @param stateDataType state data used for filtering
+     * @return List of interrogations with full details
+     */
+    @Query("""
+            select new fr.insee.queen.infrastructure.db.interrogation.projection.InterrogationProjection(
+                s.id,
+                s.surveyUnitId,
+                s.campaign.id,
+                s.questionnaireModel.id,
+                s.personalization.value,
+                s.data.value,
+                s.comment.value,
+                s.stateData.state,
+                s.stateData.date,
+                s.stateData.currentPage,
+                s.locked
+            )
+            from InterrogationDB s
+            left join s.personalization
+            left join s.data
+            left join s.comment
+            left join s.stateData
+            where s.stateData.state = :stateDataType
+            order by s.id asc""")
+    List<InterrogationProjection> findAllInterrogationsByState(StateDataType stateDataType);
+
+    /**
      * Search interrogations by ids
      * @param interrogationIds ids to search
      * @return List of {@link Interrogation} interrogations found
@@ -205,7 +236,8 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
-                s.stateData.currentPage
+                s.stateData.currentPage,
+                s.locked
             )
             from InterrogationDB s
             left join s.personalization

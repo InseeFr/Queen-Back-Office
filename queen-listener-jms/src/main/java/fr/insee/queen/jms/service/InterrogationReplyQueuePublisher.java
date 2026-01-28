@@ -5,17 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import jakarta.jms.DeliveryMode;
 import jakarta.jms.ObjectMessage;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class InterrogationReplyQueuePublisher implements InterrogationResponsePublisher {
     private final ObjectMapper objectMapper;
     private final JmsTemplate jmsQueuePublisher;
+
+    public InterrogationReplyQueuePublisher(
+            ObjectMapper objectMapper,
+            @Qualifier("jmsQueuePublisher") JmsTemplate jmsQueuePublisher) {
+        this.objectMapper = objectMapper;
+        this.jmsQueuePublisher = jmsQueuePublisher;
+    }
 
     public void send(String replyQueue, String correlationId, JMSOutputMessage responseMessage) {
         log.info("Command {} - reply to queue {} - response code: {} - response message: {} - ",

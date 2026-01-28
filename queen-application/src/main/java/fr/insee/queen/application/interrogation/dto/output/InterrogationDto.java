@@ -20,18 +20,19 @@ public record InterrogationDto(
         @Schema(ref = SchemaType.Names.DATA)
         ObjectNode data,
         ObjectNode comment,
-        StateDataDto stateData) {
+        StateDataDto stateData,
+        Boolean locked) {
 
     public static InterrogationDto createInterrogationNOKDto(String id) {
-        return new InterrogationDto(id, null, null, null, null, null);
+        return new InterrogationDto(id, null, null, null, null, null, null);
     }
 
     public static InterrogationDto createInterrogationOKDtoWithStateData(String id, StateData stateData) {
-        return new InterrogationDto(id, null, null, null, null, StateDataDto.fromModel(stateData));
+        return new InterrogationDto(id, null, null, null, null, StateDataDto.fromModel(stateData), null);
     }
 
     public static InterrogationDto createInterrogationOKDtoWithQuestionnaireModel(String id, String questionnaireModelId) {
-        return new InterrogationDto(id, questionnaireModelId, null, null, null, null);
+        return new InterrogationDto(id, questionnaireModelId, null, null, null, null, null);
     }
 
     public static InterrogationDto fromModel(Interrogation interrogation) {
@@ -39,7 +40,8 @@ public record InterrogationDto(
                 interrogation.personalization(),
                 interrogation.data(),
                 interrogation.comment(),
-                StateDataDto.fromModel(interrogation.stateData()));
+                StateDataDto.fromModel(interrogation.stateData()),
+                interrogation.locked());
     }
 
     public static InterrogationDto fromSensitiveModel(Interrogation interrogation) {
@@ -47,6 +49,7 @@ public record InterrogationDto(
                 interrogation.personalization(),
                 JsonNodeFactory.instance.objectNode(),
                 interrogation.comment(),
-                StateDataDto.fromModel(interrogation.stateData()));
+                StateDataDto.fromModel(interrogation.stateData()),
+                interrogation.locked());
     }
 }

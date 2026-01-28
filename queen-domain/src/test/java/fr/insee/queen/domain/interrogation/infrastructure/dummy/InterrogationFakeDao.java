@@ -70,6 +70,11 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
+    public List<Interrogation> findAllByState(StateDataType stateDataType) {
+        return null;
+    }
+
+    @Override
     public List<InterrogationState> findAllWithStateByIdIn(List<String> interrogationIds) {
         return null;
     }

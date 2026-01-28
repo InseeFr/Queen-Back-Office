@@ -1,0 +1,13 @@
+services:
+  keycloak:
+    image: ${IMAGES_REGISTRY_QUAY_IO}/${IMAGE_KEYCLOAK}
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HEALTH_ENABLED: "true"
+      KC_LOG_LEVEL: info
+    command: [ "start-dev", "--import-realm" ]
+    ports:
+      - "${KEYCLOAK_PORT}:8080"
+    volumes:
+      - ./container/keycloak/realms:/opt/keycloak/data/import

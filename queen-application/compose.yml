@@ -1,52 +1,58 @@
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0
+    extends:
+      file: ./container/compose.keycloak.yml
+      service: keycloak
     profiles:
       - all
       - keycloak
-    environment:
-      KEYCLOAK_ADMIN: administrator
-      KEYCLOAK_ADMIN_PASSWORD: administrator
-      KC_HEALTH_ENABLED: "true"
-      KC_LOG_LEVEL: info
-    command: [ "start-dev", "--import-realm" ]
-    ports:
-      - "${KEYCLOAK_PORT}:8080"
-    volumes:
-      - ./container/keycloak/realms:/opt/keycloak/data/import
 
   queen-db:
-    image: postgres:14.15
+    extends:
+      file: ./container/compose.queen-db.yml
+      service: queen-db
     profiles:
       - all
       - queen-db
-    environment:
-      - POSTGRES_USER=${QUEEN_DB_USER}
-      - POSTGRES_PASSWORD=${QUEEN_DB_PASSWORD}
-      - POSTGRES_DB=${QUEEN_DB}
-    command: ["postgres"]
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${QUEEN_DB_USER} -d ${QUEEN_DB} -h localhost"]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    ports:
-      - ${QUEEN_DB_PORT}:5432
+      - queen-listener-jms
 
   queen-db-ciphered:
-    image: postgres:14.15
+    extends:
+      file: ./container/compose.queen-db-ciphered.yml
+      service: queen-db-ciphered
     profiles:
       - all
       - queen-db-ciphered
-    environment:
-      - POSTGRES_USER=${QUEEN_DB_USER}
-      - POSTGRES_PASSWORD=${QUEEN_DB_PASSWORD}
-      - POSTGRES_DB=${QUEEN_DB_CIPHERED}
-    command: ["postgres"]
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${QUEEN_DB_USER} -d ${QUEEN_DB_CIPHERED} -h localhost"]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    ports:
-      - ${QUEEN_DB_CIPHERED_PORT}:5432
+
+  activemq:
+    extends:
+      file: ./container/compose.activemq.yml
+      service: activemq
+    profiles:
+      - all
+      - activemq
+
+  queen-listener-jms:
+    extends:
+      file: ./container/compose.queen-listener-jms.yml
+      service: queen-listener-jms
+    profiles:
+      - all
+      - queen-listener-jms
+
+  queen-db-remote:
+    extends:
+      file: ./container/compose.synchronisation.yml
+      service: queen-db-remote
+    profiles:
+      - synchronisation
+
+  queen-remote:
+    extends:
+      file: ./container/compose.synchronisation.yml
+      service: queen-remote
+    profiles:
+      - synchronisation
+
+volumes:
+  activemq_vol:

@@ -46,7 +46,8 @@ class InterrogationCommonAssertions {
                     {"id":"517046b6-bd88-47e0-838e-00d03461f592","questionnaireId":"simpsons"},
                     {"id":"d98d28c2-1535-4fc8-a405-d6a554231bbc","questionnaireId":"simpsons"},
                     {"id":"c8142dcc-c133-49aa-a969-bb9828190a2c","questionnaireId":"simpsonsV2"},
-                    {"id":"45c78a3e-f3b6-4d69-bd58-d2ca749dd7cd","questionnaireId":"simpsonsV2"}
+                    {"id":"45c78a3e-f3b6-4d69-bd58-d2ca749dd7cd","questionnaireId":"simpsonsV2"},
+                    {"id":"a1b2c3d4-5678-90ab-cdef-1234567890ab","questionnaireId":"simpsons"}
                 ]""";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
     }
@@ -173,7 +174,7 @@ class InterrogationCommonAssertions {
                         .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER)))
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(16)))
+                .andExpect(jsonPath("$.size()", is(17)))
                 .andExpect(jsonPath("$[0].id").value("31e0537d-01ab-4402-9a59-d001d3ba00fd"))
                 .andExpect(jsonPath("$[0].questionnaireId").value("LOG2021X11Tel"))
                 .andExpect(jsonPath("$[0].personalization.size()", is(0)))
