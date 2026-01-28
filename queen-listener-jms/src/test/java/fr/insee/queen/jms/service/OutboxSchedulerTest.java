@@ -6,7 +6,6 @@ import fr.insee.modelefiliere.EventDto;
 import fr.insee.queen.infrastructure.db.events.EventsJpaRepository;
 import fr.insee.queen.infrastructure.db.events.OutboxDB;
 import fr.insee.queen.domain.messaging.port.serverside.Publisher;
-import fr.insee.queen.infrastructure.jms.configuration.MultimodeProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,9 +33,6 @@ class OutboxSchedulerTest {
     @Mock
     private Publisher publisher;
 
-    @Mock
-    private MultimodeProperties multimodeProperties;
-
     private OutboxScheduler outboxScheduler;
 
     private ObjectMapper objectMapper;
@@ -44,7 +40,7 @@ class OutboxSchedulerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        outboxScheduler = new OutboxScheduler(eventsJpaRepository, publisher, multimodeProperties, objectMapper);
+        outboxScheduler = new OutboxScheduler(eventsJpaRepository, publisher, objectMapper);
     }
 
     @Test

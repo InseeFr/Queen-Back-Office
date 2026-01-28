@@ -60,6 +60,9 @@ public class InterrogationDB {
     @Column(name = "correlation_id")
     private UUID correlationId;
 
+    @Column(name = "locked", nullable = false)
+    private Boolean locked = false;
+
     public InterrogationDB(String id, String surveyUnitId, CampaignDB campaign, QuestionnaireModelDB questionnaireModel, UUID correlationId) {
         this.id = id;
         this.surveyUnitId = surveyUnitId;

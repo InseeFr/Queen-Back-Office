@@ -19,13 +19,14 @@ public record InterrogationUpdateInput(
         ObjectNode data,
         ObjectNode comment,
         @Valid
-        StateDataForInterrogationUpdateInput stateData) {
+        StateDataForInterrogationUpdateInput stateData,
+        Boolean locked) {
 
     public static Interrogation toModel(String interrogationId, InterrogationUpdateInput interrogation) {
         ArrayNode personalization = interrogation.personalization();
         ObjectNode comment = interrogation.comment();
         ObjectNode data = interrogation.data();
         return Interrogation.createForUpdate(interrogationId, null, personalization, comment, data,
-                StateDataForInterrogationUpdateInput.toModel(interrogation.stateData()));
+                StateDataForInterrogationUpdateInput.toModel(interrogation.stateData()), interrogation.locked());
     }
 }

@@ -53,6 +53,14 @@ public abstract class AbstractStateDataEventConsumer implements EventConsumer {
             }
 
             var interrogationId = payload.getInterrogationId();
+
+            // Check if the event can be consumed
+            if (!canConsume(interrogationId)) {
+                log.info("{} event with correlationId {} skipped - interrogation {} cannot be consumed",
+                    getEventType(), eventDto.getCorrelationId(), interrogationId);
+                return;
+            }
+
             log.info("Updating state to {} for interrogation: {}", getStateDataType(), interrogationId);
 
             // Get current date

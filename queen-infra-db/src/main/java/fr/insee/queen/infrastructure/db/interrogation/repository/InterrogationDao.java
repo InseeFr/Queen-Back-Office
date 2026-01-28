@@ -196,7 +196,7 @@ public class InterrogationDao implements InterrogationRepository {
     @Override
     public void update(Interrogation interrogation) {
         String interrogationId = interrogation.id();
-        save(interrogation.id(), interrogation.surveyUnitId(), interrogation.campaignId(), interrogation.questionnaireId());
+        save(interrogation.id(), interrogation.surveyUnitId(), interrogation.campaignId(), interrogation.questionnaireId(), interrogation.locked());
         savePersonalization(interrogationId, interrogation.personalization());
         saveComment(interrogationId, interrogation.comment());
         saveData(interrogationId, interrogation.data());
@@ -221,7 +221,7 @@ public class InterrogationDao implements InterrogationRepository {
         dataRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
     }
 
-    private void save(String interrogationId, String surveyUnitId, String campaignId, String questionnaireId) {
+    private void save(String interrogationId, String surveyUnitId, String campaignId, String questionnaireId, Boolean locked) {
         Map<String, Object> fieldsToUpdate = new LinkedHashMap<>();
         if (campaignId != null) {
             fieldsToUpdate.put("campaign_id", campaignId);
@@ -233,6 +233,10 @@ public class InterrogationDao implements InterrogationRepository {
 
         if (surveyUnitId != null) {
             fieldsToUpdate.put("survey_unit_id", surveyUnitId);
+        }
+
+        if (locked != null) {
+            fieldsToUpdate.put("locked", locked);
         }
 
         if (fieldsToUpdate.isEmpty()) {

@@ -72,6 +72,7 @@ class SynchronisationApiServiceTest {
                 data,
                 comment,
                 stateData,
+                null,
                 null
         );
 
@@ -120,6 +121,7 @@ class SynchronisationApiServiceTest {
                 null,
                 null,
                 stateData,
+                null,
                 null
         );
 
@@ -150,6 +152,7 @@ class SynchronisationApiServiceTest {
                 "questionnaire-id",
                 null,
                 data,
+                null,
                 null,
                 null,
                 null

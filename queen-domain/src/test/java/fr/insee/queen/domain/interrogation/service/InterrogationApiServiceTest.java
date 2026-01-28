@@ -60,6 +60,7 @@ class InterrogationApiServiceTest {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
+                null,
                 null);
         interrogationFakeDao.setInterrogationExist(false);
         interrogationApiService.createInterrogation(interrogation);
@@ -76,6 +77,7 @@ class InterrogationApiServiceTest {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
+                null,
                 null);
         assertThatThrownBy(() -> interrogationApiService.createInterrogation(interrogation))
                 .isInstanceOf(EntityAlreadyExistException.class)
@@ -89,6 +91,7 @@ class InterrogationApiServiceTest {
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
+                null,
                 null,
                 null);
         interrogationFakeDao.setInterrogationExist(false);
@@ -106,6 +109,7 @@ class InterrogationApiServiceTest {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
+                null,
                 null);
         interrogationFakeDao.setInterrogationExist(false);
         interrogationApiService.createInterrogation(interrogation);
@@ -122,6 +126,7 @@ class InterrogationApiServiceTest {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
+                null,
                 null);
         interrogationFakeDao.setInterrogationExist(false);
         assertThatThrownBy(() -> interrogationApiService.updateInterrogation(interrogation))
@@ -139,6 +144,7 @@ class InterrogationApiServiceTest {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
+                null,
                 null);
         interrogationApiService.updateInterrogation(interrogation);
         assertThat(interrogationFakeDao.getInterrogationUpdated()).isEqualTo(interrogation);
@@ -154,6 +160,7 @@ class InterrogationApiServiceTest {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
+                null,
                 null);
         interrogationApiService.updateInterrogation(interrogation);
         assertThat(interrogationFakeDao.getInterrogationUpdated()).isEqualTo(interrogation);
@@ -169,6 +176,7 @@ class InterrogationApiServiceTest {
                 JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
+                null,
                 null);
         stateDataFakeService.setDateInvalid(true);
         interrogationApiService.updateInterrogation(interrogation);

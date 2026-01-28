@@ -32,4 +32,5 @@
   <include file="changelog/710_add_processed_date_to_outbox.xml" relativeToChangelogFile="true"/>
   <include file="changelog/720_inbox.xml" relativeToChangelogFile="true"/>
   <include file="changelog/730_add_leaf_state.xml" relativeToChangelogFile="true"/>
+  <include file="changelog/740_add_locked_to_interrogation.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

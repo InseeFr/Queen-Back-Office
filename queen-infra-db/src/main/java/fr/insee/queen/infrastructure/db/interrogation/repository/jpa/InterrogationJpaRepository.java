@@ -107,7 +107,8 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
-                s.stateData.currentPage
+                s.stateData.currentPage,
+                s.locked
             )
             from InterrogationDB s left join s.personalization left join s.data left join s.comment left join s.stateData where s.id=:interrogationId""")
     Optional<InterrogationProjection> findOneById(String interrogationId);
@@ -128,7 +129,8 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
-                s.stateData.currentPage
+                s.stateData.currentPage,
+                s.locked
             )
             from InterrogationDB s left join s.personalization left join s.data left join s.comment left join s.stateData order by s.id asc""")
     List<InterrogationProjection> findAllInterrogations();
@@ -206,7 +208,8 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
-                s.stateData.currentPage
+                s.stateData.currentPage,
+                s.locked
             )
             from InterrogationDB s
             left join s.personalization
@@ -233,7 +236,8 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.comment.value,
                 s.stateData.state,
                 s.stateData.date,
-                s.stateData.currentPage
+                s.stateData.currentPage,
+                s.locked
             )
             from InterrogationDB s
             left join s.personalization

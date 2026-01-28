@@ -15,20 +15,21 @@ public record Interrogation(
         ObjectNode data,
         ObjectNode comment,
         StateData stateData,
-        UUID correlationId) {
+        UUID correlationId,
+        Boolean locked) {
     public static Interrogation create(String id, String surveyUnitId, ArrayNode personalization,
                                     ObjectNode comment, ObjectNode data,
                                     StateData stateData) {
         return new Interrogation(id, surveyUnitId, null,
                 null, personalization, data,
-                comment, stateData, null);
+                comment, stateData, null, null);
     }
 
     public static Interrogation createForUpdate(String id, String surveyUnitId, ArrayNode personalization,
                                              ObjectNode comment, ObjectNode data,
-                                             StateData stateData) {
+                                             StateData stateData, Boolean locked) {
         return new Interrogation(id, surveyUnitId, null, null,
-                personalization, data, comment, stateData, null);
+                personalization, data, comment, stateData, null, locked);
     }
 
     public static Interrogation createFromAsync(String id, String surveyUnitId, ArrayNode personalization,
@@ -36,6 +37,6 @@ public record Interrogation(
                                        StateData stateData, UUID  correlationId) {
         return new Interrogation(id, surveyUnitId, null,
                 null, personalization, data,
-                comment, stateData, correlationId);
+                comment, stateData, correlationId, null);
     }
 }

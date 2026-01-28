@@ -827,6 +827,93 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         assertThat(leafStates.get(2).state()).isEqualTo("COMPLETED");
     }
 
+    @Test
+    void shouldNotProcessMultimodeMovedEventWhenInterrogationIsLocked() {
+        // Given: Interrogation with locked=true (created by SQL script)
+        String interrogationId = "MOVED-LOCKED-001";
+
+        // Verify initial state from SQL script
+        var initialState = stateDataService.findStateData(interrogationId);
+        assertThat(initialState).isPresent();
+        assertThat(initialState.get().state()).isEqualTo(StateDataType.INIT);
+
+        // Create and publish a MULTIMODE_MOVED event
+        UUID eventId = UUID.randomUUID();
+        ObjectNode payload = createEventPayload(
+                "MULTIMODE_MOVED",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    builder.put("mode", "CAWI");
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // When: Wait for the event to be processed through the complete flow
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify event was stored in inbox (subscriber received it)
+                    var inboxRecord = inboxJpaRepository.findById(eventId);
+                    assertThat(inboxRecord).isPresent();
+                });
+
+        // Then: Verify StateData was NOT updated (still INIT because locked=true)
+        var finalState = stateDataService.findStateData(interrogationId);
+        assertThat(finalState).isPresent();
+        assertThat(finalState.get().state()).isEqualTo(StateDataType.INIT); // State should NOT be changed to IS_MOVED
+    }
+
+    @Test
+    void shouldProcessMultimodeMovedEventWhenInterrogationIsNotLocked() {
+        // Given: Interrogation with locked=false (created by SQL script)
+        String interrogationId = "MOVED-UNLOCKED-001";
+
+        // Verify initial state from SQL script
+        var initialState = stateDataService.findStateData(interrogationId);
+        assertThat(initialState).isPresent();
+        assertThat(initialState.get().state()).isEqualTo(StateDataType.INIT);
+
+        // Create and publish a MULTIMODE_MOVED event
+        UUID eventId = UUID.randomUUID();
+        ObjectNode payload = createEventPayload(
+                "MULTIMODE_MOVED",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    builder.put("mode", "CAWI");
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // When: Wait for the event to be processed through the complete flow
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // Verify event was stored in inbox
+                    var inboxRecord = inboxJpaRepository.findById(eventId);
+                    assertThat(inboxRecord).isPresent();
+
+                    // Verify StateData was updated to IS_MOVED
+                    var updatedState = stateDataService.findStateData(interrogationId);
+                    assertThat(updatedState).isPresent();
+                    assertThat(updatedState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+                });
+
+        // Then: Verify final state
+        var finalState = stateDataService.findStateData(interrogationId);
+        assertThat(finalState).isPresent();
+        assertThat(finalState.get().state()).isEqualTo(StateDataType.IS_MOVED);
+    }
+
     /**
      * Creates an event payload following the Event Sourcing pattern.
      * Structure: {

@@ -16,7 +16,8 @@ public record InterrogationProjection(
         ObjectNode comment,
         StateDataType state,
         Long date,
-        String currentPage) {
+        String currentPage,
+        Boolean locked) {
 
     public static Interrogation toModel(InterrogationProjection projection) {
         StateData stateDataModel = null;
@@ -31,6 +32,7 @@ public record InterrogationProjection(
                 projection.data(),
                 projection.comment(),
                 stateDataModel,
-                null);
+                null,
+                projection.locked());
     }
 }
