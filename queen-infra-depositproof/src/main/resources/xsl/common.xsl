@@ -6,9 +6,15 @@
     xmlns:xhtml="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xs" version="2.0">
     
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
-    
-    <!-- La xsl comportant l'ensemble des paramètres surchargeables par les xsl de chaque enquête -->
-    <xsl:include href="parametres.xsl"/>
+
+    <xsl:param name="campaignLabel"/>
+    <xsl:param name="date"/>
+    <xsl:param name="unite"/>
+    <xsl:param name="surveyUnit"/>
+    <xsl:param name="style" select="string('any')"/>
+    <xsl:param name="imgPathAQuoi" select="'img/Insee_formulaire-recensement-bleunuance2.png'"/>
+    <xsl:param name="imgPathMariane" select="'img/marianne.png'"/>
+    <xsl:param name="imgPathInsee" select="'img/logo4.png'"/>
    
     
     <!-- Le template du pdf -->
@@ -65,7 +71,6 @@
                         height="7mm">
                         <fo:block font-family="Liberation Sans" font-size="16pt" font-weight="bold"
                             text-align="center">
-                            <!-- <xsl:call-template name="titre"/>  -->
                             <xsl:value-of select="$campaignLabel"/>
                         </fo:block>
                     </fo:block-container>
