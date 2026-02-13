@@ -10,6 +10,7 @@ import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
+import fr.insee.queen.infrastructure.db.interrogation.repository.jpa.InterrogationJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -38,6 +39,9 @@ class CampaignIT {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private InterrogationJpaRepository interrogationRepository;
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
@@ -286,8 +290,8 @@ class CampaignIT {
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void on_delete_campaign_process_deletion() throws Exception {
         String campaignName = "LOG2021X11Web";
+        interrogationRepository.deleteInterrogations(campaignName);
         mockMvc.perform(delete("/api/campaign/" + campaignName)
-                        .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -302,7 +306,6 @@ class CampaignIT {
     @Test
     void on_delete_campaign_when_campaign_invalid_identifier_return_400() throws Exception {
         mockMvc.perform(delete("/api/campaign/invalid!identifier")
-                        .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -312,7 +315,6 @@ class CampaignIT {
     @Test
     void on_delete_campaign_when_campaign_not_exist_return_404() throws Exception {
         mockMvc.perform(delete("/api/campaign/non-existing-campaign")
-                        .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -322,7 +324,6 @@ class CampaignIT {
     @Test
     void on_delete_campaign_when_user_not_authorized_return_403() throws Exception {
         mockMvc.perform(delete("/api/campaign/non-existing-campaign")
-                        .param("force", "true")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )

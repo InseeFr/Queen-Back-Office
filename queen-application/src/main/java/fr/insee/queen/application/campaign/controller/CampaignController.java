@@ -6,10 +6,8 @@ import fr.insee.queen.application.campaign.dto.output.CampaignDto;
 import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
 import fr.insee.queen.application.campaign.dto.output.CampaignIdsDto;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
-import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.campaign.service.CampaignService;
-import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,7 +31,6 @@ import java.util.List;
 @Validated
 public class CampaignController {
     private final CampaignService campaignService;
-    private final PilotageComponent pilotageComponent;
 
     /**
      * Retrieve all campaigns
@@ -101,28 +98,5 @@ public class CampaignController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createCampaignV2(@Valid @RequestBody CampaignCreationDataV2 campaignInputDto) {
         campaignService.createCampaign(CampaignCreationDataV2.toModel(campaignInputDto));
-    }
-
-    /**
-     * Delete a campaign. The deletion is processed in two cases:
-     * - the campaign is closed (check on pilotage api)
-     * - pilotage api is disabled or force option is set to true
-     *
-     * @param force      force the full deletion of the campaign (without checking if campaign is closed in pilotage api)
-     * @param campaignId campaign id
-     */
-    @Operation(summary = "Delete a campaign")
-    @DeleteMapping(path = "/campaign/{id}")
-    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteCampaignById(@RequestParam("force") boolean force,
-                                   @IdValid @PathVariable(value = "id") String campaignId) {
-        if (force || pilotageComponent.isClosed(campaignId)) {
-            campaignService.delete(campaignId);
-            log.info("Campaign with id {} deleted", campaignId);
-            return;
-        }
-
-        throw new CampaignDeletionException(String.format("Unable to delete campaign %s, campaign isn't closed", campaignId));
     }
 }

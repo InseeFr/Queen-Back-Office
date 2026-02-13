@@ -13,7 +13,7 @@
     <name>queen-listener-jms</name>
     <description>JMS Consumer for Queen</description>
     <properties>
-        <json-schema-validator.version>1.5.7</json-schema-validator.version>
+        <json-schema-validator.version>1.5.9</json-schema-validator.version>
     </properties>
 
     <dependencies>

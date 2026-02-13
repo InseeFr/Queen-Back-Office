@@ -25,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@SpringBootTest
-@ActiveProfiles({"test", "test-cache"})
+@SpringBootTest(properties = {"feature.cache.enabled=true"})
+@ActiveProfiles("test")
 class InterrogationCacheIT {
 
     @Autowired
@@ -110,7 +110,7 @@ class InterrogationCacheIT {
         interrogationExist = Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_EXIST).get(interrogationId, Boolean.class));
         assertThat(interrogationExist).isTrue();
 
-        campaignService.delete(campaignId);
+        campaignService.delete(campaignId, true);
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_EXIST)).get(interrogationId)).isNull();
     }
 
@@ -180,7 +180,7 @@ class InterrogationCacheIT {
         InterrogationSummary interrogationSummary = Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_SUMMARY).get(interrogationId, InterrogationSummary.class));
         assertThat(interrogationSummary).isEqualTo(expectedInterrogationSummary);
 
-        campaignService.delete(campaignId);
+        campaignService.delete(campaignId, true);
 
         // after deletion, no interrogation anymore in cache
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_SUMMARY)).get(interrogationId)).isNull();

@@ -8,7 +8,7 @@ import java.util.List;
 public interface CampaignService {
     List<CampaignSummary> getAllCampaigns();
 
-    void delete(String campaignId);
+    void delete(String campaignId, boolean deleteInterrogations);
 
     void createCampaign(Campaign campaignData);
 

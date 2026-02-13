@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.campaign.service;
 
+import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
 import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
 import fr.insee.queen.domain.campaign.gateway.QuestionnaireModelRepository;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -48,13 +48,23 @@ public class CampaignApiService implements CampaignService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(CacheName.CAMPAIGN_EXIST),
+            @CacheEvict(value = CacheName.CAMPAIGN_EXIST, key = "#campaignId"),
             @CacheEvict(value = CacheName.INTERROGATION_EXIST, allEntries = true),
             @CacheEvict(value = CacheName.INTERROGATION_SUMMARY, allEntries = true)
     })
     @Override
-    public void delete(String campaignId) {
-        interrogationRepository.deleteInterrogations(campaignId);
+    public void delete(String campaignId, boolean deleteInterrogations) {
+        if(deleteInterrogations) {
+            log.info("Deleting interrogations for campaign {}", campaignId);
+            interrogationRepository.deleteInterrogations(campaignId);
+        } else {
+            if (interrogationRepository.existsByCampaignId(campaignId)) {
+                log.info("Checking existence of interrogations for campaign {}", campaignId);
+                throw new CampaignDeletionException(
+                        String.format("Cannot delete campaign %s because interrogations still exist", campaignId)
+                );
+            }
+        }
 
         CampaignSummary campaignSummary = campaignRepository.
                 findWithQuestionnaireIds(campaignId)
