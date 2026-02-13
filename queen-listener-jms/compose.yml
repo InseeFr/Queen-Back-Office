@@ -38,7 +38,7 @@ services:
       - "8161:8161"
 
   queen-db:
-    image: postgres:14.15
+    image: postgres:14.21
     profiles:
       - all
       - queen-db
