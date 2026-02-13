@@ -214,6 +214,11 @@ public class InterrogationDao implements InterrogationRepository {
         dataRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
     }
 
+    @Override
+    public boolean existsByCampaignId(String campaignId) {
+        return crudRepository.existsByCampaignId(campaignId);
+    }
+
     private void save(String interrogationId, String surveyUnitId, String campaignId, String questionnaireId) {
         Map<String, Object> fieldsToUpdate = new LinkedHashMap<>();
         if (campaignId != null) {

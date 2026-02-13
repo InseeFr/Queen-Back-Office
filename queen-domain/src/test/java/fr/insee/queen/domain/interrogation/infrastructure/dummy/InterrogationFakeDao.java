@@ -153,4 +153,9 @@ public class InterrogationFakeDao implements InterrogationRepository {
     public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
         // not used at this moment
     }
+
+    @Override
+    public boolean existsByCampaignId(String campaignId) {
+        return false;
+    }
 }

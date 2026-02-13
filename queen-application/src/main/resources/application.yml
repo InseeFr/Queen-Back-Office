@@ -19,6 +19,8 @@ application:
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
   # Use a folder with permissions for the app only
   temp-folder: ./tmp
+  campaign:
+    check-interrogations-on-delete: true
 
 feature:
   cross-environment-communication:
@@ -57,9 +59,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:postgresql://localhost:5434/questionnaire
-    username: mypostgresuser2
-    password: mypostgrespassword2
+    url:
+    username:
+    password:
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 2

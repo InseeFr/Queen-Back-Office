@@ -27,7 +27,7 @@ public class CampaignFakeService implements CampaignService {
     }
 
     @Override
-    public void delete(String campaignId) {
+    public void delete(String campaignId, boolean deleteInterrogations) {
         this.deleted = true;
     }
 

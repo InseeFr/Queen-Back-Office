@@ -30,7 +30,7 @@ public interface InterrogationRepository {
     /**
      * Find all interrogation summary by survey-unit
      *
-     * @param surveyUnitId
+     * @param surveyUnitId survey unit id
      * @return List of {@link InterrogationSummary} interrogation summary
      */
     List<InterrogationSummary> findAllSummaryBySurveyUnitId(String surveyUnitId);
@@ -202,4 +202,12 @@ public interface InterrogationRepository {
      * @param endTimestamp timestamp end
      */
     void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
+
+    /**
+     * Check if interrogations exist for the campaign
+     *
+     * @param campaignId campaign id
+     * @return true if interrogations exist, false otherwise
+     */
+    boolean existsByCampaignId(String campaignId);
 }

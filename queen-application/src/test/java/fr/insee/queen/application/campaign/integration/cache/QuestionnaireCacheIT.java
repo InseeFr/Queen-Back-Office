@@ -31,8 +31,8 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@SpringBootTest
-@ActiveProfiles({"test", "test-cache"})
+@SpringBootTest(properties = {"feature.cache.enabled=true"})
+@ActiveProfiles("test")
 class QuestionnaireCacheIT {
 
     @Autowired
@@ -111,7 +111,7 @@ class QuestionnaireCacheIT {
         campaignService.createCampaign(new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
 
         // when deleting campaign, associated questionnaires are evicted from cache
-        campaignService.delete(campaignId);
+        campaignService.delete(campaignId, true);
 
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId1)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId1)).isNull();
