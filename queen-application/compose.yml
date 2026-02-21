@@ -16,7 +16,7 @@ services:
       - ./container/keycloak/realms:/opt/keycloak/data/import
 
   queen-db:
-    image: postgres:14.15
+    image: postgres:14.21
     profiles:
       - all
       - queen-db
@@ -34,7 +34,7 @@ services:
       - ${QUEEN_DB_PORT}:5432
 
   queen-db-ciphered:
-    image: postgres:14.15
+    image: postgres:14.21
     profiles:
       - all
       - queen-db-ciphered
