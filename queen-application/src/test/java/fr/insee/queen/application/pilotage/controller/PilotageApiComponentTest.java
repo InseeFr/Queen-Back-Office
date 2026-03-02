@@ -1,6 +1,7 @@
 package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
+import fr.insee.queen.application.pilotage.HabilitationFakeService;
 import fr.insee.queen.application.pilotage.service.dummy.PilotageFakeService;
 import fr.insee.queen.application.interrogation.service.dummy.InterrogationFakeService;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class PilotageApiComponentTest {
     private PilotageFakeService pilotageService;
     private AuthenticationFakeHelper authHelper;
+    private HabilitationFakeService habilitationService;
     private AuthenticatedUserTestHelper authenticatedUserTestHelper;
     private InterrogationFakeService interrogationService;
     private PilotageApiComponent pilotageComponent;
@@ -28,6 +30,7 @@ class PilotageApiComponentTest {
     void init() {
         authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
         pilotageService = new PilotageFakeService();
+        habilitationService = new HabilitationFakeService();
         interrogationService = new InterrogationFakeService();
     }
 
@@ -35,27 +38,27 @@ class PilotageApiComponentTest {
     @DisplayName("On check habilitations when ADMIN role do not check pilotage api")
     void testCheckHabilitations02() {
         authHelper = new AuthenticationFakeHelper(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.ADMIN));
-        pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, interrogationService);
+        pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
         pilotageComponent.checkHabilitations(InterrogationFakeService.INTERROGATION1_ID, PilotageRole.INTERVIEWER);
-        assertThat(pilotageService.getWentThroughHasHabilitation()).isZero();
+        assertThat(habilitationService.getWentThroughHasHabilitation()).isZero();
     }
 
     @Test
     @DisplayName("On check habilitations when WEBCLIENT role do not check pilotage api")
     void testCheckHabilitations03() {
         authHelper = new AuthenticationFakeHelper(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.WEBCLIENT));
-        pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, interrogationService);
+        pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
         pilotageComponent.checkHabilitations(InterrogationFakeService.INTERROGATION1_ID, PilotageRole.INTERVIEWER);
-        assertThat(pilotageService.getWentThroughHasHabilitation()).isZero();
+        assertThat(habilitationService.getWentThroughHasHabilitation()).isZero();
     }
 
     @Test
     @DisplayName("On check habilitations then check pilotage api")
     void testCheckHabilitations04() {
         authHelper = new AuthenticationFakeHelper(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER));
-        pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, interrogationService);
+        pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
         pilotageComponent.checkHabilitations(InterrogationFakeService.INTERROGATION1_ID, PilotageRole.INTERVIEWER);
-        assertThat(pilotageService.getWentThroughHasHabilitation()).isEqualTo(1);
+        assertThat(habilitationService.getWentThroughHasHabilitation()).isEqualTo(1);
     }
 
     @Test
@@ -64,11 +67,11 @@ class PilotageApiComponentTest {
         Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(
                 AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE, AuthorityRoleEnum.REVIEWER);
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
-        pilotageService.setHasHabilitation(false);
-        pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, interrogationService);
+        habilitationService.setHabilitationResult(false);
+        pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
         assertThatThrownBy(() -> pilotageComponent.checkHabilitations(InterrogationFakeService.INTERROGATION1_ID, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER))
                 .isInstanceOf(HabilitationException.class);
-        assertThat(pilotageService.getWentThroughHasHabilitation()).isEqualTo(2);
+        assertThat(habilitationService.getWentThroughHasHabilitation()).isEqualTo(2);
     }
 
     @ParameterizedTest
@@ -78,7 +81,7 @@ class PilotageApiComponentTest {
         Authentication authenticatedUser = authenticatedUserTestHelper.getAdminUser();
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageService.setCampaignClosed(pilotageServiceResult);
-        pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, interrogationService);
+        pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
         boolean isCampaignClosed = pilotageComponent.isClosed("écampaign-id");
         assertThat(isCampaignClosed).isEqualTo(pilotageServiceResult);
     }
@@ -89,7 +92,7 @@ class PilotageApiComponentTest {
         Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(
                 AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE, AuthorityRoleEnum.REVIEWER);
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
-        pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, interrogationService);
+        pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
         assertThat(pilotageComponent.getInterrogationsByCampaign("campaign-id")).isEqualTo(pilotageService.getInterrogationSummaries());
     }
 
@@ -98,7 +101,7 @@ class PilotageApiComponentTest {
     void testInterviewerCampaigns() {
         Authentication authenticatedUser = authenticatedUserTestHelper.getManagerUser();
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
-        pilotageComponent = new PilotageApiComponent(pilotageService, authHelper, interrogationService);
+        pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
         assertThat(pilotageComponent.getInterviewerCampaigns()).isEqualTo(pilotageService.getInterviewerCampaigns());
     }
 }

@@ -19,8 +19,8 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@SpringBootTest
-@ActiveProfiles({"test", "test-cache"})
+@SpringBootTest(properties = {"feature.cache.enabled=true"})
+@ActiveProfiles("test")
 class NomenclatureCacheIT {
 
     @Autowired

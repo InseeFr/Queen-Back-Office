@@ -22,8 +22,8 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@SpringBootTest
-@ActiveProfiles({"test", "test-cache"})
+@SpringBootTest(properties = {"feature.cache.enabled=true"})
+@ActiveProfiles("test")
 class CampaignCacheIT {
 
     @Autowired
@@ -60,7 +60,7 @@ class CampaignCacheIT {
         campaignExist =Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId, Boolean.class));
         assertThat(campaignExist).isTrue();
 
-        campaignService.delete(campaignId);
+        campaignService.delete(campaignId, true);
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
     }
 }

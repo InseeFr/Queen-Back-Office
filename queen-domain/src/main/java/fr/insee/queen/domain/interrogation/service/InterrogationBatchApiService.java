@@ -27,6 +27,12 @@ class InterrogationBatchApiService implements InterrogationBatchService {
 
     @Transactional
     @Override
+    public void saveInterrogation(@NonNull Interrogation interrogation) {
+        saveInterrogations(List.of(interrogation));
+    }
+
+    @Transactional
+    @Override
     public void delete(@NonNull List<String> interrogationIds) {
         batchRepository.deleteAll(interrogationIds);
     }

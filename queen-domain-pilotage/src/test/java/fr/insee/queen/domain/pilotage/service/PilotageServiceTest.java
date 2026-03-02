@@ -1,14 +1,12 @@
 package fr.insee.queen.domain.pilotage.service;
 
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
 import fr.insee.queen.domain.campaign.service.dummy.QuestionnaireModelFakeService;
+import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
+import fr.insee.queen.domain.interrogation.service.dummy.InterrogationFakeService;
 import fr.insee.queen.domain.pilotage.infrastructure.dummy.PilotageFakeRepository;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
-import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
-import fr.insee.queen.domain.interrogation.service.dummy.InterrogationFakeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,22 +62,6 @@ class PilotageServiceTest {
         List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
         assertThat(campaigns).hasSize(1);
         assertThat(campaigns.getFirst().id()).isNotEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
-    }
-
-    @Test
-    @DisplayName("On check habilitation, when role == INTERVIEWER return true")
-    void testHasHabilitation_01() {
-        InterrogationSummary su = new InterrogationSummary("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01", "su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
-        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.INTERVIEWER, "idep");
-        assertThat(hasHabilitation).isTrue();
-    }
-
-    @Test
-    @DisplayName("On check habilitation, when role == REVIEWER return true")
-    void testHasHabilitation_02() {
-        InterrogationSummary su = new InterrogationSummary("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01", "su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
-        boolean hasHabilitation = pilotageService.hasHabilitation(su, PilotageRole.REVIEWER, "idep");
-        assertThat(hasHabilitation).isTrue();
     }
 
     @Test

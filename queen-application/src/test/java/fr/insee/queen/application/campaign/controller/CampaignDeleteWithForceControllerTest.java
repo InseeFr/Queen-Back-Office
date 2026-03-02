@@ -7,42 +7,44 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
-class CampaignControllerTest {
+class CampaignDeleteWithForceControllerTest {
 
-    private CampaignController campaignController;
+    private CampaignDeleteWithForceController campaignController;
     private PilotageFakeComponent pilotageComponent;
     private CampaignFakeService campaignService;
+    private final String campaignId = "11";
 
     @BeforeEach
-    public void init() {
-        campaignService = new CampaignFakeService();
+    void init() {
+        campaignService = spy(new CampaignFakeService());
         pilotageComponent = new PilotageFakeComponent();
-        campaignController = new CampaignController(campaignService, pilotageComponent);
+        campaignController = new CampaignDeleteWithForceController(campaignService, pilotageComponent);
     }
 
     @Test
     @DisplayName("On deletion, when force is true, deletion is done")
     void testDeletion() {
-        campaignController.deleteCampaignById(true, "11");
-        assertThat(campaignService.isDeleted()).isTrue();
+        campaignController.deleteCampaignById(true, campaignId);
+        verify(campaignService, times(1)).delete(campaignId, true);
     }
 
     @Test
     @DisplayName("On deletion, when campaign is closed, deletion is done")
     void testDeletion_02() {
-        campaignController.deleteCampaignById(false, "11");
-        assertThat(campaignService.isDeleted()).isTrue();
+        campaignController.deleteCampaignById(false, campaignId);
+        verify(campaignService, times(1)).delete(campaignId, true);
     }
 
     @Test
     @DisplayName("On deletion, when campaign is opened, deletion is aborted")
     void testDeletionException() {
         pilotageComponent.setCampaignClosed(false);
-        assertThatThrownBy(() -> campaignController.deleteCampaignById(false, "11"))
+        assertThatThrownBy(() -> campaignController.deleteCampaignById(false, campaignId))
                 .isInstanceOf(CampaignDeletionException.class);
+        verifyNoInteractions(campaignService);
     }
 
 

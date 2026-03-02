@@ -1,4 +1,6 @@
 application:
+  collection:
+    environment: WEB
   public-urls:
     - /swagger-ui/**
     - /v3/api-docs/**
@@ -12,18 +14,23 @@ application:
     webclient:
     reviewer-alternative:
     survey-unit:
-  corsOrigins:
+  corsOrigins: https://test.com
   # Folder where to store temp files.
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
   # Use a folder with permissions for the app only
-  temp-folder:
+  temp-folder: ./tmp
+  campaign:
+    check-interrogations-on-delete: true
 
 feature:
+  cross-environment-communication:
+    emitter: false
+    consumer: false
   sensitive-data:
     enabled: false
     encryptionSecretKey:
   oidc:
-    enabled: true
+    enabled: false
     auth-server-host: https://auth-server.host
     auth-server-url: ${feature.oidc.auth-server-host}/auth
     client-id: my-client-id

@@ -250,7 +250,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
     /**
      * Find all interrogation summary by survey-unit
      *
-     * @param surveyUnitId
+     * @param surveyUnitId survey unit id
      * @return List of {@link InterrogationSummary} interrogation summary
      */
     @Query("""
@@ -265,4 +265,12 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
             )
             from InterrogationDB s where s.surveyUnitId=:surveyUnitId""")
     List<InterrogationSummary> findAllSummaryBySurveyUnitId(String surveyUnitId);
+
+    /**
+     * Check if interrogations exist within the campaign
+     *
+     * @param campaignId campaign id
+     * @return true if exist, false otherwise
+     */
+    boolean existsByCampaignId(String campaignId);
 }

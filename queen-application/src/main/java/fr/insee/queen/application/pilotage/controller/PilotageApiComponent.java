@@ -2,6 +2,7 @@ package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.pilotage.service.HabilitationService;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.PilotageService;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
@@ -24,6 +25,7 @@ import java.util.List;
 @Slf4j
 public class PilotageApiComponent implements PilotageComponent {
     private final PilotageService pilotageService;
+    private final HabilitationService habilitationService;
     private final AuthenticationHelper authHelper;
     private final InterrogationService interrogationService;
 
@@ -65,7 +67,7 @@ public class PilotageApiComponent implements PilotageComponent {
         }
 
         for (PilotageRole roleToCheck : rolesToCheck) {
-            if (pilotageService.hasHabilitation(interrogation, roleToCheck, userId)) {
+            if (habilitationService.hasHabilitation(interrogation, roleToCheck, userId)) {
                 log.info("Habilitation granted: user {} has access to interrogation {} with role {}", userId, interrogation.id(), roleToCheck);
                 return;
             }

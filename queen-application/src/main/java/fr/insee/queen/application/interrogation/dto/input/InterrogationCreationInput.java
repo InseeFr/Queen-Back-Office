@@ -38,6 +38,7 @@ public record InterrogationCreationInput(
                 interrogation.personalization(),
                 interrogation.data(),
                 interrogation.comment(),
-                StateDataInput.toModel(interrogation.stateData()));
+                StateDataInput.toModel(interrogation.stateData()),
+                null);
     }
 }

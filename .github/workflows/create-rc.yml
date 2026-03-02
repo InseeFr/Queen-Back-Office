@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: install model filiere
+        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+
       - name: Get version
         id: version
         run: echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)-rc" >> $GITHUB_OUTPUT
@@ -19,7 +22,7 @@ jobs:
       - name: Print version
         run: echo ${{ steps.version.outputs.version }}
 
-      - uses: mukunku/tag-exists-action@v1.6.0
+      - uses: mukunku/tag-exists-action@v1.7.0
         name: Check tag existence
         id: check-tag-exists
         with:
@@ -83,6 +86,9 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "21"
+
+      - name: install model filiere
+        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
 
       - name: Build API
         run: mvn package -Dchangelist=-rc --no-transfer-progress

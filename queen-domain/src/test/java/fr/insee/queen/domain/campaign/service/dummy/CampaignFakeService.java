@@ -1,9 +1,9 @@
 package fr.insee.queen.domain.campaign.service.dummy;
 
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
-import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.campaign.model.Campaign;
+import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.campaign.service.CampaignService;
 import lombok.Getter;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class CampaignFakeService implements CampaignService {
     }
 
     @Override
-    public void delete(String campaignId) {
+    public void delete(String campaignId, boolean deleteInterrogations) {
         this.deleted = true;
     }
 

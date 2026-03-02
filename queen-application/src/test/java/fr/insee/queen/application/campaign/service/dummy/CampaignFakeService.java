@@ -15,6 +15,7 @@ public class CampaignFakeService implements CampaignService {
     private boolean deleted = false;
     private boolean updated = false;
     private boolean created = false;
+
     public static final String CAMPAIGN1_ID = "allCampaigns1";
     public static final List<CampaignSummary> CAMPAIGN_SUMMARY_LIST = List.of(
             new CampaignSummary(CAMPAIGN1_ID, "label", CampaignSensitivity.NORMAL, Set.of("questionnaireId1", "questionnaireId2")),
@@ -27,7 +28,7 @@ public class CampaignFakeService implements CampaignService {
     }
 
     @Override
-    public void delete(String campaignId) {
+    public void delete(String campaignId, boolean deleteInterrogations) {
         this.deleted = true;
     }
 

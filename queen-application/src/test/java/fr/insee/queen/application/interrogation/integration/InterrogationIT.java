@@ -393,7 +393,8 @@ class InterrogationIT {
             "surveyUnitId": "survey-unit-test",
             "data":{},
             "comment":{"COMMENT":"acomment"},
-            "questionnaireId":"simpsons"
+            "questionnaireId":"simpsons",
+            "correlationId":"0c83fb82-0197-7197-8e8c-a6ce2c2dbd04"
         }""";
         mockMvc.perform(post("/api/campaign/SIMPSONS2020X00/interrogation")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -410,7 +411,9 @@ class InterrogationIT {
             "surveyUnitId": "survey-unit-test",
             "data":{},
             "comment":{"COMMENT":"acomment"},
-            "questionnaireId":"simpsons"
+            "questionnaireId":"simpsons",
+            "correlationId":"0c83fb82-0197-7197-8e8c-a6ce2c2dbd04"
+            
         }""";
         mockMvc.perform(post("/api/campaigns/SIMPSONS2020X00/interrogation")
                         .contentType(MediaType.APPLICATION_JSON)
