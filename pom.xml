@@ -29,6 +29,7 @@
             **/queen-domain/**, **/fr/insee/queen/domain/**, **/fr/insee/queen/infrastructure/broker/dto/**
         </sonar.coverage.exclusions>
         <sonar.cpd.exclusions>**/fr/insee/queen/infrastructure/broker/dto/**</sonar.cpd.exclusions>
+        <jackson-bom.version>2.21.1</jackson-bom.version>
     </properties>
 
     <parent>
