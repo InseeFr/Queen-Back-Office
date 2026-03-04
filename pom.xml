@@ -10,7 +10,7 @@
     <description>Modules for queen back-office</description>
 
     <properties>
-        <revision>5.7.4</revision>
+        <revision>5.8.0</revision>
         <changelist></changelist>
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
@@ -26,9 +26,8 @@
         <sonar.java.binaries>target</sonar.java.binaries>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.coverage.exclusions>
-            **/queen-domain/**, **/fr/insee/queen/domain/**, **/fr/insee/queen/infrastructure/broker/dto/**
+            **/queen-domain/**, **/fr/insee/queen/domain/**
         </sonar.coverage.exclusions>
-        <sonar.cpd.exclusions>**/fr/insee/queen/infrastructure/broker/dto/**</sonar.cpd.exclusions>
         <jackson-bom.version>2.21.1</jackson-bom.version>
     </properties>
 
