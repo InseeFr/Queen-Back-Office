@@ -46,9 +46,16 @@ public class StateDataApiService implements StateDataService {
         }
 
         if (previousStateData.isEmpty()) {
+            log.info("Previous state data not found, new state data -> [{}, {}]", stateData.state().name(), stateData.date());
             stateDataRepository.save(interrogationId, stateData);
             return;
         }
+
+        log.info("Previous state data -> [{},{}], new state data -> [{}, {}]",
+                previousStateData.get().state() != null ? previousStateData.get().state().name() : null,
+                previousStateData.get().date(),
+                stateData.state().name(),
+                stateData.date());
 
         // update only if incoming state-data is newer and verifyDate is true
         if (verifyDate) {

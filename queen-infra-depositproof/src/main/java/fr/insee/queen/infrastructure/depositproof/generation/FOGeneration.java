@@ -3,12 +3,11 @@ package fr.insee.queen.infrastructure.depositproof.generation;
 import fr.insee.queen.infrastructure.depositproof.exception.DepositProofException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.saxon.TransformerFactoryImpl;
+import javax.xml.transform.TransformerFactory;
 import org.springframework.stereotype.Component;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
@@ -48,10 +47,10 @@ public class FOGeneration {
                                String campaignLabel,
                                String userId,
                                String surveyUnitCompositeName) throws TransformerException {
-        TransformerFactory tFactory = new TransformerFactoryImpl();
+        TransformerFactory tFactory = TransformerFactory.newInstance();
         tFactory.setURIResolver(new ClasspathURIResolver());
         tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "file");
+        tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         Transformer transformer = tFactory.newTransformer(new StreamSource(xslSheet));
         transformer.setURIResolver(new ClasspathURIResolver());
         transformer.setParameter(UNITE, userId);

@@ -45,9 +45,6 @@ spring:
         active:
           - queen-db
   datasource:
-    url: jdbc:postgresql://localhost:5434/queen
-    username: mypostgresuser2
-    password: mypostgrespassword2
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 1

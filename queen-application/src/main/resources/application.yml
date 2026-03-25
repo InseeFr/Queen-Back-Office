@@ -14,18 +14,15 @@ application:
     webclient:
     reviewer-alternative:
     survey-unit:
-  corsOrigins: https://test.com
+  corsOrigins:
   # Folder where to store temp files.
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
   # Use a folder with permissions for the app only
-  temp-folder: ./tmp
+  temp-folder:
   campaign:
     check-interrogations-on-delete: true
 
 feature:
-  cross-environment-communication:
-    emitter: false
-    consumer: false
   sensitive-data:
     enabled: false
     encryptionSecretKey:

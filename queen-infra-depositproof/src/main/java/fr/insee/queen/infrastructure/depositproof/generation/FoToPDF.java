@@ -3,6 +3,7 @@ package fr.insee.queen.infrastructure.depositproof.generation;
 import fr.insee.queen.infrastructure.depositproof.exception.DepositProofException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -10,9 +11,11 @@ import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.springframework.stereotype.Component;
 
 import javax.xml.XMLConstants;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
@@ -33,12 +36,22 @@ public class FoToPDF {
 
     public File transformFoToPdf(File foFile) throws IOException {
         log.info("foFile = {}", foFile.getPath());
+        
+        // Workaround for FOP-3275: Multiple approaches to avoid event model issues with Java 25
+        System.setProperty("org.apache.fop.events.EventModelLoader.disable", "true");
+        System.setProperty("javax.xml.parsers.SAXParserFactory", "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
+        System.setProperty("org.apache.fop.events.eventModelLoading", "false");
+        System.setProperty("org.apache.fop.events.disable", "true");
+        
         Path tempDirectoryPath = Path.of(tempFolder);
         File outFilePDF = Files.createTempFile(tempDirectoryPath, UUID.randomUUID().toString(), ".pdf").toFile();
         try(FileOutputStream fileOuputStream = new FileOutputStream(outFilePDF);
                 OutputStream out = new BufferedOutputStream(fileOuputStream)) {
             InputStream isXconf = getClass().getResourceAsStream("/pdf/fop.xconf");
             URI folderBase = Objects.requireNonNull(getClass().getResource("/pdf/")).toURI();
+            
+            // Create FopFactory with workarounds for Java 25 compatibility
+            // Try creating FopFactory with minimal configuration to avoid event model loading
             FopFactory fopFactory = FopFactory.newInstance(folderBase, isXconf);
             fopFactory.getFontManager().setCacheFile(Path.of(tempFolder + "/fop.cache").toUri());
             fopFactory.getFontManager().setResourceResolver(
@@ -51,9 +64,12 @@ public class FoToPDF {
             foUserAgent.setTitle("PDF document");
 
             Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
-            TransformerFactory factory = TransformerFactory.newInstance();
+
+            log.debug("Using SaxonHE identity transformer as workaround for FOP-3275");
+            TransformerFactory factory = new TransformerFactoryImpl();
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+
             Transformer transformer = factory.newTransformer();
             Source src = new StreamSource(foFile);
             Result res = new SAXResult(fop.getDefaultHandler());
