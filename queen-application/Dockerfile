@@ -1,26 +1,18 @@
-FROM eclipse-temurin:21.0.10_7-jre
+FROM eclipse-temurin:25.0.2_10-jre-jammy
 
-ENV PATH_TO_JAR=/opt/app/app.jar
-WORKDIR /opt/app/
-COPY ./target/*.jar $PATH_TO_JAR
+WORKDIR /opt/app
 
-ENV JAVA_TOOL_OPTIONS_DEFAULT \
-    -XX:MaxRAMPercentage=75
+COPY ./target/*.jar /opt/app/app.jar
 
-
-
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75"
 ENV JAVA_USER_ID=10001
 ENV JAVA_USER=java
 
-# Setup a non-root user context (security)
 RUN groupadd -g "$JAVA_USER_ID" "$JAVA_USER" && \
-    useradd -r -u "$JAVA_USER_ID" -g "$JAVA_USER" "$JAVA_USER"
+    useradd -r -u "$JAVA_USER_ID" -g "$JAVA_USER" "$JAVA_USER" && \
+    mkdir -p /opt/app/temp-files && \
+    chown -R "$JAVA_USER":"$JAVA_USER" /opt/app
 
-RUN mkdir /opt/app/temp-files
-RUN chown -R "$JAVA_USER":"$JAVA_USER" /opt/app
+USER $JAVA_USER
 
-USER $JAVA_USER_ID
-
-ENTRYPOINT [ "/bin/sh", "-c", \
-    "export JAVA_TOOL_OPTIONS=\"$JAVA_TOOL_OPTIONS_DEFAULT $JAVA_TOOL_OPTIONS\"; \
-    exec java -jar $PATH_TO_JAR" ]
+ENTRYPOINT ["java", "-jar", "/opt/app/app.jar"]
