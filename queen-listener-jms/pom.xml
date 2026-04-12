@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.datastax.oss</groupId>
             <artifactId>pulsar-jms</artifactId>
-            <version>7.0.15</version>
+            <version>7.0.16</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.pulsar</groupId>
@@ -151,7 +151,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.1.4</version>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
