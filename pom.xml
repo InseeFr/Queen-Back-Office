@@ -50,7 +50,6 @@
         <module>queen-infra-pilotage</module>
         <module>queen-infra-depositproof</module>
         <module>queen-infra-registre</module>
-        <module>queen-listener-jms</module>
         <module>coverage-report</module>
     </modules>
 
