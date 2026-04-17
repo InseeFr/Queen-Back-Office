@@ -21,7 +21,7 @@ jobs:
           java-version: 25
           distribution: 'temurin'
       - name: install model filiere
-        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+        run: mvn install:install-file -Dfile="$(pwd)/libs/modelefiliere-3.0.0-rc.2.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=3.0.0-rc.2 -Dpackaging=jar -DgeneratePom=true
       - name: Cache SonarCloud packages
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:

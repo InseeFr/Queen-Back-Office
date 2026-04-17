@@ -30,6 +30,7 @@
         </sonar.coverage.exclusions>
         <jackson-bom.version>2.21.1</jackson-bom.version>
         <filiere-model.version>3.0.0-rc.2</filiere-model.version>
+        <tomcat.version>11.0.21</tomcat.version>
     </properties>
 
     <parent>

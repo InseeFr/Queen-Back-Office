@@ -29,6 +29,8 @@ feature:
     enabled: true
   interviewer-mode:
     enabled: true
+  registre:
+    enabled: false
 spring:
   docker:
     compose:
