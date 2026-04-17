@@ -3,7 +3,6 @@ package fr.insee.queen.application.configuration.registre.auth;
 import fr.insee.queen.domain.registre.service.exception.RegistreAuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
