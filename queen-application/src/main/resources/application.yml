@@ -42,6 +42,13 @@ feature:
     alternative-habilitation:
       url: http://alternative.url
       campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
+  registre:
+    enabled: true
+    base-url:
+    service-account:
+      client-id:
+      client-secret:
+      token-uri:
   cache:
     enabled: true
   comments:

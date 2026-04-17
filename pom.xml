@@ -10,7 +10,7 @@
     <description>Modules for queen back-office</description>
 
     <properties>
-        <revision>5.8.2</revision>
+        <revision>5.9.0</revision>
         <changelist></changelist>
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
@@ -29,12 +29,14 @@
             **/queen-domain/**, **/fr/insee/queen/domain/**
         </sonar.coverage.exclusions>
         <jackson-bom.version>2.21.1</jackson-bom.version>
+        <filiere-model.version>3.0.0-rc.2</filiere-model.version>
+        <tomcat.version>11.0.21</tomcat.version>
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.12</version>
+        <version>3.5.13</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -44,9 +46,10 @@
         <module>queen-infra-db</module>
         <module>queen-domain-depositproof</module>
         <module>queen-domain-pilotage</module>
+        <module>queen-domain-registre</module>
         <module>queen-infra-pilotage</module>
         <module>queen-infra-depositproof</module>
-        <module>queen-listener-jms</module>
+        <module>queen-infra-registre</module>
         <module>coverage-report</module>
     </modules>
 

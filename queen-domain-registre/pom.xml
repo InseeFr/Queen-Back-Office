@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>fr.insee.queen</groupId>
+        <artifactId>queen-parent</artifactId>
+        <version>${revision}${changelist}</version>
+    </parent>
+    <artifactId>queen-domain-registre</artifactId>
+    <name>queen-domain-registre</name>
+    <description>Business logic on registre for Queen/Stromae</description>
+    <dependencies>
+        <dependency>
+            <groupId>fr.insee.queen</groupId>
+            <artifactId>queen-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <!-- will only display a warning but does not fail the build. -->
+                                    <level>ERROR</level>
+                                    <excludes>
+                                        <exclude>fr.insee.queen:*</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>fr.insee.queen:queen-domain</include>
+                                    </includes>
+                                    <message>Queen domain module should not use another queen modules</message>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
