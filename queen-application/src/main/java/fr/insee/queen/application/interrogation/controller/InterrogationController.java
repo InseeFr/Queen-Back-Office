@@ -5,6 +5,7 @@ import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationBySurveyUnitDto;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationStateDto;
+import fr.insee.queen.application.interrogation.dto.output.QuestionnaireLinkDto;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
 import fr.insee.queen.application.interrogation.dto.input.StateDataInput;
@@ -280,6 +281,21 @@ public class InterrogationController {
         throw new AccessDeniedException("Not authorized to update interrogation data");
     }
 
+    /**
+     * Get questionnaire links for a list of interrogation IDs
+     *
+     * @param interrogationIds list of interrogation IDs
+     * @return list of questionnaire links
+     */
+    @Operation(summary = "Get questionnaire links for interrogations")
+    @PostMapping("/interrogations/questionnaire-link")
+    @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
+    public List<QuestionnaireLinkDto> getQuestionnaireLinks(@Valid @RequestBody List<String> interrogationIds) {
+        return interrogationService.findQuestionnaireLinksByInterrogationIds(interrogationIds)
+                .stream()
+                .map(QuestionnaireLinkDto::fromModel)
+                .toList();
+    }
 
     /**
      * Delete an interrogation

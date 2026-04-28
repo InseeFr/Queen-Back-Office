@@ -139,4 +139,13 @@ public class InterrogationFakeService implements InterrogationService {
     public List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType) {
         return null;
     }
+
+    @Override
+    public List<QuestionnaireLink> findQuestionnaireLinksByInterrogationIds(List<String> interrogationIds) {
+        return interrogationSummaries
+                .stream()
+                .filter(summary -> interrogationIds.contains(summary.id()))
+                .map(summary -> new QuestionnaireLink(summary.id(), summary.questionnaireId()))
+                .toList();
+    }
 }
