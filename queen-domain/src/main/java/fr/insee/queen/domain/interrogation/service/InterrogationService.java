@@ -47,4 +47,6 @@ public interface InterrogationService {
     List<Interrogation> findAllInterrogations();
 
     List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType);
+
+    List<QuestionnaireLink> findQuestionnaireLinksByInterrogationIds(List<String> interrogationIds);
 }

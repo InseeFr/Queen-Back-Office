@@ -46,7 +46,10 @@ public class InterrogationFakeDao implements InterrogationRepository {
 
     @Override
     public List<InterrogationSummary> findAllSummaryByIdIn(List<String> interrogationIds) {
-        return null;
+            return interrogationSummaries
+                    .stream()
+                    .filter(summary -> interrogationIds.contains(summary.id()))
+                    .toList();
     }
 
     @Override

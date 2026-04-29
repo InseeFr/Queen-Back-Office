@@ -200,6 +200,13 @@ public class InterrogationApiService implements InterrogationService {
     }
 
     @Override
+    public List<QuestionnaireLink> findQuestionnaireLinksByInterrogationIds(List<String> interrogationIds) {
+        return interrogationRepository.findAllSummaryByIdIn(interrogationIds).stream()
+                .map(summary -> new QuestionnaireLink(summary.id(), summary.questionnaireId()))
+                .toList();
+    }
+
+    @Override
     public InterrogationSummary getSummaryById(String interrogationId) {
         return findSummaryById(interrogationId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, interrogationId)));
