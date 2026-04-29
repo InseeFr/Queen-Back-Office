@@ -8,6 +8,7 @@ import fr.insee.queen.application.interrogation.controller.dummy.MetadataFakeCon
 import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
 import fr.insee.queen.application.interrogation.dto.input.*;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
+import fr.insee.queen.application.interrogation.dto.output.QuestionnaireLinkDto;
 import fr.insee.queen.application.interrogation.service.dummy.StateDataFakeService;
 import fr.insee.queen.application.interrogation.service.dummy.InterrogationFakeService;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
@@ -409,6 +410,48 @@ class InterrogationControllerTest {
         assertThat(interrogationDto.stateData()).isNull();
         assertThat(interrogationDto.questionnaireId()).isEqualTo(interrogation.questionnaireId());
     }
+
+    @ParameterizedTest
+    @MethodSource("provideQuestionnaireLinkTestCases")
+    @DisplayName("Should return questionnaire links for given interrogation IDs")
+    void testGetQuestionnaireLinks(List<String> inputIds, List<QuestionnaireLinkDto> expectedLinks) {
+        // when
+        List<QuestionnaireLinkDto> questionnaireLinks = interrogationController.getQuestionnaireLinks(inputIds);
+
+        // then
+        assertThat(questionnaireLinks).isNotNull().hasSize(expectedLinks.size());
+
+        assertThat(questionnaireLinks).containsExactlyInAnyOrderElementsOf(expectedLinks);
+    }
+
+    private static Stream<Arguments> provideQuestionnaireLinkTestCases() {
+        return Stream.of(
+                Arguments.of(
+                        List.of(
+                                InterrogationFakeService.INTERROGATION1_ID,
+                                InterrogationFakeService.INTERROGATION2_ID,
+                                InterrogationFakeService.INTERROGATION4_ID
+                        ),
+                        List.of(
+                                new QuestionnaireLinkDto(InterrogationFakeService.INTERROGATION1_ID, InterrogationFakeService.QUESTIONNAIRE1_ID),
+                                new QuestionnaireLinkDto(InterrogationFakeService.INTERROGATION2_ID, InterrogationFakeService.QUESTIONNAIRE1_ID),
+                                new QuestionnaireLinkDto(InterrogationFakeService.INTERROGATION4_ID, InterrogationFakeService.QUESTIONNAIRE2_ID)
+                        )
+                ),
+                Arguments.of(
+                        List.of("unknown-id-1", "unknown-id-2"),
+                        List.of()
+                ),
+                Arguments.of(
+                        List.of(InterrogationFakeService.INTERROGATION1_ID, "unknown-id", InterrogationFakeService.INTERROGATION3_ID),
+                        List.of(
+                                new QuestionnaireLinkDto(InterrogationFakeService.INTERROGATION1_ID, InterrogationFakeService.QUESTIONNAIRE1_ID),
+                                new QuestionnaireLinkDto(InterrogationFakeService.INTERROGATION3_ID, InterrogationFakeService.QUESTIONNAIRE1_ID)
+                        )
+                )
+        );
+    }
+
 
     @Test
     @DisplayName("Should return interrogations by survey-unit")
