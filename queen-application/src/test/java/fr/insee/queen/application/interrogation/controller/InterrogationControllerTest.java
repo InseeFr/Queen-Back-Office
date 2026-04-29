@@ -419,9 +419,9 @@ class InterrogationControllerTest {
         List<QuestionnaireLinkDto> questionnaireLinks = interrogationController.getQuestionnaireLinks(inputIds);
 
         // then
-        assertThat(questionnaireLinks).isNotNull().hasSize(expectedLinks.size());
-
-        assertThat(questionnaireLinks).containsExactlyInAnyOrderElementsOf(expectedLinks);
+        assertThat(questionnaireLinks)
+                .isNotNull().hasSize(expectedLinks.size())
+                .containsExactlyInAnyOrderElementsOf(expectedLinks);
     }
 
     private static Stream<Arguments> provideQuestionnaireLinkTestCases() {

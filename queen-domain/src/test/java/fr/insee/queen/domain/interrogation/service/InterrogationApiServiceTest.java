@@ -263,11 +263,12 @@ class InterrogationApiServiceTest {
         List<QuestionnaireLink> result = interrogationApiService.findQuestionnaireLinksByInterrogationIds(interrogationIds);
 
         // Then
-        assertThat(result).hasSize(3);
-        assertThat(result).containsExactlyInAnyOrder(
-                new QuestionnaireLink("interro1", "quest1"),
-                new QuestionnaireLink("interro2", "quest2"),
-                new QuestionnaireLink("interro3", "quest1")
+        assertThat(result)
+                .hasSize(3)
+                .containsExactlyInAnyOrder(
+                        new QuestionnaireLink("interro1", "quest1"),
+                        new QuestionnaireLink("interro2", "quest2"),
+                        new QuestionnaireLink("interro3", "quest1")
         );
     }
 
@@ -285,10 +286,11 @@ class InterrogationApiServiceTest {
         List<QuestionnaireLink> result = interrogationApiService.findQuestionnaireLinksByInterrogationIds(interrogationIds);
 
         // Then
-        assertThat(result).hasSize(2);
-        assertThat(result).containsExactlyInAnyOrder(
-                new QuestionnaireLink("interro1", "quest1"),
-                new QuestionnaireLink("interro2", "quest2")
+        assertThat(result)
+                .hasSize(2)
+                .containsExactlyInAnyOrder(
+                        new QuestionnaireLink("interro1", "quest1"),
+                        new QuestionnaireLink("interro2", "quest2")
         );
     }
 
