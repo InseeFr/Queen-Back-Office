@@ -1,10 +1,7 @@
 broker:
-  # artemis, pulsar
-  name:
   queue:
     interrogation:
       request: interrogation_request
-      response: interrogation_response
 
 spring:
   application:
