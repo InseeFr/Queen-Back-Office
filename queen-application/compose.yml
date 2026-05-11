@@ -6,6 +6,7 @@ services:
     profiles:
       - all
       - keycloak
+      - queen-api
 
   queen-db:
     extends:
@@ -15,6 +16,7 @@ services:
       - all
       - queen-db
       - queen-listener-jms
+      - queen-api
 
   queen-db-ciphered:
     extends:
@@ -40,11 +42,57 @@ services:
       - all
       - queen-listener-jms
 
+  pearl-db:
+    extends:
+      file: ./container/compose.pearl-db.yml
+      service: pearl-db
+    profiles:
+      - all
+      - pearl
+
+  pearl-api:
+    extends:
+      file: ./container/compose.pearl-api.yml
+      service: pearl-api
+    profiles:
+      - all
+      - pearl
+
+  pearl-listener-jms:
+    extends:
+      file: ./container/compose.pearl-listener-jms.yml
+      service: pearl-listener-jms
+    profiles:
+      - all
+      - pearl
+
+  pearl-front:
+    extends:
+      file: ./container/compose.pearl-front.yml
+      service: pearl-front
+    profiles:
+      - all
+      - pearl
+
+  queen-api:
+    extends:
+      file: ./container/compose.queen-api.yml
+      service: queen-api
+    depends_on:
+      queen-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    profiles:
+      - all
+      - queen-api
+
   queen-db-remote:
     extends:
       file: ./container/compose.synchronisation.yml
       service: queen-db-remote
     profiles:
+      - all
       - synchronisation
 
   queen-remote:
@@ -52,6 +100,23 @@ services:
       file: ./container/compose.synchronisation.yml
       service: queen-remote
     profiles:
+      - all
+      - synchronisation
+
+  queen-remote-init:
+    extends:
+      file: ./container/compose.synchronisation.yml
+      service: queen-remote-init
+    profiles:
+      - all
+      - synchronisation
+
+  queen-remote-listener-jms:
+    extends:
+      file: ./container/compose.queen-remote-listener-jms.yml
+      service: queen-remote-listener-jms
+    profiles:
+      - all
       - synchronisation
 
 volumes:

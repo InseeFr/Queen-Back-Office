@@ -1,0 +1,5 @@
+services:
+  pearl-front:
+    image: nginx:alpine
+    ports:
+      - "${PEARL_FRONTEND_PORT}:80"

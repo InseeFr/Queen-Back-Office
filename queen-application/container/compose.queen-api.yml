@@ -1,0 +1,41 @@
+services:
+  queen-api:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://queen-db:5432/${QUEEN_DB}
+      - SPRING_DATASOURCE_USERNAME=${QUEEN_DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${QUEEN_DB_PASSWORD}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - FEATURE_OIDC_ENABLED=true
+      - FEATURE_OIDC_REALM=${AUTH_REALM}
+      - FEATURE_OIDC_CLIENTID=${AUTH_CLIENT_ID}
+      - FEATURE_OIDC_AUTHSERVERHOST=http://localhost:${KEYCLOAK_PORT}
+      - FEATURE_OIDC_AUTHSERVERURL=http://localhost:${KEYCLOAK_PORT}
+      - FEATURE_OIDC_PRINCIPALATTRIBUTE=preferred_username
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/${AUTH_REALM}/protocol/openid-connect/certs
+      - APPLICATION_ROLES_INTERVIEWER=interviewer
+      - APPLICATION_ROLES_REVIEWER=gestionnaire
+      - APPLICATION_ROLES_ADMIN=admin
+      - APPLICATION_ROLES_WEBCLIENT=webclient
+      - APPLICATION_CORSORIGINS_0=http://localhost:3000
+      - FEATURE_SWAGGER_ENABLED=true
+      - FEATURE_INTERVIEWER_MODE_ENABLED=true
+      - FEATURE_PILOTAGE_URL=http://pearl-api:8080
+      - SPRING_LIQUIBASE_ENABLED=true
+      - SPRING_LIQUIBASE_CONTEXTS=demo
+      - SPRING_LIQUIBASE_CHANGE_LOG=classpath:db/integration-demo.xml
+      - APPLICATION_TEMP_FOLDER=/opt/app/temp-files
+      - FEATURE_CROSSENVIRONMENTCOMMUNICATION_EMITTER=true
+      - FEATURE_CROSSENVIRONMENTCOMMUNICATION_CONSUMER=true
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=DEBUG
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:8080/api/healthcheck || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s

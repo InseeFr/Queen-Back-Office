@@ -1,0 +1,15 @@
+services:
+  pearl-db:
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_POSTGRES}
+    environment:
+      - POSTGRES_USER=${PEARL_DB_USER}
+      - POSTGRES_PASSWORD=${PEARL_DB_PASSWORD}
+      - POSTGRES_DB=${PEARL_DB}
+    command: ["postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PEARL_DB_USER} -d ${PEARL_DB} -h localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - ${PEARL_DB_PORT}:5432

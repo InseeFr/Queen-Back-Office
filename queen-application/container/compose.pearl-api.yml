@@ -1,0 +1,41 @@
+services:
+  pearl-api:
+    build:
+      context: ../../../Pearl-Jam-Back-Office/api
+      dockerfile: Dockerfile
+    image: pearl-jam-back-office:local
+    depends_on:
+      pearl-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://pearl-db:5432/${PEARL_DB}
+      - SPRING_DATASOURCE_USERNAME=${PEARL_DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${PEARL_DB_PASSWORD}
+      - SPRINGDOC_SWAGGER_UI_OAUTH_ADDITIONALQUERYSTRINGPARAMS_KC_IDP_HINT=${IDP_HINT}
+      - spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:${KEYCLOAK_PORT}/realms/${AUTH_REALM}
+      - spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://keycloak:8080/realms/${AUTH_REALM}/protocol/openid-connect/certs
+      - APPLICATION_HOST=http://localhost:${PEARL_API_PORT}
+      - APPLICATION_ROLES_INTERVIEWER=${INTERVIEWER_ROLE}
+      - APPLICATION_ROLES_LOCAL_USER=${INTERNAL_USER_ROLE}
+      - APPLICATION_ROLES_NATIONAL_USER=${INTERNAL_USER_ROLE}
+      - APPLICATION_ROLES_ADMIN=${ADMIN_ROLE}
+      - APPLICATION_ROLES_WEBCLIENT=${WEBCLIENT_ROLE}
+      - application.corsOrigins=http://localhost:${PEARL_FRONTEND_PORT}
+      - FEATURE_OIDC_ENABLED=true
+      - FEATURE_OIDC_REALM=${AUTH_REALM}
+      - FEATURE_OIDC_CLIENTID=${AUTH_CLIENT_ID}
+      - FEATURE_OIDC_AUTHSERVERHOST=http://localhost:${KEYCLOAK_PORT}
+      - FEATURE_OIDC_AUTHSERVERURL=http://localhost:${KEYCLOAK_PORT}
+      - FEATURE_OIDC_PRINCIPALATTRIBUTE=preferred_username
+      - FEATURE_MAILSERVICE_ENABLED=false
+      - FEATURE_SWAGGER_ENABLED=true
+      - LOGGING_FILE_ENABLED=false
+      - SPRINGDOC_SWAGGER_UI_OAUTH_CLIENT_ID=${AUTH_CLIENT_ID}
+      - SPRING_LIQUIBASE_ENABLED=true
+      - SPRING_LIQUIBASE_CONTEXTS=demo
+      - SPRING_LIQUIBASE_CHANGELOG=classpath:db/integration-demo.xml
+    ports:
+      - ${PEARL_API_PORT}:8080

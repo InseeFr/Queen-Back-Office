@@ -1,0 +1,18 @@
+services:
+  drama-queen:
+    build:
+      context: ../../../Drama-Queen/drama-queen
+      dockerfile: ./Dockerfile.compose
+      args:
+        - VITE_QUEEN_URL=http://localhost:${QUEEN_V1_PORT}
+        - VITE_QUEEN_V2_URL=http://localhost:${QUEEN_V2_PORT}
+    environment:
+      - VITE_QUEEN_URL=http://localhost:${QUEEN_V1_PORT}
+      - VITE_QUEEN_V2_URL=http://localhost:${QUEEN_V2_PORT}
+    depends_on:
+      queen-v1:
+        condition: service_started
+      queen-v2:
+        condition: service_started
+    ports:
+      - ${DRAMA_QUEEN_PORT}:80

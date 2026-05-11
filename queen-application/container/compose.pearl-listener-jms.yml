@@ -1,0 +1,22 @@
+services:
+  pearl-listener-jms:
+    build:
+      context: ../../../Pearl-Jam-Back-Office/listener-jms
+      dockerfile: Dockerfile
+    image: pearl-listener-jms:local
+    depends_on:
+      pearl-db:
+        condition: service_healthy
+      activemq:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://pearl-db:5432/${PEARL_DB}
+      - SPRING_DATASOURCE_USERNAME=${PEARL_DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${PEARL_DB_PASSWORD}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_ARTEMIS_BROKER_URL=tcp://activemq:61616
+      - SPRING_ARTEMIS_USER=${ARTEMIS_USER}
+      - SPRING_ARTEMIS_PASSWORD=${ARTEMIS_PASSWORD}
+      - SPRING_ARTEMIS_MODE=native
+      - FEATURE_MULTIMODE_SUBSCRIBER_ENABLED=true
+      - FEATURE_MULTIMODE_TOPIC=multimode.topic

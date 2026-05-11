@@ -7,14 +7,13 @@ services:
       - POSTGRES_DB=queen-remote
     command: ["postgres"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U queenremote -d queen-remote -h localhost"]
+      test:
+        ["CMD-SHELL", "pg_isready -U queenremote -d queen-remote -h localhost"]
       interval: 5s
       timeout: 10s
       retries: 10
     ports:
       - "5436:5432"
-    volumes:
-      - ../src/test/resources/db/init-remote-data.sql:/docker-entrypoint-initdb.d/init-remote-data.sql:ro
 
   queen-remote:
     build:
@@ -23,6 +22,8 @@ services:
     depends_on:
       queen-db-remote:
         condition: service_healthy
+      activemq:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://queen-db-remote:5432/queen-remote
       - SPRING_DATASOURCE_USERNAME=queenremote
@@ -36,11 +37,27 @@ services:
       - SPRING_LIQUIBASE_CHANGE_LOG=classpath:db/integration-test.xml
       - APPLICATION_CORSORIGINS=*
       - APPLICATION_TEMP_FOLDER=/opt/app/temp-files
+      - FEATURE_CROSSENVIRONMENTCOMMUNICATION_EMITTER=true
+      - FEATURE_CROSSENVIRONMENTCOMMUNICATION_CONSUMER=true
+      - SPRING_ARTEMIS_BROKER_URL=tcp://activemq:61616
+      - SPRING_ARTEMIS_USER=admin
+      - SPRING_ARTEMIS_PASSWORD=admin
     ports:
       - "8081:8080"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/healthcheck || exit 1"]
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:8080/api/healthcheck || exit 1"]
       interval: 10s
       timeout: 10s
       retries: 30
       start_period: 60s
+
+  queen-remote-init:
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_POSTGRES}
+    depends_on:
+      queen-remote:
+        condition: service_healthy
+    volumes:
+      - ./init-remote-data.sh:/init-remote-data.sh:ro
+    command: ["bash", "/init-remote-data.sh"]
+    restart: "no"

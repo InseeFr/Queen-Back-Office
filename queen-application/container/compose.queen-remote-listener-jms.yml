@@ -1,0 +1,24 @@
+services:
+  queen-remote-listener-jms:
+    build:
+      context: ../../queen-listener-jms
+      dockerfile: Dockerfile
+    image: queen-remote-listener-jms:local
+    depends_on:
+      queen-db-remote:
+        condition: service_healthy
+      activemq:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://queen-db-remote:5432/queen-remote
+      - SPRING_DATASOURCE_USERNAME=queenremote
+      - SPRING_DATASOURCE_PASSWORD=queenremote
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_ARTEMIS_BROKER_URL=tcp://activemq:61616
+      - SPRING_ARTEMIS_USER=${ARTEMIS_USER}
+      - SPRING_ARTEMIS_PASSWORD=${ARTEMIS_PASSWORD}
+      - SPRING_ARTEMIS_MODE=native
+      - FEATURE_MULTIMODE_PUBLISHER_ENABLED=true
+      - FEATURE_MULTIMODE_PUBLISHER_SCHEDULER_INTERVAL=5000
+      - FEATURE_MULTIMODE_PUBLISHER_SCHEDULER_INITIALDELAY=10000
+      - FEATURE_MULTIMODE_TOPIC=multimode.topic
