@@ -19,8 +19,8 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
+            <artifactId>spring-boot</artifactId>
+        </dependency> <!-- TODO: this may be removed since it inherits spring parent from queen parent -->
     </dependencies>
     <build>
         <plugins>
