@@ -30,7 +30,6 @@
         <sonar.coverage.exclusions>
             **/queen-domain/**, **/fr/insee/queen/domain/**
         </sonar.coverage.exclusions>
-        <jackson-bom.version>2.21.1</jackson-bom.version>
     </properties>
 
     <parent>
