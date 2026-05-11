@@ -68,7 +68,7 @@ spring:
     hibernate:
       ddl-auto: none
       naming:
-        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl # CamelCaseToUnderscoresNamingStrategy is deprecated in Hibernate 7+
         implicit-strategy: org.springframework.boot.hibernate.SpringImplicitNamingStrategy
     properties:
       id:
