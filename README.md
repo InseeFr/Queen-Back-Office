@@ -241,7 +241,7 @@ feature:
 - spring-boot-web
 - spring-boot-tomcat
 - spring-boot-test
-- spring-boot-starter-oauth2-resource-server
+- spring-boot-starter-security-oauth2-resource-server
 - liquibase
 - postgresql
 - junit
