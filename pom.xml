@@ -52,6 +52,14 @@
     </modules>
 
     <dependencies>
+        <!-- Temporary dependency added for Spring Boot 4 migration
+         https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide#configuration-properties-migration -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-properties-migrator</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.projectlombok</groupId>
