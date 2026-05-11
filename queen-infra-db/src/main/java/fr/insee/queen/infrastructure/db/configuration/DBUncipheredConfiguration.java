@@ -3,7 +3,7 @@ package fr.insee.queen.infrastructure.db.configuration;
 import fr.insee.queen.infrastructure.db.data.repository.jpa.CipheredDataJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
