@@ -11,11 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @ActiveProfiles("test")
@@ -37,6 +41,9 @@ class DataUnCipherIT {
 
     @Autowired
     private DataFactory dataFactory;
+
+    @MockitoSpyBean
+    private UncipheredDataJpaRepository uncipheredDataJpaRepository;
 
 
     @Test
@@ -136,5 +143,49 @@ class DataUnCipherIT {
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void cleanExtractedData() throws Exception {
         dataCommonAssertions.cleanExtractedData();
+    }
+
+    @Test
+    @DisplayName("Given listed EXTRACTED ids, when cleaning by ids, then data is blanked and non-listed EXTRACTED are untouched")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void cleanExtractedDataByIds() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds();
+        verify(uncipheredDataJpaRepository).cleanExtractedDataByIds(eq("SIMPSONS2020X00"), anyList());
+    }
+
+    @Test
+    @DisplayName("Given listed ids with INIT state, when cleaning by ids, then data is untouched")
+    void cleanExtractedDataByIds_initStateUnchanged() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_initStateUnchanged();
+    }
+
+    @Test
+    @DisplayName("Given listed ids belonging to another campaign, when cleaning by ids, then data is untouched")
+    void cleanExtractedDataByIds_wrongCampaignUnchanged() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_wrongCampaignUnchanged();
+    }
+
+    @Test
+    @DisplayName("Given empty body, when cleaning by ids, then return 400")
+    void cleanExtractedDataByIds_emptyBody_return400() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_emptyBody_return400();
+    }
+
+    @Test
+    @DisplayName("Given invalid campaign id, when cleaning by ids, then return 400")
+    void cleanExtractedDataByIds_invalidCampaignId_return400() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_invalidCampaignId_return400();
+    }
+
+    @Test
+    @DisplayName("Given anonymous user, when cleaning by ids, then return 401")
+    void cleanExtractedDataByIds_anonymous_return401() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_anonymous_return401();
+    }
+
+    @Test
+    @DisplayName("Given non-WEBCLIENT user, when cleaning by ids, then return 403")
+    void cleanExtractedDataByIds_forbidden_return403() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_forbidden_return403();
     }
 }

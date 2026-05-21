@@ -60,7 +60,5 @@ public interface DataRepository {
      * @param campaignId campaign id
      * @param interrogationIds interrogation ids to target
      */
-    default void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
-        throw new UnsupportedOperationException("cleanExtractedDataByIds must be implemented by the JPA adapter");
-    }
+     void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
 }
