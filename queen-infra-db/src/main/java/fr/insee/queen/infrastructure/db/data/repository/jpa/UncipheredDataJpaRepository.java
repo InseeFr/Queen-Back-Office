@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
  * JPA repository to handle interrogation's data response for a questionnaire
  */
@@ -33,33 +31,4 @@ public interface UncipheredDataJpaRepository extends DataJpaRepository {
     """, nativeQuery = true)
     void updateCollectedData(String interrogationId, ObjectNode collectedUpdateData);
 
-    @Transactional
-    @Modifying
-    @Query(value = """
-        UPDATE data
-            SET value = '{}'::jsonb
-            WHERE interrogation_id IN (
-                SELECT su.id
-                FROM interrogation su
-                INNER JOIN state_data sd ON sd.interrogation_id = su.id
-                WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
-                AND sd.date BETWEEN :startTimestamp AND :endTimestamp
-            );
-    """, nativeQuery = true)
-    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
-
-    @Transactional
-    @Modifying
-    @Query(value = """
-        UPDATE data
-            SET value = '{}'::jsonb
-            WHERE interrogation_id IN (
-                SELECT su.id
-                FROM interrogation su
-                INNER JOIN state_data sd ON sd.interrogation_id = su.id
-                WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
-                AND su.id IN (:interrogationIds)
-            );
-    """, nativeQuery = true)
-    void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
 }
