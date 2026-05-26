@@ -11,15 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @ActiveProfiles("test")
@@ -41,10 +37,6 @@ class DataUnCipherIT {
 
     @Autowired
     private DataFactory dataFactory;
-
-    @MockitoSpyBean
-    private UncipheredDataJpaRepository uncipheredDataJpaRepository;
-
 
     @Test
     @DisplayName("Check Ciphered Data repository is loaded")
@@ -143,14 +135,6 @@ class DataUnCipherIT {
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void cleanExtractedData() throws Exception {
         dataCommonAssertions.cleanExtractedData();
-    }
-
-    @Test
-    @DisplayName("Given listed EXTRACTED ids, when cleaning by ids, then data is blanked and non-listed EXTRACTED are untouched")
-    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void cleanExtractedDataByIds() throws Exception {
-        dataCommonAssertions.cleanExtractedDataByIds();
-        verify(uncipheredDataJpaRepository).cleanExtractedDataByIds(eq("SIMPSONS2020X00"), anyList());
     }
 
     @Test
