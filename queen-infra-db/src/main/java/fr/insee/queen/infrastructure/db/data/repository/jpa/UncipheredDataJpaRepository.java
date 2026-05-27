@@ -1,9 +1,9 @@
 package fr.insee.queen.infrastructure.db.data.repository.jpa;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +22,18 @@ public interface UncipheredDataJpaRepository extends DataJpaRepository {
      */
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
         update data
             set value = jsonb_set(coalesce(value, '{}'),
                         '{COLLECTED}',
                         coalesce(value->'COLLECTED', '{}') || :collectedUpdateData)
             where interrogation_id=:interrogationId
-    """, nativeQuery = true)
+    """)
     void updateCollectedData(String interrogationId, ObjectNode collectedUpdateData);
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
         UPDATE data
             SET value = '{}'::jsonb
             WHERE interrogation_id IN (
@@ -43,6 +43,6 @@ public interface UncipheredDataJpaRepository extends DataJpaRepository {
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND sd.date BETWEEN :startTimestamp AND :endTimestamp
             );
-    """, nativeQuery = true)
+    """)
     void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 }

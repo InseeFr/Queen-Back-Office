@@ -13,7 +13,8 @@
     <name>queen-listener-jms</name>
     <description>JMS Consumer for Queen</description>
     <properties>
-        <json-schema-validator.version>1.5.9</json-schema-validator.version>
+        <json-schema-validator.version>3.0.2</json-schema-validator.version><!--previous: 1.5.9-->
+        <!--TODO: this dependency version is declared in two different modules, should probably be factorized.-->
     </properties>
 
     <dependencies>

@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.data.entity.ciphered;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.data.converter.ObjectNodeConverter;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import fr.insee.queen.infrastructure.db.interrogation.entity.InterrogationDB;

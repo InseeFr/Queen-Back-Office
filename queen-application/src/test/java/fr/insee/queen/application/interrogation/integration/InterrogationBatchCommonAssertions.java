@@ -1,8 +1,9 @@
 package fr.insee.queen.application.interrogation.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.interrogation.dto.input.InterrogationBatchInput;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class InterrogationBatchCommonAssertions {
     private final MockMvc mockMvc;
     private final JdbcTemplate jdbcTemplate;
-    private final ObjectMapper om = new ObjectMapper();
+    private final ObjectMapper om = new JsonMapper();
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
     void shouldCreateUpdateDeleteInterrogations(boolean isCiphered) throws Exception {

@@ -1,6 +1,7 @@
 package fr.insee.queen.application.integration.controller.builder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import fr.insee.queen.application.integration.component.builder.IntegrationCampaignBuilder;
 import fr.insee.queen.application.integration.component.builder.schema.SchemaIntegrationComponent;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
@@ -36,7 +37,7 @@ class CampaignBuilderTest {
     @BeforeEach
     void init() {
         Locale.setDefault(Locale.of("en", "US"));
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new JsonMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         SchemaIntegrationComponent schemaComponent = new SchemaIntegrationComponent(objectMapper, new JsonValidatorComponent());
         integrationFakeService = new IntegrationFakeService();

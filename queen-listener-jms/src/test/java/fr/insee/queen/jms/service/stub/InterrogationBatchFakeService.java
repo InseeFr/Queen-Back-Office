@@ -1,6 +1,5 @@
 package fr.insee.queen.jms.service.stub;
 
-import com.networknt.schema.ValidationMessage;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.service.InterrogationBatchService;
@@ -11,7 +10,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.util.List;
-import java.util.Set;
 
 public class InterrogationBatchFakeService implements InterrogationBatchService {
 
@@ -46,7 +44,7 @@ public class InterrogationBatchFakeService implements InterrogationBatchService 
         }
 
         if(shouldThrowSchemaValidationException) {
-            throw new SchemaValidationException(SCHEMA_VALIDATION_EXCEPTION, Set.of());
+            throw new SchemaValidationException(SCHEMA_VALIDATION_EXCEPTION, List.of());
         }
 
         if(shouldThrowEntityNotFoundException) {

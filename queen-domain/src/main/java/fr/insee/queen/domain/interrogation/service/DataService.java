@@ -1,6 +1,6 @@
 package fr.insee.queen.domain.interrogation.service;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 
 public interface DataService {
     ObjectNode getData(String interrogationId);

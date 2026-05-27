@@ -1,7 +1,7 @@
 package fr.insee.queen.domain.interrogation.infrastructure.dummy;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import fr.insee.queen.domain.interrogation.model.*;
 import lombok.Getter;

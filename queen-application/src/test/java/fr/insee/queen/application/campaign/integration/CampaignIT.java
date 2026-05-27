@@ -1,7 +1,7 @@
 package fr.insee.queen.application.campaign.integration;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.campaign.dto.input.CampaignCreationData;
 import fr.insee.queen.application.campaign.dto.input.CampaignCreationDataV2;
 import fr.insee.queen.application.campaign.dto.input.MetadataCreationData;

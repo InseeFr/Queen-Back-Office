@@ -1,13 +1,13 @@
 package fr.insee.queen.application.web.validation.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.JsonNode;
 
-import java.util.Set;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -27,14 +27,14 @@ public class JsonValidator implements ConstraintValidator<JsonValid, JsonNode> {
             return true;
         }
 
-        Set<ValidationMessage> errors = validatorComponent.validate(schemaType, jsonNode);
+        List<Error> errors = validatorComponent.validate(schemaType, jsonNode);
 
         if(errors.isEmpty()) {
             return true;
         }
 
         StringBuilder messageBuilder = new StringBuilder();
-        for(ValidationMessage errorMessage : errors) {
+        for(Error errorMessage : errors) {
             messageBuilder.append(errorMessage.getMessage());
             messageBuilder.append("\n");
         }

@@ -5,8 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import fr.insee.queen.jms.model.ResponseCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +14,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.jms.core.JmsTemplate;
+import tools.jackson.core.JacksonException;
 
 import java.util.Locale;
 
 @ExtendWith(OutputCaptureExtension.class)
+@ExtendWith(MockitoExtension.class)
 class InterrogationReplyQueuePublisherTest {
 
     @Mock
@@ -37,7 +38,6 @@ class InterrogationReplyQueuePublisherTest {
     @BeforeEach
     void setUp() {
         Locale.setDefault(Locale.US);
-        MockitoAnnotations.openMocks(this);
         surveyUnitReplyQueuePublisher = new InterrogationReplyQueuePublisher(objectMapper, jmsQueuePublisher);
     }
 
@@ -69,7 +69,7 @@ class InterrogationReplyQueuePublisherTest {
         String replyQueue = "replyQueue";
         String correlationId = "12345";
         JMSOutputMessage responseMessage = JMSOutputMessage.createResponse(ResponseCode.CREATED);
-        when(objectMapper.writeValueAsString(responseMessage)).thenThrow(JsonProcessingException.class);
+        when(objectMapper.writeValueAsString(responseMessage)).thenThrow(JacksonException.class);
 
         // When
         surveyUnitReplyQueuePublisher.send(replyQueue, correlationId, responseMessage);

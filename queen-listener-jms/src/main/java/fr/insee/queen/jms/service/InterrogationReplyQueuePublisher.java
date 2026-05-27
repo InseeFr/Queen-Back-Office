@@ -1,7 +1,6 @@
 package fr.insee.queen.jms.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import jakarta.jms.DeliveryMode;
 import jakarta.jms.ObjectMessage;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
 
 @Component
 @Slf4j
@@ -24,7 +24,7 @@ public class InterrogationReplyQueuePublisher implements InterrogationResponsePu
         String jsonResponse;
         try {
             jsonResponse = objectMapper.writeValueAsString(responseMessage);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Command {} - Unable to process json response", correlationId);
             return;
         }

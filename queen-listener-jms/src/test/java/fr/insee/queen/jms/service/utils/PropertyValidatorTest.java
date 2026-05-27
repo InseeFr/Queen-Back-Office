@@ -1,9 +1,10 @@
 package fr.insee.queen.jms.service.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.BinaryNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.BinaryNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.jms.exception.PropertyException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PropertyValidatorTest {
 
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new JsonMapper();
 
     private static JsonNode json(String raw) {
         try {

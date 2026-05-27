@@ -1,6 +1,6 @@
 package fr.insee.queen.application.interrogationtempzone.controller;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.interrogationtempzone.dto.output.InterrogationTempZoneDto;
 import fr.insee.queen.application.web.validation.IdValid;

@@ -1,9 +1,10 @@
 package fr.insee.queen.infrastructure.db.data.repository.jpa;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +24,11 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
      */
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
             delete from data where interrogation_id in (
                 select id from interrogation
                     where campaign_id = :campaignId
-            )""", nativeQuery = true)
+            )""")
     void deleteDatas(String campaignId);
 
     /**

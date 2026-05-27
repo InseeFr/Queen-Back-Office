@@ -4,7 +4,6 @@ import fr.insee.queen.application.configuration.FixedTimeConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,7 +25,7 @@ class InterrogationCipherIT {
 
     private final InterrogationCommonAssertions interrogationTests;
 
-    public InterrogationCipherIT(@Autowired MockMvc mockMvc) {
+    public InterrogationCipherIT(MockMvc mockMvc) {
         this.interrogationTests = new InterrogationCommonAssertions(mockMvc);
     }
 

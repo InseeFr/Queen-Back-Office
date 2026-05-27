@@ -1,7 +1,7 @@
 package fr.insee.queen.jms.integration;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import fr.insee.queen.jms.service.InterrogationReplyQueuePublisher;
 import jakarta.jms.DeliveryMode;
@@ -57,6 +57,6 @@ class InterrogationReplyQueuePublisherIT {
 
         JsonNode root = objectMapper.readTree(json);
         assertThat(root.get("code").asInt()).isEqualTo(200);
-        assertThat(root.get("message").asText()).isEqualTo("OK");
+        assertThat(root.get("message").asString()).isEqualTo("OK");
     }
 }

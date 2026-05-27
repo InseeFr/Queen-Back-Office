@@ -1,6 +1,6 @@
 package fr.insee.queen.application.interrogation.controller;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationBySurveyUnitDto;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;

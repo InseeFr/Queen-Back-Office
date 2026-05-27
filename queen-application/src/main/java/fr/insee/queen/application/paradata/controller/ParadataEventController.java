@@ -1,7 +1,7 @@
 package fr.insee.queen.application.paradata.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -47,11 +47,11 @@ public class ParadataEventController {
         }
 
         JsonNode interrogationNode = paradataValue.get(paradataInterrogationIdParameter);
-        if (!interrogationNode.isTextual() || interrogationNode.textValue() == null) {
+        if (!interrogationNode.isString() || interrogationNode.asString() == null) {
             throw new EntityNotFoundException("Paradata does not contain the interrogation id");
         }
 
-        String interrogationId = interrogationNode.textValue();
+        String interrogationId = interrogationNode.asString();
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER);
         paradataEventService.createParadataEvent(interrogationId, paradataValue);
     }

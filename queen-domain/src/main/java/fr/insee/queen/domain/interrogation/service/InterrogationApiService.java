@@ -1,6 +1,6 @@
 package fr.insee.queen.domain.interrogation.service;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
 import fr.insee.queen.domain.campaign.service.MetadataService;
 import fr.insee.queen.domain.common.cache.CacheName;

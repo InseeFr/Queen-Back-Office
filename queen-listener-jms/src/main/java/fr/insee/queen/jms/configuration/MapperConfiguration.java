@@ -1,6 +1,8 @@
 package fr.insee.queen.jms.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -8,8 +10,7 @@ import org.springframework.jms.support.converter.JacksonJsonMessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES;
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+import static tools.jackson.databind.DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES;
 
 @Configuration
 public class MapperConfiguration {
@@ -28,8 +29,9 @@ public class MapperConfiguration {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
-        return new ObjectMapper()
-                .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        return JsonMapper.builder()
+                .configure(FAIL_ON_MISSING_CREATOR_PROPERTIES, true)
+                .configure(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true) // ISO-8601
+                .build();
     }
 }

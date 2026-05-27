@@ -110,7 +110,7 @@ springdoc:
 #Actuator Metrics
 management:
   endpoints:
-    enabled-by-default: false
+    access.default: none
     web:
       discovery:
         enabled: false

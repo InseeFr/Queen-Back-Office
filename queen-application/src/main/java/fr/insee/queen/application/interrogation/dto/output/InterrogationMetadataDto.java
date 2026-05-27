@@ -1,7 +1,7 @@
 package fr.insee.queen.application.interrogation.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ArrayNode;
 import fr.insee.queen.application.campaign.component.MetadataConverter;
 import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.interrogation.model.InterrogationMetadata;

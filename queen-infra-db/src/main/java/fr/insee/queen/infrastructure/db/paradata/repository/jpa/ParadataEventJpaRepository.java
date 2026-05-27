@@ -1,10 +1,10 @@
 package fr.insee.queen.infrastructure.db.paradata.repository.jpa;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.paradata.entity.ParadataEventDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +25,8 @@ public interface ParadataEventJpaRepository extends JpaRepository<ParadataEventD
      */
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
             INSERT INTO paradata_event (id, value, interrogation_id, survey_unit_id)
-            VALUES (:id, :paradataValue\\:\\:jsonb, :interrogationId, :surveyUnitId)""", nativeQuery = true)
+            VALUES (:id, :paradataValue\\:\\:jsonb, :interrogationId, :surveyUnitId)""")
     void createParadataEvent(UUID id, ObjectNode paradataValue, String interrogationId, String surveyUnitId);
 }

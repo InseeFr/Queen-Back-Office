@@ -1,8 +1,8 @@
 package fr.insee.queen.application.integration.component.builder;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
 import fr.insee.queen.application.integration.component.builder.schema.SchemaComponent;
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.application.integration.dto.input.NomenclatureIntegrationData;
@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import tools.jackson.core.JacksonException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -105,10 +106,15 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
 
         try {
             nomenclatureItems = mapper.readValue(zf.getInputStream(zipNomenclaturesFile), new TypeReference<List<NomenclatureItem>>() {});
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
                     null,
-                    String.format(IntegrationResultLabel.JSON_PARSING_ERROR, NOMENCLATURES_JSON));
+                    IntegrationResultLabel.JSON_PARSING_ERROR.formatted(NOMENCLATURES_JSON));
+            return List.of(resultError);
+        } catch (IOException _) {
+            IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
+                    null,
+                    IntegrationResultLabel.ZIP_PARSING_ERROR.formatted(zf.getName()));
             return List.of(resultError);
         }
 
@@ -147,7 +153,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
             InputStream questionnaireInputStream = getNomenclatureInputStream(zipFile, nomenclatureId, nomenclatureFilename);
             schemaComponent.throwExceptionIfJsonDataFileNotValid(zipFile, "nomenclatures/"+nomenclatureFilename, SchemaType.NOMENCLATURE);
             return mapper.readValue(questionnaireInputStream, ArrayNode.class);
-        } catch (IOException e) {
+        } catch (JacksonException | IOException e) {
             log.info("Could not parse json in file {}", nomenclatureFilename);
             throw new IntegrationValidationException(IntegrationResultUnitDto.integrationResultUnitError(
                     nomenclatureId,

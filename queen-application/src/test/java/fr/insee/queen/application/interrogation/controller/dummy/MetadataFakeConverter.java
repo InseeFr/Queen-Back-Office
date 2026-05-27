@@ -1,6 +1,6 @@
 package fr.insee.queen.application.interrogation.controller.dummy;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.campaign.component.MetadataConverter;
 import fr.insee.queen.application.interrogation.dto.output.MetadataDto;
 import lombok.RequiredArgsConstructor;
