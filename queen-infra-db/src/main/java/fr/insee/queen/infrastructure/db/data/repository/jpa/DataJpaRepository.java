@@ -18,20 +18,6 @@ import java.util.UUID;
 @NoRepositoryBean
 public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepository {
     /**
-     * Delete all interrogations data for a campaign
-     *
-     * @param campaignId campaign id
-     */
-    @Transactional
-    @Modifying
-    @Query(value = """
-            delete from data where interrogation_id in (
-                select id from interrogation
-                    where campaign_id = :campaignId
-            )""", nativeQuery = true)
-    void deleteDatas(String campaignId);
-
-    /**
      * Find the data of an interrogation
      *
      * @param interrogationId interrogation id
