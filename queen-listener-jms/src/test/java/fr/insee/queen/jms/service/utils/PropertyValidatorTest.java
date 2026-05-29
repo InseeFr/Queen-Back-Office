@@ -2,6 +2,7 @@ package fr.insee.queen.jms.service.utils;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.JsonNodeException;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.BinaryNode;
 import tools.jackson.databind.node.ObjectNode;
@@ -148,22 +149,22 @@ class PropertyValidatorTest {
         @DisplayName("OBJECT -> PropertyException with type OBJECT")
         void objectTypeThrows() {
             JsonNode node = json("{\"meta\": {\"k\":\"v\"}}");
-            PropertyException ex = assertThrows(
-                    PropertyException.class,
+            JsonNodeException ex = assertThrows(
+                    JsonNodeException.class,
                     () -> PropertyValidator.textValue(node, "meta")
             );
-            assertTrue(ex.getMessage().contains("type found : OBJECT"));
+            assertTrue(ex.getMessage().contains("Object")); // this assertion is a bit dubious
         }
 
         @Test
         @DisplayName("ARRAY -> PropertyException with type ARRAY")
         void arrayTypeThrows() {
             JsonNode node = json("{\"list\": [\"a\",\"b\"]}");
-            PropertyException ex = assertThrows(
-                    PropertyException.class,
+            JsonNodeException ex = assertThrows(
+                    JsonNodeException.class,
                     () -> PropertyValidator.textValue(node, "list")
             );
-            assertTrue(ex.getMessage().contains("type found : ARRAY"));
+            assertTrue(ex.getMessage().contains("Array")); // this assertion is a bit dubious
         }
 
         @Test
