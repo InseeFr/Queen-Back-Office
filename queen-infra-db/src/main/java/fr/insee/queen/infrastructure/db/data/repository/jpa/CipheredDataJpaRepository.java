@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @ConditionalOnProperty(name = "feature.sensitive-data.enabled", havingValue = "true")
 @Repository
 public interface CipheredDataJpaRepository extends DataJpaRepository {
@@ -77,4 +79,19 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
             );
     """, nativeQuery = true)
     void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
+
+    @Transactional
+    @Modifying
+    @Query(value = """
+        UPDATE data
+            SET value = pgp_sym_encrypt('{}', current_setting('data.encryption.key'), 's2k-count=65536')
+            WHERE interrogation_id IN (
+                SELECT su.id
+                FROM interrogation su
+                INNER JOIN state_data sd ON sd.interrogation_id = su.id
+                WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
+                AND su.id IN (:interrogationIds)
+            );
+    """, nativeQuery = true)
+    void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
 }
