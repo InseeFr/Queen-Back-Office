@@ -17,7 +17,6 @@
 		<commons-io.version>2.21.0</commons-io.version>
 		<org-json.version>20240303</org-json.version>
 		<guava.version>33.5.0-jre</guava.version>
-		<json-schema-validator.version>3.0.2</json-schema-validator.version><!--previous: 1.5.7-->
 	</properties>
 
 	<dependencies>
