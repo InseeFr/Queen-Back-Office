@@ -44,7 +44,7 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
         UPDATE data
             SET value = '{}'::jsonb
             WHERE interrogation_id IN (
@@ -54,12 +54,12 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND sd.date BETWEEN :startTimestamp AND :endTimestamp
             );
-    """, nativeQuery = true)
+    """)
     void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
         UPDATE data
             SET value = '{}'::jsonb
             WHERE interrogation_id IN (
@@ -69,6 +69,6 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND su.id IN (:interrogationIds)
             );
-    """, nativeQuery = true)
+    """)
     void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
 }
