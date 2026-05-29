@@ -204,6 +204,15 @@ public interface InterrogationRepository {
     void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 
     /**
+     * Clear extracted data for a campaign, restricted to the given interrogation ids.
+     * Only interrogations whose state is EXTRACTED and that belong to the campaign are affected.
+     *
+     * @param campaignId       campaign id
+     * @param interrogationIds interrogation ids to target
+     */
+    void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
+
+    /**
      * Check if interrogations exist for the campaign
      *
      * @param campaignId campaign id

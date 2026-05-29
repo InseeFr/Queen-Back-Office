@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -37,6 +39,12 @@ public class DataApiService implements DataService {
     @Transactional
     public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
         interrogationRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    }
+
+    @Override
+    @Transactional
+    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
+        interrogationRepository.cleanExtractedDataByIds(campaignId, interrogationIds);
     }
 
 

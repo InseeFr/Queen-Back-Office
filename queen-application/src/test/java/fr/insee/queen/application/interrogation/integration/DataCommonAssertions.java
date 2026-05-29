@@ -341,4 +341,122 @@ public class DataCommonAssertions {
                 )
                 .andExpect(status().isUnauthorized());
     }
+
+    void cleanExtractedDataByIds() throws Exception {
+        // 517046b6 is EXTRACTED and listed → must be blanked
+        // c8142dcc is EXTRACTED but not listed → must stay untouched
+        mockMvc.perform(post("/api/admin/campaign/SIMPSONS2020X00/interrogations/data/extracted/clean")
+                        .content("""
+                            ["517046b6-bd88-47e0-838e-00d03461f592"]
+                            """)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT)))
+                )
+                .andExpect(status().isOk());
+
+        MvcResult result = mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        JSONAssert.assertEquals("{}", result.getResponse().getContentAsString(), JSONCompareMode.NON_EXTENSIBLE);
+
+        result = mockMvc.perform(get("/api/interrogations/c8142dcc-c133-49aa-a969-bb9828190a2c/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        JSONAssert.assertNotEquals("{}", result.getResponse().getContentAsString(), JSONCompareMode.NON_EXTENSIBLE);
+    }
+
+    void cleanExtractedDataByIds_initStateUnchanged() throws Exception {
+        // 45c78a3e has state INIT → sd.state = 'EXTRACTED' filter prevents blanking
+        mockMvc.perform(post("/api/admin/campaign/SIMPSONS2020X00/interrogations/data/extracted/clean")
+                        .content("""
+                            ["45c78a3e-f3b6-4d69-bd58-d2ca749dd7cd"]
+                            """)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT)))
+                )
+                .andExpect(status().isOk());
+
+        MvcResult result = mockMvc.perform(get("/api/interrogations/45c78a3e-f3b6-4d69-bd58-d2ca749dd7cd/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        JSONAssert.assertNotEquals("{}", result.getResponse().getContentAsString(), JSONCompareMode.NON_EXTENSIBLE);
+    }
+
+    void cleanExtractedDataByIds_wrongCampaignUnchanged() throws Exception {
+        // 517046b6 belongs to SIMPSONS2020X00; campaignId=VQS2021X00 → campaign filter prevents blanking
+        mockMvc.perform(post("/api/admin/campaign/VQS2021X00/interrogations/data/extracted/clean")
+                        .content("""
+                            ["517046b6-bd88-47e0-838e-00d03461f592"]
+                            """)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT)))
+                )
+                .andExpect(status().isOk());
+
+        MvcResult result = mockMvc.perform(get("/api/interrogations/517046b6-bd88-47e0-838e-00d03461f592/data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAdminUser()))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        JSONAssert.assertNotEquals("{}", result.getResponse().getContentAsString(), JSONCompareMode.NON_EXTENSIBLE);
+    }
+
+    void cleanExtractedDataByIds_emptyBody_return400() throws Exception {
+        mockMvc.perform(post("/api/admin/campaign/SIMPSONS2020X00/interrogations/data/extracted/clean")
+                        .content("[]")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT)))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    void cleanExtractedDataByIds_invalidCampaignId_return400() throws Exception {
+        mockMvc.perform(post("/api/admin/campaign/INVALID$CAMP/interrogations/data/extracted/clean")
+                        .content("""
+                            ["517046b6-bd88-47e0-838e-00d03461f592"]
+                            """)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.WEBCLIENT)))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    void cleanExtractedDataByIds_anonymous_return401() throws Exception {
+        mockMvc.perform(post("/api/admin/campaign/SIMPSONS2020X00/interrogations/data/extracted/clean")
+                        .content("""
+                            ["517046b6-bd88-47e0-838e-00d03461f592"]
+                            """)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    void cleanExtractedDataByIds_forbidden_return403() throws Exception {
+        mockMvc.perform(post("/api/admin/campaign/SIMPSONS2020X00/interrogations/data/extracted/clean")
+                        .content("""
+                            ["517046b6-bd88-47e0-838e-00d03461f592"]
+                            """)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(authentication(authenticatedUserTestHelper.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER)))
+                )
+                .andExpect(status().isForbidden());
+    }
 }

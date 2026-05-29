@@ -215,6 +215,11 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
+    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
+        dataRepository.cleanExtractedDataByIds(campaignId, interrogationIds);
+    }
+
+    @Override
     public boolean existsByCampaignId(String campaignId) {
         return crudRepository.existsByCampaignId(campaignId);
     }

@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -162,5 +164,20 @@ public class DataController {
                           @NotNull @RequestParam("start") Long startTimestamp,
                           @NotNull @RequestParam("end") Long endTimestamp) {
         dataService.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    }
+
+    /**
+     * Clean data from extracted interrogations of a campaign, restricted to the provided ids
+     *
+     * @param campaignId        the campaign id
+     * @param interrogationIds  the interrogation ids to clean
+     */
+    @Operation(summary = "Clean data from extracted interrogations of a campaign, filtered by ids")
+    @PostMapping("/admin/campaign/{id}/interrogations/data/extracted/clean")
+    @PreAuthorize("hasRole('WEBCLIENT')")
+    public void cleanExtractedDataByIds(
+            @IdValid @PathVariable(value = "id") String campaignId,
+            @NotEmpty @RequestBody List<String> interrogationIds) {
+        dataService.cleanExtractedDataByIds(campaignId, interrogationIds);
     }
 }

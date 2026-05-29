@@ -38,7 +38,6 @@ class DataUnCipherIT {
     @Autowired
     private DataFactory dataFactory;
 
-
     @Test
     @DisplayName("Check Ciphered Data repository is loaded")
     void checkRepository() {
@@ -136,5 +135,41 @@ class DataUnCipherIT {
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void cleanExtractedData() throws Exception {
         dataCommonAssertions.cleanExtractedData();
+    }
+
+    @Test
+    @DisplayName("Given listed ids with INIT state, when cleaning by ids, then data is untouched")
+    void cleanExtractedDataByIds_initStateUnchanged() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_initStateUnchanged();
+    }
+
+    @Test
+    @DisplayName("Given listed ids belonging to another campaign, when cleaning by ids, then data is untouched")
+    void cleanExtractedDataByIds_wrongCampaignUnchanged() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_wrongCampaignUnchanged();
+    }
+
+    @Test
+    @DisplayName("Given empty body, when cleaning by ids, then return 400")
+    void cleanExtractedDataByIds_emptyBody_return400() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_emptyBody_return400();
+    }
+
+    @Test
+    @DisplayName("Given invalid campaign id, when cleaning by ids, then return 400")
+    void cleanExtractedDataByIds_invalidCampaignId_return400() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_invalidCampaignId_return400();
+    }
+
+    @Test
+    @DisplayName("Given anonymous user, when cleaning by ids, then return 401")
+    void cleanExtractedDataByIds_anonymous_return401() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_anonymous_return401();
+    }
+
+    @Test
+    @DisplayName("Given non-WEBCLIENT user, when cleaning by ids, then return 403")
+    void cleanExtractedDataByIds_forbidden_return403() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_forbidden_return403();
     }
 }

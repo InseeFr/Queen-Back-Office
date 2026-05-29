@@ -38,3 +38,7 @@ logs
 
 *.DS_Store
 .apt_generated_tests/
+/.clinerules/context-fak.md
+/.clinerules/build-config-fak.md
+/.clinerules/
+CLAUDE.md

@@ -31,18 +31,4 @@ public interface UncipheredDataJpaRepository extends DataJpaRepository {
     """)
     void updateCollectedData(String interrogationId, ObjectNode collectedUpdateData);
 
-    @Transactional
-    @Modifying
-    @NativeQuery("""
-        UPDATE data
-            SET value = '{}'::jsonb
-            WHERE interrogation_id IN (
-                SELECT su.id
-                FROM interrogation su
-                INNER JOIN state_data sd ON sd.interrogation_id = su.id
-                WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
-                AND sd.date BETWEEN :startTimestamp AND :endTimestamp
-            );
-    """)
-    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 }
