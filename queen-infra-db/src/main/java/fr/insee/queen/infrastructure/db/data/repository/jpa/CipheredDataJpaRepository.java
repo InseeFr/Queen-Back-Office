@@ -80,7 +80,7 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery(value = """
         UPDATE data
             SET value = pgp_sym_encrypt('{}', current_setting('data.encryption.key'), 's2k-count=65536')
             WHERE interrogation_id IN (
@@ -90,6 +90,6 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND su.id IN (:interrogationIds)
             );
-    """, nativeQuery = true)
+    """)
     void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
 }
