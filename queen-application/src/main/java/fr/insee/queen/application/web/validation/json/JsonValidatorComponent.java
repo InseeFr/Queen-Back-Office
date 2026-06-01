@@ -40,7 +40,6 @@ public class JsonValidatorComponent {
         }
 
         for (SchemaType schemaType : SchemaType.values()) {
-            System.out.println(schemaType.getSchemaFileName());
             schemas.get(schemaType).initializeValidators();
         }
     }

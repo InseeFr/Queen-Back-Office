@@ -141,7 +141,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             return buildCampaign(campaign);
         } catch (IntegrationValidationException ex) {
             return ex.getResultError();
-        }  catch (JacksonException e) {
+        }  catch (JacksonException _) {
             return IntegrationResultUnitDto.integrationResultUnitError(
                     null,
                     IntegrationResultLabel.JSON_PARSING_ERROR.formatted(CAMPAIGN_JSON));

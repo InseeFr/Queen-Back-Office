@@ -101,12 +101,12 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
 
         try {
             questionnaireModelItems = mapper.readValue(zf.getInputStream(zipQuestionnairesFile), new TypeReference<List<QuestionnaireModelItem>>(){});
-        } catch (JacksonException e) {
+        } catch (JacksonException _) {
             IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
                     null,
                     IntegrationResultLabel.JSON_PARSING_ERROR.formatted(QUESTIONNAIRE_MODELS_JSON));
             return List.of(resultError);
-        } catch (IOException e) {
+        } catch (IOException _) {
             IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
                     null,
                     IntegrationResultLabel.ZIP_PARSING_ERROR.formatted(zf.getName()));

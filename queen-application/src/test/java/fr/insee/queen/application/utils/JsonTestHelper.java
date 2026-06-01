@@ -37,19 +37,19 @@ public class JsonTestHelper {
         }
     }
 
-    public static ArrayNode getResourceFileAsArrayNode(String fileName) throws IOException {
+    public static ArrayNode getResourceFileAsArrayNode(String fileName) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         ObjectMapper objectMapper = new JsonMapper();
         return objectMapper.readValue(classLoader.getResourceAsStream(DATA_FOLDER + fileName), ArrayNode.class);
     }
 
-    public static ObjectNode getResourceFileAsObjectNode(String fileName) throws IOException {
+    public static ObjectNode getResourceFileAsObjectNode(String fileName) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         ObjectMapper objectMapper = new JsonMapper();
         return objectMapper.readValue(classLoader.getResourceAsStream(DATA_FOLDER + fileName), ObjectNode.class);
     }
 
-    public static String getObjectAsJsonString(Object object) throws IOException {
+    public static String getObjectAsJsonString(Object object) {
         ObjectMapper objectMapper = new JsonMapper();
         return objectMapper.writeValueAsString(object);
     }

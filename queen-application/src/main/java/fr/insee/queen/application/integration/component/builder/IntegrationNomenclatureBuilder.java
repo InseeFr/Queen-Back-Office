@@ -106,7 +106,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
 
         try {
             nomenclatureItems = mapper.readValue(zf.getInputStream(zipNomenclaturesFile), new TypeReference<List<NomenclatureItem>>() {});
-        } catch (JacksonException e) {
+        } catch (JacksonException _) {
             IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(
                     null,
                     IntegrationResultLabel.JSON_PARSING_ERROR.formatted(NOMENCLATURES_JSON));
@@ -153,7 +153,7 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
             InputStream questionnaireInputStream = getNomenclatureInputStream(zipFile, nomenclatureId, nomenclatureFilename);
             schemaComponent.throwExceptionIfJsonDataFileNotValid(zipFile, "nomenclatures/"+nomenclatureFilename, SchemaType.NOMENCLATURE);
             return mapper.readValue(questionnaireInputStream, ArrayNode.class);
-        } catch (JacksonException | IOException e) {
+        } catch (JacksonException | IOException _) {
             log.info("Could not parse json in file {}", nomenclatureFilename);
             throw new IntegrationValidationException(IntegrationResultUnitDto.integrationResultUnitError(
                     nomenclatureId,

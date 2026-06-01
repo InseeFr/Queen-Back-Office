@@ -185,7 +185,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(CampaignDeletionException.class)
     public ResponseEntity<ApiError> campaignDeletionException(CampaignDeletionException e, WebRequest request) {
-        return generateResponseError(e, HttpStatus.UNPROCESSABLE_ENTITY, request);
+        return generateResponseError(e, HttpStatus.UNPROCESSABLE_CONTENT, request);
     }
 
     @ExceptionHandler(CampaignNotLinkedToQuestionnaireException.class)
