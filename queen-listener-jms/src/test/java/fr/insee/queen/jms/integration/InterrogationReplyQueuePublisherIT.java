@@ -1,7 +1,5 @@
 package fr.insee.queen.jms.integration;
 
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import fr.insee.queen.jms.service.InterrogationReplyQueuePublisher;
 import jakarta.jms.DeliveryMode;
@@ -13,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.UUID;
 
@@ -31,9 +31,6 @@ class InterrogationReplyQueuePublisherIT {
 
     @Autowired
     private JmsTemplate jmsTemplate; // pour la lecture côté test
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     void send_should_publish_ObjectMessage_with_correlationId_and_json_payload() throws Exception {
@@ -55,7 +52,7 @@ class InterrogationReplyQueuePublisherIT {
         assertThat(msg).isInstanceOf(ObjectMessage.class);
         String json = (String) ((ObjectMessage) msg).getObject();
 
-        JsonNode root = objectMapper.readTree(json);
+        JsonNode root = new JsonMapper().readTree(json);
         assertThat(root.get("code").asInt()).isEqualTo(200);
         assertThat(root.get("message").asString()).isEqualTo("OK");
     }
