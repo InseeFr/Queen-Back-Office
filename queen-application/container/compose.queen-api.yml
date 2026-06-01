@@ -30,6 +30,9 @@ services:
       - FEATURE_CROSSENVIRONMENTCOMMUNICATION_EMITTER=true
       - FEATURE_CROSSENVIRONMENTCOMMUNICATION_CONSUMER=true
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=DEBUG
+    depends_on:
+      queen-db:
+        condition: service_healthy
     ports:
       - "8080:8080"
     healthcheck:
