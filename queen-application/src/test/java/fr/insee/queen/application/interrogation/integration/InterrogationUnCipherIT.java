@@ -4,6 +4,7 @@ import fr.insee.queen.application.configuration.FixedTimeConfiguration;
 import fr.insee.queen.application.configuration.ScriptConstants;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,7 +24,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 class InterrogationUnCipherIT {
     private final InterrogationCommonAssertions interrogationTests;
 
-    public InterrogationUnCipherIT(MockMvc mockMvc) {
+    public InterrogationUnCipherIT(@Autowired MockMvc mockMvc) {
         this.interrogationTests = new InterrogationCommonAssertions(mockMvc);
     }
 

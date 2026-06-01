@@ -28,7 +28,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 class DataUnCipherIT {
     private final DataCommonAssertions dataCommonAssertions;
 
-    public DataUnCipherIT(MockMvc mockMvc) {
+    public DataUnCipherIT(@Autowired MockMvc mockMvc) {
         this.dataCommonAssertions = new DataCommonAssertions(mockMvc);
     }
 

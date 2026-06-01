@@ -33,7 +33,7 @@ class DataCipherIT {
 
     private final DataCommonAssertions dataCommonAssertions;
 
-    public DataCipherIT(MockMvc mockMvc) {
+    public DataCipherIT(@Autowired MockMvc mockMvc) {
         this.dataCommonAssertions = new DataCommonAssertions(mockMvc);
     }
 
