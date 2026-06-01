@@ -4,7 +4,6 @@ import jakarta.jms.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.jms.autoconfigure.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -12,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Slf4j
 @EnableJms
 @EnableScheduling
-@Configuration(enforceUniqueMethods = false)
 public class JMSConfiguration {
 
     @Bean
