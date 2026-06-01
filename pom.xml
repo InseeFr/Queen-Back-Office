@@ -13,7 +13,7 @@
         <!-- Project properties -->
         <!-- About revision and changelist maven special properties:
          https://maven.apache.org/guides/mini/guide-maven-ci-friendly.html -->
-        <revision>5.9.1</revision>
+        <revision>5.9.2</revision>
         <changelist></changelist>
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
@@ -36,6 +36,10 @@
         <sonar.coverage.exclusions>
             **/queen-domain/**, **/fr/insee/queen/domain/**
         </sonar.coverage.exclusions>
+        <!-- TODO: to be updated with spring boot 4 -->
+        <jackson-bom.version>2.21.1</jackson-bom.version>
+        <tomcat.version>10.1.55</tomcat.version>
+        <postgresql.version>42.7.11</postgresql.version>
     </properties>
 
     <parent>
