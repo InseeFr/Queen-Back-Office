@@ -1,7 +1,5 @@
 package fr.insee.queen.jms.service;
 
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.json.JsonMapper;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import fr.insee.queen.jms.model.ResponseCode;
@@ -19,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Locale;
 
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.when;
 class InterrogationQueueConsumerTest {
     private InterrogationQueueConsumer consumer;
     private InterrogationFakePublisher publisher;
-    private final ObjectMapper mapper = new JsonMapper();
+    private final JsonMapper mapper = new JsonMapper();
     private InterrogationBatchFakeService interrogationBatchFakeService;
     @Mock
     private Message commandMessage;

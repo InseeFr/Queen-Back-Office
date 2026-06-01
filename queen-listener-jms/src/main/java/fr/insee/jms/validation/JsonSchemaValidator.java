@@ -8,7 +8,7 @@ import fr.insee.queen.jms.exception.SchemaValidationException;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +20,7 @@ public final class JsonSchemaValidator {
     public static <T> T readAndValidate(JsonNode root,
                                         Schema schema,
                                         Class<T> targetType,
-                                        ObjectMapper mapper)
+                                        JsonMapper mapper)
             throws SchemaValidationException, JacksonException {
         ensureValid(root, schema);
         return mapper.treeToValue(root, targetType);
@@ -29,13 +29,13 @@ public final class JsonSchemaValidator {
     public static <T> T readAndValidateFromClasspath(JsonNode root,
                                                      String schemaResourcePath,
                                                      Class<T> targetType,
-                                                     ObjectMapper mapper)
+                                                     JsonMapper mapper)
             throws SchemaValidationException, IOException {
         Schema schema = loadSchemaFromClasspath(schemaResourcePath, mapper);
         return readAndValidate(root, schema, targetType, mapper);
     }
 
-    public static Schema loadSchemaFromClasspath(String resourcePath, ObjectMapper mapper) throws IOException {
+    public static Schema loadSchemaFromClasspath(String resourcePath, JsonMapper mapper) throws IOException {
         if (resourcePath == null || resourcePath.isBlank()) {
             throw new IOException("Schema resource path is null or blank");
         }

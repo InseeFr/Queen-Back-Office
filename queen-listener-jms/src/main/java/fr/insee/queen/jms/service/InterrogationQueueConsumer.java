@@ -1,7 +1,7 @@
 package fr.insee.queen.jms.service;
 
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.jms.validation.JsonSchemaValidator;
@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
-import tools.jackson.databind.cfg.DateTimeFeature;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -35,7 +34,7 @@ import static fr.insee.queen.jms.service.utils.PropertyValidator.textValue;
 @Component
 @RequiredArgsConstructor
 public class InterrogationQueueConsumer {
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final InterrogationResponsePublisher replyQueuePublisher;
     private final InterrogationBatchService interrogationBatchService;
 
@@ -47,7 +46,7 @@ public class InterrogationQueueConsumer {
         try {
             String jsonString = message.getBody(String.class);
             // ---
-            JsonNode root = objectMapper.readTree(jsonString);
+            JsonNode root = jsonMapper.readTree(jsonString);
 
             replyQueue = textValue(root, "replyTo");
             correlationId = textValue(root, "correlationID");
@@ -56,15 +55,15 @@ public class InterrogationQueueConsumer {
                     root,
                     SchemaType.PROCESS_MESSAGE.getSchemaFileName(),
                     CommandDto.class,
-                    objectMapper
+                    jsonMapper
             );
             log.debug(command.toString());
 
             // TODO personalization
-            ArrayNode personalization = objectMapper.createArrayNode();
+            ArrayNode personalization = jsonMapper.createArrayNode();
 
             // TODO identifier le questionnaire de manière unique
-            ObjectNode data = objectMapper.convertValue(command.getPayload().get("TODO"), ObjectNode.class);
+            ObjectNode data = jsonMapper.convertValue(command.getPayload().get("TODO"), ObjectNode.class);
 
             Interrogation interrogation = InterrogationAsyncInput.toModel(new InterrogationAsyncInput(command.getPayload().get("interrogationId").toString(),
                                                                                             command.getPayload().get("surveyUnitId").toString(),
