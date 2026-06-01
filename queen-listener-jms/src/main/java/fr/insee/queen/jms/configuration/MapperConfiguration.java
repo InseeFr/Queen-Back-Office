@@ -26,11 +26,10 @@ public class MapperConfiguration {
 
     @Bean
     JsonMapperBuilderCustomizer jsonCustomizer() {
-        return builder -> {builder
+        return builder -> builder
                 .configure(FAIL_ON_MISSING_CREATOR_PROPERTIES, true)
                 .configure(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true) // ISO-8601
                 .build();
-        };
     }
 
 }
