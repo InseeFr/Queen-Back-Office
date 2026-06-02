@@ -5,4 +5,8 @@ public class JsonValidatorComponentInitializationException extends RuntimeExcept
     public JsonValidatorComponentInitializationException(String message) {
         super(message);
     }
+
+    public JsonValidatorComponentInitializationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
