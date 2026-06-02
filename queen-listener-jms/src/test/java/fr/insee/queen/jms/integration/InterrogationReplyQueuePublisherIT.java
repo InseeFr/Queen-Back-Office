@@ -32,6 +32,9 @@ class InterrogationReplyQueuePublisherIT {
     @Autowired
     private JmsTemplate jmsTemplate; // pour la lecture côté test
 
+    @Autowired
+    private JsonMapper jsonMapper;
+
     @Test
     void send_should_publish_ObjectMessage_with_correlationId_and_json_payload() throws Exception {
         // Arrange
@@ -52,7 +55,7 @@ class InterrogationReplyQueuePublisherIT {
         assertThat(msg).isInstanceOf(ObjectMessage.class);
         String json = (String) ((ObjectMessage) msg).getObject();
 
-        JsonNode root = new JsonMapper().readTree(json);
+        JsonNode root = jsonMapper.readTree(json);
         assertThat(root.get("code").asInt()).isEqualTo(200);
         assertThat(root.get("message").asString()).isEqualTo("OK");
     }
