@@ -191,7 +191,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
         try {
             InputStream questionnaireInputStream = getQuestionnaireInputStream(zipFile, questionnaireModelItem);
             return mapper.readValue(questionnaireInputStream, ObjectNode.class);
-        } catch (JacksonException | IOException e) {
+        } catch (JacksonException | IOException _) {
             log.info("Could not parse json in file {}", questionnaireModelItem.filename());
             throw new IntegrationValidationException(IntegrationResultUnitDto.integrationResultUnitError(
                     questionnaireModelItem.id(),

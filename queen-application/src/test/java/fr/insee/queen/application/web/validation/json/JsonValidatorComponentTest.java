@@ -23,6 +23,9 @@ class JsonValidatorComponentTest {
     private JsonValidatorComponent validatorComponent;
     private ObjectMapper mapper;
 
+    // Note: the assertions like "is equal to '/0/name'" are implementation specific with the JSON validation lib used
+    // should probably be reworked.
+
     @BeforeEach
     void init() {
         this.mapper = new JsonMapper();
@@ -110,7 +113,7 @@ class JsonValidatorComponentTest {
         JsonNode personalizationNode = mapper.readValue(personalizationJson, JsonNode.class);
         List<Error> errors = validatorComponent.validate(SchemaType.PERSONALIZATION, personalizationNode);
         assertThat(errors).hasSize(5);
-        assertBadType(errors.get(0), "/0/name"); // TODO: this kind of assertion is implementation specific with the json validation lib used, to be reworked
+        assertBadType(errors.get(0), "/0/name");
         assertBadType(errors.get(1), "/0/value");
         assertForbiddenProperty(errors.get(2), "/0", "forbidden_property");
         assertRequiredProperty(errors.get(3), "/2", "name");

@@ -68,7 +68,7 @@ class QuestionnaireCacheIT {
     @Test
     @DisplayName("When updating questionnaire, cache is handled")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void check_questionnaire_cache02() throws IOException {
+    void check_questionnaire_cache02() {
         String questionnaireId = "questionnaire-cache-id";
         String campaignId = "campaign-cache-id";
 
