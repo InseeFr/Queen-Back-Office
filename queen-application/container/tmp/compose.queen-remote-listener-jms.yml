@@ -1,8 +1,8 @@
 services:
   queen-remote-listener-jms:
     build:
-      context: ../../queen-listener-jms
-      dockerfile: Dockerfile
+      context: ../../../queen-listener-jms
+      dockerfile: ../../../queen-listener-jms/Dockerfile
     image: queen-remote-listener-jms:local
     depends_on:
       queen-db-remote:

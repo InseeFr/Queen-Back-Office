@@ -17,8 +17,8 @@ services:
 
   queen-remote:
     build:
-      context: ../
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: ../../Dockerfile
     depends_on:
       queen-db-remote:
         condition: service_healthy

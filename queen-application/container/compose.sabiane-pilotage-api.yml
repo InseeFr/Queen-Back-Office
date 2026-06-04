@@ -1,0 +1,47 @@
+services:
+  sabiane-pilotage-api:
+#    build:
+#      context: ../../../Pearl-Jam-Back-Office/api
+#      dockerfile: Dockerfile
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_SABIANE_PILOTAGE_API}
+    depends_on:
+      sabiane-pilotage-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://sabiane-pilotage-db:5432/${PEARL_DB}
+      - SPRING_DATASOURCE_USERNAME=${PEARL_DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${PEARL_DB_PASSWORD}
+      - SPRINGDOC_SWAGGER_UI_OAUTH_ADDITIONALQUERYSTRINGPARAMS_KC_IDP_HINT=${IDP_HINT}
+      - APPLICATION_HOST=http://localhost:${PEARL_API_PORT}
+      - APPLICATION_ROLES_INTERVIEWER=${INTERVIEWER_ROLE}
+      - APPLICATION_ROLES_LOCAL_USER=${INTERNAL_USER_ROLE}
+      - APPLICATION_ROLES_NATIONAL_USER=${INTERNAL_USER_ROLE}
+      - APPLICATION_ROLES_ADMIN=${ADMIN_ROLE}
+      - APPLICATION_ROLES_WEBCLIENT=${WEBCLIENT_ROLE}
+      - application.corsOrigins=http://localhost:5001,http://localhost:3000
+      - FEATURE_OIDC_ENABLED=true
+      - FEATURE_OIDC_APPLICATIONHOST=http://localhost:9080
+      - FEATURE_OIDC_AUTHSERVERHOST=${AUTH_SERVER_URL}
+      - FEATURE_OIDC_AUTHSERVERURL=${AUTH_SERVER_URL}
+      - FEATURE_OIDC_CLIENTID=${AUTH_CLIENT_ID}
+      - FEATURE_OIDC_REALM=${AUTH_REALM_SABIANE}
+      - FEATURE_OIDC_PRINCIPALATTRIBUTE=preferred_username
+      # issuer-uri is used to auto discover keycloak configuration endpoints and to validate the iss in the token (spring boot check that issuer-uri and iss are identical)
+      # When using jwk-set-uri, issuer-uri is not used anymore to auto discover configuration.
+      # That's what we want here. By authenticating with swagger, host machine is used and the iss generated in the token is equals to issuer-uri
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI=${AUTH_SERVER_URL}/realms/${AUTH_REALM}
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI=http://keycloak:8080/realms/${AUTH_REALM}/protocol/openid-connect/certs
+      - FEATURE_MAILSERVICE_ENABLED=false
+      - FEATURE_SWAGGER_ENABLED=true
+      - FEATURE_MAILSERVICE_ENABLED=false
+      - FEATURE_SWAGGER_ENABLED=true
+      - LOGGING_FILE_ENABLED=false
+      - SPRINGDOC_SWAGGER_UI_OAUTH_CLIENT_ID=${AUTH_CLIENT_ID}
+      - SPRING_LIQUIBASE_ENABLED=true
+      - SPRING_LIQUIBASE_CONTEXTS=dev
+      - SPRING_LIQUIBASE_CHANGELOG=classpath:db/integration-demo.xml
+    ports:
+      - ${PEARL_API_PORT}:8080

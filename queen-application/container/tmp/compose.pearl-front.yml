@@ -1,0 +1,32 @@
+services:
+#  pearl-front:
+#    image: docker.io/nginx:alpine
+#    ports:
+#      - "${PEARL_FRONTEND_PORT}:80"
+
+  pearl-front:
+    environment:
+      - PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1
+    build:
+      dockerfile: ./Dockerfile
+      args:
+        - VITE_PEARL_API_URL=http://localhost:${PEARL_API_PORT}
+        - VITE_PEARL_AUTHENTICATION_MODE=keycloak
+        - VITE_KEYCLOAK_CLIENTID=${AUTH_CLIENT_ID}
+        - VITE_KEYCLOAK_REALM=${AUTH_REALM}
+        - VITE_KEYCLOAK_URL=http://localhost:${KEYCLOAK_PORT}
+        - VITE_KEYCLOAK_ROLES_ALLOW_LIST=interviewer
+        - VITE_QUEEN_URL=http://localhost:${QUEEN_FRONTEND_PORT}
+    tty: true
+    stdin_open: true
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', 'http://localhost']
+    depends_on:
+      queen-front:
+        condition: service_started
+      keycloak:
+        condition: service_started
+      pearl-api:
+        condition: service_started
+    ports:
+      - '${PEARL_FRONTEND_PORT}:8300'

@@ -1,5 +1,5 @@
 services:
-  pearl-db:
+  sabiane-pilotage-db:
     image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_POSTGRES}
     environment:
       - POSTGRES_USER=${PEARL_DB_USER}

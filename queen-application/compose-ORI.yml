@@ -1,0 +1,133 @@
+services:
+  keycloak:
+    extends:
+      file: ./container/compose.keycloak.yml
+      service: keycloak
+    profiles:
+      - all
+      - keycloak
+      - queen-api
+
+  queen-db:
+    extends:
+      file: container/tmp/compose.queen-db.yml
+      service: queen-db
+    profiles:
+      - all
+      - queen-db
+      - queen-listener-jms
+      - queen-api
+
+  queen-db-ciphered:
+    extends:
+      file: container/tmp/compose.queen-db-ciphered.yml
+      service: queen-db-ciphered
+    profiles:
+      - all
+      - queen-db-ciphered
+
+  questionnaire-sabine-db:
+    extends:
+      file: ./container/compose.questionnaire-sabine-db.yml
+      service: queen-db
+    profiles:
+      - all
+      - questionnaire-sabine-db
+
+  activemq:
+    extends:
+      file: ./container/compose.activemq.yml
+      service: activemq
+    profiles:
+      - all
+      - activemq
+
+  queen-listener-jms:
+    extends:
+      file: container/tmp/compose.queen-listener-jms.yml
+      service: queen-listener-jms
+    restart: on-failure
+    profiles:
+      - all
+      - queen-listener-jms
+
+  pearl-db:
+    extends:
+      file: ./container/compose.pearl-db.yml
+      service: pearl-db
+    profiles:
+      - all
+      - pearl-db
+
+  pearl-api:
+    extends:
+      file: ./container/compose.pearl-api.yml
+      service: pearl-api
+    profiles:
+      - all
+      - pearl-api
+
+  pearl-listener-jms:
+    extends:
+      file: container/tmp/compose.pearl-listener-jms.yml
+      service: pearl-listener-jms
+    profiles:
+      - all
+      - pearl-jms
+
+  pearl-front:
+    extends:
+      file: container/tmp/compose.pearl-front.yml
+      service: pearl-front
+    profiles:
+      - all
+      - pearl-front
+
+  questionnaire-sabiane-api:
+    extends:
+      file: ./container/compose.questionnaire-sabiane-api.yml
+      service: questionnaire-sabiane-api
+    depends_on:
+      queen-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    restart: on-failure
+    profiles:
+      - all
+      - questionnaire-sabiane-api
+
+  queen-db-remote:
+    extends:
+      file: container/tmp/compose.synchronisation.yml
+      service: queen-db-remote
+    profiles:
+      - all
+      - synchronisation
+
+  queen-remote:
+    extends:
+      file: container/tmp/compose.synchronisation.yml
+      service: queen-remote
+    profiles:
+      - all
+      - synchronisation
+
+  queen-remote-init:
+    extends:
+      file: container/tmp/compose.synchronisation.yml
+      service: queen-remote-init
+    profiles:
+      - all
+      - synchronisation
+
+  queen-remote-listener-jms:
+    extends:
+      file: container/tmp/compose.queen-remote-listener-jms.yml
+      service: queen-remote-listener-jms
+    profiles:
+      - all
+      - synchronisation
+
+volumes:
+  activemq_vol:

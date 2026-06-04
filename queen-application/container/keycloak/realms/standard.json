@@ -1,0 +1,201 @@
+{
+  "realm": "standard",
+  "enabled": true,
+  "users": [
+    {
+      "username": "gestio1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Gertrude",
+      "lastName": "Gestionnaire",
+      "email": "gestion@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "gestio1",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["gestionnaire"]
+    },
+    {
+      "username": "gestio2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Gontrand",
+      "lastName": "Gestionnaire",
+      "email": "gestion2@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "gestio2",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["gestionnaire"]
+    },
+    {
+      "username": "respon1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Regine",
+      "lastName": "Respondent 1",
+      "email": "respondent1@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "respon1",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["respondent"]
+    },
+    {
+      "username": "respon2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Robert",
+      "lastName": "Respondent 2",
+      "email": "respondent2@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "respon2",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["respondent"]
+    },
+    {
+      "username": "respon3",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Raoul",
+      "lastName": "Respondent 3",
+      "email": "respondent3@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "respon3",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["respondent"]
+    },
+    {
+      "username": "respon4",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Rico",
+      "lastName": "Respondent 4",
+      "email": "respondent4@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "respon4",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["respondent"]
+    },
+    {
+      "username": "respon5",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Rocco",
+      "lastName": "Respondent 5",
+      "email": "respondent5@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "respon5",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["respondent"]
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Adele",
+      "lastName": "Admin",
+      "email": "adele@insee.fr",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin"]
+    },
+    {
+      "id": "15cfea92-65bc-441e-bf55-1234c73b30",
+      "username": "service-account-webclient",
+      "emailVerified": false,
+      "createdTimestamp": 1739881777223,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "webclient",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-standard",
+        "webclient"
+      ],
+      "notBefore": 0,
+      "groups": []
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "myclient",
+      "enabled": true,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false
+    },
+    {
+      "clientId": "webclient",
+      "enabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "publicClient": false,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "webclient"
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "gestionnaire",
+        "description": "gestionnaire role"
+      },
+      {
+        "name": "admin",
+        "description": "Admin role"
+      },
+      {
+        "name": "respondent",
+        "description": "Respondent role"
+      },
+      {
+        "name": "webclient",
+        "description": "webclient role"
+      }
+    ]
+  }
+}

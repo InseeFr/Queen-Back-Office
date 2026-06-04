@@ -10,4 +10,4 @@ services:
     ports:
       - "${KEYCLOAK_PORT}:8080"
     volumes:
-      - ./keycloak/realms:/opt/keycloak/data/import
+      - ./container/keycloak/realms:/opt/keycloak/data/import

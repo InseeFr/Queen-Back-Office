@@ -1,0 +1,15 @@
+services:
+  sabiane-questionnaire-db:
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_POSTGRES}
+    environment:
+      - POSTGRES_USER=${QUESTIONNAIRE_SABIANE_DB_USER}
+      - POSTGRES_PASSWORD=${QUESTIONNAIRE_SABIANE_DB_PASSWORD}
+      - POSTGRES_DB=${QUESTIONNAIRE_SABIANE_DB}
+    command: ["postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${QUESTIONNAIRE_SABIANE_DB_USER} -d ${QUESTIONNAIRE_SABIANE_DB} -h localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - ${QUESTIONNAIRE_SABIANE_DB_PORT}:5432

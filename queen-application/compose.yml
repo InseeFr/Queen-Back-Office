@@ -1,3 +1,5 @@
+# podman-compose -f ./compose.yml --env-file .env --profile keycloak --profile activemq --profile sabiane-questionnaire-db --profile sabiane-questionnaire-api --profile sabiane-pilotage-db --profile sabiane-pilotage-api down -v
+
 services:
   keycloak:
     extends:
@@ -6,25 +8,6 @@ services:
     profiles:
       - all
       - keycloak
-      - queen-api
-
-  queen-db:
-    extends:
-      file: ./container/compose.queen-db.yml
-      service: queen-db
-    profiles:
-      - all
-      - queen-db
-      - queen-listener-jms
-      - queen-api
-
-  queen-db-ciphered:
-    extends:
-      file: ./container/compose.queen-db-ciphered.yml
-      service: queen-db-ciphered
-    profiles:
-      - all
-      - queen-db-ciphered
 
   activemq:
     extends:
@@ -34,90 +17,43 @@ services:
       - all
       - activemq
 
-  queen-listener-jms:
+  sabiane-questionnaire-db:
     extends:
-      file: ./container/compose.queen-listener-jms.yml
-      service: queen-listener-jms
+      file: ./container/compose.sabiane-questionnaire-db.yml
+      service: sabiane-questionnaire-db
     profiles:
       - all
-      - queen-listener-jms
+      - sabiane-questionnaire-db
 
-  pearl-db:
+  sabiane-pilotage-db:
     extends:
-      file: ./container/compose.pearl-db.yml
-      service: pearl-db
+      file: ./container/compose.sabiane-pilotage-db.yml
+      service: sabiane-pilotage-db
     profiles:
       - all
-      - pearl
+      - sabiane-pilotage-db
 
-  pearl-api:
+  sabiane-pilotage-api:
     extends:
-      file: ./container/compose.pearl-api.yml
-      service: pearl-api
+      file: ./container/compose.sabiane-pilotage-api.yml
+      service: sabiane-pilotage-api
     profiles:
       - all
-      - pearl
+      - sabiane-pilotage-api
 
-  pearl-listener-jms:
+  sabiane-questionnaire-api:
     extends:
-      file: ./container/compose.pearl-listener-jms.yml
-      service: pearl-listener-jms
-    profiles:
-      - all
-      - pearl
-
-  pearl-front:
-    extends:
-      file: ./container/compose.pearl-front.yml
-      service: pearl-front
-    profiles:
-      - all
-      - pearl
-
-  queen-api:
-    extends:
-      file: ./container/compose.queen-api.yml
-      service: queen-api
+      file: ./container/compose.sabiane-questionnaire-api.yml
+      service: sabiane-questionnaire-api
     depends_on:
-      queen-db:
+      sabiane-questionnaire-db:
         condition: service_healthy
       keycloak:
         condition: service_started
+#    restart: on-failure
     profiles:
       - all
-      - queen-api
-
-  queen-db-remote:
-    extends:
-      file: ./container/compose.synchronisation.yml
-      service: queen-db-remote
-    profiles:
-      - all
-      - synchronisation
-
-  queen-remote:
-    extends:
-      file: ./container/compose.synchronisation.yml
-      service: queen-remote
-    profiles:
-      - all
-      - synchronisation
-
-  queen-remote-init:
-    extends:
-      file: ./container/compose.synchronisation.yml
-      service: queen-remote-init
-    profiles:
-      - all
-      - synchronisation
-
-  queen-remote-listener-jms:
-    extends:
-      file: ./container/compose.queen-remote-listener-jms.yml
-      service: queen-remote-listener-jms
-    profiles:
-      - all
-      - synchronisation
+      - sabiane-questionnaire-api
 
 volumes:
   activemq_vol:

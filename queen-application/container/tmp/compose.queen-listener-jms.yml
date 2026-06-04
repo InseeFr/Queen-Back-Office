@@ -1,8 +1,8 @@
 services:
   queen-listener-jms:
     build:
-      context: ../../queen-listener-jms
-      dockerfile: Dockerfile
+      context: ../../../queen-listener-jms
+      dockerfile: ../../../queen-listener-jms/Dockerfile
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://queen-db:5432/${QUEEN_DB}
       - SPRING_DATASOURCE_USERNAME=${QUEEN_DB_USER}
