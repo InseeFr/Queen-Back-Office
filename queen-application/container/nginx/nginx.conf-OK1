@@ -3,7 +3,7 @@ server {
     server_name /usr/share/nginx/html;
 
     root /usr/share/nginx/html;
-    index index.html;
+    index index.html;      
 
     location ~* \.(?:manifest|appcache|html?|xml|json)$ {
       expires -1;
