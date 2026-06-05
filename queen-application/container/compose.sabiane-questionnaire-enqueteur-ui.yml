@@ -1,0 +1,16 @@
+services:
+  questionnaire-enqueteur-ui:
+    profiles:
+      - all
+      - questionnaire-enqueteur-ui
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_SABIANE_QUESTIONNAIRE_ENQUETEUR_UI}
+    environment:
+      - VITE_QUEEN_API_URL=http://localhost:8080
+      - VITE_OIDC_ISSUER=http://localhost:7080/realms/sabiane
+      - VITE_OIDC_CLIENT_ID=myclient
+      - VITE_OIDC_SCOPES=profile,roles
+      - VITE_TELEMETRY_ENABLED=true
+      - VITE_TELEMETRY_DISABLED=false
+      - VITE_TRUST_URI_DOMAINS=no-op,localhost
+    ports:
+      - '${QUEEN_FRONTEND_PORT}:8080'

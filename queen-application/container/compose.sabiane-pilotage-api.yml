@@ -4,11 +4,6 @@ services:
 #      context: ../../../Pearl-Jam-Back-Office/api
 #      dockerfile: Dockerfile
     image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_SABIANE_PILOTAGE_API}
-    depends_on:
-      sabiane-pilotage-db:
-        condition: service_healthy
-      keycloak:
-        condition: service_started
     environment:
       - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
       - SPRING_DATASOURCE_URL=jdbc:postgresql://sabiane-pilotage-db:5432/${PEARL_DB}
@@ -23,7 +18,7 @@ services:
       - APPLICATION_ROLES_WEBCLIENT=${WEBCLIENT_ROLE}
       - application.corsOrigins=http://localhost:5001,http://localhost:3000
       - FEATURE_OIDC_ENABLED=true
-      - FEATURE_OIDC_APPLICATIONHOST=http://localhost:9080
+      - FEATURE_OIDC_APPLICATIONHOST=http://localhost:${IMAGE_SABIANE_PILOTAGE_API_PORT}
       - FEATURE_OIDC_AUTHSERVERHOST=${AUTH_SERVER_URL}
       - FEATURE_OIDC_AUTHSERVERURL=${AUTH_SERVER_URL}
       - FEATURE_OIDC_CLIENTID=${AUTH_CLIENT_ID}
@@ -44,4 +39,4 @@ services:
       - SPRING_LIQUIBASE_CONTEXTS=dev
       - SPRING_LIQUIBASE_CHANGELOG=classpath:db/integration-demo.xml
     ports:
-      - ${PEARL_API_PORT}:8080
+      - ${IMAGE_SABIANE_PILOTAGE_API_PORT}:8080

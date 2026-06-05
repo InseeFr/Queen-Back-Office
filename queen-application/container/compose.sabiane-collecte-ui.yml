@@ -1,0 +1,21 @@
+services:
+  sabiane-collecte-ui:
+    image: ${IMAGES_REGISTRY_INSEE_FR}/${IMAGE_SABIANE_COLLECTE_UI}
+    profiles:
+      - all
+      - sabiane-collecte-ui
+    environment:
+      - PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1
+      - VITE_QUEEN_URL=http://localhost:${QUEEN_FRONTEND_PORT}
+      - VITE_PEARL_API_URL=http://localhost:${IMAGE_SABIANE_PILOTAGE_API_PORT}
+      - VITE_PEARL_AUTHENTICATION_MODE=keycloak
+      - VITE_KEYCLOAK_CLIENTID=${AUTH_CLIENT_ID}
+      - VITE_KEYCLOAK_REALM=${AUTH_REALM}
+      - VITE_KEYCLOAK_URL=http://localhost:${KEYCLOAK_PORT}
+      - VITE_KEYCLOAK_ROLES_ALLOW_LIST=interviewer
+#    healthcheck:
+#      test: ['CMD', 'curl', '--fail', 'http://localhost']
+    ports:
+      - '${PEARL_FRONTEND_PORT}:8300'
+    volumes:
+      - ./container/nginx/nginx.conf:/etc/nginx/conf.d/default.conf

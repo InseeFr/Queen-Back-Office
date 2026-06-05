@@ -1,4 +1,4 @@
-# podman-compose -f ./compose.yml --env-file .env --profile keycloak --profile activemq --profile sabiane-questionnaire-db --profile sabiane-questionnaire-api --profile sabiane-pilotage-db --profile sabiane-pilotage-api down -v
+# podman-compose -f ./compose.yml --env-file .env --profile keycloak --profile activemq --profile sabiane-questionnaire-db --profile sabiane-questionnaire-api --profile sabiane-pilotage-db --profile sabiane-pilotage-api --profile questionnaire-enqueteur-ui down -v
 
 services:
   keycloak:
@@ -40,6 +40,11 @@ services:
     profiles:
       - all
       - sabiane-pilotage-api
+    depends_on:
+      sabiane-pilotage-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
 
   sabiane-questionnaire-api:
     extends:
@@ -54,6 +59,34 @@ services:
     profiles:
       - all
       - sabiane-questionnaire-api
+
+  questionnaire-enqueteur-ui:
+    extends:
+      file: ./container/compose.sabiane-questionnaire-enqueteur-ui.yml
+      service: questionnaire-enqueteur-ui
+    depends_on:
+      keycloak:
+        condition: service_started
+      sabiane-questionnaire-api:
+        condition: service_started
+    profiles:
+      - all
+      - questionnaire-enqueteur-ui
+
+  sabiane-collecte-ui:
+    extends:
+      file: ./container/compose.sabiane-collecte-ui.yml
+      service: sabiane-collecte-ui
+    depends_on:
+      questionnaire-enqueteur-ui:
+        condition: service_started
+      keycloak:
+        condition: service_started
+      sabiane-pilotage-api:
+        condition: service_started
+    profiles:
+      - all
+      - sabiane-collecte-ui
 
 volumes:
   activemq_vol:
