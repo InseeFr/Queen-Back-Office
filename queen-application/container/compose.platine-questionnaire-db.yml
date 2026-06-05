@@ -1,0 +1,15 @@
+services:
+  platine-questionnaire-db:
+    image: ${IMAGES_REGISTRY_DOCKER_IO}/${IMAGE_POSTGRES}
+    environment:
+      - POSTGRES_USER=${QUESTIONNAIRE_PLATINE_DB_USER}
+      - POSTGRES_PASSWORD=${QUESTIONNAIRE_PLATINE_DB_PASSWORD}
+      - POSTGRES_DB=${QUESTIONNAIRE_PLATINE_DB}
+    command: ["postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${QUESTIONNAIRE_PLATINE_DB_USER} -d ${QUESTIONNAIRE_PLATINE_DB} -h localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - ${QUESTIONNAIRE_PLATINE_DB_PORT}:5432

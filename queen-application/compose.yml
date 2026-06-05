@@ -1,12 +1,18 @@
 # podman-compose -f ./compose.yml --env-file .env --profile keycloak --profile activemq --profile sabiane-questionnaire-db --profile sabiane-questionnaire-api --profile sabiane-pilotage-db --profile sabiane-pilotage-api --profile questionnaire-enqueteur-ui down -v
 
 services:
+
+# ┌──────────────────────────────────────────┐
+# │         Services transverses             │
+# └──────────────────────────────────────────┘
+
   keycloak:
     extends:
       file: ./container/compose.keycloak.yml
       service: keycloak
     profiles:
       - all
+      - transverse
       - keycloak
 
   activemq:
@@ -15,7 +21,12 @@ services:
       service: activemq
     profiles:
       - all
+      - transverse
       - activemq
+
+# ┌─────────────────────────────────────────────────┐
+# │         Sabiane - Collecte enquêteurs           │
+# └─────────────────────────────────────────────────┘
 
   sabiane-questionnaire-db:
     extends:
@@ -23,6 +34,7 @@ services:
       service: sabiane-questionnaire-db
     profiles:
       - all
+      - sabiane
       - sabiane-questionnaire-db
 
   sabiane-pilotage-db:
@@ -31,20 +43,22 @@ services:
       service: sabiane-pilotage-db
     profiles:
       - all
+      - sabiane
       - sabiane-pilotage-db
 
   sabiane-pilotage-api:
     extends:
       file: ./container/compose.sabiane-pilotage-api.yml
       service: sabiane-pilotage-api
-    profiles:
-      - all
-      - sabiane-pilotage-api
     depends_on:
       sabiane-pilotage-db:
         condition: service_healthy
       keycloak:
         condition: service_started
+    profiles:
+      - all
+      - sabiane
+      - sabiane-pilotage-api
 
   sabiane-questionnaire-api:
     extends:
@@ -58,6 +72,7 @@ services:
 #    restart: on-failure
     profiles:
       - all
+      - sabiane
       - sabiane-questionnaire-api
 
   questionnaire-enqueteur-ui:
@@ -71,6 +86,7 @@ services:
         condition: service_started
     profiles:
       - all
+      - sabiane
       - questionnaire-enqueteur-ui
 
   sabiane-collecte-ui:
@@ -86,7 +102,40 @@ services:
         condition: service_started
     profiles:
       - all
+      - sabiane
       - sabiane-collecte-ui
+
+# ┌──────────────────────────────────────────┐
+# │         Platine - Collecte WEB           │
+# └──────────────────────────────────────────┘
+
+  platine-questionnaire-db:
+    extends:
+      file: ./container/compose.platine-questionnaire-db.yml
+      service: platine-questionnaire-db
+    profiles:
+      - all
+      - platine
+      - platine-questionnaire-db
+
+  platine-questionnaire-api:
+    extends:
+      file: ./container/compose.platine-questionnaire-api.yml
+      service: platine-questionnaire-api
+    depends_on:
+      platine-questionnaire-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    #    restart: on-failure
+    profiles:
+      - all
+      - platine
+      - platine-questionnaire-api
+
+# ┌──────────────────────────────────────────┐
+# │         Volumes                          │
+# └──────────────────────────────────────────┘
 
 volumes:
   activemq_vol:
