@@ -14,5 +14,5 @@ public interface QuestionnaireBuilder {
      * @param isXmlIntegration Is integration done with xml files
      * @return List of {@link IntegrationResultUnitDto} integration results for the questionnaires
      */
-    List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile, boolean isXmlIntegration);
+    List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile);
 }

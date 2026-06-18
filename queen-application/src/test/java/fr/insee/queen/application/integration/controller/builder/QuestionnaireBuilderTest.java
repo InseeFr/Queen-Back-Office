@@ -15,14 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,15 +38,14 @@ class QuestionnaireBuilderTest {
         questionnaireBuilder = new IntegrationQuestionnaireBuilder(schemaComponent, validator, integrationService, objectMapper);
     }
 
-    @ParameterizedTest
-    @MethodSource("xmlIntegrationWithPaths")
+    @Test
     @DisplayName("on building questionnaires, return integration result created")
-    void testQuestionnaireBuilder01(String path, boolean isXmlIntegration) throws IOException {
+    void testQuestionnaireBuilder01() throws IOException {
         String questionnaireId1 = "simpsons-v1";
         String questionnaireId2 = "simpson-v2";
         String campaignId = "SIMPSONS2020X00";
-        ZipFile zipFile = zipUtils.createZip("data/integration" + path + "/questionnaire-builder/valid-questionnaires.zip");
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, isXmlIntegration);
+        ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/valid-questionnaires.zip");
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         IntegrationResultUnitDto result1 = IntegrationResultUnitDto.integrationResultUnitCreated(questionnaireId1);
         IntegrationResultUnitDto result2 = IntegrationResultUnitDto.integrationResultUnitCreated(questionnaireId2);
         assertThat(results)
@@ -59,15 +54,14 @@ class QuestionnaireBuilderTest {
                 .contains(result2);
     }
 
-    @ParameterizedTest
-    @MethodSource("xmlIntegrationWithPaths")
+    @Test
     @DisplayName("on building questionnaires, when questionnaire input invalid return integration error")
-    void testQuestionnaireBuilder02(String path, boolean isXmlIntegration) throws IOException {
+    void testQuestionnaireBuilder02() throws IOException {
         String questionnaireId = "simpsons%v1";
         String campaignId = "SIMPSONS2020X00";
-        ZipFile zipFile = zipUtils.createZip("data/integration" + path + "/questionnaire-builder/invalid-input-questionnaires.zip");
+        ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/invalid-input-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, isXmlIntegration);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -80,14 +74,13 @@ class QuestionnaireBuilderTest {
         assertThat(errorResult.getCause()).contains("label: must not be empty.");
     }
 
-    @ParameterizedTest
-    @MethodSource("xmlIntegrationWithPaths")
+    @Test
     @DisplayName("on building questionnaires, when questionnaire forgotten return integration error")
-    void testQuestionnaireBuilder03(String path, boolean isXmlIntegration) throws IOException {
+    void testQuestionnaireBuilder03() throws IOException {
         String campaignId = "SIMPSONS2020X00";
-        ZipFile zipFile = zipUtils.createZip("data/integration" + path + "/questionnaire-builder/forgotten-questionnaires.zip");
+        ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/forgotten-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, isXmlIntegration);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -99,63 +92,33 @@ class QuestionnaireBuilderTest {
         assertThat(errorResult.getCause()).contains(String.format(IntegrationResultLabel.QUESTIONNAIRE_FILE_NOT_FOUND, "simpsons-v2.json"));
     }
 
-    @ParameterizedTest
-    @MethodSource("xmlIntegrationWithPaths")
-    @DisplayName("on building questionnaires, when questionnaire  missing return integration error")
-    void testQuestionnaireBuilder04(String path, boolean isXmlIntegration) throws IOException {
+    @Test
+    @DisplayName("on building questionnaires, when questionnaire missing return integration error")
+    void testQuestionnaireBuilder04() throws IOException {
         String campaignId = "SIMPSONS2020X00";
-        ZipFile zipFile = zipUtils.createZip("data/integration" + path + "/questionnaire-builder/xml-questionnaire-missing.zip");
+        ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/xml-questionnaire-missing.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, isXmlIntegration);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto questionnaireResult = results.getFirst();
         assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(questionnaireResult.getId()).isNull();
         assertThat(questionnaireResult.getCause())
-                .containsAnyOf(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML),
-                        String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_JSON));
-    }
-
-    @ParameterizedTest
-    @MethodSource("xmlIntegrationWithPaths")
-    @DisplayName("on building questionnaires, when malformed xml questionnaire return integration error")
-    void testQuestionnaireBuilder05(String path, boolean isXmlIntegration) throws IOException {
-        String campaignId = "SIMPSONS2020X00";
-        ZipFile zipFile = zipUtils.createZip("data/integration" + path + "/questionnaire-builder/malformed-questionnaires.zip");
-
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, isXmlIntegration);
-        assertThat(results).hasSize(1);
-        IntegrationResultUnitDto questionnaireResult = results.getFirst();
-        assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(questionnaireResult.getId()).isNull();
-        assertThat(questionnaireResult.getCause())
-                .containsAnyOf(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_XML, ""),
-                        String.format(IntegrationResultLabel.FILE_INVALID, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_JSON, ""));
+                .contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_JSON));
     }
 
     @Test
-    @DisplayName("on building questionnaires, when campaign id from xml different from campaign id in questionnaire xml return integration error")
-    void testQuestionnaireBuilderXml06() throws IOException {
-        String campaignId = "different-id";
-        String questionnaireId1 = "simpsons%v1";
-        String questionnaireId2 = "simpson-v2";
+    @DisplayName("on building questionnaires, when malformed json questionnaire return integration error")
+    void testQuestionnaireBuilder05() throws IOException {
+        String campaignId = "SIMPSONS2020X00";
+        ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/malformed-questionnaires.zip");
 
-        ZipFile zipFile = zipUtils.createZip("data/integration/xml/questionnaire-builder/invalid-input-questionnaires.zip");
-
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile, true);
-        IntegrationResultUnitDto expectedResult1 = IntegrationResultUnitDto.integrationResultUnitError(questionnaireId1, String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, "SIMPSONS2020X00", campaignId));
-        IntegrationResultUnitDto expectedResult2 = IntegrationResultUnitDto.integrationResultUnitError(questionnaireId2, String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, "SIMPSONS2020X00", campaignId));
-
-        assertThat(results)
-                .hasSize(2)
-                .contains(expectedResult1)
-                .contains(expectedResult2);
-    }
-
-    private static Stream<Arguments> xmlIntegrationWithPaths() {
-        return Stream.of(
-                Arguments.of("/json", false),
-                Arguments.of("/xml", true)
-        );
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        assertThat(results).hasSize(1);
+        IntegrationResultUnitDto questionnaireResult = results.getFirst();
+        assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(questionnaireResult.getId()).isNull();
+        assertThat(questionnaireResult.getCause())
+                .contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationQuestionnaireBuilder.QUESTIONNAIRE_MODELS_JSON, ""));
     }
 }

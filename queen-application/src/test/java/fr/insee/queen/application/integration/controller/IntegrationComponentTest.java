@@ -10,17 +10,13 @@ import fr.insee.queen.application.integration.dto.output.IntegrationResultsDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -42,44 +38,33 @@ class IntegrationComponentTest {
         integrationComponent = new IntegrationComponent(nomenclatureBuilder, campaignBuilder, questionnaireBuilder, applicationProperties);
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
+    @Test
     @DisplayName("on integration, when file is not a zip, throw exception")
-    void integrate01(boolean isXmlIntegration) {
-        MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, "Hello, World!".getBytes()
-        );
-        assertThatThrownBy(() -> integrationComponent.integrateContext(uploadedFile, isXmlIntegration)).isInstanceOf(IntegrationComponentException.class);
+    void integrate01() {
+        MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, "Hello, World!".getBytes());
+        assertThatThrownBy(() -> integrationComponent.integrateContext(uploadedFile)).isInstanceOf(IntegrationComponentException.class);
     }
 
-    @ParameterizedTest
-    @MethodSource("xmlIntegrationWithPaths")
+    @Test
     @DisplayName("on integration, return an integration result list")
-    void integrate02(String path, boolean isXmlIntegration) throws IOException {
-        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration" + path + "/integration-component.zip");
+    void integrate02() throws IOException {
+        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
-        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile, isXmlIntegration);
+        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
         assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultSuccess());
         assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
         assertThat(result.getQuestionnaireModels()).isEqualTo(questionnaireBuilder.getResults());
     }
 
-    @ParameterizedTest
-    @MethodSource("xmlIntegrationWithPaths")
+    @Test
     @DisplayName("when integrating campaign result in errors, then do not process questionnaires")
-    void integrate03(String path, boolean isXmlIntegration) throws IOException {
+    void integrate03() throws IOException {
         campaignBuilder.setResultIsInErrorState(true);
-        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration" + path + "/integration-component.zip");
+        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
-        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile, isXmlIntegration);
+        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
         assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultError());
         assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
         assertThat(result.getQuestionnaireModels()).isNull();
-    }
-
-    private static Stream<Arguments> xmlIntegrationWithPaths() {
-        return Stream.of(
-                Arguments.of("/json", false),
-                Arguments.of("/xml", true)
-        );
     }
 }

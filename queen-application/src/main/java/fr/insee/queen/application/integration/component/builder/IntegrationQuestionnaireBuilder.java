@@ -1,5 +1,6 @@
 package fr.insee.queen.application.integration.component.builder;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -16,21 +17,12 @@ import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import tools.jackson.core.JacksonException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -45,48 +37,11 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
     private final Validator validator;
     private final IntegrationService integrationService;
     private final ObjectMapper mapper;
-    private static final String LABEL = "Label";
-    private static final String ID = "Id";
-    private static final String FILENAME = "FileName";
-    private static final String CAMPAIGN_ID = "CampaignId";
-    private static final String NOMENCLATURE = "Nomenclature";
-    public static final String QUESTIONNAIRE_MODELS_XML = "questionnaireModels.xml";
     public static final String QUESTIONNAIRE_MODELS_JSON = "questionnaireModels.json";
 
     @Override
-    public List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile, boolean isXmlIntegration) {
-
-        if(isXmlIntegration) {
-            return buildXmlQuestionnaireModels(campaignId, integrationZipFile);
-        }
+    public List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile) {
         return buildQuestionnaireModels(campaignId, integrationZipFile);
-    }
-
-    private List<IntegrationResultUnitDto> buildXmlQuestionnaireModels(String campaignId, ZipFile zf) {
-        try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, QUESTIONNAIRE_MODELS_XML, "questionnaireModels_integration_template.xsd");
-        } catch (IntegrationValidationException ex) {
-            return List.of(ex.getResultError());
-        }
-
-        List<IntegrationResultUnitDto> results = new ArrayList<>();
-        Document doc;
-        try {
-            doc = schemaComponent.buildDocument(zf.getInputStream(zf.getEntry(QUESTIONNAIRE_MODELS_XML)));
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            results.add(IntegrationResultUnitDto.integrationResultUnitError(null, e.getMessage()));
-            return results;
-        }
-
-        NodeList qmNodes = doc.getElementsByTagName("QuestionnaireModels").item(0).getChildNodes();
-        for (int i = 0; i < qmNodes.getLength(); i++) {
-            if (qmNodes.item(i).getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
-            Element qm = (Element) qmNodes.item(i);
-            results.addAll(buildXmlQuestionnaireModel(campaignId, qm, zf));
-        }
-        return results;
     }
 
     private List<IntegrationResultUnitDto> buildQuestionnaireModels(String campaignId, ZipFile zf) {
@@ -123,43 +78,6 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
             }
         }
         return results;
-    }
-
-    private List<IntegrationResultUnitDto> buildXmlQuestionnaireModel(String campaignId, Element qm, ZipFile zf) {
-        String qmId = qm.getElementsByTagName(ID).item(0).getTextContent();
-        String qmCampaignId = qm.getElementsByTagName(CAMPAIGN_ID).item(0).getTextContent().toUpperCase();
-        String qmFileName = qm.getElementsByTagName(FILENAME).item(0).getTextContent();
-
-        if (!qmCampaignId.equals(campaignId)) {
-            log.info("Questionnaire model has campaign id {} while campaign in zip has id {}", qmCampaignId, campaignId);
-            List<IntegrationResultUnitDto> results = new ArrayList<>();
-            results.add(IntegrationResultUnitDto.integrationResultUnitError(
-                    qmId,
-                    String.format(IntegrationResultLabel.CAMPAIGN_IDS_MISMATCH, qmCampaignId, campaignId))
-            );
-            return results;
-        }
-
-        String qmLabel = qm.getElementsByTagName(LABEL).item(0).getTextContent();
-
-
-        NodeList qmNomenclatures = qm.getElementsByTagName(NOMENCLATURE);
-        Set<String> requiredNomenclatureIds = IntStream.range(0, qmNomenclatures.getLength())
-                .filter(j -> qmNomenclatures.item(j).getNodeType() == Node.ELEMENT_NODE)
-                .mapToObj(j -> qmNomenclatures.item(j).getTextContent())
-                .collect(Collectors.toSet());
-
-        QuestionnaireModelItem questionnaireModelItem = new QuestionnaireModelItem(qmId, qmLabel, qmFileName, requiredNomenclatureIds);
-        try {
-            ObjectNode qmValue = readQuestionnaireStream(questionnaireModelItem, zf);
-            return buildQuestionnaireModel(qmCampaignId, questionnaireModelItem, qmValue);
-        } catch (IntegrationValidationException ex) {
-            List<IntegrationResultUnitDto> results = new ArrayList<>();
-            results.add(ex.getResultError());
-            return results;
-        }
-
-
     }
 
     private List<IntegrationResultUnitDto> buildQuestionnaireModel(String qmCampaignId, QuestionnaireModelItem questionnaireModelItem, ObjectNode qmValue) {

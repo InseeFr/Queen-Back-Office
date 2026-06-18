@@ -23,7 +23,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import tools.jackson.core.JacksonException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -43,55 +42,11 @@ public class IntegrationNomenclatureBuilder implements NomenclatureBuilder {
     private final Validator validator;
     private final ObjectMapper mapper;
     private final IntegrationService integrationService;
-    private static final String LABEL = "Label";
-    private static final String ID = "Id";
-    private static final String FILENAME = "FileName";
-    public static final String NOMENCLATURES_XML = "nomenclatures.xml";
     public static final String NOMENCLATURES_JSON = "nomenclatures.json";
 
     @Override
-    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile, boolean isXmlIntegration) {
-        if(isXmlIntegration) {
-            return buildXmlNomenclatures(integrationZipFile);
-        }
+    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile) {
         return buildNomenclatures(integrationZipFile);
-    }
-
-    private List<IntegrationResultUnitDto> buildXmlNomenclatures(ZipFile zf) {
-
-        try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, NOMENCLATURES_XML, "nomenclatures_integration_template.xsd");
-        } catch (IntegrationValidationException ex) {
-            return List.of(ex.getResultError());
-        }
-
-        List<IntegrationResultUnitDto> results = new ArrayList<>();
-
-        Document doc;
-        try {
-            doc = schemaComponent.buildDocument(zf.getInputStream(zf.getEntry(NOMENCLATURES_XML)));
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            return List.of(IntegrationResultUnitDto.integrationResultUnitError(null, e.getMessage()));
-        }
-
-        NodeList nomenclatureNodes = doc.getElementsByTagName("Nomenclatures").item(0).getChildNodes();
-        for (int i = 0; i < nomenclatureNodes.getLength(); i++) {
-            if (nomenclatureNodes.item(i).getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
-
-            Element nomenclatureElement = (Element) nomenclatureNodes.item(i);
-            try {
-                String nomenclatureId = nomenclatureElement.getElementsByTagName(ID).item(0).getTextContent();
-                String nomenclatureLabel = nomenclatureElement.getElementsByTagName(LABEL).item(0).getTextContent();
-                String nomenclatureFilename = nomenclatureElement.getElementsByTagName(FILENAME).item(0).getTextContent();
-                ArrayNode nomenclatureValue = readNomenclatureStream(nomenclatureId, nomenclatureFilename, zf);
-                results.add(buildNomenclature(nomenclatureId, nomenclatureLabel, nomenclatureValue));
-            } catch (IntegrationValidationException ex) {
-                results.add(ex.getResultError());
-            }
-        }
-        return results;
     }
 
     private List<IntegrationResultUnitDto> buildNomenclatures(ZipFile zf) {

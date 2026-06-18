@@ -18,7 +18,7 @@ public class CampaignFakeBuilder implements CampaignBuilder {
     private final IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError("id-campaign", "error");
 
     @Override
-    public IntegrationResultUnitDto build(ZipFile integrationZipFile, boolean isXmlIntegration) {
+    public IntegrationResultUnitDto build(ZipFile integrationZipFile) {
         return resultIsInErrorState ? resultError : resultSuccess;
     }
 }

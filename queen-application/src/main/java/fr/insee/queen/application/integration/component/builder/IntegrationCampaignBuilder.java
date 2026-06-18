@@ -1,11 +1,7 @@
 package fr.insee.queen.application.integration.component.builder;
 
-import tools.jackson.databind.JsonNode;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.node.ArrayNode;
-import tools.jackson.databind.node.JsonNodeFactory;
-import tools.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Iterators;
 import fr.insee.queen.application.integration.component.builder.schema.SchemaComponent;
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.application.integration.dto.input.CampaignIntegrationData;
@@ -55,87 +51,19 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
     private final Validator validator;
     private final IntegrationService integrationService;
     private final ObjectMapper mapper;
-    private static final String LABEL = "Label";
-    private static final String METADATA = "Metadata";
-    private static final String SENSITIVITY = "Sensitivity";
-    public static final String CAMPAIGN_XML = "campaign.xml";
     public static final String CAMPAIGN_JSON = "campaign.json";
 
     @Override
-    public IntegrationResultUnitDto build(ZipFile integrationZipFile, boolean isXmlIntegration) {
-        if(isXmlIntegration) {
-            return buildXmlCampaign(integrationZipFile);
-        }
+    public IntegrationResultUnitDto build(ZipFile integrationZipFile) {
         return buildCampaign(integrationZipFile);
     }
 
-    private IntegrationResultUnitDto buildXmlCampaign(ZipFile zf) {
-        try {
-            schemaComponent.throwExceptionIfXmlDataFileNotValid(zf, CAMPAIGN_XML, "campaign_integration_template.xsd");
-        } catch (IntegrationValidationException ex) {
-            return ex.getResultError();
-        }
-
-        Document doc;
-        try {
-            doc = schemaComponent.buildDocument(zf.getInputStream(zf.getEntry(CAMPAIGN_XML)));
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            return IntegrationResultUnitDto.integrationResultUnitError(null, e.getMessage());
-        }
-
-        XPathFactory xPathfactory = XPathFactory.newInstance();
-        XPath xpath = xPathfactory.newXPath();
-        String id;
-        try {
-            XPathExpression expr = xpath.compile("/Campaign/Id/text()");
-            id = expr.evaluate(doc, XPathConstants.STRING).toString();
-        } catch (XPathExpressionException e) {
-            log.error("Error when parsing campaign xml", e);
-            return IntegrationResultUnitDto.integrationResultUnitError(null, IntegrationResultLabel.CAMPAIGN_ID_INCORRECT);
-        }
-
-        NodeList metadataTags = doc.getElementsByTagName(METADATA);
-        NodeList labelTags = doc.getElementsByTagName(LABEL);
-        NodeList sensitivityTags = doc.getElementsByTagName(SENSITIVITY);
-
-        ObjectNode metadataValue = mapper.createObjectNode();
-        if (metadataTags.getLength() > 0) {
-            log.info("Setting metadata for campaign {}", id);
-            try {
-                metadataValue = convertMetadataValueToObjectNode(metadataTags.item(0));
-            } catch (JacksonException e) {
-                log.error("Error when converting metadata", e);
-                return IntegrationResultUnitDto.integrationResultUnitError(null, e.getMessage());
-            }
-        }
-
-        String label = "";
-        if (labelTags.getLength() > 0) {
-            log.info("Setting label for campaign {}", id);
-            label = labelTags.item(0).getTextContent();
-        }
-
-        CampaignSensitivity campaignSensitivity = CampaignSensitivity.NORMAL;
-        if (sensitivityTags.getLength() > 0) {
-            log.info("Setting sensitivity for campaign {}", id);
-            String sensitivity = sensitivityTags.item(0).getTextContent();
-            campaignSensitivity = CampaignSensitivity.valueOf(sensitivity);
-        }
-        CampaignIntegrationData campaign = new CampaignIntegrationData(id, label, campaignSensitivity, metadataValue);
-        return buildCampaign(campaign);
-    }
-
-    /**
-     * Parses the campaign metadata in the given zip and returns the interrogation status.
-     * @param zf Zip file that should contain a campaign JSON file.
-     * @return {@link IntegrationResultUnitDto}
-     */
     private IntegrationResultUnitDto buildCampaign(ZipFile zf) {
         try {
             schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, CAMPAIGN_JSON, SchemaType.CAMPAIGN_INTEGRATION);
             ZipEntry zipCampaignFile = zf.getEntry(CAMPAIGN_JSON);
             CampaignIntegrationData campaign = mapper.readValue(zf.getInputStream(zipCampaignFile), CampaignIntegrationData.class);
-            if(campaign.sensitivity() == null) {
+            if (campaign.sensitivity() == null) {
                 campaign = new CampaignIntegrationData(campaign.id(), campaign.label(), CampaignSensitivity.NORMAL, campaign.metadata());
             }
             return buildCampaign(campaign);
@@ -168,80 +96,4 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
         IntegrationResult result = integrationService.create(CampaignIntegrationData.toModel(campaign));
         return IntegrationResultUnitDto.fromModel(result);
     }
-
-    private ObjectNode convertMetadataValueToObjectNode(Node xmlNode) throws JacksonException {
-        String jsonString = XML.toJSONObject(toString(xmlNode)).toString();
-        ObjectNode metadataObject = mapper.readValue(jsonString, ObjectNode.class);
-        if (metadataObject.get(METADATA).isEmpty()) {
-            return JsonNodeFactory.instance.objectNode();
-        }
-        return (ObjectNode) removeArrayLevel(metadataObject.get(METADATA), mapper);
-    }
-
-    private JsonNode removeArrayLevel(JsonNode node, ObjectMapper mapper) {
-        if (node == null || node.isValueNode()) {
-            return node;
-        }
-        if (node.isArray()) {
-            ArrayNode arrNode = mapper.createArrayNode();
-            for (int i = 0; i < node.size(); i++) {
-                arrNode.add(removeArrayLevel(node.get(i), mapper));
-            }
-            return arrNode;
-        }
-        if (node.isObject()) {
-            if (Iterators.size(node.values().iterator()) == 1 && node.values().iterator().next().isArray()) {
-                String keyName = node.propertyNames().iterator().next();
-                return removeArrayLevel(node.get(keyName), mapper);
-            } else {
-                ObjectNode objNode = mapper.createObjectNode();
-                Iterator<Map.Entry<String, JsonNode>> it = node.properties().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<String, JsonNode> e = it.next();
-                    objNode.set(e.getKey(), removeArrayLevel(e.getValue(), mapper));
-                }
-                return objNode;
-            }
-        }
-        return node;
-    }
-
-    private String toString(Node node) {
-        if (node == null) {
-            throw new IllegalArgumentException("node is null.");
-        }
-        try {
-            // Remove unwanted whitespaces
-            node.normalize();
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            XPathExpression expr = xpath.compile("//text()[normalize-space()='']");
-            NodeList nodeList = (NodeList) expr.evaluate(node, XPathConstants.NODESET);
-
-            for (int i = 0; i < nodeList.getLength(); ++i) {
-                Node nd = nodeList.item(i);
-                nd.getParentNode().removeChild(nd);
-            }
-
-            // Create and setup transformer
-            System.setProperty("javax.xml.transform.TransformerFactory",
-                    "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
-            TransformerFactory tf = TransformerFactory.newInstance();
-            tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-            Transformer transformer = tf.newTransformer();
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-            // Turn the node into a string
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(node), new StreamResult(writer));
-            return writer.toString();
-        } catch (TransformerException | XPathExpressionException e) {
-            return null;
-        }
-    }
 }
-
