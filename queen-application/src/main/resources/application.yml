@@ -81,6 +81,10 @@ spring:
         auto: validate
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+  jackson:
+    time-zone: UTC
   security:
     oauth2:
       resourceserver:

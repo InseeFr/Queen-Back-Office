@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.TimeZone;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +43,7 @@ public class PDFDepositProofService implements DepositProofService {
         if (Arrays.asList(StateDataType.EXTRACTED, StateDataType.VALIDATED).contains(interrogation.stateData().state())) {
             LocalDateTime stateDate =
                     LocalDateTime.ofInstant(Instant.ofEpochMilli(interrogation.stateData().date()),
-                            TimeZone.getDefault().toZoneId());
+                            ZoneId.of("UTC"));
             date = dateFormat.format(stateDate);
         }
         String filename = String.format("%s_%s_%s.pdf", campaignId, surveyUnitId, userId);
