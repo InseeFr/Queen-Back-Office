@@ -9,20 +9,17 @@ import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
 import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireModelJpaRepository;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
+import org.springframework.transaction.annotation.Transactional;
 import fr.insee.queen.infrastructure.db.interrogation.entity.*;
 import fr.insee.queen.infrastructure.db.interrogation.projection.InterrogationProjection;
 import fr.insee.queen.infrastructure.db.interrogation.repository.jpa.*;
 import fr.insee.queen.infrastructure.db.configuration.DataFactory;
 import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import java.util.stream.Collectors;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,7 +36,6 @@ public class InterrogationDao implements InterrogationRepository {
     private final CampaignJpaRepository campaignRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final DataFactory dataFactory;
-    private final EntityManager entityManager;
 
     @Override
     public Optional<InterrogationSummary> findSummaryById(String interrogationId) {
@@ -168,11 +164,11 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
+    @Transactional
     public void update(Interrogation interrogation) {
-        String interrogationId = interrogation.id();
-        save(interrogation.id(), interrogation.surveyUnitId(), interrogation.campaignId(), interrogation.questionnaireId());
-        savePersonalization(interrogationId, interrogation.personalization());
-        saveData(interrogationId, interrogation.data());
+        crudRepository.updateFields(interrogation.id(), interrogation.surveyUnitId(), interrogation.campaignId(), interrogation.questionnaireId());
+        savePersonalization(interrogation.id(), interrogation.personalization());
+        saveData(interrogation.id(), interrogation.data());
     }
 
     @Override
@@ -204,34 +200,4 @@ public class InterrogationDao implements InterrogationRepository {
         return crudRepository.existsByCampaignId(campaignId);
     }
 
-    private void save(String interrogationId, String surveyUnitId, String campaignId, String questionnaireId) {
-        Map<String, Object> fieldsToUpdate = new LinkedHashMap<>();
-        if (campaignId != null) {
-            fieldsToUpdate.put("campaign_id", campaignId);
-        }
-
-        if (questionnaireId != null) {
-            fieldsToUpdate.put("questionnaire_model_id", questionnaireId);
-        }
-
-        if (surveyUnitId != null) {
-            fieldsToUpdate.put("survey_unit_id", surveyUnitId);
-        }
-
-        if (fieldsToUpdate.isEmpty()) {
-            return;
-        }
-
-        String fields = fieldsToUpdate.keySet()
-                .stream()
-                .map(key -> key + " = :" + key)
-                .collect(Collectors.joining(", "));
-        String sql = String.format("UPDATE interrogation SET %s WHERE id = :interrogationId", fields);
-
-        var query = entityManager.createNativeQuery(sql);
-        fieldsToUpdate.forEach(query::setParameter);
-        query.setParameter("interrogationId", interrogationId);
-
-        query.executeUpdate();
-    }
 }

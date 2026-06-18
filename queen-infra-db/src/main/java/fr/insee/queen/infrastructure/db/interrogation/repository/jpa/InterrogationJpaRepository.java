@@ -6,6 +6,7 @@ import fr.insee.queen.infrastructure.db.interrogation.projection.InterrogationPr
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -250,6 +251,21 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
             )
             from InterrogationDB s left join s.stateData where s.id in :interrogationIds""")
     List<InterrogationState> findAllWithStateByIdIn(List<String> interrogationIds);
+
+    @Transactional
+    @Modifying
+    @Query(value = """
+            UPDATE interrogation SET
+            survey_unit_id = COALESCE(:surveyUnitId, survey_unit_id),
+            campaign_id = COALESCE(:campaignId, campaign_id),
+            questionnaire_model_id = COALESCE(:questionnaireId, questionnaire_model_id)
+            WHERE id = :interrogationId
+            """, nativeQuery = true)
+    void updateFields(
+            @Param("interrogationId") String interrogationId,
+            @Param("surveyUnitId") String surveyUnitId,
+            @Param("campaignId") String campaignId,
+            @Param("questionnaireId") String questionnaireId);
 
     /**
      * Delete interrogations linked to a campaign
