@@ -21,6 +21,8 @@ application:
   temp-folder:
   campaign:
     check-interrogations-on-delete: true
+  group:
+    kind: CAMPAIGN  # CAMPAIGN | PARTITION
 
 feature:
   sensitive-data:

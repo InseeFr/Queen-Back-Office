@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+fr.insee.queen.application.configuration.properties.GroupPathEnvironmentPostProcessor
