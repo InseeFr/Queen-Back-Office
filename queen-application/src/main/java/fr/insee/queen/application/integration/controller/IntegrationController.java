@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @AllArgsConstructor
 @Validated
+@ConditionalOnProperty(name = "application.group.kind", havingValue = "CAMPAIGN", matchIfMissing = true)
 public class IntegrationController {
     private final IntegrationComponent integrationComponent;
 

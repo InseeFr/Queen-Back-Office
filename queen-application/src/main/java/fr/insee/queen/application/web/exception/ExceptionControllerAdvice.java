@@ -113,6 +113,11 @@ public class ExceptionControllerAdvice {
         return generateResponseError(e, HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiError> noResourceFoundException(NoResourceFoundException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.NOT_FOUND, request, false);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> accessDeniedException(AccessDeniedException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.FORBIDDEN, request);
