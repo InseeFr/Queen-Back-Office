@@ -23,6 +23,9 @@ public class InterrogationFakeService implements InterrogationService {
     public static final String INTERROGATION5_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa05";
     public static final String INTERROGATION6_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa06";
 
+    public static final String QUESTIONNAIRE1_ID = "questionnaire-id-1";
+    public static final String QUESTIONNAIRE2_ID = "questionnaire-id-2";
+
     @Getter
     private final List<Interrogation> interrogations;
     @Getter
@@ -48,12 +51,12 @@ public class InterrogationFakeService implements InterrogationService {
         CampaignSummary normalCampaign = new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL);
         CampaignSummary sensitiveCampaign = new CampaignSummary("campaign-id2", "campaign-label2", CampaignSensitivity.SENSITIVE);
         interrogationSummaries = List.of(
-                new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id1", "questionnaire-id", normalCampaign),
-                new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id2", "questionnaire-id", normalCampaign),
-                new InterrogationSummary(INTERROGATION3_ID, "survey-unit-id3", "questionnaire-id", sensitiveCampaign),
-                new InterrogationSummary(INTERROGATION4_ID, "survey-unit-id4", "questionnaire-id", sensitiveCampaign),
-                new InterrogationSummary(INTERROGATION5_ID, "survey-unit-id5", "questionnaire-id", sensitiveCampaign),
-                new InterrogationSummary(INTERROGATION6_ID, "survey-unit-id6", "questionnaire-id", sensitiveCampaign)
+                new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id1", QUESTIONNAIRE1_ID, normalCampaign),
+                new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id2", QUESTIONNAIRE1_ID, normalCampaign),
+                new InterrogationSummary(INTERROGATION3_ID, "survey-unit-id3", QUESTIONNAIRE1_ID, sensitiveCampaign),
+                new InterrogationSummary(INTERROGATION4_ID, "survey-unit-id4", QUESTIONNAIRE2_ID, sensitiveCampaign),
+                new InterrogationSummary(INTERROGATION5_ID, "survey-unit-id5", QUESTIONNAIRE2_ID, sensitiveCampaign),
+                new InterrogationSummary(INTERROGATION6_ID, "survey-unit-id6", QUESTIONNAIRE2_ID, sensitiveCampaign)
         );
 
         ObjectNode data = JsonNodeFactory.instance.objectNode();
@@ -199,5 +202,14 @@ public class InterrogationFakeService implements InterrogationService {
     @Override
     public List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType) {
         return null;
+    }
+
+    @Override
+    public List<QuestionnaireLink> findQuestionnaireLinksByInterrogationIds(List<String> interrogationIds) {
+        return interrogationSummaries
+                .stream()
+                .filter(summary -> interrogationIds.contains(summary.id()))
+                .map(summary -> new QuestionnaireLink(summary.id(), summary.questionnaireId()))
+                .toList();
     }
 }
