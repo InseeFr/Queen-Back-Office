@@ -157,6 +157,18 @@ public class InterrogationFakeDao implements InterrogationRepository {
         // not used at this moment
     }
 
+    @Getter
+    private String cleanedCampaignId;
+
+    @Getter
+    private List<String> cleanedInterrogationIds;
+
+    @Override
+    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
+        this.cleanedCampaignId = campaignId;
+        this.cleanedInterrogationIds = interrogationIds;
+    }
+
     @Override
     public boolean existsByCampaignId(String campaignId) {
         return false;
