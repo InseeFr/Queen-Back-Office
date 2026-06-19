@@ -87,8 +87,8 @@ public class DataController {
      *
      * @param campaignId the campaign id
      */
-    @Operation(summary = "Clean all data from interrogations of a campaign with extracted state")
-    @DeleteMapping("/admin/campaign/{id}/interrogations/data/extracted")
+    @Operation(summary = "Clean all data from interrogations of a group with extracted state")
+    @DeleteMapping("/admin/${application.group.path-singular}/{id}/interrogations/data/extracted")
     @PreAuthorize("hasRole('WEBCLIENT')")
     public void cleanData(@IdValid @PathVariable(value = "id") String campaignId,
                           @NotNull @RequestParam("start") Long startTimestamp,
@@ -102,8 +102,8 @@ public class DataController {
      * @param campaignId        the campaign id
      * @param interrogationIds  the interrogation ids to clean
      */
-    @Operation(summary = "Clean data from extracted interrogations of a campaign, filtered by ids")
-    @PostMapping("/admin/campaign/{id}/interrogations/data/extracted/clean")
+    @Operation(summary = "Clean data from extracted interrogations of a group, filtered by ids")
+    @PostMapping("/admin/${application.group.path-singular}/{id}/interrogations/data/extracted/clean")
     @PreAuthorize("hasRole('WEBCLIENT')")
     public void cleanExtractedDataByIds(
             @IdValid @PathVariable(value = "id") String campaignId,

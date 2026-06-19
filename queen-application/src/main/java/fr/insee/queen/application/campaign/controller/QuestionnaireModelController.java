@@ -44,8 +44,8 @@ public class QuestionnaireModelController {
      * @param campaignId the id of campaign
      * @return List of {@link QuestionnaireModelValueDto} linked to the campaign
      */
-    @Operation(summary = "Get questionnaire list for a campaign ")
-    @GetMapping(path = "/campaign/{id}/questionnaires")
+    @Operation(summary = "Get questionnaire list for a group")
+    @GetMapping(path = "/${application.group.path-singular}/{id}/questionnaires")
     @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<QuestionnaireModelValueDto> getQuestionnaireDatasByCampaignId(
             @IdValid @PathVariable(value = "id") String campaignId) {
@@ -89,8 +89,8 @@ public class QuestionnaireModelController {
      * @param campaignId the campaign id
      * @return List of {@link QuestionnaireModelIdDto} list linked to the campaign id
      */
-    @Operation(summary = "Get list of questionnaire ids for a campaign")
-    @GetMapping(path = "/campaign/{id}/questionnaire-id")
+    @Operation(summary = "Get list of questionnaire ids for a group")
+    @GetMapping(path = "/${application.group.path-singular}/{id}/questionnaire-id")
     @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<QuestionnaireModelIdDto> getQuestionnaireIdsByCampaignId(
             @IdValid @PathVariable(value = "id") String campaignId) {

@@ -38,8 +38,8 @@ public class MetadataController {
      * @param campaignId the id of the campaign
      * @return the metadata linked to the campaign
      */
-    @Operation(summary = "Get metadata for a campaign ")
-    @GetMapping(path = "/campaign/{id}/metadata")
+    @Operation(summary = "Get metadata for a group ")
+    @GetMapping(path = "/${application.group.path-singular}/{id}/metadata")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.METADATA))})
     public ObjectNode getMetadataByCampaignId(@IdValid @PathVariable(value = "id") String campaignId) {

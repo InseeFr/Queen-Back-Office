@@ -39,10 +39,10 @@ public class InterviewerController {
      *
      * @return List of {@link CampaignSummaryDto}
      */
-    @Operation(summary = "Get campaign list for the current user")
+    @Operation(summary = "Get group list for the current user")
     @Parameter(name = "userId", hidden = true)
-    @Tag(name = "02. Campaigns")
-    @GetMapping(path = "/campaigns")
+    @Tag(name = "02. Groups")
+    @GetMapping(path = "/${application.group.path-plural}")
     @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<CampaignSummaryDto> getInterviewerCampaignList(@CurrentSecurityContext(expression = "authentication.name")
                                                                    String userId) {
@@ -79,9 +79,9 @@ public class InterviewerController {
      * @param campaignId the id of campaign
      * @return List of {@link InterrogationByCampaignDto}
      */
-    @Operation(summary = "Get list of interrogations for a campaign")
+    @Operation(summary = "Get list of interrogations for a group")
     @Tag(name = "06. Interrogations")
-    @GetMapping("/campaign/{id}/interrogations")
+    @GetMapping("/${application.group.path-singular}/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
     public List<InterrogationByCampaignDto> getListInterrogationByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
         // get interrogations of a campaign from the pilotage api

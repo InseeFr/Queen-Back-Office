@@ -64,7 +64,7 @@ public class InterrogationController {
      * @return all ids of interrogations
      */
     @Operation(summary = "Retrieve interrogations by state")
-    @GetMapping("/admin/campaign/{id}/interrogations")
+    @GetMapping("/admin/${application.group.path-singular}/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public List<InterrogationStateDto> getInterrogationsByState(
             @IdValid @PathVariable("id") String campaignId,
@@ -146,7 +146,7 @@ public class InterrogationController {
      * @param interrogationCreationInput interrogation data for creation
      */
     @Operation(summary = "Create/Update an interrogation")
-    @PostMapping({"/campaign/{id}/interrogation", "/campaigns/{id}/interrogation"})
+    @PostMapping({"/${application.group.path-singular}/{id}/interrogation", "/${application.group.path-plural}/{id}/interrogation"})
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public ResponseEntity<Void> createUpdateInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
                                                           @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
@@ -170,7 +170,7 @@ public class InterrogationController {
      * @param interrogationCreationInput interrogation data for creation
      */
     @Operation(summary = "Create an interrogation")
-    @PostMapping({"/campaigns/{id}/interrogations/create"})
+    @PostMapping({"/${application.group.path-plural}/{id}/interrogations/create"})
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public void createInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
                                                           @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {

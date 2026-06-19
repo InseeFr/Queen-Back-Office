@@ -37,7 +37,7 @@ public class InterrogationBatchController {
      * @param interrogationBatchInputs interrogations data for creation
      */
     @Operation(summary = "Create/Update interrogations")
-    @PostMapping("/campaigns/{id}/interrogations")
+    @PostMapping("/${application.group.path-plural}/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public void createUpdateInterrogations(@IdValid @PathVariable(value = "id") String campaignId,
                                                           @NotEmpty @Valid @RequestBody List<InterrogationBatchInput> interrogationBatchInputs) {

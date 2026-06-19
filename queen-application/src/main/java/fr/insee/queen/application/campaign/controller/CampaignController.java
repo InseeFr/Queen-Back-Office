@@ -24,7 +24,7 @@ import java.util.List;
  * Handle campaigns
  */
 @RestController
-@Tag(name = "02. Campaigns", description = "Endpoints for campaigns")
+@Tag(name = "02. Groups", description = "Endpoints for groups")
 @RequestMapping(path = "/api")
 @Slf4j
 @RequiredArgsConstructor
@@ -37,8 +37,8 @@ public class CampaignController {
      *
      * @return List of all {@link CampaignSummaryDto}
      */
-    @Operation(summary = "Get list of all campaigns")
-    @GetMapping(path = "/admin/campaigns")
+    @Operation(summary = "Get list of all groups")
+    @GetMapping(path = "/admin/${application.group.path-plural}")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public List<CampaignSummaryDto> getListCampaign() {
         return campaignService.getAllCampaigns()
@@ -51,8 +51,8 @@ public class CampaignController {
      *
      * @return List of all {@link CampaignIdsDto}
      */
-    @Operation(summary = "Get list of all campaigns ids")
-    @GetMapping(path = "/campaigns/ids")
+    @Operation(summary = "Get list of all group ids")
+    @GetMapping(path = "/${application.group.path-plural}/ids")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public List<CampaignIdsDto> getListCampaignsIds() {
         return campaignService.getAllCampaignIds()
@@ -65,8 +65,8 @@ public class CampaignController {
      *
      * @return {@link CampaignSummaryDto}
      */
-    @Operation(summary = "Get campaign")
-    @GetMapping(path = "/admin/campaigns/{id}")
+    @Operation(summary = "Get group")
+    @GetMapping(path = "/admin/${application.group.path-plural}/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public CampaignDto getCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
         return CampaignDto.fromModel(campaignService.getCampaign(campaignId));
@@ -79,8 +79,8 @@ public class CampaignController {
      * @param campaignInputDto the value to create
      */
     @Deprecated(since = "4.3.0")
-    @Operation(summary = "Create a campaign")
-    @PostMapping(path = "/campaigns")
+    @Operation(summary = "Create a group")
+    @PostMapping(path = "/${application.group.path-plural}")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createCampaign(@Valid @RequestBody CampaignCreationData campaignInputDto) {
@@ -92,8 +92,8 @@ public class CampaignController {
      *
      * @param campaignInputDto the value to create
      */
-    @Operation(summary = "Create a campaign")
-    @PostMapping(path = "/campaign")
+    @Operation(summary = "Create a group")
+    @PostMapping(path = "/${application.group.path-singular}")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.CREATED)
     public void createCampaignV2(@Valid @RequestBody CampaignCreationDataV2 campaignInputDto) {

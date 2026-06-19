@@ -80,8 +80,8 @@ public class NomenclatureController {
      * @param campaignId the id of campaign
      * @return List of {@link String} nomenclature ids
      */
-    @Operation(summary = "Get list of required nomenclatures for a campaign")
-    @GetMapping(path = "/campaign/{id}/required-nomenclatures")
+    @Operation(summary = "Get list of required nomenclatures for a group")
+    @GetMapping(path = "/${application.group.path-singular}/{id}/required-nomenclatures")
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public List<String> getListRequiredNomenclature(@IdValid @PathVariable(value = "id") String campaignId) {
         return nomenclatureService.findRequiredNomenclatureByCampaign(campaignId);

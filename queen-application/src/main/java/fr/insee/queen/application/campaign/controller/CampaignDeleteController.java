@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * Handle campaigns deletion
  */
 @RestController
-@Tag(name = "02. Campaigns", description = "Endpoints for campaigns")
+@Tag(name = "02. Groups", description = "Endpoints for groups")
 @RequestMapping(path = "/api")
 @Slf4j
 @RequiredArgsConstructor
@@ -29,14 +29,14 @@ public class CampaignDeleteController {
     private final PilotageComponent pilotageComponent;
 
     /**
-     * Delete a campaign. The deletion is processed in two cases:
+     * Delete a group. The deletion is processed in two cases:
      * - the campaign is closed (check on pilotage api)
      * - the campaign has no interrogations associated
      *
      * @param campaignId campaign id
      */
-    @Operation(summary = "Delete a campaign")
-    @DeleteMapping(path = "/campaign/{id}")
+    @Operation(summary = "Delete a group")
+    @DeleteMapping(path = "/${application.group.path-singular}/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public void deleteCampaignById(@IdValid @PathVariable(value = "id") String campaignId) {
