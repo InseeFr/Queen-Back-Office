@@ -5,13 +5,13 @@ import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
-import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.infrastructure.dummy.InterrogationFakeDao;
 import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.dummy.DataFakeService;
 import fr.insee.queen.domain.interrogation.service.dummy.MetadataFakeService;
 import fr.insee.queen.domain.interrogation.service.dummy.StateDataFakeService;
+import fr.insee.queen.domain.interrogation.service.exception.InterrogationAlreadyExistException;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,7 +76,7 @@ class InterrogationApiServiceTest {
                 stateData,
                 null);
         assertThatThrownBy(() -> interrogationApiService.createInterrogation(interrogation))
-                .isInstanceOf(EntityAlreadyExistException.class)
+                .isInstanceOf(InterrogationAlreadyExistException.class)
                 .hasMessage(String.format(InterrogationApiService.ALREADY_EXIST_MESSAGE, interrogation.id()));
     }
 

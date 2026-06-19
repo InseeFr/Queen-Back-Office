@@ -11,11 +11,11 @@ TRUNCATE TABLE interrogation_temp_zone, state_data, paradata_event,
     required_nomenclature, questionnaire_model, nomenclature,
     metadata, campaign;
 
-INSERT INTO campaign(id, label, sensitivity) VALUES
-  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'NORMAL'),
-  ('VQS2021X00', 'Everyday life and health survey 2021', 'NORMAL'),
-  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'SENSITIVE'),
-  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', 'NORMAL');
+INSERT INTO campaign(id, label) VALUES
+  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020'),
+  ('VQS2021X00', 'Everyday life and health survey 2021'),
+  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web'),
+  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR');
 
 --
 -- TOC entry 3406 (class 0 OID 16489)

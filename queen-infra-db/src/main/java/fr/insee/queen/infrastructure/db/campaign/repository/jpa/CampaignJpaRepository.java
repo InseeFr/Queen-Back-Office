@@ -19,7 +19,7 @@ public interface CampaignJpaRepository extends JpaRepository<CampaignDB, String>
 
     @Query("""
     select new fr.insee.queen.infrastructure.db.campaign.entity.CampaignSummaryRow(
-        c.id, c.label, c.sensitivity, q.id
+        c.id, c.label, q.id
     )
     from CampaignDB c
     left join c.questionnaireModels q

@@ -3,7 +3,6 @@ package fr.insee.queen.domain.campaign.infrastructure.dummy;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
 import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import lombok.Setter;
 
@@ -48,7 +47,6 @@ public class CampaignFakeRepository implements CampaignRepository {
         if(campaignExists) {
             return Optional.of(new CampaignSummary(CAMPAIGN_ID,
                     "label",
-                    CampaignSensitivity.NORMAL,
                     Set.of(QUESTIONNAIRE_LINKED_ID)));
         }
         return Optional.empty();

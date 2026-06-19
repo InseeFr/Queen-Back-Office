@@ -7,7 +7,6 @@ import fr.insee.queen.application.integration.component.exception.IntegrationVal
 import fr.insee.queen.application.integration.dto.input.CampaignIntegrationData;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.web.validation.json.SchemaType;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.integration.model.IntegrationResult;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.service.IntegrationService;
@@ -15,27 +14,9 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.XML;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import tools.jackson.core.JacksonException;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.*;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -63,9 +44,6 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, CAMPAIGN_JSON, SchemaType.CAMPAIGN_INTEGRATION);
             ZipEntry zipCampaignFile = zf.getEntry(CAMPAIGN_JSON);
             CampaignIntegrationData campaign = mapper.readValue(zf.getInputStream(zipCampaignFile), CampaignIntegrationData.class);
-            if (campaign.sensitivity() == null) {
-                campaign = new CampaignIntegrationData(campaign.id(), campaign.label(), CampaignSensitivity.NORMAL, campaign.metadata());
-            }
             return buildCampaign(campaign);
         } catch (IntegrationValidationException ex) {
             return ex.getResultError();

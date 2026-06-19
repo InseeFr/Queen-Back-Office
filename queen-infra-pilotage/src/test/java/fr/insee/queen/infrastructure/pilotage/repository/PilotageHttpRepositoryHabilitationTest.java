@@ -1,6 +1,5 @@
 package fr.insee.queen.infrastructure.pilotage.repository;
 
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import fr.insee.queen.domain.pilotage.model.CollectionEnvironmentEnum;
@@ -53,7 +52,7 @@ class PilotageHttpRepositoryHabilitationTest {
         String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
         String idep = "idep";
         PilotageRole role = PilotageRole.INTERVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(campaignId, "label"));
 
         String habilitationResponse = "{ \"habilitated\": \"" + status + "\" }";
         mockServer.expect(request ->
@@ -81,7 +80,7 @@ class PilotageHttpRepositoryHabilitationTest {
         String matchedRegexCampaignId = "EDT-campaign-id";
         String idep = "idep";
         PilotageRole role = PilotageRole.REVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "q-id", new CampaignSummary(matchedRegexCampaignId, "label", CampaignSensitivity.NORMAL));
+        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "q-id", new CampaignSummary(matchedRegexCampaignId, "label"));
 
         mockServer.expect(request ->
                         assertThat(alternativeHabilitationServiceURL)
@@ -103,7 +102,7 @@ class PilotageHttpRepositoryHabilitationTest {
     @Test
     void testHabilitation03() {
         String interrogationId = "id-1";
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "q-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "q-id", new CampaignSummary(campaignId, "label"));
 
         mockServer.expect(anything())
                 .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON));
@@ -115,7 +114,7 @@ class PilotageHttpRepositoryHabilitationTest {
     @DisplayName("On checking habilitation, when http response status is unauthorized, habilitation is false")
     @Test
     void testHabilitation04() {
-        InterrogationSummary interrogation = new InterrogationSummary("id-1", "su-id", "q-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        InterrogationSummary interrogation = new InterrogationSummary("id-1", "su-id", "q-id", new CampaignSummary(campaignId, "label"));
 
         mockServer.expect(anything())
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON));
@@ -128,7 +127,7 @@ class PilotageHttpRepositoryHabilitationTest {
     @DisplayName("On checking habilitation, when http response status is error, throw exception")
     @Test
     void testHabilitation05() {
-        InterrogationSummary interrogation = new InterrogationSummary("id-1", "su-id", "q-id", new CampaignSummary(campaignId, "label", CampaignSensitivity.NORMAL));
+        InterrogationSummary interrogation = new InterrogationSummary("id-1", "su-id", "q-id", new CampaignSummary(campaignId, "label"));
 
         mockServer.expect(anything())
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));

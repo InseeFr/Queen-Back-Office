@@ -9,7 +9,6 @@ import fr.insee.queen.application.campaign.dto.input.QuestionnaireModelCreationD
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 import fr.insee.queen.application.utils.JsonTestHelper;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.infrastructure.db.interrogation.repository.jpa.InterrogationJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -91,7 +90,7 @@ class CampaignIT {
 
         ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("campaign/metadata/metadata.json");
         MetadataCreationData metadata = new MetadataCreationData(metadataNode);
-        CampaignCreationData campaign = new CampaignCreationData(campaignName, "label campaign", CampaignSensitivity.NORMAL, questionnaireIds, metadata);
+        CampaignCreationData campaign = new CampaignCreationData(campaignName, "label campaign",  questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +110,7 @@ class CampaignIT {
     @Test
     void on_create_campaigns_when_campaign_already_exist_return_400() throws Exception {
         MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
-        CampaignCreationData campaign = new CampaignCreationData("VQS2021X00", "label campaign", CampaignSensitivity.NORMAL, Set.of("simpsons", "simpsonsV2"), metadata);
+        CampaignCreationData campaign = new CampaignCreationData("VQS2021X00", "label campaign",  Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -124,7 +123,7 @@ class CampaignIT {
     @Test
     void on_create_campaigns_when_campaign_invalid_identifier_return_400() throws Exception {
         MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
-        CampaignCreationData campaign = new CampaignCreationData("campaign_1234", "label campaign", CampaignSensitivity.NORMAL, Set.of("simpsons", "simpsonsV2"), metadata);
+        CampaignCreationData campaign = new CampaignCreationData("campaign_1234", "label campaign",  Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -141,7 +140,6 @@ class CampaignIT {
         String expectedResult = """
                 {
                   "id": "SIMPSONS2020X00",
-                  "sensitivity": "NORMAL",
                   "questionnaireIds": [
                     "simpsonsV2",
                     "simpsons"
@@ -176,7 +174,7 @@ class CampaignIT {
         Set<String> questionnaireIds = Set.of("Hello", "Plip");
 
         MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
-        CampaignCreationData campaign = new CampaignCreationData(campaignName, "label campaign", CampaignSensitivity.NORMAL, questionnaireIds, metadata);
+        CampaignCreationData campaign = new CampaignCreationData(campaignName, "label campaign",  questionnaireIds, metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -188,7 +186,7 @@ class CampaignIT {
 
     @Test
     void on_create_campaigns_when_user_not_authorized_return_403() throws Exception {
-        CampaignCreationData campaign = new CampaignCreationData("VQS2021X00", "label campaign", CampaignSensitivity.NORMAL, Set.of("simpsons", "simpsonsV2"), null);
+        CampaignCreationData campaign = new CampaignCreationData("VQS2021X00", "label campaign",  Set.of("simpsons", "simpsonsV2"), null);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -218,7 +216,7 @@ class CampaignIT {
         Set<String> questionnaireIds = Set.of(questionnaireId);
 
         ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("campaign/metadata/metadata.json");
-        CampaignCreationDataV2 campaign = new CampaignCreationDataV2(campaignName, "label campaign", CampaignSensitivity.SENSITIVE, questionnaireIds, metadataNode);
+        CampaignCreationDataV2 campaign = new CampaignCreationDataV2(campaignName, "label campaign", questionnaireIds, metadataNode);
         mockMvc.perform(post("/api/campaign")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -237,7 +235,7 @@ class CampaignIT {
 
     @Test
     void on_create_campaign_when_campaign_already_exist_return_400() throws Exception {
-        CampaignCreationDataV2 campaign = new CampaignCreationDataV2("VQS2021X00", "label campaign", CampaignSensitivity.NORMAL, Set.of("simpsons", "simpsonsV2"), null);
+        CampaignCreationDataV2 campaign = new CampaignCreationDataV2("VQS2021X00", "label campaign",  Set.of("simpsons", "simpsonsV2"), null);
         mockMvc.perform(post("/api/campaign")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -249,7 +247,7 @@ class CampaignIT {
 
     @Test
     void on_create_campaign_when_campaign_invalid_identifier_return_400() throws Exception {
-        CampaignCreationDataV2 campaign = new CampaignCreationDataV2("campaign_1234", "label campaign", CampaignSensitivity.NORMAL, Set.of("simpsons", "simpsonsV2"), null);
+        CampaignCreationDataV2 campaign = new CampaignCreationDataV2("campaign_1234", "label campaign",  Set.of("simpsons", "simpsonsV2"), null);
         mockMvc.perform(post("/api/campaign")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -264,7 +262,7 @@ class CampaignIT {
         String campaignName = "CAMPAIGN-TEST";
         Set<String> questionnaireIds = Set.of("Hello", "Plip");
 
-        CampaignCreationDataV2 campaign = new CampaignCreationDataV2(campaignName, "label campaign", CampaignSensitivity.NORMAL, questionnaireIds, null);
+        CampaignCreationDataV2 campaign = new CampaignCreationDataV2(campaignName, "label campaign",  questionnaireIds, null);
         mockMvc.perform(post("/api/campaign")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -276,7 +274,7 @@ class CampaignIT {
 
     @Test
     void on_create_campaign_when_user_not_authorized_return_403() throws Exception {
-        CampaignCreationDataV2 campaign = new CampaignCreationDataV2("VQS2021X00", "label campaign", CampaignSensitivity.NORMAL, Set.of("simpsons", "simpsonsV2"), null);
+        CampaignCreationDataV2 campaign = new CampaignCreationDataV2("VQS2021X00", "label campaign",  Set.of("simpsons", "simpsonsV2"), null);
         mockMvc.perform(post("/api/campaign")
                         .content(JsonTestHelper.getObjectAsJsonString(campaign))
                         .contentType(MediaType.APPLICATION_JSON)

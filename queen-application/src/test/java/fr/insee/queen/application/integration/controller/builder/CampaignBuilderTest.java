@@ -8,7 +8,6 @@ import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDt
 import fr.insee.queen.application.integration.service.dummy.IntegrationFakeService;
 import fr.insee.queen.application.web.validation.json.JsonValidatorComponent;
 import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import jakarta.validation.Validation;
@@ -52,7 +51,6 @@ class CampaignBuilderTest {
         assertThat(campaignResult.getId()).isEqualTo(campaignId);
         assertThat(campaignCreated.getId()).isEqualTo("SIMPSONS2020X00");
         assertThat(campaignCreated.getLabel()).isEqualTo("Enquête sur les simpsons 2020");
-        assertThat(campaignCreated.getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
     }
 
     @Test

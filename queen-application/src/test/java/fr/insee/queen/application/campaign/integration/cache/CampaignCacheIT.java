@@ -3,7 +3,6 @@ package fr.insee.queen.application.campaign.integration.cache;
 import tools.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
 import fr.insee.queen.domain.campaign.service.CampaignService;
 import fr.insee.queen.domain.common.cache.CacheName;
@@ -53,7 +52,7 @@ class CampaignCacheIT {
         Boolean campaignExist = Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST).get(campaignId, Boolean.class));
         assertThat(campaignExist).isFalse();
 
-        campaignService.createCampaign(new Campaign(campaignId, "label", CampaignSensitivity.NORMAL, new HashSet<>(), JsonNodeFactory.instance.objectNode()));
+        campaignService.createCampaign(new Campaign(campaignId, "label",  new HashSet<>(), JsonNodeFactory.instance.objectNode()));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId)).isNull();
 
         campaignExistenceService.existsById(campaignId);

@@ -32,7 +32,7 @@ public class PilotageFakeService implements PilotageService {
     public static final String INTERROGATION1_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
     public static final String INTERROGATION2_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa02";
 
-    public final CampaignSummary campaignSummary = new CampaignSummary("campaign-id", "label", CampaignSensitivity.NORMAL);
+    public final CampaignSummary campaignSummary = new CampaignSummary("campaign-id", "label");
 
     @Getter
     private final List<InterrogationSummary> interrogationSummaries = List.of(

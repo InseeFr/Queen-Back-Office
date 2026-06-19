@@ -31,7 +31,6 @@ public record InterrogationAsyncInput(
                 interrogation.personalization(),
                 interrogation.data(),
                 null,
-                null,
                 interrogation.correlationId);
     }
 }

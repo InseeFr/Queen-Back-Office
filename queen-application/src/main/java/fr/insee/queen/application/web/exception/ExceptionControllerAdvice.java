@@ -1,7 +1,6 @@
 package fr.insee.queen.application.web.exception;
 
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
-import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
 import fr.insee.queen.application.web.authentication.AuthenticationTokenException;
 import fr.insee.queen.application.web.validation.exception.JsonValidatorComponentInitializationException;
 import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
@@ -164,14 +163,6 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(AuthenticationTokenException.class)
     public ResponseEntity<ApiError> authenticationTokenExceptionException(AuthenticationTokenException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
-    }
-
-    @ExceptionHandler(LockedResourceException.class)
-    public ResponseEntity<ApiError> lockedResourceException(LockedResourceException e, WebRequest request) {
-        log.info(e.getMessage());
-        HttpStatus status = HttpStatus.LOCKED;
-        ApiError error = errorComponent.buildApiErrorObject(request, status, e.getMessage());
-        return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(HabilitationException.class)

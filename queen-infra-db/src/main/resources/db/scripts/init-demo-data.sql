@@ -11,14 +11,14 @@ TRUNCATE TABLE interrogation_temp_zone, state_data, paradata_event,
     required_nomenclature, questionnaire_model, nomenclature,
     metadata, campaign;
 
-INSERT INTO campaign(id, label, sensitivity) VALUES
-  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'NORMAL'),
-  ('VQS2021X00', 'Everyday life and health survey 2021', 'NORMAL'),
-  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'SENSITIVE'),
-  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', 'NORMAL'),
-  ('AQV2022X00', 'Campagne qualité volaille en 2022', 'NORMAL'),
-  ('AQV2023X00', 'Campagne qualité volaille en 2023', 'SENSITIVE'),
-  ('AQV2024X00', 'Campagne qualité volaille en 2024', 'NORMAL');
+INSERT INTO campaign(id, label) VALUES
+  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020'),
+  ('VQS2021X00', 'Everyday life and health survey 2021'),
+  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web'),
+  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR'),
+  ('AQV2022X00', 'Campagne qualité volaille en 2022'),
+  ('AQV2023X00', 'Campagne qualité volaille en 2023'),
+  ('AQV2024X00', 'Campagne qualité volaille en 2024');
 
 
 --

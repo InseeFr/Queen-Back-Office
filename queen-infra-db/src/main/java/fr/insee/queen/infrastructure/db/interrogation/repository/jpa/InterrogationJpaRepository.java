@@ -32,8 +32,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.questionnaireModel.id,
                 new fr.insee.queen.domain.campaign.model.CampaignSummary(
                     s.campaign.id,
-                    s.campaign.label,
-                    s.campaign.sensitivity)
+                    s.campaign.label)
             )
             from InterrogationDB s where s.id=:interrogationId""")
     Optional<InterrogationSummary> findSummaryById(String interrogationId);
@@ -66,8 +65,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.questionnaireModel.id,
                 new fr.insee.queen.domain.campaign.model.CampaignSummary(
                     s.campaign.id,
-                    s.campaign.label,
-                    s.campaign.sensitivity)
+                    s.campaign.label)
             )
             from InterrogationDB s where s.campaign.id=:campaignId""")
     List<InterrogationSummary> findAllSummaryByCampaignId(String campaignId);
@@ -85,8 +83,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.questionnaireModel.id,
                 new fr.insee.queen.domain.campaign.model.CampaignSummary(
                     s.campaign.id,
-                    s.campaign.label,
-                    s.campaign.sensitivity)
+                    s.campaign.label)
             )
             from InterrogationDB s where s.id in :interrogationIds""")
     List<InterrogationSummary> findAllSummaryByIdIn(List<String> interrogationIds);
@@ -144,8 +141,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.surveyUnitId,
                 new fr.insee.queen.domain.campaign.model.CampaignSummary(
                     s.campaign.id,
-                    s.campaign.label,
-                    s.campaign.sensitivity
+                    s.campaign.label
                 ),
                 new fr.insee.queen.domain.interrogation.model.StateData(
                     s.stateData.state,
@@ -290,8 +286,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
                 s.questionnaireModel.id,
                 new fr.insee.queen.domain.campaign.model.CampaignSummary(
                     s.campaign.id,
-                    s.campaign.label,
-                    s.campaign.sensitivity)
+                    s.campaign.label)
             )
             from InterrogationDB s where s.surveyUnitId=:surveyUnitId""")
     List<InterrogationSummary> findAllSummaryBySurveyUnitId(String surveyUnitId);
