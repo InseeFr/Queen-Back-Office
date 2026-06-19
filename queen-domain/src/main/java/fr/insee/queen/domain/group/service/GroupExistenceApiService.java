@@ -1,8 +1,8 @@
-package fr.insee.queen.domain.campaign.service;
+package fr.insee.queen.domain.group.service;
 
-import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
-import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuestionnaireException;
+import fr.insee.queen.domain.group.gateway.GroupRepository;
+import fr.insee.queen.domain.group.model.GroupSummary;
+import fr.insee.queen.domain.group.service.exception.GroupNotLinkedToQuestionnaireException;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -14,45 +14,45 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
-public class CampaignExistenceApiService implements CampaignExistenceService {
-    private final CampaignRepository campaignRepository;
+public class GroupExistenceApiService implements GroupExistenceService {
+    private final GroupRepository groupRepository;
     private final CacheManager cacheManager;
-    public static final String NOT_FOUND_MESSAGE = "Campaign %s was not found";
-    public static final String ALREADY_EXIST_MESSAGE = "Campaign %s already exist";
+    public static final String NOT_FOUND_MESSAGE = "Group %s was not found";
+    public static final String ALREADY_EXIST_MESSAGE = "Group %s already exist";
 
     @Override
-    public void throwExceptionIfCampaignNotExist(String campaignId) {
-        if (!existsById(campaignId)) {
-            throw new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, campaignId));
+    public void throwExceptionIfGroupNotExist(String groupId) {
+        if (!existsById(groupId)) {
+            throw new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, groupId));
         }
     }
 
     @Override
-    public void throwExceptionIfCampaignAlreadyExist(String campaignId) {
-        if (existsById(campaignId)) {
-            throw new EntityAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, campaignId));
+    public void throwExceptionIfGroupAlreadyExist(String groupId) {
+        if (existsById(groupId)) {
+            throw new EntityAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, groupId));
         }
     }
 
     @Override
-    public void throwExceptionIfCampaignNotLinkedToQuestionnaire(String campaignId, String questionnaireId) {
-        CampaignSummary campaign = campaignRepository.findWithQuestionnaireIds(campaignId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, campaignId)));
-        if(!campaign.getQuestionnaireIds().contains(questionnaireId)) {
-            throw new CampaignNotLinkedToQuestionnaireException(campaignId, questionnaireId);
+    public void throwExceptionIfGroupNotLinkedToQuestionnaire(String groupId, String questionnaireId) {
+        GroupSummary group = groupRepository.findWithQuestionnaireIds(groupId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, groupId)));
+        if(!group.getQuestionnaireIds().contains(questionnaireId)) {
+            throw new GroupNotLinkedToQuestionnaireException(groupId, questionnaireId);
         }
     }
 
     @Override
-    public boolean existsById(String campaignId) {
+    public boolean existsById(String groupId) {
         // not using @Cacheable annotation here, to avoid problems with proxy class generation
-        Boolean isCampaignPresent = Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).get(campaignId, Boolean.class);
-        if (isCampaignPresent != null) {
-            return isCampaignPresent;
+        Boolean isGroupPresent = Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_EXIST)).get(groupId, Boolean.class);
+        if (isGroupPresent != null) {
+            return isGroupPresent;
         }
-        isCampaignPresent = campaignRepository.exists(campaignId);
-        Objects.requireNonNull(cacheManager.getCache(CacheName.CAMPAIGN_EXIST)).putIfAbsent(campaignId, isCampaignPresent);
+        isGroupPresent = groupRepository.exists(groupId);
+        Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_EXIST)).putIfAbsent(groupId, isGroupPresent);
 
-        return isCampaignPresent;
+        return isGroupPresent;
     }
 }

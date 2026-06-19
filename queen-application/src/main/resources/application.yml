@@ -19,10 +19,9 @@ application:
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
   # Use a folder with permissions for the app only
   temp-folder:
-  campaign:
-    check-interrogations-on-delete: true
   group:
     kind: CAMPAIGN  # CAMPAIGN | PARTITION
+    check-interrogations-on-delete: true
 
 feature:
   sensitive-data:
@@ -43,7 +42,7 @@ feature:
     url:
     alternative-habilitation:
       url: http://alternative.url
-      campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
+      groupids-regex: ((edt)|(EDT))(\d|\S){1,}
   cache:
     enabled: true
   interviewer-mode:

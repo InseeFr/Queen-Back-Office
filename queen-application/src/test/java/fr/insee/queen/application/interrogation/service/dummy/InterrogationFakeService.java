@@ -2,8 +2,7 @@ package fr.insee.queen.application.interrogation.service.dummy;
 
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.group.model.GroupSummary;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.InterrogationService;
@@ -45,20 +44,20 @@ public class InterrogationFakeService implements InterrogationService {
     public InterrogationFakeService() {
         stateDataFakeService = new StateDataFakeService();
 
-        CampaignSummary normalCampaign = new CampaignSummary("campaign-id", "campaign-label");
+        GroupSummary normalGroup = new GroupSummary("group-id", "group-label");
         interrogationSummaries = List.of(
-                new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id1", "questionnaire-id", normalCampaign),
-                new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id2", "questionnaire-id", normalCampaign)
+                new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id1", "questionnaire-id", normalGroup),
+                new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id2", "questionnaire-id", normalGroup)
         );
 
         ObjectNode data = JsonNodeFactory.instance.objectNode();
         data.put("data", "data-value");
 
         interrogations = List.of(
-                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", normalCampaign.getId(), "questionnaire-id",
+                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", normalGroup.getId(), "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(), data,
                         stateDataFakeService.getStateData(INTERROGATION1_ID), null),
-                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", normalCampaign.getId(), "questionnaire-id",
+                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", normalGroup.getId(), "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(), data,
                         stateDataFakeService.getStateData(INTERROGATION2_ID), null)
         );
@@ -89,7 +88,7 @@ public class InterrogationFakeService implements InterrogationService {
     }
 
     @Override
-    public List<InterrogationSummary> findSummariesByCampaignId(String campaignId) {
+    public List<InterrogationSummary> findSummariesByGroupId(String groupId) {
         return interrogationSummaries;
     }
 
@@ -174,13 +173,22 @@ public class InterrogationFakeService implements InterrogationService {
     @Override
     public List<Interrogation> findAllInterrogations() {
         return List.of(
-                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "campaign-id", "questionnaire-id", null, null, null, null),
-                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "campaign-id", "questionnaire-id", null, null, null, null)
+                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "group-id", "questionnaire-id", null, null, null, null),
+                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "group-id", "questionnaire-id", null, null, null, null)
         );
     }
 
     @Override
-    public List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType) {
+    public List<InterrogationState> getInterrogations(String groupId, StateDataType stateDataType) {
         return null;
+    }
+
+    @Override
+    public List<QuestionnaireLink> findQuestionnaireLinksByInterrogationIds(List<String> interrogationIds) {
+        return interrogationSummaries
+                .stream()
+                .filter(summary -> interrogationIds.contains(summary.id()))
+                .map(summary -> new QuestionnaireLink(summary.id(), summary.questionnaireId()))
+                .toList();
     }
 }

@@ -1,8 +1,8 @@
-package fr.insee.queen.application.campaign.controller;
+package fr.insee.queen.application.group.controller;
 
-import fr.insee.queen.application.campaign.service.dummy.CampaignFakeService;
+import fr.insee.queen.application.group.service.dummy.GroupFakeService;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
-import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
+import fr.insee.queen.domain.group.service.exception.GroupDeletionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,41 +10,41 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-class CampaignDeleteWithForceControllerTest {
+class GroupDeleteWithForceControllerTest {
 
-    private CampaignDeleteWithForceController campaignController;
+    private GroupDeleteWithForceController groupController;
     private PilotageFakeComponent pilotageComponent;
-    private CampaignFakeService campaignService;
-    private final String campaignId = "11";
+    private GroupFakeService groupService;
+    private final String groupId = "11";
 
     @BeforeEach
     void init() {
-        campaignService = spy(new CampaignFakeService());
+        groupService = spy(new GroupFakeService());
         pilotageComponent = new PilotageFakeComponent();
-        campaignController = new CampaignDeleteWithForceController(campaignService, pilotageComponent);
+        groupController = new GroupDeleteWithForceController(groupService, pilotageComponent);
     }
 
     @Test
     @DisplayName("On deletion, when force is true, deletion is done")
     void testDeletion() {
-        campaignController.deleteCampaignById(true, campaignId);
-        verify(campaignService, times(1)).delete(campaignId, true);
+        groupController.deleteGroupById(true, groupId);
+        verify(groupService, times(1)).delete(groupId, true);
     }
 
     @Test
-    @DisplayName("On deletion, when campaign is closed, deletion is done")
+    @DisplayName("On deletion, when group is closed, deletion is done")
     void testDeletion_02() {
-        campaignController.deleteCampaignById(false, campaignId);
-        verify(campaignService, times(1)).delete(campaignId, true);
+        groupController.deleteGroupById(false, groupId);
+        verify(groupService, times(1)).delete(groupId, true);
     }
 
     @Test
-    @DisplayName("On deletion, when campaign is opened, deletion is aborted")
+    @DisplayName("On deletion, when group is opened, deletion is aborted")
     void testDeletionException() {
-        pilotageComponent.setCampaignClosed(false);
-        assertThatThrownBy(() -> campaignController.deleteCampaignById(false, campaignId))
-                .isInstanceOf(CampaignDeletionException.class);
-        verifyNoInteractions(campaignService);
+        pilotageComponent.setGroupClosed(false);
+        assertThatThrownBy(() -> groupController.deleteGroupById(false, groupId))
+                .isInstanceOf(GroupDeletionException.class);
+        verifyNoInteractions(groupService);
     }
 
 

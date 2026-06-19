@@ -1,8 +1,8 @@
-package fr.insee.queen.infrastructure.db.campaign.repository.jpa;
+package fr.insee.queen.infrastructure.db.group.repository.jpa;
 
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
-import fr.insee.queen.infrastructure.db.campaign.entity.CampaignSummaryRow;
+import fr.insee.queen.infrastructure.db.group.entity.GroupDB;
+import fr.insee.queen.infrastructure.db.group.entity.GroupSummaryRow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,66 +11,66 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * JPA repository to handle campaigns
+ * JPA repository to handle groups
  */
 @Repository
-public interface CampaignJpaRepository extends JpaRepository<CampaignDB, String> {
+public interface GroupJpaRepository extends JpaRepository<GroupDB, String> {
 
 
     @Query("""
-    select new fr.insee.queen.infrastructure.db.campaign.entity.CampaignSummaryRow(
+    select new fr.insee.queen.infrastructure.db.group.entity.GroupSummaryRow(
         c.id, c.label, q.id
     )
-    from CampaignDB c
+    from GroupDB c
     left join c.questionnaireModels q
     """)
-    List<CampaignSummaryRow> findAllCampaignSummaryRows();
+    List<GroupSummaryRow> findAllGroupSummaryRows();
 
     /**
-     * Retrieve campaign by id
-     * @return {@link CampaignDB} a campaign
+     * Retrieve group by id
+     * @return {@link GroupDB} a group
      */
-    @Query("select c from CampaignDB c left join fetch c.metadata left join fetch c.questionnaireModels where c.id=:campaignId")
-    Optional<CampaignDB> findById(String campaignId);
+    @Query("select c from GroupDB c left join fetch c.metadata left join fetch c.questionnaireModels where c.id=:groupId")
+    Optional<GroupDB> findById(String groupId);
 
     /**
-     * Retrieve the metadata json value of a campaign
-     * @param campaignId campaign id
+     * Retrieve the metadata json value of a group
+     * @param groupId group id
      * @return {@link ObjectNode} json metadata value
      */
     @Query("""
             select c.metadata.value
-            from CampaignDB c where c.id=:campaignId""")
-    Optional<ObjectNode> findMetadataByCampaignId(String campaignId);
+            from GroupDB c where c.id=:groupId""")
+    Optional<ObjectNode> findMetadataByGroupId(String groupId);
 
     /**
-     * Retrieve the metadata json value of a campaign byt the questionnaire id
+     * Retrieve the metadata json value of a group byt the questionnaire id
      *
      * @param questionnaireId questionnaire id
      * @return {@link ObjectNode} json metadata value
      */
     @Query("""
             select c.metadata.value
-            from CampaignDB c INNER JOIN c.questionnaireModels qm
+            from GroupDB c INNER JOIN c.questionnaireModels qm
             where qm.id=:questionnaireId""")
     Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
 
     /**
-     * Retrieve all campaigns ids
-     * @return {@link String} all campaigns ids
+     * Retrieve all groups ids
+     * @return {@link String} all groups ids
      */
-    @Query("SELECT c.id FROM CampaignDB c")
-    List<String> findAllCampaignIds();
+    @Query("SELECT c.id FROM GroupDB c")
+    List<String> findAllGroupIds();
 
 
     /**
-     * Retrieve campaign by questionnaire id
-     * @return the campaign id
+     * Retrieve group by questionnaire id
+     * @return the group id
      */
     @Query("""
-            select qm.campaign.id from QuestionnaireModelDB qm
+            select qm.group.id from QuestionnaireModelDB qm
             where qm.id=:questionnaireId
     """)
-    Optional<String> findCampaignIdByQuestionnaireId(String questionnaireId);
+    Optional<String> findGroupIdByQuestionnaireId(String questionnaireId);
 
 }

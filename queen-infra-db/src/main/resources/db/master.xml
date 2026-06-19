@@ -32,4 +32,6 @@
 	<include file="changelog/702_drop_events.xml" relativeToChangelogFile="true" />
 	<include file="changelog/703_drop_comment_table.sql" relativeToChangelogFile="true" />
 	<include file="changelog/704_drop_sensitivity.sql" relativeToChangelogFile="true" />
+	<!-- Rename table campaign → survey_group and FK columns campaign_id → group_id -->
+	<include file="changelog/705_rename_campaign_to_survey_group.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

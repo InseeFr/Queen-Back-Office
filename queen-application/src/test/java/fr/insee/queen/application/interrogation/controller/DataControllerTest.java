@@ -56,7 +56,7 @@ class DataControllerTest {
         dataController.cleanExtractedDataByIds("SIMPSONS2020X00", ids);
 
         // then
-        assertThat(dataFakeService.getCleanedCampaignId()).isEqualTo("SIMPSONS2020X00");
+        assertThat(dataFakeService.getCleanedGroupId()).isEqualTo("SIMPSONS2020X00");
         assertThat(dataFakeService.getCleanedInterrogationIds()).containsExactlyElementsOf(ids);
     }
 }

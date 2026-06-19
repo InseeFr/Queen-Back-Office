@@ -1,35 +1,35 @@
-package fr.insee.queen.domain.campaign.service.dummy;
+package fr.insee.queen.domain.group.service.dummy;
 
-import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
+import fr.insee.queen.domain.group.service.GroupExistenceService;
 import lombok.Getter;
 import lombok.Setter;
 
-public class CampaignExistenceFakeService implements CampaignExistenceService {
+public class GroupExistenceFakeService implements GroupExistenceService {
 
     @Setter
-    private boolean campaignExist = true;
+    private boolean groupExist = true;
     @Getter
-    private boolean checkCampaignNotExist = false;
+    private boolean checkGroupNotExist = false;
     @Getter
-    private boolean checkCampaignExist = false;
+    private boolean checkGroupExist = false;
 
     @Override
-    public void throwExceptionIfCampaignNotExist(String campaignId) {
-        checkCampaignExist = true;
+    public void throwExceptionIfGroupNotExist(String groupId) {
+        checkGroupExist = true;
     }
 
     @Override
-    public void throwExceptionIfCampaignAlreadyExist(String campaignId) {
-        checkCampaignNotExist = true;
+    public void throwExceptionIfGroupAlreadyExist(String groupId) {
+        checkGroupNotExist = true;
     }
 
     @Override
-    public void throwExceptionIfCampaignNotLinkedToQuestionnaire(String campaignId, String questionnaireId) {
+    public void throwExceptionIfGroupNotLinkedToQuestionnaire(String groupId, String questionnaireId) {
         // not implemented yet
     }
 
     @Override
-    public boolean existsById(String campaignId) {
-        return campaignExist;
+    public boolean existsById(String groupId) {
+        return groupExist;
     }
 }

@@ -1,7 +1,7 @@
 package fr.insee.queen.application.pilotage.controller;
 
 import fr.insee.queen.application.web.authentication.AuthenticationHelper;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.service.HabilitationService;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.pilotage.service.PilotageService;
@@ -30,20 +30,20 @@ public class PilotageApiComponent implements PilotageComponent {
     private final InterrogationService interrogationService;
 
     @Override
-    public boolean isClosed(String campaignId) {
-        return pilotageService.isClosed(campaignId);
+    public boolean isClosed(String groupId) {
+        return pilotageService.isClosed(groupId);
     }
 
     @Override
-    public List<InterrogationSummary> getInterrogationsByCampaign(String campaignId) {
-        return pilotageService.getInterrogationsByCampaign(campaignId);
+    public List<InterrogationSummary> getInterrogations(String groupId) {
+        return pilotageService.getInterrogations(groupId);
     }
 
     @Override
-    public List<PilotageCampaign> getInterviewerCampaigns() {
-        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
-        log.info("{} campaign(s) found", campaigns.size());
-        return campaigns;
+    public List<PilotageGroup> getInterviewerGroups() {
+        List<PilotageGroup> groups = pilotageService.getInterviewerGroups();
+        log.info("{} group(s) found", groups.size());
+        return groups;
     }
 
     @Override

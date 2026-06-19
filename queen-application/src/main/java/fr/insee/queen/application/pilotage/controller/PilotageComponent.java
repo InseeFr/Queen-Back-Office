@@ -1,6 +1,6 @@
 package fr.insee.queen.application.pilotage.controller;
 
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
@@ -17,28 +17,28 @@ public interface PilotageComponent {
     void checkHabilitations(String interrogationId, PilotageRole... roles);
 
     /**
-     * Check if a campaign is closed
-     * @param campaignId campaign id
-     * @return true if campaign is closed, false otherwise
+     * Check if a group is closed
+     * @param groupId group id
+     * @return true if group is closed, false otherwise
      */
-    boolean isClosed(String campaignId);
+    boolean isClosed(String groupId);
 
     /**
-     * Retrieve interrogation list of a campaign
-     * @param campaignId campaign id
-     * @return List of {@link InterrogationSummary} interrogations of the campaign
+     * Retrieve interrogation list of a group
+     * @param groupId group id
+     * @return List of {@link InterrogationSummary} interrogations of the group
      */
-    List<InterrogationSummary> getInterrogationsByCampaign(String campaignId);
+    List<InterrogationSummary> getInterrogations(String groupId);
 
     /**
-     * Retrieve campaigns the user has access to as an interviewer
-     * @return List of {@link PilotageCampaign} authorized campaigns
+     * Retrieve groups the user has access to as an interviewer
+     * @return List of {@link PilotageGroup} authorized groups
      */
-    List<PilotageCampaign> getInterviewerCampaigns();
+    List<PilotageGroup> getInterviewerGroups();
 
     /**
      * Retrieve interrogation list for an interviewer
-     * @return List of {@link Interrogation} interrogations of the campaign
+     * @return List of {@link Interrogation} interrogations of the group
      */
     List<Interrogation> getInterviewerInterrogations();
 }

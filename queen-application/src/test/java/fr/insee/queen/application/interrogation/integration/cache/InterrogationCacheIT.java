@@ -2,7 +2,7 @@ package fr.insee.queen.application.interrogation.integration.cache;
 
 import tools.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.configuration.ScriptConstants;
-import fr.insee.queen.domain.campaign.service.CampaignApiService;
+import fr.insee.queen.domain.group.service.GroupApiService;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
@@ -36,7 +36,7 @@ class InterrogationCacheIT {
     private CacheManager cacheManager;
 
     @Autowired
-    private CampaignApiService campaignService;
+    private GroupApiService groupService;
 
     @AfterEach
     void clearCaches() {
@@ -79,7 +79,7 @@ class InterrogationCacheIT {
     }
 
     @Test
-    @DisplayName("When creating interrogation and delete the related campaign, then the cache for interrogation existence is deleted")
+    @DisplayName("When creating interrogation and delete the related group, then the cache for interrogation existence is deleted")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_interrogation_existence_cache_02() throws StateDataInvalidDateException {
         String interrogationId = "interrogation-cache-id";
@@ -88,10 +88,10 @@ class InterrogationCacheIT {
         Boolean interrogationExist =  Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_EXIST).get(interrogationId, Boolean.class));
         assertThat(interrogationExist).isFalse();
 
-        String campaignId = "LOG2021X11Tel";
+        String groupId = "LOG2021X11Tel";
         Interrogation interrogation = new Interrogation(interrogationId,
                 "survey-unit-id",
-                campaignId,
+                groupId,
                 "LOG2021X11Tel",
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
@@ -108,15 +108,15 @@ class InterrogationCacheIT {
         interrogationExist = Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_EXIST).get(interrogationId, Boolean.class));
         assertThat(interrogationExist).isTrue();
 
-        campaignService.delete(campaignId, true);
+        groupService.delete(groupId, true);
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_EXIST)).get(interrogationId)).isNull();
     }
 
     @Test
-    @DisplayName("When handling interrogations, handle correctly cache for interrogations with campaign")
+    @DisplayName("When handling interrogations, handle correctly cache for interrogations with group")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void check_interrogation_campaign_cache_01() throws StateDataInvalidDateException {
-        String interrogationId = "interrogation-campaign-cache-id";
+    void check_interrogation_group_cache_01() throws StateDataInvalidDateException {
+        String interrogationId = "interrogation-group-cache-id";
 
         // check cache is null at beginning
         assertThatThrownBy(() -> interrogationService.getSummaryById(interrogationId)).isInstanceOf(EntityNotFoundException.class);
@@ -148,18 +148,18 @@ class InterrogationCacheIT {
     }
 
     @Test
-    @DisplayName("When creating interrogation and delete the related campaign, then the cache for interrogation summary is deleted")
+    @DisplayName("When creating interrogation and delete the related group, then the cache for interrogation summary is deleted")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void check_interrogation_campaign_cache_02() throws StateDataInvalidDateException {
-        String interrogationId = "interrogation-campaign-cache-id";
-        String campaignId = "LOG2021X11Tel";
+    void check_interrogation_group_cache_02() throws StateDataInvalidDateException {
+        String interrogationId = "interrogation-group-cache-id";
+        String groupId = "LOG2021X11Tel";
         // check cache is null at beginning
         assertThatThrownBy(() -> interrogationService.getSummaryById(interrogationId)).isInstanceOf(EntityNotFoundException.class);
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_SUMMARY)).get(interrogationId)).isNull();
 
         Interrogation interrogation = new Interrogation(interrogationId,
                 "survey-unit-id",
-                campaignId,
+                groupId,
                 "LOG2021X11Tel",
                 JsonNodeFactory.instance.arrayNode(),
                 JsonNodeFactory.instance.objectNode(),
@@ -176,7 +176,7 @@ class InterrogationCacheIT {
         InterrogationSummary interrogationSummary = Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_SUMMARY).get(interrogationId, InterrogationSummary.class));
         assertThat(interrogationSummary).isEqualTo(expectedInterrogationSummary);
 
-        campaignService.delete(campaignId, true);
+        groupService.delete(groupId, true);
 
         // after deletion, no interrogation anymore in cache
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.INTERROGATION_SUMMARY)).get(interrogationId)).isNull();

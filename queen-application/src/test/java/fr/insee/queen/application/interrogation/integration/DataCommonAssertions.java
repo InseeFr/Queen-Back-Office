@@ -393,8 +393,8 @@ public class DataCommonAssertions {
         JSONAssert.assertNotEquals("{}", result.getResponse().getContentAsString(), JSONCompareMode.NON_EXTENSIBLE);
     }
 
-    void cleanExtractedDataByIds_wrongCampaignUnchanged() throws Exception {
-        // 517046b6 belongs to SIMPSONS2020X00; campaignId=VQS2021X00 → campaign filter prevents blanking
+    void cleanExtractedDataByIds_wrongGroupUnchanged() throws Exception {
+        // 517046b6 belongs to SIMPSONS2020X00; groupId=VQS2021X00 → group filter prevents blanking
         mockMvc.perform(post("/api/admin/campaign/VQS2021X00/interrogations/data/extracted/clean")
                         .content("""
                             ["517046b6-bd88-47e0-838e-00d03461f592"]
@@ -424,7 +424,7 @@ public class DataCommonAssertions {
                 .andExpect(status().isBadRequest());
     }
 
-    void cleanExtractedDataByIds_invalidCampaignId_return400() throws Exception {
+    void cleanExtractedDataByIds_invalidGroupId_return400() throws Exception {
         mockMvc.perform(post("/api/admin/campaign/INVALID$CAMP/interrogations/data/extracted/clean")
                         .content("""
                             ["517046b6-bd88-47e0-838e-00d03461f592"]

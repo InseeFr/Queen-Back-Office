@@ -16,7 +16,7 @@ public interface InterrogationService {
 
     Interrogation getInterrogation(String id);
 
-    List<InterrogationSummary> findSummariesByCampaignId(String campaignId);
+    List<InterrogationSummary> findSummariesByGroupId(String groupId);
 
     List<InterrogationSummary> findSummariesBySurveyUnitId(String surveyUnitId);
 
@@ -46,7 +46,7 @@ public interface InterrogationService {
 
     List<Interrogation> findAllInterrogations();
 
-    List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType);
+    List<InterrogationState> getInterrogations(String groupId, StateDataType stateDataType);
 
     List<QuestionnaireLink> findQuestionnaireLinksByInterrogationIds(List<String> interrogationIds);
 }

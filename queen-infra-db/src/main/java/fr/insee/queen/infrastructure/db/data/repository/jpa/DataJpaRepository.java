@@ -51,11 +51,11 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
                 SELECT su.id
                 FROM interrogation su
                 INNER JOIN state_data sd ON sd.interrogation_id = su.id
-                WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
+                WHERE su.survey_group_id = :groupId AND sd.state = 'EXTRACTED'
                 AND sd.date BETWEEN :startTimestamp AND :endTimestamp
             );
     """)
-    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
+    void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp);
 
     @Transactional
     @Modifying
@@ -66,9 +66,9 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
                 SELECT su.id
                 FROM interrogation su
                 INNER JOIN state_data sd ON sd.interrogation_id = su.id
-                WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
+                WHERE su.survey_group_id = :groupId AND sd.state = 'EXTRACTED'
                 AND su.id IN (:interrogationIds)
             );
     """)
-    void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
+    void cleanExtractedDataByIds(String groupId, List<String> interrogationIds);
 }

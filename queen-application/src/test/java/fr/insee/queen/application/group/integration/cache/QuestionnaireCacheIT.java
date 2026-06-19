@@ -1,0 +1,171 @@
+package fr.insee.queen.application.group.integration.cache;
+
+import fr.insee.queen.application.configuration.ScriptConstants;
+import fr.insee.queen.application.utils.JsonTestHelper;
+import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.QuestionnaireModel;
+import fr.insee.queen.domain.group.service.GroupService;
+import fr.insee.queen.domain.group.service.MetadataService;
+import fr.insee.queen.domain.group.service.NomenclatureService;
+import fr.insee.queen.domain.group.service.QuestionnaireModelService;
+import fr.insee.queen.domain.common.cache.CacheName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+
+@SpringBootTest(properties = {"feature.cache.enabled=true"})
+@ActiveProfiles("test")
+class QuestionnaireCacheIT {
+
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private QuestionnaireModelService questionnaireModelService;
+
+    @Autowired
+    private NomenclatureService nomenclatureService;
+
+    @Autowired
+    private MetadataService metadataService;
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    @AfterEach
+    void clearCaches() {
+        for (String cacheName : cacheManager.getCacheNames()) {
+            Objects.requireNonNull(cacheManager.getCache(cacheName)).clear();
+        }
+    }
+
+    @Test
+    @DisplayName("When creating questionnaire, cache is handled")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void check_questionnaire_cache01() {
+        String questionnaireId = "questionnaire-cache-id";
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("cities2019", "regions2019")));
+    }
+
+    @Test
+    @DisplayName("When updating questionnaire, cache is handled")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void check_questionnaire_cache02() {
+        String questionnaireId = "questionnaire-cache-id";
+        String groupId = "group-cache-id";
+
+        ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("group/metadata/metadata.json");
+        groupService.createGroup(new Group(groupId, "label",  new HashSet<>(), metadataNode));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("regions2019")));
+
+        // when updating questionnaire, cache is evicted
+        questionnaireModelService.updateQuestionnaire(QuestionnaireModel.createQuestionnaireWithGroup(questionnaireId, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019"), groupId));
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
+
+        ObjectNode questionnaire = questionnaireModelService.getQuestionnaireData(questionnaireId);
+        List<String> requiredNomenclatures = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
+        ObjectNode metadata = metadataService.getMetadataByQuestionnaireId(questionnaireId);
+
+        // when retrieving questionnaire, cache does contain the updated questionnaire
+        ObjectNode questionnaireCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId, ObjectNode.class));
+        @SuppressWarnings("unchecked")
+        List<String> requiredNomenclaturesCache = (List<String>) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES).get(questionnaireId).get());
+        ObjectNode metadataCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA).get(questionnaireId, ObjectNode.class));
+
+        assertThat(questionnaire).isEqualTo(questionnaireCache);
+        assertThat(requiredNomenclatures).isEqualTo(requiredNomenclaturesCache);
+        assertThat(metadata).isEqualTo(metadataCache);
+    }
+
+    @Test
+    @DisplayName("When deleting groups, handle cache eviction on associated questionnaires")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void check_questionnaire_cache03() {
+        String questionnaireId1 = "questionnaire-cache-id1";
+        String questionnaireId2 = "questionnaire-cache-id2";
+
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("cities2019")));
+
+        String groupId = "group-with-questionnaires-cache-id";
+        groupService.createGroup(new Group(groupId, "label",  Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
+
+        // when deleting group, associated questionnaires are evicted from cache
+        groupService.delete(groupId, true);
+
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId1)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId1)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId1)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId2)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId2)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId2)).isNull();
+    }
+
+    @Test
+    @DisplayName("When updating group, handle cache eviction on all questionnaire metadatas")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
+    void check_questionnaire_cache04() {
+        String questionnaireId1 = "questionnaire-cache-id1";
+        String questionnaireId2 = "questionnaire-cache-id2";
+        String questionnaireId3 = "questionnaire-cache-id3";
+        String questionnaireId4 = "questionnaire-cache-id4";
+
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId3, "label3", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId4, "label4", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+
+        // create group and associate questionnaireId1 & questionnaireId2
+        String groupId = "group-with-questionnaires-cache-id";
+        Group group = new Group(groupId, "label",  Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode());
+        groupService.createGroup(group);
+
+        group = new Group(groupId, "labelUpdated",  Set.of(questionnaireId2), JsonNodeFactory.instance.objectNode());
+        // when deleting group, associated questionnaires are evicted from cache
+        groupService.updateGroup(group);
+
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId1)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId2)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId3)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId4)).isNull();
+    }
+
+    void check_questionnaire_cache_on_creation(QuestionnaireModel questionnaireData) {
+        String questionnaireId = questionnaireData.getId();
+
+        // before creating questionnaire, cache does not contain the questionnaire
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
+
+        questionnaireModelService.createQuestionnaire(questionnaireData);
+        ObjectNode questionnaire = questionnaireModelService.getQuestionnaireData(questionnaireId);
+        List<String> requiredNomenclatures = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
+
+        // when retrieving questionnaire, cache does contain the questionnaire now
+        ObjectNode questionnaireCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId, ObjectNode.class));
+        @SuppressWarnings("unchecked")
+        List<String> requiredNomenclaturesCache = (List<String>) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES).get(questionnaireId).get());
+
+        assertThat(questionnaire).isEqualTo(questionnaireCache);
+        assertThat(requiredNomenclatures).isEqualTo(requiredNomenclaturesCache);
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
+    }
+}

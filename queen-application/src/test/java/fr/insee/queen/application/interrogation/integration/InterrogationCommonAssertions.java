@@ -32,7 +32,7 @@ class InterrogationCommonAssertions {
     private final MockMvc mockMvc;
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-    void on_get_interrogations_by_campaign_return_interrogations() throws Exception {
+    void on_get_interrogations_by_group_return_interrogations() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/interrogations")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))

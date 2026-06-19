@@ -5,7 +5,7 @@ import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.application.campaign.component.MetadataComponentConverter;
+import fr.insee.queen.application.group.component.MetadataComponentConverter;
 import fr.insee.queen.application.interrogation.dto.output.*;
 import fr.insee.queen.domain.interrogation.service.exception.MetadataValueNotFoundException;
 import org.junit.jupiter.api.BeforeEach;

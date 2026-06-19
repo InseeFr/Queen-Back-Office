@@ -1,51 +1,51 @@
-package fr.insee.queen.domain.campaign.service.dummy;
+package fr.insee.queen.domain.group.service.dummy;
 
-import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
-import fr.insee.queen.domain.campaign.service.CampaignService;
+import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.GroupSummary;
+import fr.insee.queen.domain.group.service.GroupService;
 import lombok.Getter;
 
 import java.util.List;
 import java.util.Set;
 
 @Getter
-public class CampaignFakeService implements CampaignService {
+public class GroupFakeService implements GroupService {
 
     private boolean deleted = false;
     private boolean updated = false;
     private boolean created = false;
-    public static final String CAMPAIGN1_ID = "allCampaigns1";
-    public static final List<CampaignSummary> CAMPAIGN_SUMMARY_LIST = List.of(
-            new CampaignSummary(CAMPAIGN1_ID, "label", Set.of("questionnaireId1", "questionnaireId2"))
+    public static final String GROUP1_ID = "allGroups1";
+    public static final List<GroupSummary> GROUP_SUMMARY_LIST = List.of(
+            new GroupSummary(GROUP1_ID, "label", Set.of("questionnaireId1", "questionnaireId2"))
     );
 
     @Override
-    public List<CampaignSummary> getAllCampaigns() {
-        return CAMPAIGN_SUMMARY_LIST;
+    public List<GroupSummary> getAllGroups() {
+        return GROUP_SUMMARY_LIST;
     }
 
     @Override
-    public void delete(String campaignId, boolean deleteInterrogations) {
+    public void delete(String groupId, boolean deleteInterrogations) {
         this.deleted = true;
     }
 
     @Override
-    public void createCampaign(Campaign campaignData) {
+    public void createGroup(Group groupData) {
         created = true;
     }
 
     @Override
-    public void updateCampaign(Campaign campaignData) {
+    public void updateGroup(Group groupData) {
         updated = true;
     }
 
     @Override
-    public Campaign getCampaign(String campaignId) {
+    public Group getGroup(String groupId) {
         return null;
     }
 
     @Override
-    public List<String> getAllCampaignIds() {
-        return List.of(CAMPAIGN1_ID);
+    public List<String> getAllGroupIds() {
+        return List.of(GROUP1_ID);
     }
 }

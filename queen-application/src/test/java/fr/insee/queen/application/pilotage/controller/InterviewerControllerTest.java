@@ -1,7 +1,7 @@
 package fr.insee.queen.application.pilotage.controller;
 
-import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationByCampaignDto;
+import fr.insee.queen.application.group.dto.output.GroupSummaryResponse;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationByGroupResponse;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,29 +23,29 @@ class InterviewerControllerTest {
     }
 
     @Test
-    @DisplayName("On retrieving interviewer campaigns, all interviewer campaigns are retrieved")
-    void testGetInterviewerCampaigns01() {
-        List<CampaignSummaryDto> campaigns = interviewerController.getInterviewerCampaignList("userId");
-        assertThat(pilotageComponent.isWentThroughInterviewerCampaigns()).isTrue();
-        assertThat(campaigns).hasSize(2);
-        assertThat(campaigns.getFirst().getId()).isEqualTo(PilotageFakeComponent.CAMPAIGN1_ID);
+    @DisplayName("On retrieving interviewer groups, all interviewer groups are retrieved")
+    void testGetInterviewerGroups01() {
+        List<GroupSummaryResponse> groups = interviewerController.getInterviewerGroupList("userId");
+        assertThat(pilotageComponent.isWentThroughInterviewerGroups()).isTrue();
+        assertThat(groups).hasSize(2);
+        assertThat(groups.getFirst().getId()).isEqualTo(PilotageFakeComponent.GROUP1_ID);
     }
 
     @Test
-    @DisplayName("On retrieving interrogations for a campaign, then return interrogations from pilotage service")
-    void testGetInterrogationsCampaign01() {
-        List<InterrogationByCampaignDto> interrogations = interviewerController.getListInterrogationByCampaign("campaign-id");
+    @DisplayName("On retrieving interrogations for a group, then return interrogations from pilotage service")
+    void testGetInterrogationsGroup01() {
+        List<InterrogationByGroupResponse> interrogations = interviewerController.getListInterrogationByGroup("group-id");
         assertThat(interrogations).hasSize(2);
         assertThat(interrogations.getFirst().id()).isEqualTo(PilotageFakeComponent.INTERROGATION1_ID);
     }
 
     @Test
-    @DisplayName("On retrieving interrogations for a campaign, when interrogations are empty")
-    void testGetInterrogationsCampaign02() {
+    @DisplayName("On retrieving interrogations for a group, when interrogations are empty")
+    void testGetInterrogationsGroup02() {
         // Given
         pilotageComponent.setHasEmptyInterrogations(true);
         // When
-        List<InterrogationByCampaignDto> result = interviewerController.getListInterrogationByCampaign("campaign-id");
+        List<InterrogationByGroupResponse> result = interviewerController.getListInterrogationByGroup("group-id");
         // Then
         assertThat(result)
                 .isNotNull()

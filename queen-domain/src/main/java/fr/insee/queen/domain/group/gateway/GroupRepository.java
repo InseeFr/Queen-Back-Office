@@ -1,70 +1,70 @@
-package fr.insee.queen.domain.campaign.gateway;
+package fr.insee.queen.domain.group.gateway;
 
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.GroupSummary;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository to handle campaigns
+ * Repository to handle groups
  */
-public interface CampaignRepository {
+public interface GroupRepository {
 
     /**
-     * Create campaign
-     * @param campaign campaign to create
+     * Create group
+     * @param group group to create
      */
-    void create(Campaign campaign);
+    void create(Group group);
 
     /**
-     * Check if campaign exists
+     * Check if group exists
      *
-     * @param campaignId campaign id to check
+     * @param groupId group id to check
      * @return true if exists, false otherwise
      */
-    boolean exists(String campaignId);
+    boolean exists(String groupId);
 
     /**
-     * Retrieve all campaigns summary
+     * Retrieve all groups summary
      *
-     * @return List of {@link CampaignSummary} campaigns
+     * @return List of {@link GroupSummary} groups
      */
-    List<CampaignSummary> getAllWithQuestionnaireIds();
+    List<GroupSummary> getAllWithQuestionnaireIds();
 
     /**
-     * Delete campaign
+     * Delete group
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      */
-    void delete(String campaignId);
+    void delete(String groupId);
 
     /**
-     * Retrieve campaign summary
+     * Retrieve group summary
      *
-     * @param campaignId campaign id
-     * @return {@link CampaignSummary} campaign
+     * @param groupId group id
+     * @return {@link GroupSummary} group
      */
-    Optional<CampaignSummary> findWithQuestionnaireIds(String campaignId);
+    Optional<GroupSummary> findWithQuestionnaireIds(String groupId);
 
     /**
-     * Update campaign
+     * Update group
      *
-     * @param campaign campaign to update
+     * @param group group to update
      */
-    void update(Campaign campaign);
+    void update(Group group);
 
     /**
-     * Retrieve the metadata json value of a campaign
+     * Retrieve the metadata json value of a group
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @return {@link String} json metadata value
      */
-    Optional<ObjectNode> findMetadataByCampaignId(String campaignId);
+    Optional<ObjectNode> findMetadataByGroupId(String groupId);
 
     /**
-     * Retrieve the metadata json value of a campaign byt the questionnaire id
+     * Retrieve the metadata json value of a group byt the questionnaire id
      *
      * @param questionnaireId questionnaire id
      * @return {@link String} json metadata value
@@ -72,16 +72,16 @@ public interface CampaignRepository {
     Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
 
     /**
-     * Find campaign
+     * Find group
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      */
-    Optional<Campaign> findCampaign(String campaignId);
+    Optional<Group> findGroup(String groupId);
 
     /**
-     * Retrieve all campaigns ids
+     * Retrieve all groups ids
      *
-     * @return List of {@link String} campaigns ids
+     * @return List of {@link String} groups ids
      */
-    List<String> getAllCampaignIds();
+    List<String> getAllGroupIds();
 }

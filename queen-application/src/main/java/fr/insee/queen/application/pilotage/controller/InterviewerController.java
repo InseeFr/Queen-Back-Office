@@ -1,12 +1,11 @@
 package fr.insee.queen.application.pilotage.controller;
 
-import fr.insee.queen.application.campaign.dto.output.CampaignSummaryDto;
+import fr.insee.queen.application.group.dto.output.GroupSummaryResponse;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationByCampaignDto;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationByGroupResponse;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
 import fr.insee.queen.application.web.validation.IdValid;
-import fr.insee.queen.domain.common.exception.EntityNotFoundException;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,23 +34,23 @@ public class InterviewerController {
     private final PilotageComponent pilotageComponent;
 
     /**
-     * Retrieve the campaigns the current user has access to
+     * Retrieve the groups the current user has access to
      *
-     * @return List of {@link CampaignSummaryDto}
+     * @return List of {@link GroupSummaryResponse}
      */
     @Operation(summary = "Get group list for the current user")
     @Parameter(name = "userId", hidden = true)
     @Tag(name = "02. Groups")
     @GetMapping(path = "/${application.group.path-plural}")
     @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
-    public List<CampaignSummaryDto> getInterviewerCampaignList(@CurrentSecurityContext(expression = "authentication.name")
+    public List<GroupSummaryResponse> getInterviewerGroupList(@CurrentSecurityContext(expression = "authentication.name")
                                                                    String userId) {
 
-        List<PilotageCampaign> campaigns = pilotageComponent.getInterviewerCampaigns();
-        log.info("{} campaign(s) found for {}", campaigns.size(), userId);
+        List<PilotageGroup> groups = pilotageComponent.getInterviewerGroups();
+        log.info("{} group(s) found for {}", groups.size(), userId);
 
-        return campaigns.stream()
-                .map(CampaignSummaryDto::fromPilotageModel)
+        return groups.stream()
+                .map(GroupSummaryResponse::fromPilotageModel)
                 .toList();
     }
 
@@ -74,21 +73,21 @@ public class InterviewerController {
     }
 
     /**
-     * Retrieve all the interrogations of a campaign
+     * Retrieve all the interrogations of a group
      *
-     * @param campaignId the id of campaign
-     * @return List of {@link InterrogationByCampaignDto}
+     * @param groupId the id of group
+     * @return List of {@link InterrogationByGroupResponse}
      */
     @Operation(summary = "Get list of interrogations for a group")
     @Tag(name = "06. Interrogations")
     @GetMapping("/${application.group.path-singular}/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_REVIEWER_PRIVILEGES)
-    public List<InterrogationByCampaignDto> getListInterrogationByCampaign(@IdValid @PathVariable(value = "id") String campaignId) {
-        // get interrogations of a campaign from the pilotage api
-        List<InterrogationSummary> interrogations = pilotageComponent.getInterrogationsByCampaign(campaignId);
+    public List<InterrogationByGroupResponse> getListInterrogationByGroup(@IdValid @PathVariable(value = "id") String groupId) {
+        // get interrogations of a group from the pilotage api
+        List<InterrogationSummary> interrogations = pilotageComponent.getInterrogations(groupId);
 
         return interrogations.stream()
-                .map(InterrogationByCampaignDto::fromModel)
+                .map(InterrogationByGroupResponse::fromModel)
                 .toList();
     }
 }

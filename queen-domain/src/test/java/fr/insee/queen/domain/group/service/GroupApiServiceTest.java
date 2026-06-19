@@ -1,9 +1,9 @@
-package fr.insee.queen.domain.campaign.service;
+package fr.insee.queen.domain.group.service;
 
-import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
-import fr.insee.queen.domain.campaign.gateway.QuestionnaireModelRepository;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
-import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
+import fr.insee.queen.domain.group.gateway.GroupRepository;
+import fr.insee.queen.domain.group.gateway.QuestionnaireModelRepository;
+import fr.insee.queen.domain.group.model.GroupSummary;
+import fr.insee.queen.domain.group.service.exception.GroupDeletionException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,30 +23,30 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CampaignApiServiceTest {
+class GroupApiServiceTest {
 
     @Mock
-    private CampaignRepository campaignRepository;
+    private GroupRepository groupRepository;
     @Mock
     private InterrogationRepository interrogationRepository;
     @Mock
     private QuestionnaireModelRepository questionnaireModelRepository;
     @Mock
-    private CampaignExistenceService campaignExistenceService;
+    private GroupExistenceService groupExistenceService;
     @Mock
     private CacheManager cacheManager;
     @Mock
     private Cache dummyCache; // stub cache to avoid NPE, cache behavior is tested in integration tests
 
-    private CampaignApiService service;
+    private GroupApiService service;
 
     @BeforeEach
     void setUp() {
-        service = new CampaignApiService(
-                campaignRepository,
+        service = new GroupApiService(
+                groupRepository,
                 interrogationRepository,
                 questionnaireModelRepository,
-                campaignExistenceService,
+                groupExistenceService,
                 cacheManager
         );
     }
@@ -54,121 +54,121 @@ class CampaignApiServiceTest {
     @Test
     void delete_should_delete_interrogations() {
         // Given
-        String campaignId = "C1";
-        CampaignSummary summary = mock(CampaignSummary.class);
+        String groupId = "C1";
+        GroupSummary summary = mock(GroupSummary.class);
         when(summary.getQuestionnaireIds()).thenReturn(Set.of());
-        when(campaignRepository.findWithQuestionnaireIds(campaignId)).thenReturn(Optional.of(summary));
+        when(groupRepository.findWithQuestionnaireIds(groupId)).thenReturn(Optional.of(summary));
 
         // When
-        service.delete(campaignId, true);
+        service.delete(groupId, true);
 
         // Then
-        verify(interrogationRepository).deleteInterrogations(campaignId);
-        verify(interrogationRepository, never()).existsByCampaignId(anyString());
+        verify(interrogationRepository).deleteInterrogations(groupId);
+        verify(interrogationRepository, never()).existsByGroupId(anyString());
 
-        verify(questionnaireModelRepository, never()).deleteAllFromCampaign(anyString());
-        verify(campaignRepository).delete(campaignId);
+        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(groupRepository).delete(groupId);
     }
 
     @Test
-    void delete_should_throw_campaign_exception_when_interrogations_exist() {
+    void delete_should_throw_group_exception_when_interrogations_exist() {
         // Given
-        String campaignId = "C2";
-        when(interrogationRepository.existsByCampaignId(campaignId)).thenReturn(true);
+        String groupId = "C2";
+        when(interrogationRepository.existsByGroupId(groupId)).thenReturn(true);
 
         // When / Then
-        assertThatThrownBy(() -> service.delete(campaignId, false))
-                .isInstanceOf(CampaignDeletionException.class)
-                .hasMessageContaining(campaignId);
+        assertThatThrownBy(() -> service.delete(groupId, false))
+                .isInstanceOf(GroupDeletionException.class)
+                .hasMessageContaining(groupId);
 
         // Ensure nothing else happens after the guard clause.
-        verify(interrogationRepository).existsByCampaignId(campaignId);
+        verify(interrogationRepository).existsByGroupId(groupId);
         verify(interrogationRepository, never()).deleteInterrogations(anyString());
 
-        verify(campaignRepository, never()).findWithQuestionnaireIds(anyString());
-        verify(questionnaireModelRepository, never()).deleteAllFromCampaign(anyString());
-        verify(campaignRepository, never()).delete(anyString());
+        verify(groupRepository, never()).findWithQuestionnaireIds(anyString());
+        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(groupRepository, never()).delete(anyString());
     }
 
     @Test
-    void delete_shouldProceedAndDeleteCampaign_whenFlagFalse_andNoInterrogations() {
+    void delete_shouldProceedAndDeleteGroup_whenFlagFalse_andNoInterrogations() {
         // Given
-        String campaignId = "C3";
-        when(interrogationRepository.existsByCampaignId(campaignId)).thenReturn(false);
+        String groupId = "C3";
+        when(interrogationRepository.existsByGroupId(groupId)).thenReturn(false);
 
-        CampaignSummary summary = mock(CampaignSummary.class);
+        GroupSummary summary = mock(GroupSummary.class);
         when(summary.getQuestionnaireIds()).thenReturn(Set.of());
-        when(campaignRepository.findWithQuestionnaireIds(campaignId)).thenReturn(Optional.of(summary));
+        when(groupRepository.findWithQuestionnaireIds(groupId)).thenReturn(Optional.of(summary));
 
         // When
-        service.delete(campaignId, false);
+        service.delete(groupId, false);
 
         // Then
-        verify(interrogationRepository).existsByCampaignId(campaignId);
+        verify(interrogationRepository).existsByGroupId(groupId);
         verify(interrogationRepository, never()).deleteInterrogations(anyString());
 
-        verify(questionnaireModelRepository, never()).deleteAllFromCampaign(anyString());
-        verify(campaignRepository).delete(campaignId);
+        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(groupRepository).delete(groupId);
     }
 
     @Test
-    void delete_shouldThrowEntityNotFoundException_whenCampaignNotFound() {
+    void delete_shouldThrowEntityNotFoundException_whenGroupNotFound() {
         // Given
-        String campaignId = "C4";
-        when(interrogationRepository.existsByCampaignId(campaignId)).thenReturn(false);
-        when(campaignRepository.findWithQuestionnaireIds(campaignId)).thenReturn(Optional.empty());
+        String groupId = "C4";
+        when(interrogationRepository.existsByGroupId(groupId)).thenReturn(false);
+        when(groupRepository.findWithQuestionnaireIds(groupId)).thenReturn(Optional.empty());
 
         // When / Then
-        assertThatThrownBy(() -> service.delete(campaignId, false))
+        assertThatThrownBy(() -> service.delete(groupId, false))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining(campaignId);
+                .hasMessageContaining(groupId);
 
-        // Ensure no deletion occurs when campaign does not exist.
-        verify(campaignRepository, never()).delete(anyString());
-        verify(questionnaireModelRepository, never()).deleteAllFromCampaign(anyString());
+        // Ensure no deletion occurs when group does not exist.
+        verify(groupRepository, never()).delete(anyString());
+        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
     }
 
     @Test
-    void delete_shouldDeleteQuestionnaireModels_thenDeleteCampaign_whenQuestionnairesExist() {
+    void delete_shouldDeleteQuestionnaireModels_thenDeleteGroup_whenQuestionnairesExist() {
         // Given
-        String campaignId = "C5";
+        String groupId = "C5";
         Set<String> questionnaireIds = Set.of("Q1", "Q2");
 
-        CampaignSummary summary = mock(CampaignSummary.class);
+        GroupSummary summary = mock(GroupSummary.class);
         when(summary.getQuestionnaireIds()).thenReturn(questionnaireIds);
-        when(campaignRepository.findWithQuestionnaireIds(campaignId)).thenReturn(Optional.of(summary));
+        when(groupRepository.findWithQuestionnaireIds(groupId)).thenReturn(Optional.of(summary));
         // Cache behavior is out of scope for these unit tests; we only prevent NPEs.
         when(cacheManager.getCache(anyString())).thenReturn(dummyCache);
 
         // When
-        service.delete(campaignId, true);
+        service.delete(groupId, true);
 
         // Then
-        verify(interrogationRepository).deleteInterrogations(campaignId);
-        verify(questionnaireModelRepository).deleteAllFromCampaign(campaignId);
-        verify(campaignRepository).delete(campaignId);
+        verify(interrogationRepository).deleteInterrogations(groupId);
+        verify(questionnaireModelRepository).deleteAllFromGroup(groupId);
+        verify(groupRepository).delete(groupId);
 
-        // Ensure questionnaire cleanup happens before campaign deletion.
-        InOrder inOrder = inOrder(questionnaireModelRepository, campaignRepository);
-        inOrder.verify(questionnaireModelRepository).deleteAllFromCampaign(campaignId);
-        inOrder.verify(campaignRepository).delete(campaignId);
+        // Ensure questionnaire cleanup happens before group deletion.
+        InOrder inOrder = inOrder(questionnaireModelRepository, groupRepository);
+        inOrder.verify(questionnaireModelRepository).deleteAllFromGroup(groupId);
+        inOrder.verify(groupRepository).delete(groupId);
     }
 
     @Test
     void delete_shouldNotDeleteQuestionnaireModels_whenQuestionnaireIdsIsNull() {
         // Given
-        String campaignId = "C6";
+        String groupId = "C6";
 
-        CampaignSummary summary = mock(CampaignSummary.class);
+        GroupSummary summary = mock(GroupSummary.class);
         when(summary.getQuestionnaireIds()).thenReturn(null);
-        when(campaignRepository.findWithQuestionnaireIds(campaignId)).thenReturn(Optional.of(summary));
+        when(groupRepository.findWithQuestionnaireIds(groupId)).thenReturn(Optional.of(summary));
 
         // When
-        service.delete(campaignId, true);
+        service.delete(groupId, true);
 
         // Then
-        verify(questionnaireModelRepository, never()).deleteAllFromCampaign(anyString());
-        verify(campaignRepository).delete(campaignId);
+        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(groupRepository).delete(groupId);
     }
 }
 

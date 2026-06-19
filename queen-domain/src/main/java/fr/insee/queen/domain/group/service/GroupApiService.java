@@ -1,11 +1,11 @@
-package fr.insee.queen.domain.campaign.service;
+package fr.insee.queen.domain.group.service;
 
-import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
-import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
-import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
-import fr.insee.queen.domain.campaign.gateway.QuestionnaireModelRepository;
-import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.group.service.exception.GroupDeletionException;
+import fr.insee.queen.domain.group.service.exception.QuestionnaireInvalidException;
+import fr.insee.queen.domain.group.gateway.GroupRepository;
+import fr.insee.queen.domain.group.gateway.QuestionnaireModelRepository;
+import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.GroupSummary;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
@@ -24,53 +24,53 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class CampaignApiService implements CampaignService {
-    private final CampaignRepository campaignRepository;
+public class GroupApiService implements GroupService {
+    private final GroupRepository groupRepository;
     private final InterrogationRepository interrogationRepository;
     private final QuestionnaireModelRepository questionnaireModelRepository;
-    private final CampaignExistenceService campaignExistenceService;
+    private final GroupExistenceService groupExistenceService;
     private final CacheManager cacheManager;
 
     @Override
-    public Campaign getCampaign(String campaignId) {
-        return campaignRepository.findCampaign(campaignId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaignId)));
+    public Group getGroup(String groupId) {
+        return groupRepository.findGroup(groupId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Group %s not found", groupId)));
     }
 
     @Override
-    public List<String> getAllCampaignIds() {
-        return campaignRepository.getAllCampaignIds();
+    public List<String> getAllGroupIds() {
+        return groupRepository.getAllGroupIds();
     }
 
-    public List<CampaignSummary> getAllCampaigns() {
-        return campaignRepository.getAllWithQuestionnaireIds();
+    public List<GroupSummary> getAllGroups() {
+        return groupRepository.getAllWithQuestionnaireIds();
     }
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = CacheName.CAMPAIGN_EXIST, key = "#campaignId"),
+            @CacheEvict(value = CacheName.GROUP_EXIST, key = "#groupId"),
             @CacheEvict(value = CacheName.INTERROGATION_EXIST, allEntries = true),
             @CacheEvict(value = CacheName.INTERROGATION_SUMMARY, allEntries = true)
     })
     @Override
-    public void delete(String campaignId, boolean deleteInterrogations) {
+    public void delete(String groupId, boolean deleteInterrogations) {
         if(deleteInterrogations) {
-            log.info("Deleting interrogations for campaign {}", campaignId);
-            interrogationRepository.deleteInterrogations(campaignId);
+            log.info("Deleting interrogations for group {}", groupId);
+            interrogationRepository.deleteInterrogations(groupId);
         } else {
-            if (interrogationRepository.existsByCampaignId(campaignId)) {
-                log.info("Checking existence of interrogations for campaign {}", campaignId);
-                throw new CampaignDeletionException(
-                        String.format("Cannot delete campaign %s because interrogations still exist", campaignId)
+            if (interrogationRepository.existsByGroupId(groupId)) {
+                log.info("Checking existence of interrogations for group {}", groupId);
+                throw new GroupDeletionException(
+                        String.format("Cannot delete group %s because interrogations still exist", groupId)
                 );
             }
         }
 
-        CampaignSummary campaignSummary = campaignRepository.
-                findWithQuestionnaireIds(campaignId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaignId)));
+        GroupSummary groupSummary = groupRepository.
+                findWithQuestionnaireIds(groupId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Group %s not found", groupId)));
 
-        Set<String> questionnaireIds = campaignSummary.getQuestionnaireIds();
+        Set<String> questionnaireIds = groupSummary.getQuestionnaireIds();
 
         if (questionnaireIds != null && !questionnaireIds.isEmpty()) {
             questionnaireIds.forEach(id -> {
@@ -81,39 +81,39 @@ public class CampaignApiService implements CampaignService {
                 Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
                         .evict(id);
             });
-            questionnaireModelRepository.deleteAllFromCampaign(campaignId);
+            questionnaireModelRepository.deleteAllFromGroup(groupId);
         }
-        campaignRepository.delete(campaignId);
+        groupRepository.delete(groupId);
     }
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = CacheName.CAMPAIGN_EXIST, key = "#campaign.id")
+            @CacheEvict(value = CacheName.GROUP_EXIST, key = "#group.id")
     })
     @Override
-    public void createCampaign(Campaign campaign) {
-        String campaignId = campaign.getId();
-        campaignExistenceService.throwExceptionIfCampaignAlreadyExist(campaignId);
-        throwExceptionIfInvalidQuestionnairesBeforeSave(campaign.getId(), campaign.getQuestionnaireIds());
-        campaignRepository.create(campaign);
+    public void createGroup(Group group) {
+        String groupId = group.getId();
+        groupExistenceService.throwExceptionIfGroupAlreadyExist(groupId);
+        throwExceptionIfInvalidQuestionnairesBeforeSave(group.getId(), group.getQuestionnaireIds());
+        groupRepository.create(group);
     }
 
     @Caching(evict = {
             @CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, allEntries = true),
     })
     @Override
-    public void updateCampaign(Campaign campaign) {
-        String campaignId = campaign.getId();
-        campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-        throwExceptionIfInvalidQuestionnairesBeforeSave(campaignId, campaign.getQuestionnaireIds());
-        campaignRepository.update(campaign);
+    public void updateGroup(Group group) {
+        String groupId = group.getId();
+        groupExistenceService.throwExceptionIfGroupNotExist(groupId);
+        throwExceptionIfInvalidQuestionnairesBeforeSave(groupId, group.getQuestionnaireIds());
+        groupRepository.update(group);
     }
 
-    private void throwExceptionIfInvalidQuestionnairesBeforeSave(String campaignId, Set<String> questionnaireIds) {
-        Long nbValidQuestionnaires = questionnaireModelRepository.countValidQuestionnaires(campaignId, questionnaireIds);
+    private void throwExceptionIfInvalidQuestionnairesBeforeSave(String groupId, Set<String> questionnaireIds) {
+        Long nbValidQuestionnaires = questionnaireModelRepository.countValidQuestionnaires(groupId, questionnaireIds);
         if (questionnaireIds.size() != nbValidQuestionnaires) {
             throw new QuestionnaireInvalidException(
-                    String.format("One or more questionnaires do not exist for campaign %s or are already linked with another campaign. Creation aborted.", campaignId));
+                    String.format("One or more questionnaires do not exist for group %s or are already linked with another group. Creation aborted.", groupId));
         }
     }
 }

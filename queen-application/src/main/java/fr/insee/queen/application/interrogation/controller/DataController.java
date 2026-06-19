@@ -83,31 +83,31 @@ public class DataController {
     }
 
     /**
-     * Clean all data from interrogations of a campaign with extracted state
+     * Clean all data from interrogations of a group with extracted state
      *
-     * @param campaignId the campaign id
+     * @param groupId the group id
      */
     @Operation(summary = "Clean all data from interrogations of a group with extracted state")
     @DeleteMapping("/admin/${application.group.path-singular}/{id}/interrogations/data/extracted")
     @PreAuthorize("hasRole('WEBCLIENT')")
-    public void cleanData(@IdValid @PathVariable(value = "id") String campaignId,
+    public void cleanData(@IdValid @PathVariable(value = "id") String groupId,
                           @NotNull @RequestParam("start") Long startTimestamp,
                           @NotNull @RequestParam("end") Long endTimestamp) {
-        dataService.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+        dataService.cleanExtractedData(groupId, startTimestamp, endTimestamp);
     }
 
     /**
-     * Clean data from extracted interrogations of a campaign, restricted to the provided ids
+     * Clean data from extracted interrogations of a group, restricted to the provided ids
      *
-     * @param campaignId        the campaign id
+     * @param groupId        the group id
      * @param interrogationIds  the interrogation ids to clean
      */
     @Operation(summary = "Clean data from extracted interrogations of a group, filtered by ids")
     @PostMapping("/admin/${application.group.path-singular}/{id}/interrogations/data/extracted/clean")
     @PreAuthorize("hasRole('WEBCLIENT')")
     public void cleanExtractedDataByIds(
-            @IdValid @PathVariable(value = "id") String campaignId,
+            @IdValid @PathVariable(value = "id") String groupId,
             @NotEmpty @RequestBody List<String> interrogationIds) {
-        dataService.cleanExtractedDataByIds(campaignId, interrogationIds);
+        dataService.cleanExtractedDataByIds(groupId, interrogationIds);
     }
 }

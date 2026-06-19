@@ -7,7 +7,7 @@
     
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 
-    <xsl:param name="campaignLabel"/>
+    <xsl:param name="groupLabel"/>
     <xsl:param name="date"/>
     <xsl:param name="unite"/>
     <xsl:param name="surveyUnit"/>
@@ -71,7 +71,7 @@
                         height="7mm">
                         <fo:block font-family="Liberation Sans" font-size="16pt" font-weight="bold"
                             text-align="center">
-                            <xsl:value-of select="$campaignLabel"/>
+                            <xsl:value-of select="$groupLabel"/>
                         </fo:block>
                     </fo:block-container>
                     

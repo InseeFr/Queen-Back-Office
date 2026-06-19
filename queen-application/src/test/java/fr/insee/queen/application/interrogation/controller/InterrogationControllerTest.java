@@ -1,8 +1,6 @@
 package fr.insee.queen.application.interrogation.controller;
 
-import tools.jackson.databind.node.JsonNodeFactory;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationBySurveyUnitDto;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationBySurveyUnitResponse;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
 import fr.insee.queen.application.interrogation.controller.dummy.MetadataFakeConverter;
 import fr.insee.queen.application.interrogation.dto.input.*;
@@ -85,22 +83,22 @@ class InterrogationControllerTest {
     @DisplayName("Should return interrogations by survey-unit")
     void testGetInterrogationsBySurveyUnitId() {
         // when
-        List<InterrogationBySurveyUnitDto> interrogations = interrogationController.getInterrogationsBySurveyUnit("survey-unit-id1");
+        List<InterrogationBySurveyUnitResponse> interrogations = interrogationController.getInterrogationsBySurveyUnit("survey-unit-id1");
 
         // then
         assertThat(interrogations).isNotNull()
                 .hasSize(1);
-        InterrogationBySurveyUnitDto interrogation = interrogations.getFirst();
+        InterrogationBySurveyUnitResponse interrogation = interrogations.getFirst();
         assertThat(interrogation).isNotNull();
         assertThat(interrogation.interrogationId()).isEqualTo(InterrogationFakeService.INTERROGATION1_ID);
-        assertThat(interrogation.campaignId()).isEqualTo("campaign-id");
+        assertThat(interrogation.groupId()).isEqualTo("group-id");
     }
 
     @Test
     @DisplayName("Should return empty list  if survey-unit unknown")
     void testGetInterrogationsBySurveyUnitId2() {
         // when
-        List<InterrogationBySurveyUnitDto> interrogations = interrogationController.getInterrogationsBySurveyUnit("survey-unit-unknown");
+        List<InterrogationBySurveyUnitResponse> interrogations = interrogationController.getInterrogationsBySurveyUnit("survey-unit-unknown");
 
         // then
         assertThat(interrogations).isNotNull()

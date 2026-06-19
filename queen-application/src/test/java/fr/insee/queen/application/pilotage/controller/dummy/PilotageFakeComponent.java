@@ -2,8 +2,8 @@ package fr.insee.queen.application.pilotage.controller.dummy;
 
 import tools.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.group.model.GroupSummary;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
@@ -19,13 +19,13 @@ public class PilotageFakeComponent implements PilotageComponent {
     @Getter
     private boolean checked = false;
     @Setter
-    private boolean isCampaignClosed = true;
+    private boolean isGroupClosed = true;
     @Getter
-    private boolean wentThroughInterviewerCampaigns = false;
+    private boolean wentThroughInterviewerGroups = false;
     @Setter
     private boolean hasEmptyInterrogations = false;
 
-    public static final String CAMPAIGN1_ID = "interviewerCampaign1";
+    public static final String GROUP1_ID = "interviewerGroup1";
     public static final String INTERROGATION1_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
     public static final String INTERROGATION2_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa02";
 
@@ -35,28 +35,28 @@ public class PilotageFakeComponent implements PilotageComponent {
     }
 
     @Override
-    public boolean isClosed(String campaignId) {
-        return this.isCampaignClosed;
+    public boolean isClosed(String groupId) {
+        return this.isGroupClosed;
     }
 
     @Override
-    public List<InterrogationSummary> getInterrogationsByCampaign(String campaignId) {
+    public List<InterrogationSummary> getInterrogations(String groupId) {
         if (this.hasEmptyInterrogations) {
             return new ArrayList<>();
         }
-        CampaignSummary campaignSummary = new CampaignSummary("campaign-id", "label");
+        GroupSummary groupSummary = new GroupSummary("group-id", "label");
         return List.of(
-                new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id1", "questionnaire-id", campaignSummary),
-                new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id2", "questionnaire-id", campaignSummary)
+                new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id1", "questionnaire-id", groupSummary),
+                new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id2", "questionnaire-id", groupSummary)
         );
     }
 
     @Override
-    public List<PilotageCampaign> getInterviewerCampaigns() {
-        wentThroughInterviewerCampaigns = true;
+    public List<PilotageGroup> getInterviewerGroups() {
+        wentThroughInterviewerGroups = true;
         return List.of(
-                new PilotageCampaign(CAMPAIGN1_ID, new ArrayList<>()),
-                new PilotageCampaign("interviewerCampaign2", new ArrayList<>())
+                new PilotageGroup(GROUP1_ID, new ArrayList<>()),
+                new PilotageGroup("interviewerGroup2", new ArrayList<>())
         );
     }
 
@@ -66,12 +66,12 @@ public class PilotageFakeComponent implements PilotageComponent {
             return new ArrayList<>();
         }
         return List.of(
-                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "campaign-id", "questionnaire-id",
+                new Interrogation(INTERROGATION1_ID, "survey-unit-id1", "group-id", "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(),
                         JsonNodeFactory.instance.objectNode(),
                         new StateData(StateDataType.INIT, 0L, "2#3"),
                         null),
-                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "campaign-id", "questionnaire-id",
+                new Interrogation(INTERROGATION2_ID, "survey-unit-id2", "group-id", "questionnaire-id",
                         JsonNodeFactory.instance.arrayNode(),
                         JsonNodeFactory.instance.objectNode(),
                         new StateData(StateDataType.INIT, 0L, "2#3"),

@@ -1,7 +1,7 @@
-package fr.insee.queen.domain.campaign.service.exception;
+package fr.insee.queen.domain.group.service.exception;
 
-public class CampaignDeletionException extends RuntimeException {
-    public CampaignDeletionException(String message) {
+public class GroupDeletionException extends RuntimeException {
+    public GroupDeletionException(String message) {
         super(message);
     }
 }

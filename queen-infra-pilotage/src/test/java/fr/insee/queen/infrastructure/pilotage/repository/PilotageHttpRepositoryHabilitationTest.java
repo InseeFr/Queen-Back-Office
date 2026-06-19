@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.pilotage.repository;
 
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.group.model.GroupSummary;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import fr.insee.queen.domain.pilotage.model.CollectionEnvironmentEnum;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
@@ -28,18 +28,18 @@ class PilotageHttpRepositoryHabilitationTest {
     private final String pilotageUrl = "http://www.pilotage.com";
     private final String alternativeHabilitationServiceURL = "http://www.pilotage-alternative.com";
     private MockRestServiceServer mockServer;
-    private final String campaignId = "campaign-id";
+    private final String groupId = "group-id";
 
     @BeforeEach
     void init() {
         RestTemplate restTemplate = new RestTemplate();
         mockServer = MockRestServiceServer.createServer(restTemplate);
-        String campaignIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
+        String groupIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
 
         pilotageRepository = new PilotageHttpRepository(
                 pilotageUrl,
                 alternativeHabilitationServiceURL,
-                campaignIdRegexWithAlternativeHabilitationService,
+                groupIdRegexWithAlternativeHabilitationService,
                 restTemplate,
                 CollectionEnvironmentEnum.WEB
         );
@@ -52,7 +52,7 @@ class PilotageHttpRepositoryHabilitationTest {
         String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
         String idep = "idep";
         PilotageRole role = PilotageRole.INTERVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary(campaignId, "label"));
+        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new GroupSummary(groupId, "label"));
 
         String habilitationResponse = "{ \"habilitated\": \"" + status + "\" }";
         mockServer.expect(request ->
@@ -77,17 +77,17 @@ class PilotageHttpRepositoryHabilitationTest {
     @Test
     void testHabilitation02() {
         String interrogationId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01";
-        String matchedRegexCampaignId = "EDT-campaign-id";
+        String matchedRegexGroupId = "EDT-group-id";
         String idep = "idep";
         PilotageRole role = PilotageRole.REVIEWER;
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "q-id", new CampaignSummary(matchedRegexCampaignId, "label"));
+        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "q-id", new GroupSummary(matchedRegexGroupId, "label"));
 
         mockServer.expect(request ->
                         assertThat(alternativeHabilitationServiceURL)
                                 .isEqualTo(request.getURI().getScheme() + "://" + request.getURI().getHost() + request.getURI().getPath()))
                 .andExpect(queryParam("id", interrogationId))
                 .andExpect(queryParam("role", role.getExpectedRole()))
-                .andExpect(queryParam("campaign", matchedRegexCampaignId))
+                .andExpect(queryParam("campaign", matchedRegexGroupId))
                 .andExpect(queryParam("idep", idep))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -102,7 +102,7 @@ class PilotageHttpRepositoryHabilitationTest {
     @Test
     void testHabilitation03() {
         String interrogationId = "id-1";
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "q-id", new CampaignSummary(campaignId, "label"));
+        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "q-id", new GroupSummary(groupId, "label"));
 
         mockServer.expect(anything())
                 .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON));
@@ -114,7 +114,7 @@ class PilotageHttpRepositoryHabilitationTest {
     @DisplayName("On checking habilitation, when http response status is unauthorized, habilitation is false")
     @Test
     void testHabilitation04() {
-        InterrogationSummary interrogation = new InterrogationSummary("id-1", "su-id", "q-id", new CampaignSummary(campaignId, "label"));
+        InterrogationSummary interrogation = new InterrogationSummary("id-1", "su-id", "q-id", new GroupSummary(groupId, "label"));
 
         mockServer.expect(anything())
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON));
@@ -127,7 +127,7 @@ class PilotageHttpRepositoryHabilitationTest {
     @DisplayName("On checking habilitation, when http response status is error, throw exception")
     @Test
     void testHabilitation05() {
-        InterrogationSummary interrogation = new InterrogationSummary("id-1", "su-id", "q-id", new CampaignSummary(campaignId, "label"));
+        InterrogationSummary interrogation = new InterrogationSummary("id-1", "su-id", "q-id", new GroupSummary(groupId, "label"));
 
         mockServer.expect(anything())
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));

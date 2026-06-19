@@ -23,10 +23,10 @@ public record InterrogationAsyncInput(
         @NotNull
         UUID correlationId) {
 
-    public static Interrogation toModel(InterrogationAsyncInput interrogation, String campaignId) {
+    public static Interrogation toModel(InterrogationAsyncInput interrogation, String groupId) {
         return new Interrogation(interrogation.id,
                 interrogation.surveyUnitId(),
-                campaignId,
+                groupId,
                 interrogation.questionnaireId(),
                 interrogation.personalization(),
                 interrogation.data(),

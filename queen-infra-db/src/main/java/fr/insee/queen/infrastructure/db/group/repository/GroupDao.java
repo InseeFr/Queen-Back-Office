@@ -1,16 +1,16 @@
-package fr.insee.queen.infrastructure.db.campaign.repository;
+package fr.insee.queen.infrastructure.db.group.repository;
 
+import fr.insee.queen.domain.group.gateway.GroupRepository;
+import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.GroupSummary;
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.gateway.CampaignRepository;
-import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
-import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
-import fr.insee.queen.infrastructure.db.campaign.entity.CampaignSummaryRow;
-import fr.insee.queen.infrastructure.db.campaign.entity.MetadataDB;
-import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
-import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
-import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireModelJpaRepository;
+import fr.insee.queen.infrastructure.db.group.entity.GroupDB;
+import fr.insee.queen.infrastructure.db.group.entity.GroupSummaryRow;
+import fr.insee.queen.infrastructure.db.group.entity.MetadataDB;
+import fr.insee.queen.infrastructure.db.group.entity.QuestionnaireModelDB;
+import fr.insee.queen.infrastructure.db.group.repository.jpa.GroupJpaRepository;
+import fr.insee.queen.infrastructure.db.group.repository.jpa.QuestionnaireModelJpaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,27 +20,27 @@ import java.util.stream.Collectors;
 
 @Repository
 @AllArgsConstructor
-public class CampaignDao implements CampaignRepository {
+public class GroupDao implements GroupRepository {
 
-    private final CampaignJpaRepository jpaRepository;
+    private final GroupJpaRepository jpaRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelJpaRepository;
 
     @Override
-    public Optional<Campaign> findCampaign(String campaignId) {
-        Optional<CampaignDB> campaignOpt = jpaRepository.findById(campaignId);
-        if (campaignOpt.isEmpty()) {
+    public Optional<Group> findGroup(String groupId) {
+        Optional<GroupDB> groupOpt = jpaRepository.findById(groupId);
+        if (groupOpt.isEmpty()) {
             return Optional.empty();
         }
         ObjectNode metadata = null;
-        CampaignDB campaign = campaignOpt.get();
-        if(campaign.getMetadata() != null) {
-            metadata = campaign.getMetadata().getValue();
+        GroupDB group = groupOpt.get();
+        if(group.getMetadata() != null) {
+            metadata = group.getMetadata().getValue();
         }
 
-        return Optional.of(new Campaign(
-                campaign.getId(),
-                campaign.getLabel(),
-                campaign.getQuestionnaireModels()
+        return Optional.of(new Group(
+                group.getId(),
+                group.getLabel(),
+                group.getQuestionnaireModels()
                         .stream()
                         .map(QuestionnaireModelDB::getId)
                         .collect(Collectors.toSet()),
@@ -50,38 +50,38 @@ public class CampaignDao implements CampaignRepository {
 
     @Override
     @Transactional
-    public void create(Campaign campaign) {
-        Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.getQuestionnaireIds());
-        CampaignDB campaignDB = new CampaignDB(campaign.getId(), campaign.getLabel(), questionnaireModels);
+    public void create(Group group) {
+        Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(group.getQuestionnaireIds());
+        GroupDB groupDB = new GroupDB(group.getId(), group.getLabel(), questionnaireModels);
         questionnaireModels.parallelStream()
-                .forEach(questionnaireModel -> questionnaireModel.setCampaign(campaignDB));
+                .forEach(questionnaireModel -> questionnaireModel.setGroup(groupDB));
 
-        ObjectNode metadataValue = campaign.getMetadata();
+        ObjectNode metadataValue = group.getMetadata();
         if (metadataValue != null) {
-            MetadataDB m = new MetadataDB(metadataValue, campaignDB);
-            campaignDB.setMetadata(m);
+            MetadataDB m = new MetadataDB(metadataValue, groupDB);
+            groupDB.setMetadata(m);
         }
-        jpaRepository.save(campaignDB);
+        jpaRepository.save(groupDB);
     }
 
     @Override
-    public boolean exists(String campaignId) {
-        return jpaRepository.existsById(campaignId);
+    public boolean exists(String groupId) {
+        return jpaRepository.existsById(groupId);
     }
 
     @Override
-    public List<CampaignSummary> getAllWithQuestionnaireIds() {
-        return jpaRepository.findAllCampaignSummaryRows().stream()
+    public List<GroupSummary> getAllWithQuestionnaireIds() {
+        return jpaRepository.findAllGroupSummaryRows().stream()
                 .collect(Collectors.groupingBy(
-                        CampaignSummaryRow::campaignId,
+                        GroupSummaryRow::groupId,
                         Collectors.collectingAndThen(Collectors.toList(), rows -> {
-                            CampaignSummaryRow first = rows.getFirst();
+                            GroupSummaryRow first = rows.getFirst();
                             Set<String> questionnaireIds = rows.stream()
-                                    .map(CampaignSummaryRow::questionnaireId)
+                                    .map(GroupSummaryRow::questionnaireId)
                                     .filter(Objects::nonNull) // éviter les null si pas de questionnaire
                                     .collect(Collectors.toSet());
-                            return new CampaignSummary(
-                                    first.campaignId(),
+                            return new GroupSummary(
+                                    first.groupId(),
                                     first.label(),
                                     questionnaireIds
                             );
@@ -95,21 +95,21 @@ public class CampaignDao implements CampaignRepository {
 
 
     @Override
-    public void delete(String campaignId) {
-        jpaRepository.deleteById(campaignId);
+    public void delete(String groupId) {
+        jpaRepository.deleteById(groupId);
     }
 
     @Override
-    public Optional<CampaignSummary> findWithQuestionnaireIds(String campaignId) {
-        Optional<CampaignDB> campaignOpt = jpaRepository.findById(campaignId);
-        if (campaignOpt.isEmpty()) {
+    public Optional<GroupSummary> findWithQuestionnaireIds(String groupId) {
+        Optional<GroupDB> groupOpt = jpaRepository.findById(groupId);
+        if (groupOpt.isEmpty()) {
             return Optional.empty();
         }
-        CampaignDB campaign = campaignOpt.get();
-        return Optional.of(new CampaignSummary(
-                campaign.getId(),
-                campaign.getLabel(),
-                campaign.getQuestionnaireModels()
+        GroupDB group = groupOpt.get();
+        return Optional.of(new GroupSummary(
+                group.getId(),
+                group.getLabel(),
+                group.getQuestionnaireModels()
                         .stream()
                         .map(QuestionnaireModelDB::getId)
                         .collect(Collectors.toSet()))
@@ -118,28 +118,28 @@ public class CampaignDao implements CampaignRepository {
 
     @Override
     @Transactional
-    public void update(Campaign campaign) {
-        CampaignDB campaignDB = jpaRepository.findById(campaign.getId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Campaign %s not found", campaign.getId())));
-        campaignDB.setLabel(campaign.getLabel());
+    public void update(Group group) {
+        GroupDB groupDB = jpaRepository.findById(group.getId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Group %s not found", group.getId())));
+        groupDB.setLabel(group.getLabel());
 
-        ObjectNode metadataValue = campaign.getMetadata();
-        MetadataDB metadata = campaignDB.getMetadata();
+        ObjectNode metadataValue = group.getMetadata();
+        MetadataDB metadata = groupDB.getMetadata();
         if (metadata == null) {
-            metadata = new MetadataDB(metadataValue, campaignDB);
-            campaignDB.setMetadata(metadata);
+            metadata = new MetadataDB(metadataValue, groupDB);
+            groupDB.setMetadata(metadata);
         } else {
             metadata.setValue(metadataValue);
         }
-        campaignDB.getQuestionnaireModels().clear();
-        Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(campaign.getQuestionnaireIds());
-        campaignDB.setQuestionnaireModels(questionnaireModels);
-        jpaRepository.save(campaignDB);
+        groupDB.getQuestionnaireModels().clear();
+        Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(group.getQuestionnaireIds());
+        groupDB.setQuestionnaireModels(questionnaireModels);
+        jpaRepository.save(groupDB);
     }
 
     @Override
-    public Optional<ObjectNode> findMetadataByCampaignId(String campaignId) {
-        return jpaRepository.findMetadataByCampaignId(campaignId);
+    public Optional<ObjectNode> findMetadataByGroupId(String groupId) {
+        return jpaRepository.findMetadataByGroupId(groupId);
     }
 
     @Override
@@ -148,7 +148,7 @@ public class CampaignDao implements CampaignRepository {
     }
 
     @Override
-    public List<String> getAllCampaignIds() {
-        return jpaRepository.findAllCampaignIds();
+    public List<String> getAllGroupIds() {
+        return jpaRepository.findAllGroupIds();
     }
 }

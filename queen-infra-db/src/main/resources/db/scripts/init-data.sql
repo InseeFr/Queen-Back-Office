@@ -3,15 +3,15 @@
 --
 -- TOC entry 3402 (class 0 OID 16416)
 -- Dependencies: 215
--- Data for Name: campaign; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: survey_group; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 TRUNCATE TABLE interrogation_temp_zone, state_data, paradata_event,
     data, personalization, interrogation,
     required_nomenclature, questionnaire_model, nomenclature,
-    metadata, campaign;
+    metadata, survey_group;
 
-INSERT INTO campaign(id, label) VALUES
+INSERT INTO survey_group(id, label) VALUES
   ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020'),
   ('VQS2021X00', 'Everyday life and health survey 2021'),
   ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web'),
@@ -23,7 +23,7 @@ INSERT INTO campaign(id, label) VALUES
 -- Data for Name: metadata; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO metadata(id, value, campaign_id) VALUES 
+INSERT INTO metadata(id, value, survey_group_id) VALUES
   ('6ce93fc8-1abd-4da3-b251-805943948954', '{}', 'SIMPSONS2020X00'),
   ('0fb58fa2-e26a-4a68-9ca7-6ec63bb2fb71', '{}', 'VQS2021X00'),
   ('09a6cf03-2998-4451-9cc0-522b7c7f423a', '{  "logos": [{"url": "https://insee.fr/logo1.png","label": "logo1"},{"url":"https://insee.fr/logo2.png","label":"logo2"},{"url":"https://insee.fr/logo3.png","label":"logo3"}],"variables": [{"name": "Enq_LibelleEnquete", "value": "Enquête logement pour la recette technique"}, {"name": "Enq_ObjectifsCourts", "value": "Cette enquête permet de connaître votre logement mais surtout nos applis"}, {"name": "Enq_CaractereObligatoire", "value": true}, {"name": "Enq_NumeroVisa", "value": "2021A054EC"}, {"name": "Enq_MinistereTutelle", "value": "de l''Économie, des Finances et de la Relance"}, {"name": "Enq_ParutionJo", "value": true}, {"name": "Enq_DateParutionJo", "value": "23/11/2020"}, {"name": "Enq_RespOperationnel", "value": "L’Institut national de la statistique et des études économiques (Insee)"}, {"name": "Enq_RespTraitement", "value": "l''Insee"}, {"name": "Enq_AnneeVisa", "value": "2021"}, {"name": "Loi_statistique", "value": "https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000888573"}, {"name": "Loi_rgpd", "value": "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32016R0679"}, {"name": "Loi_informatique", "value": "https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000886460"}], "inseeContext": "household"}', 'LOG2021X11Web'),
@@ -48,7 +48,7 @@ INSERT INTO nomenclature(id, label, value) VALUES
 -- Data for Name: questionnaire_model; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO questionnaire_model(id, label, value, campaign_id) VALUES
+INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES
   ('QmWithoutCamp', 'Questionnaire with no campaign', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', NULL),
   ('simpsons', 'Questionnaire about the Simpsons tv show', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'SIMPSONS2020X00'),
   ('simpsonsV2', 'Questionnaire about the Simpsons tv show version 2', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'SIMPSONS2020X00'),
@@ -86,7 +86,7 @@ INSERT INTO required_nomenclature(id_required_nomenclature, code) VALUES
 -- Inserts adaptés avec UUIDv7 explicites pour la table interrogation et mapping sur les autres tables
 
 INSERT INTO interrogation
-(id, survey_unit_id, campaign_id, questionnaire_model_id, correlation_id)
+(id, survey_unit_id, survey_group_id, questionnaire_model_id, correlation_id)
 VALUES
     ('517046b6-bd88-47e0-838e-00d03461f592', 'survey-unit-11',  'SIMPSONS2020X00', 'simpsons',    null),
     ('d98d28c2-1535-4fc8-a405-d6a554231bbc', 'survey-unit-12',  'SIMPSONS2020X00', 'simpsons',    null),

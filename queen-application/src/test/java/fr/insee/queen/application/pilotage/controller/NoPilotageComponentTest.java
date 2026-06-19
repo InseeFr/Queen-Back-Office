@@ -1,9 +1,9 @@
 package fr.insee.queen.application.pilotage.controller;
 
-import fr.insee.queen.application.campaign.service.dummy.CampaignFakeService;
+import fr.insee.queen.application.group.service.dummy.GroupFakeService;
 import fr.insee.queen.application.interrogation.service.dummy.InterrogationFakeService;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.group.model.GroupSummary;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,46 +16,46 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class NoPilotageComponentTest {
     private InterrogationFakeService interrogationService;
-    private CampaignFakeService campaignService;
+    private GroupFakeService groupService;
     private NoPilotageComponent pilotageComponent;
 
     @BeforeEach
     void init() {
         interrogationService = new InterrogationFakeService();
-        campaignService = new CampaignFakeService();
+        groupService = new GroupFakeService();
     }
 
     @Test
     @DisplayName("On check habilitations check interrogation existence")
     void testCheckHabilitations01() {
-        pilotageComponent = new NoPilotageComponent(interrogationService, campaignService);
+        pilotageComponent = new NoPilotageComponent(interrogationService, groupService);
         pilotageComponent.checkHabilitations("11", PilotageRole.INTERVIEWER);
         assertThat(interrogationService.isCheckInterrogationExist()).isTrue();
     }
 
     @Test
-    @DisplayName("When checking if campaign is closed, always return true")
+    @DisplayName("When checking if group is closed, always return true")
     void testIsClosed() {
-        pilotageComponent = new NoPilotageComponent(interrogationService, campaignService);
-        boolean isClosed = pilotageComponent.isClosed("campaign-id");
+        pilotageComponent = new NoPilotageComponent(interrogationService, groupService);
+        boolean isClosed = pilotageComponent.isClosed("group-id");
         assertThat(isClosed).isTrue();
     }
 
     @Test
-    @DisplayName("When retrieving interrogations by campaign, return all interrogations from campaign")
-    void testGetSUByCampaign() {
-        pilotageComponent = new NoPilotageComponent(interrogationService, campaignService);
-        List<InterrogationSummary> interrogations = pilotageComponent.getInterrogationsByCampaign("campaign-id");
+    @DisplayName("When retrieving interrogations by group, return all interrogations from group")
+    void testGetSUByGroup() {
+        pilotageComponent = new NoPilotageComponent(interrogationService, groupService);
+        List<InterrogationSummary> interrogations = pilotageComponent.getInterrogations("group-id");
         assertThat(interrogations).isEqualTo(interrogationService.getInterrogationSummaries());
     }
 
     @Test
-    @DisplayName("When retrieving campaigns for interviewer, return all campaigns")
-    void testGetInterviewerCampaigns() {
-        pilotageComponent = new NoPilotageComponent(interrogationService, campaignService);
-        List<PilotageCampaign> campaignSummaries = pilotageComponent.getInterviewerCampaigns();
-        for(CampaignSummary campaign : CampaignFakeService.CAMPAIGN_SUMMARY_LIST) {
-            assertThat(campaignSummaries).contains(new PilotageCampaign(campaign.getId(), campaign.getQuestionnaireIds().stream().toList()));
+    @DisplayName("When retrieving groups for interviewer, return all groups")
+    void testGetInterviewerGroups() {
+        pilotageComponent = new NoPilotageComponent(interrogationService, groupService);
+        List<PilotageGroup> groupSummaries = pilotageComponent.getInterviewerGroups();
+        for(GroupSummary group : GroupFakeService.GROUP_SUMMARY_LIST) {
+            assertThat(groupSummaries).contains(new PilotageGroup(group.getId(), group.getQuestionnaireIds().stream().toList()));
         }
 
     }

@@ -1,9 +1,9 @@
-package fr.insee.queen.domain.campaign.service.exception;
+package fr.insee.queen.domain.group.service.exception;
 
-public class CampaignNotLinkedToQuestionnaireException extends RuntimeException {
-    public static final String MESSAGE = "Questionnaire %s is not linked to campaign %s";
+public class GroupNotLinkedToQuestionnaireException extends RuntimeException {
+    public static final String MESSAGE = "Questionnaire %s is not linked to group %s";
 
-    public CampaignNotLinkedToQuestionnaireException(String campaignId, String questionnaireId) {
-        super(String.format(MESSAGE, questionnaireId, campaignId));
+    public GroupNotLinkedToQuestionnaireException(String groupId, String questionnaireId) {
+        super(String.format(MESSAGE, questionnaireId, groupId));
     }
 }

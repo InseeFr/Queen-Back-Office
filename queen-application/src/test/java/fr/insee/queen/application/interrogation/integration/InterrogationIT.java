@@ -56,7 +56,7 @@ class InterrogationIT {
                 "id":"517046b6-bd88-47e0-838e-00d03461f592",
                 "surveyUnitId":"survey-unit-11",
                 "questionnaireId":"simpsons",
-                "campaignId":"SIMPSONS2020X00",
+                "groupId":"SIMPSONS2020X00",
                 "stateData":{
                     "state":"EXTRACTED",
                     "date":1111111111,
@@ -82,7 +82,7 @@ class InterrogationIT {
     }
 
     @Test
-    void on_get_interrogations_by_campaign_when_campaign_not_exist_return_404() throws Exception {
+    void on_get_interrogations_by_group_when_group_not_exist_return_404() throws Exception {
         mockMvc.perform(get("/api/campaign/not-exist/interrogations")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
@@ -91,7 +91,7 @@ class InterrogationIT {
     }
 
     @Test
-    void on_get_interrogations_by_campaign_when_campaign_identifier_invalid_return_400() throws Exception {
+    void on_get_interrogations_by_group_when_group_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(get("/api/campaign/invalid!identifier/interrogations")
                         .accept(MediaType.APPLICATION_JSON)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
@@ -100,7 +100,7 @@ class InterrogationIT {
     }
 
     @Test
-    void on_create_interrogation_when_campaign_not_exist_return_404() throws Exception {
+    void on_create_interrogation_when_group_not_exist_return_404() throws Exception {
         mockMvc.perform(post("/api/campaign/not-exist/interrogation")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +111,7 @@ class InterrogationIT {
     }
 
     @Test
-    void on_create_interrogation_when_campaign_not_linked_to_questionnaire_return_400() throws Exception {
+    void on_create_interrogation_when_group_not_linked_to_questionnaire_return_400() throws Exception {
         String suData = """
                 {
                     "id":"test-interrogation2",
@@ -129,7 +129,7 @@ class InterrogationIT {
     }
 
     @Test
-    void on_create_interrogation_when_campaign_identifier_invalid_return_400() throws Exception {
+    void on_create_interrogation_when_group_identifier_invalid_return_400() throws Exception {
         mockMvc.perform(post("/api/campaign/invalid!identifier/interrogation")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -287,7 +287,7 @@ class InterrogationIT {
         String expectedFirstResult = """
         {
                 "interrogationId":"517046b6-bd88-47e0-838e-00d03461f592",
-                "campaignId":"SIMPSONS2020X00"
+                "groupId":"SIMPSONS2020X00"
         }""";
         mockMvc.perform(get("/api/survey-units/survey-unit-11/interrogations")
                         .accept(MediaType.APPLICATION_JSON)

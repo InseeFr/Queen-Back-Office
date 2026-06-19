@@ -1,11 +1,11 @@
-package fr.insee.queen.domain.campaign.service;
+package fr.insee.queen.domain.group.service;
 
-public interface CampaignExistenceService {
-    void throwExceptionIfCampaignNotExist(String campaignId);
+public interface GroupExistenceService {
+    void throwExceptionIfGroupNotExist(String groupId);
 
-    void throwExceptionIfCampaignAlreadyExist(String campaignId);
+    void throwExceptionIfGroupAlreadyExist(String groupId);
 
-    void throwExceptionIfCampaignNotLinkedToQuestionnaire(String campaignId, String questionnaireId);
+    void throwExceptionIfGroupNotLinkedToQuestionnaire(String groupId, String questionnaireId);
 
-    boolean existsById(String campaignId);
+    boolean existsById(String groupId);
 }

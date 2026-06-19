@@ -76,32 +76,32 @@ class PilotageApiComponentTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    @DisplayName("On check if campaign closed return result from pilotage service")
+    @DisplayName("On check if group closed return result from pilotage service")
     void testIsClosed(boolean pilotageServiceResult) {
         Authentication authenticatedUser = authenticatedUserTestHelper.getAdminUser();
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
-        pilotageService.setCampaignClosed(pilotageServiceResult);
+        pilotageService.setGroupClosed(pilotageServiceResult);
         pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
-        boolean isCampaignClosed = pilotageComponent.isClosed("écampaign-id");
-        assertThat(isCampaignClosed).isEqualTo(pilotageServiceResult);
+        boolean isGroupClosed = pilotageComponent.isClosed("égroup-id");
+        assertThat(isGroupClosed).isEqualTo(pilotageServiceResult);
     }
 
     @Test
-    @DisplayName("On retrieving interrogations by campaign for current user, return interrogations")
-    void testSuByCampaign() {
+    @DisplayName("On retrieving interrogations by group for current user, return interrogations")
+    void testSuByGroup() {
         Authentication authenticatedUser = authenticatedUserTestHelper.getAuthenticatedUser(
                 AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.REVIEWER_ALTERNATIVE, AuthorityRoleEnum.REVIEWER);
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
-        assertThat(pilotageComponent.getInterrogationsByCampaign("campaign-id")).isEqualTo(pilotageService.getInterrogationSummaries());
+        assertThat(pilotageComponent.getInterrogations("group-id")).isEqualTo(pilotageService.getInterrogationSummaries());
     }
 
     @Test
-    @DisplayName("On retrieving campaigns for current interviewer, return campaigns")
-    void testInterviewerCampaigns() {
+    @DisplayName("On retrieving groups for current interviewer, return groups")
+    void testInterviewerGroups() {
         Authentication authenticatedUser = authenticatedUserTestHelper.getManagerUser();
         authHelper = new AuthenticationFakeHelper(authenticatedUser);
         pilotageComponent = new PilotageApiComponent(pilotageService, habilitationService, authHelper, interrogationService);
-        assertThat(pilotageComponent.getInterviewerCampaigns()).isEqualTo(pilotageService.getInterviewerCampaigns());
+        assertThat(pilotageComponent.getInterviewerGroups()).isEqualTo(pilotageService.getInterviewerGroups());
     }
 }

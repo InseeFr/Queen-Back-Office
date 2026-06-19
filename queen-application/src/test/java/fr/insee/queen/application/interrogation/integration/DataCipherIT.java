@@ -160,9 +160,9 @@ class DataCipherIT {
     }
 
     @Test
-    @DisplayName("Given listed ids belonging to another campaign, when cleaning by ids, then data is untouched")
-    void cleanExtractedDataByIds_wrongCampaignUnchanged() throws Exception {
-        dataCommonAssertions.cleanExtractedDataByIds_wrongCampaignUnchanged();
+    @DisplayName("Given listed ids belonging to another group, when cleaning by ids, then data is untouched")
+    void cleanExtractedDataByIds_wrongGroupUnchanged() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_wrongGroupUnchanged();
     }
 
     @Test
@@ -172,9 +172,9 @@ class DataCipherIT {
     }
 
     @Test
-    @DisplayName("Given invalid campaign id, when cleaning by ids, then return 400")
-    void cleanExtractedDataByIds_invalidCampaignId_return400() throws Exception {
-        dataCommonAssertions.cleanExtractedDataByIds_invalidCampaignId_return400();
+    @DisplayName("Given invalid group id, when cleaning by ids, then return 400")
+    void cleanExtractedDataByIds_invalidGroupId_return400() throws Exception {
+        dataCommonAssertions.cleanExtractedDataByIds_invalidGroupId_return400();
     }
 
     @Test

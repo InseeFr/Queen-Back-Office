@@ -1,7 +1,7 @@
 package fr.insee.queen.infrastructure.db.interrogation.entity;
 
-import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
-import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
+import fr.insee.queen.infrastructure.db.group.entity.GroupDB;
+import fr.insee.queen.infrastructure.db.group.entity.QuestionnaireModelDB;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -33,10 +33,11 @@ public class InterrogationDB {
     private String surveyUnitId;
 
     /**
-     * campaign of the interrogation
+     * group of the interrogation
      */
     @ManyToOne
-    private CampaignDB campaign;
+    @JoinColumn(name = "survey_group_id")
+    private GroupDB group;
 
     /**
      * questionnaire model of the interrogation
@@ -57,10 +58,10 @@ public class InterrogationDB {
     @Column(name = "correlation_id")
     private UUID correlationId;
 
-    public InterrogationDB(String id, String surveyUnitId, CampaignDB campaign, QuestionnaireModelDB questionnaireModel, UUID correlationId) {
+    public InterrogationDB(String id, String surveyUnitId, GroupDB group, QuestionnaireModelDB questionnaireModel, UUID correlationId) {
         this.id = id;
         this.surveyUnitId = surveyUnitId;
-        this.campaign = campaign;
+        this.group = group;
         this.questionnaireModel = questionnaireModel;
         this.correlationId = correlationId;
     }

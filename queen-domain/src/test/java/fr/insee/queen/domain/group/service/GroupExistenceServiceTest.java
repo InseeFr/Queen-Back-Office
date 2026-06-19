@@ -1,9 +1,9 @@
-package fr.insee.queen.domain.campaign.service;
+package fr.insee.queen.domain.group.service;
 
-import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuestionnaireException;
+import fr.insee.queen.domain.group.service.exception.GroupNotLinkedToQuestionnaireException;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
-import fr.insee.queen.domain.campaign.infrastructure.dummy.CampaignFakeRepository;
+import fr.insee.queen.domain.group.infrastructure.dummy.GroupFakeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,67 +12,67 @@ import org.springframework.cache.support.NoOpCacheManager;
 
 import static org.assertj.core.api.Assertions.*;
 
-class CampaignExistenceServiceTest {
+class GroupExistenceServiceTest {
 
-    private CampaignExistenceService campaignExistenceService;
-    private CampaignFakeRepository campaignFakeRepository = new CampaignFakeRepository();
+    private GroupExistenceService groupExistenceService;
+    private GroupFakeRepository groupFakeRepository = new GroupFakeRepository();
 
     @BeforeEach
     void init() {
-        campaignFakeRepository = new CampaignFakeRepository();
+        groupFakeRepository = new GroupFakeRepository();
         CacheManager cacheManager = new NoOpCacheManager();
-        campaignExistenceService = new CampaignExistenceApiService(campaignFakeRepository, cacheManager);
+        groupExistenceService = new GroupExistenceApiService(groupFakeRepository, cacheManager);
     }
 
     @Test
-    @DisplayName("When checking campaign existence, if campaign not exists, then throws exception")
-    void test_campaign_existence_01() {
-        campaignFakeRepository.setCampaignExists(false);
-        assertThatThrownBy(() -> campaignExistenceService.throwExceptionIfCampaignNotExist(CampaignFakeRepository.CAMPAIGN_ID))
+    @DisplayName("When checking group existence, if group not exists, then throws exception")
+    void test_group_existence_01() {
+        groupFakeRepository.setGroupExists(false);
+        assertThatThrownBy(() -> groupExistenceService.throwExceptionIfGroupNotExist(GroupFakeRepository.GROUP_ID))
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
-    @DisplayName("When checking campaign existence, if campaign exists, resume")
-    void test_campaign_existence_02() {
-        assertThatCode(() -> campaignExistenceService.throwExceptionIfCampaignNotExist(CampaignFakeRepository.CAMPAIGN_ID))
+    @DisplayName("When checking group existence, if group exists, resume")
+    void test_group_existence_02() {
+        assertThatCode(() -> groupExistenceService.throwExceptionIfGroupNotExist(GroupFakeRepository.GROUP_ID))
                 .doesNotThrowAnyException();
     }
 
     @Test
-    @DisplayName("When checking campaign existence, if campaign already exists, then throws exception")
-    void test_campaign_existence_03() {
-        assertThatThrownBy(() -> campaignExistenceService.throwExceptionIfCampaignAlreadyExist(CampaignFakeRepository.CAMPAIGN_ID))
+    @DisplayName("When checking group existence, if group already exists, then throws exception")
+    void test_group_existence_03() {
+        assertThatThrownBy(() -> groupExistenceService.throwExceptionIfGroupAlreadyExist(GroupFakeRepository.GROUP_ID))
                 .isInstanceOf(EntityAlreadyExistException.class);
     }
 
     @Test
-    @DisplayName("When checking campaign existence, if campaign does not exist, resume")
-    void test_campaign_existence_04() {
-        campaignFakeRepository.setCampaignExists(false);
-        assertThatCode(() -> campaignExistenceService.throwExceptionIfCampaignAlreadyExist(CampaignFakeRepository.CAMPAIGN_ID))
+    @DisplayName("When checking group existence, if group does not exist, resume")
+    void test_group_existence_04() {
+        groupFakeRepository.setGroupExists(false);
+        assertThatCode(() -> groupExistenceService.throwExceptionIfGroupAlreadyExist(GroupFakeRepository.GROUP_ID))
                 .doesNotThrowAnyException();
     }
 
     @Test
-    @DisplayName("When checking link between a campaign and a questionnaire, if campaign does not exist, then throws exception")
-    void test_campaign_existence_05() {
-        campaignFakeRepository.setCampaignExists(false);
-        assertThatThrownBy(() -> campaignExistenceService.throwExceptionIfCampaignNotLinkedToQuestionnaire(CampaignFakeRepository.CAMPAIGN_ID, "id-questionnaire"))
+    @DisplayName("When checking link between a group and a questionnaire, if group does not exist, then throws exception")
+    void test_group_existence_05() {
+        groupFakeRepository.setGroupExists(false);
+        assertThatThrownBy(() -> groupExistenceService.throwExceptionIfGroupNotLinkedToQuestionnaire(GroupFakeRepository.GROUP_ID, "id-questionnaire"))
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
-    @DisplayName("When checking link between a campaign and a questionnaire, if campaign and questionnaire are not linked, then throws exception")
-    void test_campaign_existence_06() {
-        assertThatThrownBy(() -> campaignExistenceService.throwExceptionIfCampaignNotLinkedToQuestionnaire(CampaignFakeRepository.CAMPAIGN_ID, "random-id"))
-                .isInstanceOf(CampaignNotLinkedToQuestionnaireException.class);
+    @DisplayName("When checking link between a group and a questionnaire, if group and questionnaire are not linked, then throws exception")
+    void test_group_existence_06() {
+        assertThatThrownBy(() -> groupExistenceService.throwExceptionIfGroupNotLinkedToQuestionnaire(GroupFakeRepository.GROUP_ID, "random-id"))
+                .isInstanceOf(GroupNotLinkedToQuestionnaireException.class);
     }
 
     @Test
-    @DisplayName("When checking link between a campaign and a questionnaire, if campaign and questionnaire are linked, resume")
-    void test_campaign_existence_07() {
-        assertThatCode(() -> campaignExistenceService.throwExceptionIfCampaignNotLinkedToQuestionnaire(CampaignFakeRepository.CAMPAIGN_ID, CampaignFakeRepository.QUESTIONNAIRE_LINKED_ID))
+    @DisplayName("When checking link between a group and a questionnaire, if group and questionnaire are linked, resume")
+    void test_group_existence_07() {
+        assertThatCode(() -> groupExistenceService.throwExceptionIfGroupNotLinkedToQuestionnaire(GroupFakeRepository.GROUP_ID, GroupFakeRepository.QUESTIONNAIRE_LINKED_ID))
                 .doesNotThrowAnyException();
     }
 }

@@ -4,10 +4,10 @@ import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import fr.insee.queen.domain.interrogation.model.*;
-import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
-import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
-import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
-import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireModelJpaRepository;
+import fr.insee.queen.infrastructure.db.group.entity.GroupDB;
+import fr.insee.queen.infrastructure.db.group.entity.QuestionnaireModelDB;
+import fr.insee.queen.infrastructure.db.group.repository.jpa.GroupJpaRepository;
+import fr.insee.queen.infrastructure.db.group.repository.jpa.QuestionnaireModelJpaRepository;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import org.springframework.transaction.annotation.Transactional;
 import fr.insee.queen.infrastructure.db.interrogation.entity.*;
@@ -33,7 +33,7 @@ public class InterrogationDao implements InterrogationRepository {
     private final InterrogationJpaRepository crudRepository;
     private final PersonalizationJpaRepository personalizationRepository;
     private final DataRepository dataRepository;
-    private final CampaignJpaRepository campaignRepository;
+    private final GroupJpaRepository groupRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final DataFactory dataFactory;
 
@@ -43,8 +43,8 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public List<InterrogationSummary> findAllSummaryByCampaignId(String campaignId) {
-        return crudRepository.findAllSummaryByCampaignId(campaignId);
+    public List<InterrogationSummary> findAllSummaryByGroupId(String groupId) {
+        return crudRepository.findAllSummaryByGroupId(groupId);
     }
 
     @Override
@@ -64,8 +64,8 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public Optional<InterrogationDepositProof> findWithCampaignAndStateById(String interrogationId) {
-        return crudRepository.findWithCampaignAndStateById(interrogationId);
+    public Optional<InterrogationDepositProof> findWithGroupAndStateById(String interrogationId) {
+        return crudRepository.findWithGroupAndStateById(interrogationId);
     }
 
     @Override
@@ -74,11 +74,11 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public List<InterrogationState> findAllByState(String campaignId, StateDataType state) {
+    public List<InterrogationState> findAllByState(String groupId, StateDataType state) {
         if(state == null) {
-            return crudRepository.findAllByCampaignWithoutState(campaignId);
+            return crudRepository.findAllByGroupWithoutState(groupId);
         }
-        return crudRepository.findAllByCampaignAndState(campaignId, state);
+        return crudRepository.findAllByGroupAndState(groupId, state);
     }
 
     @Override
@@ -87,8 +87,8 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public void deleteInterrogations(String campaignId) {
-        crudRepository.deleteInterrogations(campaignId);
+    public void deleteInterrogations(String groupId) {
+        crudRepository.deleteInterrogations(groupId);
     }
 
     @Override
@@ -98,9 +98,9 @@ public class InterrogationDao implements InterrogationRepository {
 
     @Override
     public void create(Interrogation interrogation) {
-        CampaignDB campaign = campaignRepository.getReferenceById(interrogation.campaignId());
+        GroupDB group = groupRepository.getReferenceById(interrogation.groupId());
         QuestionnaireModelDB questionnaire = questionnaireModelRepository.getReferenceById(interrogation.questionnaireId());
-        InterrogationDB interrogationDB = new InterrogationDB(interrogation.id(), interrogation.surveyUnitId(), campaign, questionnaire, interrogation.correlationId());
+        InterrogationDB interrogationDB = new InterrogationDB(interrogation.id(), interrogation.surveyUnitId(), group, questionnaire, interrogation.correlationId());
         DataDB dataDB = dataFactory.buildData(interrogation.data(), interrogationDB);
         if (interrogation.personalization() != null) {
             PersonalizationDB personalizationDB = new PersonalizationDB(interrogation.personalization(), interrogationDB);
@@ -166,7 +166,7 @@ public class InterrogationDao implements InterrogationRepository {
     @Override
     @Transactional
     public void update(Interrogation interrogation) {
-        crudRepository.updateFields(interrogation.id(), interrogation.surveyUnitId(), interrogation.campaignId(), interrogation.questionnaireId());
+        crudRepository.updateFields(interrogation.id(), interrogation.surveyUnitId(), interrogation.groupId(), interrogation.questionnaireId());
         savePersonalization(interrogation.id(), interrogation.personalization());
         saveData(interrogation.id(), interrogation.data());
     }
@@ -186,18 +186,18 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
-        dataRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    public void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp) {
+        dataRepository.cleanExtractedData(groupId, startTimestamp, endTimestamp);
     }
 
     @Override
-    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
-        dataRepository.cleanExtractedDataByIds(campaignId, interrogationIds);
+    public void cleanExtractedDataByIds(String groupId, List<String> interrogationIds) {
+        dataRepository.cleanExtractedDataByIds(groupId, interrogationIds);
     }
 
     @Override
-    public boolean existsByCampaignId(String campaignId) {
-        return crudRepository.existsByCampaignId(campaignId);
+    public boolean existsByGroupId(String groupId) {
+        return crudRepository.existsByGroupId(groupId);
     }
 
 }

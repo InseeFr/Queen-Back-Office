@@ -45,20 +45,20 @@ public interface DataRepository {
     DataDB save(DataDB data);
 
     /**
-     * clean all extracted data for a campaign
+     * clean all extracted data for a group
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @param startTimestamp start timestamp
      * @param endTimestamp end timestamp
      */
-    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
+    void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp);
 
     /**
-     * clean extracted data for a campaign, restricted to the given interrogation ids.
+     * clean extracted data for a group, restricted to the given interrogation ids.
      * Implemented by the JPA adapters (ciphered / unciphered).
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @param interrogationIds interrogation ids to target
      */
-     void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
+     void cleanExtractedDataByIds(String groupId, List<String> interrogationIds);
 }

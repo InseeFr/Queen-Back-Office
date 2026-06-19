@@ -1,7 +1,7 @@
 package fr.insee.queen.domain.interrogation.service.dummy;
 
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.service.MetadataService;
+import fr.insee.queen.domain.group.service.MetadataService;
 import lombok.Setter;
 
 public class MetadataFakeService implements MetadataService {
@@ -10,7 +10,7 @@ public class MetadataFakeService implements MetadataService {
     private ObjectNode metadata;
 
     @Override
-    public ObjectNode getMetadata(String campaignId) {
+    public ObjectNode getMetadata(String groupId) {
         return metadata;
     }
 

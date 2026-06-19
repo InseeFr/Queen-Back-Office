@@ -12,7 +12,7 @@ public class DataFakeService implements DataService {
     private boolean checkUpdateData = false;
 
     @Getter
-    private String cleanedCampaignId;
+    private String cleanedGroupId;
 
     @Getter
     private List<String> cleanedInterrogationIds;
@@ -35,13 +35,13 @@ public class DataFakeService implements DataService {
     }
 
     @Override
-    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+    public void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp) {
         // not used at this moment
     }
 
     @Override
-    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
-        this.cleanedCampaignId = campaignId;
+    public void cleanExtractedDataByIds(String groupId, List<String> interrogationIds) {
+        this.cleanedGroupId = groupId;
         this.cleanedInterrogationIds = interrogationIds;
     }
 }

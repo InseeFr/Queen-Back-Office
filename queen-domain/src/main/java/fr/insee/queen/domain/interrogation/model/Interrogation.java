@@ -9,7 +9,7 @@ import java.util.UUID;
 public record Interrogation(
         String id,
         String surveyUnitId,
-        String campaignId,
+        String groupId,
         String questionnaireId,
         ArrayNode personalization,
         ObjectNode data,

@@ -1,6 +1,6 @@
-package fr.insee.queen.infrastructure.db.campaign.entity;
+package fr.insee.queen.infrastructure.db.group.entity;
 
-public record CampaignSummaryRow(String campaignId, String label,
-                                 String questionnaireId) {
+public record GroupSummaryRow(String groupId, String label,
+                              String questionnaireId) {
 }
 

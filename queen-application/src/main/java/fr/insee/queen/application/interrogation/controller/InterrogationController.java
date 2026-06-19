@@ -1,17 +1,13 @@
 package fr.insee.queen.application.interrogation.controller;
 
-import fr.insee.queen.application.campaign.component.MetadataConverter;
+import fr.insee.queen.application.group.component.MetadataConverter;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationBySurveyUnitDto;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationStateDto;
-import fr.insee.queen.application.interrogation.dto.output.QuestionnaireLinkDto;
+import fr.insee.queen.application.interrogation.dto.output.*;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.application.interrogation.dto.input.StateDataInput;
 import fr.insee.queen.application.interrogation.dto.input.InterrogationCreationInput;
 import fr.insee.queen.application.interrogation.dto.input.InterrogationDataStateDataUpdateInput;
 import fr.insee.queen.application.interrogation.dto.input.InterrogationUpdateInput;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationMetadataDto;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.interrogation.model.*;
@@ -59,20 +55,20 @@ public class InterrogationController {
     /**
      * Retrieve interrogations filtered by state
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @param stateDataType state
      * @return all ids of interrogations
      */
     @Operation(summary = "Retrieve interrogations by state")
     @GetMapping("/admin/${application.group.path-singular}/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public List<InterrogationStateDto> getInterrogationsByState(
-            @IdValid @PathVariable("id") String campaignId,
+    public List<InterrogationStateResponse> getInterrogationsByState(
+            @IdValid @PathVariable("id") String groupId,
             @RequestParam(required = false, name="state") StateDataType stateDataType) {
         return interrogationService
-                .getInterrogations(campaignId, stateDataType)
+                .getInterrogations(groupId, stateDataType)
                 .stream()
-                .map(InterrogationStateDto::fromModel)
+                .map(InterrogationStateResponse::fromModel)
                 .toList();
     }
 
@@ -80,17 +76,17 @@ public class InterrogationController {
      * Retrieve interrogations filtered by survey-unit
      *
      * @param surveyUnitId
-     * @return all {@link InterrogationBySurveyUnitDto}
+     * @return all {@link InterrogationBySurveyUnitResponse}
      */
     @Operation(summary = "Retrieve interrogations by survey-unit")
     @GetMapping("/survey-units/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public List<InterrogationBySurveyUnitDto> getInterrogationsBySurveyUnit(
+    public List<InterrogationBySurveyUnitResponse> getInterrogationsBySurveyUnit(
             @IdValid @PathVariable("id") String surveyUnitId) {
         return interrogationService
                 .findSummariesBySurveyUnitId(surveyUnitId)
                 .stream()
-                .map(InterrogationBySurveyUnitDto::fromModel)
+                .map(InterrogationBySurveyUnitResponse::fromModel)
                 .toList();
     }
 
@@ -142,15 +138,15 @@ public class InterrogationController {
     /**
      * Create or update an interrogation
      *
-     * @param campaignId             campaign id
+     * @param groupId             group id
      * @param interrogationCreationInput interrogation data for creation
      */
     @Operation(summary = "Create/Update an interrogation")
     @PostMapping({"/${application.group.path-singular}/{id}/interrogation", "/${application.group.path-plural}/{id}/interrogation"})
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public ResponseEntity<Void> createUpdateInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
+    public ResponseEntity<Void> createUpdateInterrogation(@IdValid @PathVariable(value = "id") String groupId,
                                                           @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
-        Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, campaignId);
+        Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, groupId);
         if (interrogationService.existsById(interrogationCreationInput.id())) {
             log.info("Update interrogation with id {}", interrogationCreationInput.id());
             interrogationService.updateInterrogation(interrogation);
@@ -166,15 +162,15 @@ public class InterrogationController {
     /**
      * Create or update an interrogation
      *
-     * @param campaignId             campaign id
+     * @param groupId             group id
      * @param interrogationCreationInput interrogation data for creation
      */
     @Operation(summary = "Create an interrogation")
     @PostMapping({"/${application.group.path-plural}/{id}/interrogations/create"})
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public void createInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
+    public void createInterrogation(@IdValid @PathVariable(value = "id") String groupId,
                                                           @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
-        Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, campaignId);
+        Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, groupId);
         log.info("Create interrogation with id {}", interrogationCreationInput.id());
         interrogationService.createInterrogation(interrogation);
         log.debug("Interrogation with id {} created", interrogationCreationInput.id());

@@ -20,19 +20,19 @@ import java.util.UUID;
 @Slf4j
 public class FOGeneration {
     public static final String UNITE = "unite";
-    public static final String TITRE = "campaignLabel";
+    public static final String TITRE = "groupLabel";
     public static final String DATE = "date";
     public static final String SURVEY_UNIT = "surveyUnit";
     private final String tempFolder;
 
-    public File generateFo(String date, String campaignLabel, String userId, String surveyUnitCompositeName) throws IOException {
+    public File generateFo(String date, String groupLabel, String userId, String surveyUnitCompositeName) throws IOException {
         Path tempDirectoryPath = Path.of(tempFolder);
         File outputFile = Files.createTempFile(tempDirectoryPath, UUID.randomUUID().toString(), ".fo").toFile();
         log.info(outputFile.getAbsolutePath());
         try (InputStream inputStream = getInputStreamFromPath("/xsl/empty.xml");
              OutputStream outputStream = new FileOutputStream(outputFile);
              InputStream xsl = getInputStreamFromPath("/xsl/common.xsl")) {
-            xslGenerateFo(inputStream, xsl, outputStream, date, campaignLabel, userId, surveyUnitCompositeName);
+            xslGenerateFo(inputStream, xsl, outputStream, date, groupLabel, userId, surveyUnitCompositeName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new DepositProofException();
@@ -44,7 +44,7 @@ public class FOGeneration {
                                InputStream xslSheet,
                                OutputStream outputStream,
                                String date,
-                               String campaignLabel,
+                               String groupLabel,
                                String userId,
                                String surveyUnitCompositeName) throws TransformerException {
         TransformerFactory tFactory = TransformerFactory.newInstance();
@@ -54,7 +54,7 @@ public class FOGeneration {
         Transformer transformer = tFactory.newTransformer(new StreamSource(xslSheet));
         transformer.setURIResolver(new ClasspathURIResolver());
         transformer.setParameter(UNITE, userId);
-        transformer.setParameter(TITRE, campaignLabel);
+        transformer.setParameter(TITRE, groupLabel);
         transformer.setParameter(DATE, date);
         transformer.setParameter(SURVEY_UNIT, surveyUnitCompositeName);
         transformer.transform(new StreamSource(input), new StreamResult(outputStream));

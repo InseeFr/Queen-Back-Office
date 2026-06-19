@@ -1,20 +1,20 @@
-package fr.insee.queen.domain.campaign.service;
+package fr.insee.queen.domain.group.service;
 
-import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.GroupSummary;
 
 import java.util.List;
 
-public interface CampaignService {
-    List<CampaignSummary> getAllCampaigns();
+public interface GroupService {
+    List<GroupSummary> getAllGroups();
 
-    void delete(String campaignId, boolean deleteInterrogations);
+    void delete(String groupId, boolean deleteInterrogations);
 
-    void createCampaign(Campaign campaignData);
+    void createGroup(Group groupData);
 
-    void updateCampaign(Campaign campaignData);
+    void updateGroup(Group groupData);
 
-    Campaign getCampaign(String campaignId);
+    Group getGroup(String groupId);
 
-    List<String> getAllCampaignIds();
+    List<String> getAllGroupIds();
 }
