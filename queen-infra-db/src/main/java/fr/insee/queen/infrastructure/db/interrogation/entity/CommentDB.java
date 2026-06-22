@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.interrogation.entity;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

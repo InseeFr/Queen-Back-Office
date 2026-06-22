@@ -1,12 +1,9 @@
 package fr.insee.queen.jms.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.jms.validation.JsonSchemaValidator;
 import fr.insee.jms.validation.SchemaType;
 import fr.insee.modelefiliere.CommandDto;
@@ -26,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -36,7 +34,7 @@ import static fr.insee.queen.jms.service.utils.PropertyValidator.textValue;
 @Component
 @RequiredArgsConstructor
 public class InterrogationQueueConsumer {
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final InterrogationResponsePublisher replyQueuePublisher;
     private final InterrogationBatchService interrogationBatchService;
 
@@ -47,12 +45,8 @@ public class InterrogationQueueConsumer {
         JMSOutputMessage responseMessage;
         try {
             String jsonString = message.getBody(String.class);
-            // jakarta.jms.JMSException: Invalid JSON: Java 8 date/time type java.time.Instant not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (or disable MapperFeature.REQUIRE_HANDLERS_FOR_JAVA8_TIMES)
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);   // ISO-8601
-            objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
             // ---
-            JsonNode root = objectMapper.readTree(jsonString);
+            JsonNode root = jsonMapper.readTree(jsonString);
 
             replyQueue = textValue(root, "replyTo");
             correlationId = textValue(root, "correlationID");
@@ -61,15 +55,15 @@ public class InterrogationQueueConsumer {
                     root,
                     SchemaType.PROCESS_MESSAGE.getSchemaFileName(),
                     CommandDto.class,
-                    objectMapper
+                    jsonMapper
             );
             log.debug(command.toString());
 
             // TODO personalization
-            ArrayNode personalization = objectMapper.createArrayNode();
+            ArrayNode personalization = jsonMapper.createArrayNode();
 
             // TODO identifier le questionnaire de manière unique
-            ObjectNode data = objectMapper.convertValue(command.getPayload().get("TODO"), ObjectNode.class);
+            ObjectNode data = jsonMapper.convertValue(command.getPayload().get("TODO"), ObjectNode.class);
 
             Interrogation interrogation = InterrogationAsyncInput.toModel(new InterrogationAsyncInput(command.getPayload().get("interrogationId").toString(),
                                                                                             command.getPayload().get("surveyUnitId").toString(),
@@ -89,7 +83,7 @@ public class InterrogationQueueConsumer {
         } catch (SchemaValidationException jsv) {
             log.error("JsonSchemaValidator : {}", jsv.getMessage());
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.TECHNICAL_ERROR, jsv.getMessage());
-        } catch (IOException ioe) {
+        } catch (JacksonException | IOException ioe) {
             log.error("IOException : {}", ioe.getMessage());
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.TECHNICAL_ERROR, ioe.getMessage());
         }catch (EntityNotFoundException enfe) {

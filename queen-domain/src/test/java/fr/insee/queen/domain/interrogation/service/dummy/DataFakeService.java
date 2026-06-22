@@ -1,7 +1,7 @@
 package fr.insee.queen.domain.interrogation.service.dummy;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.interrogation.service.DataService;
 import lombok.Getter;
 

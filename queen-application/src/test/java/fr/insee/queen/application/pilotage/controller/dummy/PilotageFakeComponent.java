@@ -1,6 +1,6 @@
 package fr.insee.queen.application.pilotage.controller.dummy;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.campaign.model.CampaignSummary;

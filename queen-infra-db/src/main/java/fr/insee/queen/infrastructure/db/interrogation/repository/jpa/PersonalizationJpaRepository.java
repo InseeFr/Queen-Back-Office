@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.interrogation.repository.jpa;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ArrayNode;
 import fr.insee.queen.infrastructure.db.interrogation.entity.PersonalizationDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

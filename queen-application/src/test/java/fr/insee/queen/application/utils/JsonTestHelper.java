@@ -1,8 +1,9 @@
 package fr.insee.queen.application.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,20 +37,20 @@ public class JsonTestHelper {
         }
     }
 
-    public static ArrayNode getResourceFileAsArrayNode(String fileName) throws IOException {
+    public static ArrayNode getResourceFileAsArrayNode(String fileName) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new JsonMapper();
         return objectMapper.readValue(classLoader.getResourceAsStream(DATA_FOLDER + fileName), ArrayNode.class);
     }
 
-    public static ObjectNode getResourceFileAsObjectNode(String fileName) throws IOException {
+    public static ObjectNode getResourceFileAsObjectNode(String fileName) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new JsonMapper();
         return objectMapper.readValue(classLoader.getResourceAsStream(DATA_FOLDER + fileName), ObjectNode.class);
     }
 
-    public static String getObjectAsJsonString(Object object) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public static String getObjectAsJsonString(Object object) {
+        ObjectMapper objectMapper = new JsonMapper();
         return objectMapper.writeValueAsString(object);
     }
 }

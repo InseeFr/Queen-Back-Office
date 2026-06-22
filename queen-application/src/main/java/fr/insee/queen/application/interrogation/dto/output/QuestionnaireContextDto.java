@@ -1,5 +1,6 @@
 package fr.insee.queen.application.interrogation.dto.output;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public enum QuestionnaireContextDto {
     @NotNull
     private final String label;
 
+    @JsonCreator
     QuestionnaireContextDto(String label) {
         this.label = label;
     }

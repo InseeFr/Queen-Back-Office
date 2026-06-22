@@ -1,6 +1,6 @@
 package fr.insee.queen.domain.interrogation.service;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ArrayNode;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import lombok.AllArgsConstructor;

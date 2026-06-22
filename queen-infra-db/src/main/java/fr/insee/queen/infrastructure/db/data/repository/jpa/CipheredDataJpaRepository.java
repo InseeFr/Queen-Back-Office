@@ -1,10 +1,10 @@
 package fr.insee.queen.infrastructure.db.data.repository.jpa;
 
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +23,10 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
      */
     @Transactional
     @Modifying
-    @Query(nativeQuery = true,
-        value = """
+    @NativeQuery("""
             update data
                 set value = pgp_sym_encrypt(:data\\:\\:text, current_setting('data.encryption.key'), 's2k-count=65536')
-                where interrogation_id = :interrogationId"""
-    )
+                where interrogation_id = :interrogationId""")
     int updateData(String interrogationId, ObjectNode data);
 
     /**
@@ -39,7 +37,7 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
      */
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
         WITH decrypted_data AS (
             SELECT
                 id,
@@ -62,12 +60,12 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
         FROM decrypted_data
         WHERE data.id = decrypted_data.id
           AND data.interrogation_id = :interrogationId;
-    """, nativeQuery = true)
+    """)
     void updateCollectedData(String interrogationId, ObjectNode collectedUpdateData);
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
         UPDATE data
             SET value = pgp_sym_encrypt('{}', current_setting('data.encryption.key'), 's2k-count=65536')
             WHERE interrogation_id IN (
@@ -77,12 +75,12 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND sd.date BETWEEN :startTimestamp AND :endTimestamp
             );
-    """, nativeQuery = true)
+    """)
     void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery(value = """
         UPDATE data
             SET value = pgp_sym_encrypt('{}', current_setting('data.encryption.key'), 's2k-count=65536')
             WHERE interrogation_id IN (
@@ -92,6 +90,6 @@ public interface CipheredDataJpaRepository extends DataJpaRepository {
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND su.id IN (:interrogationIds)
             );
-    """, nativeQuery = true)
+    """)
     void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
 }

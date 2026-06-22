@@ -1,6 +1,6 @@
 package fr.insee.queen.application.paradata.service.dummy;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.paradata.service.ParadataEventService;
 import lombok.Getter;
 

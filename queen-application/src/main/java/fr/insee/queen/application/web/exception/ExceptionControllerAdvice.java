@@ -1,7 +1,5 @@
 package fr.insee.queen.application.web.exception;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
 import fr.insee.queen.application.web.authentication.AuthenticationTokenException;
@@ -30,6 +28,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 /**
  * Handle API exceptions for project
@@ -139,11 +139,11 @@ public class ExceptionControllerAdvice {
         Throwable rootCause = e.getRootCause();
 
         String errorMessage = "Error when deserializing JSON";
-        if (rootCause instanceof JsonParseException parseException) {
+        if (rootCause instanceof StreamReadException parseException) {
             String location = parseException.getLocation() != null ? "[line: " + parseException.getLocation().getLineNr() + ", column: " + parseException.getLocation().getColumnNr() + "]" : "";
             errorMessage = "Error with JSON syntax. Check that your json is well formatted: " + location;
         }
-        if (rootCause instanceof JsonMappingException mappingException) {
+        if (rootCause instanceof DatabindException mappingException) {
             String location = mappingException.getLocation() != null ? "[line: " + mappingException.getLocation().getLineNr() + ", column: " + mappingException.getLocation().getColumnNr() + "]" : "";
             errorMessage = "Error when deserializing JSON. Check that your JSON properties are of the expected types " + location;
         }
@@ -185,7 +185,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(CampaignDeletionException.class)
     public ResponseEntity<ApiError> campaignDeletionException(CampaignDeletionException e, WebRequest request) {
-        return generateResponseError(e, HttpStatus.UNPROCESSABLE_ENTITY, request);
+        return generateResponseError(e, HttpStatus.UNPROCESSABLE_CONTENT, request);
     }
 
     @ExceptionHandler(CampaignNotLinkedToQuestionnaireException.class)

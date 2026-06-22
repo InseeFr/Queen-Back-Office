@@ -1,6 +1,6 @@
 package fr.insee.queen.application.campaign.controller;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.campaign.dto.input.QuestionnaireModelCreationData;
 import fr.insee.queen.application.campaign.dto.output.QuestionnaireModelIdDto;
 import fr.insee.queen.application.campaign.dto.output.QuestionnaireModelValueDto;

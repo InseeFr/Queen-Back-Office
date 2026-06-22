@@ -15,8 +15,8 @@ REST API used for communication with Queen/Stromae UI
 
 ## Requirements
 For building and running the application you need:
-- Java 21
-- Maven 3  
+- Java 25
+- Maven 3
 
 ## Install and execute unit tests
 Use the maven clean and maven install 
@@ -241,7 +241,7 @@ feature:
 - spring-boot-web
 - spring-boot-tomcat
 - spring-boot-test
-- spring-boot-starter-oauth2-resource-server
+- spring-boot-starter-security-oauth2-resource-server
 - liquibase
 - postgresql
 - junit

@@ -1,5 +1,6 @@
 package fr.insee.queen.jms.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ResponseCode {
@@ -11,6 +12,7 @@ public enum ResponseCode {
     @JsonValue
     private final int code;
 
+    @JsonCreator
     ResponseCode(int code) {
         this.code = code;
     }

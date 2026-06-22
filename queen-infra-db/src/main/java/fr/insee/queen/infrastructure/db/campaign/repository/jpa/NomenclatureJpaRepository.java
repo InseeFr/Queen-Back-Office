@@ -1,10 +1,11 @@
 package fr.insee.queen.infrastructure.db.campaign.repository.jpa;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ArrayNode;
 import fr.insee.queen.domain.campaign.model.Nomenclature;
 import fr.insee.queen.infrastructure.db.campaign.entity.NomenclatureDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +33,9 @@ public interface NomenclatureJpaRepository extends JpaRepository<NomenclatureDB,
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
             INSERT INTO nomenclature (id, label, value)
-            VALUES (:id, :label, :value\\:\\:jsonb)""", nativeQuery = true)
+            VALUES (:id, :label, :value\\:\\:jsonb)""")
     void createNomenclature(String id, String label, ArrayNode value);
 
     @Query("""
