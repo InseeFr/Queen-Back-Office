@@ -247,4 +247,64 @@ class InterrogationApiServiceTest {
         assertThat(interrogationSummaries).hasSize(1);
         assertThat(interrogationSummaries.getFirst().surveyUnitId()).isEqualTo("survey-unit-id1");
     }
+
+    @Test
+    @DisplayName("Retrieve questionnaire links for interrogation IDs")
+    void findQuestionnaireLinksByInterrogationIds_should_return_questionnaire_links() {
+        // Given
+        List<String> interrogationIds = List.of("interro1", "interro2", "interro3");
+        CampaignSummary campaignSummary = new CampaignSummary("campaignId", "label", null);
+        InterrogationSummary summary1 = new InterrogationSummary("interro1", "su1", "quest1", campaignSummary);
+        InterrogationSummary summary2 = new InterrogationSummary("interro2", "su2", "quest2", campaignSummary);
+        InterrogationSummary summary3 = new InterrogationSummary("interro3", "su3", "quest1", campaignSummary);
+        interrogationFakeDao.setInterrogationSummaries(List.of(summary1, summary2, summary3));
+
+        // When
+        List<QuestionnaireLink> result = interrogationApiService.findQuestionnaireLinksByInterrogationIds(interrogationIds);
+
+        // Then
+        assertThat(result)
+                .hasSize(3)
+                .containsExactlyInAnyOrder(
+                        new QuestionnaireLink("interro1", "quest1"),
+                        new QuestionnaireLink("interro2", "quest2"),
+                        new QuestionnaireLink("interro3", "quest1")
+        );
+    }
+
+    @Test
+    @DisplayName("Filter out non-existent interrogations when retrieving questionnaire links")
+    void findQuestionnaireLinksByInterrogationIds_should_filter_out_nonexistent_interrogations() {
+        // Given
+        List<String> interrogationIds = List.of("interro1", "nonexistent", "interro2");
+        CampaignSummary campaignSummary = new CampaignSummary("campaignId", "label", null);
+        InterrogationSummary summary1 = new InterrogationSummary("interro1", "su1", "quest1", campaignSummary);
+        InterrogationSummary summary2 = new InterrogationSummary("interro2", "su2", "quest2", campaignSummary);
+        interrogationFakeDao.setInterrogationSummaries(List.of(summary1, summary2));
+
+        // When
+        List<QuestionnaireLink> result = interrogationApiService.findQuestionnaireLinksByInterrogationIds(interrogationIds);
+
+        // Then
+        assertThat(result)
+                .hasSize(2)
+                .containsExactlyInAnyOrder(
+                        new QuestionnaireLink("interro1", "quest1"),
+                        new QuestionnaireLink("interro2", "quest2")
+        );
+    }
+
+    @Test
+    @DisplayName("Return empty list for empty input when retrieving questionnaire links")
+    void findQuestionnaireLinksByInterrogationIds_should_return_empty_list_for_empty_input() {
+        // Given
+        List<String> interrogationIds = List.of();
+        interrogationFakeDao.setInterrogationSummaries(List.of());
+
+        // When
+        List<QuestionnaireLink> result = interrogationApiService.findQuestionnaireLinksByInterrogationIds(interrogationIds);
+
+        // Then
+        assertThat(result).isEmpty();
+    }
 }
