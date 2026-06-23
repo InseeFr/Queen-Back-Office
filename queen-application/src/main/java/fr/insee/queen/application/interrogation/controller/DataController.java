@@ -1,17 +1,13 @@
 package fr.insee.queen.application.interrogation.controller;
 
-import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.application.web.validation.json.JsonValid;
 import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.interrogation.service.DataService;
-import fr.insee.queen.domain.interrogation.service.StateDataService;
-import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,9 +35,6 @@ import java.util.List;
 public class DataController {
     private final DataService dataService;
     private final PilotageComponent pilotageComponent;
-    private final StateDataService stateDataService;
-    private final InterrogationService interrogationService;
-    private final AuthenticationHelper authenticationUserHelper;
 
     /**
      * Retrieve the questionnaire form data of an interrogation
