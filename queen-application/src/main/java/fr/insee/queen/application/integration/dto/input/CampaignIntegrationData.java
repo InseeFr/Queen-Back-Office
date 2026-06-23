@@ -8,6 +8,8 @@ import fr.insee.queen.domain.group.model.Group;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.Set;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "CampaignIntegration")
 public record CampaignIntegrationData(
@@ -17,11 +19,11 @@ public record CampaignIntegrationData(
         String label,
         ObjectNode metadata) {
 
-    public static Group toModel(CampaignIntegrationData campaign) {
+    public static Group toModel(CampaignIntegrationData campaign, Set<String> questionnaireIds) {
         ObjectNode metadata = campaign.metadata();
         if(campaign.metadata() == null) {
             metadata = JsonNodeFactory.instance.objectNode();
         }
-        return new Group(campaign.id.toUpperCase(), campaign.label, metadata);
+        return new Group(campaign.id.toUpperCase(), campaign.label, questionnaireIds, metadata);
     }
 }

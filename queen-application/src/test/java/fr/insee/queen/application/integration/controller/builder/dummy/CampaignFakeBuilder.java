@@ -5,6 +5,7 @@ import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDt
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
 import java.util.zip.ZipFile;
 
 public class CampaignFakeBuilder implements CampaignBuilder {
@@ -17,8 +18,12 @@ public class CampaignFakeBuilder implements CampaignBuilder {
     @Getter
     private final IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError("id-campaign", "error");
 
+    @Getter
+    private Set<String> receivedQuestionnaireIds = Set.of();
+
     @Override
-    public IntegrationResultUnitDto build(ZipFile integrationZipFile) {
+    public IntegrationResultUnitDto build(ZipFile integrationZipFile, Set<String> questionnaireIds) {
+        this.receivedQuestionnaireIds = questionnaireIds;
         return resultIsInErrorState ? resultError : resultSuccess;
     }
 }

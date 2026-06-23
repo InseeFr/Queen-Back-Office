@@ -1,5 +1,6 @@
 package fr.insee.queen.application.configuration.properties;
 
+import fr.insee.queen.domain.group.model.GroupKind;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;

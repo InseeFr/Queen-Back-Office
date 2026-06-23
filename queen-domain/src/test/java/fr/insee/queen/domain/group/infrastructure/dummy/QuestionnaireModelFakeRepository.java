@@ -40,12 +40,12 @@ public class QuestionnaireModelFakeRepository implements QuestionnaireModelRepos
     }
 
     @Override
-    public Long countValidQuestionnaires(String groupId, Set<String> questionnaireIds) {
+    public Long countExistingQuestionnaires(Set<String> questionnaireIds) {
         return null;
     }
 
     @Override
-    public void deleteAllFromGroup(String groupId) {
+    public void deleteOrphanedQuestionnaires(Set<String> questionnaireIds) {
         // not used at this moment
     }
 

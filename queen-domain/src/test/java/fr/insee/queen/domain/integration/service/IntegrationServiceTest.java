@@ -91,20 +91,6 @@ class IntegrationServiceTest {
     }
 
     @Test
-    @DisplayName("On save questionnaire, when group does not exist, return integration error")
-    void testIntegrationQuestionnaire01() {
-        groupExistenceService.setGroupExist(false);
-        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithGroup(QUESTIONNAIRE_ID, LABEL,
-                JsonNodeFactory.instance.objectNode(), new HashSet<>(), GROUP_ID);
-        List<IntegrationResult> results = integrationService.create(questionnaire);
-        assertThat(results).hasSize(1);
-        IntegrationResult result = results.get(0);
-        assertThat(result.getId()).isEqualTo(QUESTIONNAIRE_ID);
-        assertThat(result.getStatus()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(result.getCause()).isEqualTo(String.format(IntegrationResultLabel.GROUP_DO_NOT_EXIST, GROUP_ID));
-    }
-
-    @Test
     @DisplayName("On save questionnaire, when nomenclature does not exist, return integration error")
     void testIntegrationQuestionnaire04() {
         String nonExistingNomenclature1 = "non-exist-nomenclature1";
@@ -113,8 +99,8 @@ class IntegrationServiceTest {
         String existingNomenclature2 = "exist-nomenclature2";
 
         nomenclatureService.setNonExistingNomenclatures(List.of(nonExistingNomenclature1, nonExistingNomenclature2));
-        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithGroup(QUESTIONNAIRE_ID, LABEL,
-                JsonNodeFactory.instance.objectNode(), Set.of(existingNomenclature1, nonExistingNomenclature1, existingNomenclature2, nonExistingNomenclature2), GROUP_ID);
+        QuestionnaireModel questionnaire = QuestionnaireModel.create(QUESTIONNAIRE_ID, LABEL,
+                JsonNodeFactory.instance.objectNode(), Set.of(existingNomenclature1, nonExistingNomenclature1, existingNomenclature2, nonExistingNomenclature2));
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
         List<IntegrationResult> errorResults = results.stream()
@@ -132,8 +118,8 @@ class IntegrationServiceTest {
     @Test
     @DisplayName("On save questionnaire, when questionnaire exists, return integration update")
     void testIntegrationQuestionnaire02() {
-        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithGroup(QUESTIONNAIRE_ID, LABEL,
-                JsonNodeFactory.instance.objectNode(), new HashSet<>(), GROUP_ID);
+        QuestionnaireModel questionnaire = QuestionnaireModel.create(QUESTIONNAIRE_ID, LABEL,
+                JsonNodeFactory.instance.objectNode(), new HashSet<>());
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
         assertThat(questionnaireService.isUpdated()).isTrue();
@@ -147,8 +133,8 @@ class IntegrationServiceTest {
     @DisplayName("On save questionnaire, when questionnaire does not exist, return integration create")
     void testIntegrationQuestionnaire03() {
         questionnaireExistenceService.setQuestionnaireExist(false);
-        QuestionnaireModel questionnaire = QuestionnaireModel.createQuestionnaireWithGroup(QUESTIONNAIRE_ID, LABEL,
-                JsonNodeFactory.instance.objectNode(), new HashSet<>(), GROUP_ID);
+        QuestionnaireModel questionnaire = QuestionnaireModel.create(QUESTIONNAIRE_ID, LABEL,
+                JsonNodeFactory.instance.objectNode(), new HashSet<>());
         List<IntegrationResult> results = integrationService.create(questionnaire);
 
         assertThat(questionnaireService.isCreated()).isTrue();

@@ -39,7 +39,7 @@ public interface NomenclatureJpaRepository extends JpaRepository<NomenclatureDB,
     void createNomenclature(String id, String label, ArrayNode value);
 
     @Query("""
-                select distinct n.id from QuestionnaireModelDB qm inner join qm.nomenclatures n where qm.group.id=:groupId
+                select distinct n.id from GroupDB g join g.questionnaireModels qm inner join qm.nomenclatures n where g.id = :groupId
             """)
     List<String> findRequiredNomenclatureByGroupId(String groupId);
 

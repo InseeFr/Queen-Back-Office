@@ -3,6 +3,7 @@ package fr.insee.queen.domain.group.infrastructure.dummy;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.group.gateway.GroupRepository;
 import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.GroupKind;
 import fr.insee.queen.domain.group.model.GroupSummary;
 import lombok.Setter;
 
@@ -23,7 +24,7 @@ public class GroupFakeRepository implements GroupRepository {
     public static final String GROUP_ID = "id-group";
 
     @Override
-    public void create(Group group) {
+    public void create(Group group, GroupKind kind) {
         // not used at this moment
     }
 

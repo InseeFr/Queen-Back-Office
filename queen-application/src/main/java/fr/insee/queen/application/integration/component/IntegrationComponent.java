@@ -7,6 +7,7 @@ import fr.insee.queen.application.integration.component.builder.QuestionnaireBui
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultsDto;
+import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 @Component
@@ -62,15 +65,24 @@ public class IntegrationComponent {
             List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureBuilder.build(zf);
             result.setNomenclatures(nomenclatureResults);
 
-            IntegrationResultUnitDto campaignResult = campaignBuilder.build(zf);
-            result.setCampaign(campaignResult);
+            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(zf);
+            result.setQuestionnaireModels(questionnaireResults);
 
-            if (campaignResult.getStatus() == IntegrationStatus.ERROR) {
+            boolean anyQuestionnaireInError = questionnaireResults.stream()
+                    .anyMatch(r -> r.getStatus() == IntegrationStatus.ERROR);
+
+            if (anyQuestionnaireInError) {
+                result.setCampaign(IntegrationResultUnitDto.integrationResultUnitError(
+                        null, IntegrationResultLabel.CAMPAIGN_SKIPPED_QUESTIONNAIRE_ERRORS));
                 return result;
             }
 
-            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(campaignResult.getId(), zf);
-            result.setQuestionnaireModels(questionnaireResults);
+            Set<String> questionnaireIds = questionnaireResults.stream()
+                    .map(IntegrationResultUnitDto::getId)
+                    .collect(Collectors.toSet());
+
+            IntegrationResultUnitDto campaignResult = campaignBuilder.build(zf, questionnaireIds);
+            result.setCampaign(campaignResult);
 
             return result;
         } catch (IOException e) {

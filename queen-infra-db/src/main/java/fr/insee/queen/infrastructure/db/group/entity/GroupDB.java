@@ -19,7 +19,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupDB {
+public class    GroupDB {
     /**
      * The group id
      */
@@ -33,17 +33,24 @@ public class GroupDB {
     @Column(nullable = false)
     private String label;
 
+    @Column(name = "kind", nullable = false, length = 20)
+    private String kind;
+
     @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private MetadataDB metadata;
 
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = QuestionnaireModelDB.class, cascade = CascadeType.ALL, mappedBy = "group")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "survey_group_questionnaire_model",
+            joinColumns = @JoinColumn(name = "survey_group_id"),
+            inverseJoinColumns = @JoinColumn(name = "questionnaire_model_id"))
     private Set<QuestionnaireModelDB> questionnaireModels = new HashSet<>();
 
-    public GroupDB(String id, String label, Set<QuestionnaireModelDB> questionnaireModels) {
-        super();
+    public GroupDB(String id, String label, Set<QuestionnaireModelDB> questionnaireModels, String kind) {
         this.id = id;
         this.label = label;
         this.questionnaireModels = questionnaireModels;
+        this.kind = kind;
     }
 }

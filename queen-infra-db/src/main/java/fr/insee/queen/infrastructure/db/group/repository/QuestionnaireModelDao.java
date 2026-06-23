@@ -3,10 +3,8 @@ package fr.insee.queen.infrastructure.db.group.repository;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.group.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.domain.group.model.QuestionnaireModel;
-import fr.insee.queen.infrastructure.db.group.entity.GroupDB;
 import fr.insee.queen.infrastructure.db.group.entity.NomenclatureDB;
 import fr.insee.queen.infrastructure.db.group.entity.QuestionnaireModelDB;
-import fr.insee.queen.infrastructure.db.group.repository.jpa.GroupJpaRepository;
 import fr.insee.queen.infrastructure.db.group.repository.jpa.NomenclatureJpaRepository;
 import fr.insee.queen.infrastructure.db.group.repository.jpa.QuestionnaireModelJpaRepository;
 import lombok.AllArgsConstructor;
@@ -21,7 +19,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class QuestionnaireModelDao implements QuestionnaireModelRepository {
     private final QuestionnaireModelJpaRepository jpaRepository;
-    private final GroupJpaRepository groupJpaRepository;
     private final NomenclatureJpaRepository nomenclatureRepository;
 
     @Override
@@ -44,10 +41,6 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
     public void create(QuestionnaireModel questionnaireData) {
         Set<NomenclatureDB> requiredNomenclatures = nomenclatureRepository.findAllByIdIn(questionnaireData.getRequiredNomenclatureIds());
         QuestionnaireModelDB questionnaire = new QuestionnaireModelDB(questionnaireData.getId(), questionnaireData.getLabel(), questionnaireData.getValue(), requiredNomenclatures);
-        if (questionnaireData.getGroupId() != null) {
-            GroupDB group = groupJpaRepository.getReferenceById(questionnaireData.getGroupId());
-            questionnaire.setGroup(group);
-        }
         jpaRepository.save(questionnaire);
     }
 
@@ -58,20 +51,21 @@ public class QuestionnaireModelDao implements QuestionnaireModelRepository {
         questionnaire.setLabel(questionnaireData.getLabel());
         questionnaire.setValue(questionnaireData.getValue());
         questionnaire.setNomenclatures(requiredNomenclatures);
-        GroupDB group = groupJpaRepository.getReferenceById(questionnaireData.getGroupId());
-        questionnaire.setGroup(group);
-
         jpaRepository.save(questionnaire);
     }
 
     @Override
-    public Long countValidQuestionnaires(String groupId, Set<String> questionnaireIds) {
-        return jpaRepository.countValidQuestionnairesByIds(groupId, questionnaireIds);
+    public Long countExistingQuestionnaires(Set<String> questionnaireIds) {
+        return jpaRepository.countByIdIn(questionnaireIds);
     }
 
     @Override
-    public void deleteAllFromGroup(String groupId) {
-        jpaRepository.deleteAllByGroupId(groupId);
+    @Transactional
+    public void deleteOrphanedQuestionnaires(Set<String> questionnaireIds) {
+        List<String> orphanedIds = jpaRepository.findOrphanedIds(questionnaireIds);
+        if (!orphanedIds.isEmpty()) {
+            jpaRepository.deleteAllById(orphanedIds);
+        }
     }
 
     @Override

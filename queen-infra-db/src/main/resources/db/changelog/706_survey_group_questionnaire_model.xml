@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- N:M relationship between survey_group and questionnaire_model.
+         A survey_group can have multiple questionnaire_models.
+         A questionnaire_model can be shared across multiple survey_groups.
+         Modeled with a join table. -->
+
+    <!-- 1. Create join table survey_group_questionnaire_model -->
+    <changeSet id="706-1-create-join-table" author="davdarras">
+        <createTable tableName="survey_group_questionnaire_model">
+            <column name="survey_group_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="questionnaire_model_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey
+            tableName="survey_group_questionnaire_model"
+            columnNames="survey_group_id, questionnaire_model_id"
+            constraintName="pk_survey_group_questionnaire_model"/>
+        <addForeignKeyConstraint
+            baseTableName="survey_group_questionnaire_model"
+            baseColumnNames="survey_group_id"
+            referencedTableName="survey_group"
+            referencedColumnNames="id"
+            constraintName="fk_sgqm_survey_group"/>
+        <addForeignKeyConstraint
+            baseTableName="survey_group_questionnaire_model"
+            baseColumnNames="questionnaire_model_id"
+            referencedTableName="questionnaire_model"
+            referencedColumnNames="id"
+            constraintName="fk_sgqm_questionnaire_model"/>
+    </changeSet>
+
+    <!-- 2. Migrate existing data:
+         questionnaire_model.survey_group_id (one QM per campaign, nullable)
+         becomes (survey_group_id, questionnaire_model_id) entries in the join table. -->
+    <changeSet id="706-2-migrate-data-to-join-table" author="davdarras">
+        <sql>
+            INSERT INTO survey_group_questionnaire_model (survey_group_id, questionnaire_model_id)
+            SELECT qm.survey_group_id, qm.id
+            FROM questionnaire_model qm
+            WHERE qm.survey_group_id IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <!-- 3. Drop FK questionnaire_model → survey_group (relationship now carried by join table) -->
+    <changeSet id="706-3-drop-fk-questionnaire-model-survey-group" author="davdarras">
+        <dropForeignKeyConstraint
+            baseTableName="questionnaire_model"
+            constraintName="fk_questionnaire_model_survey_group"/>
+    </changeSet>
+
+    <!-- 4. Drop column survey_group_id from questionnaire_model -->
+    <changeSet id="706-4-drop-survey-group-id-from-questionnaire-model" author="davdarras">
+        <dropColumn tableName="questionnaire_model" columnName="survey_group_id"/>
+    </changeSet>
+
+</databaseChangeLog>

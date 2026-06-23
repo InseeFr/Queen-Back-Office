@@ -2,6 +2,7 @@ package fr.insee.queen.domain.group.service;
 
 import fr.insee.queen.domain.group.service.exception.GroupDeletionException;
 import fr.insee.queen.domain.group.service.exception.QuestionnaireInvalidException;
+import fr.insee.queen.domain.group.gateway.GroupKindProvider;
 import fr.insee.queen.domain.group.gateway.GroupRepository;
 import fr.insee.queen.domain.group.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.domain.group.model.Group;
@@ -30,6 +31,7 @@ public class GroupApiService implements GroupService {
     private final QuestionnaireModelRepository questionnaireModelRepository;
     private final GroupExistenceService groupExistenceService;
     private final CacheManager cacheManager;
+    private final GroupKindProvider groupKindProvider;
 
     @Override
     public Group getGroup(String groupId) {
@@ -81,9 +83,11 @@ public class GroupApiService implements GroupService {
                 Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
                         .evict(id);
             });
-            questionnaireModelRepository.deleteAllFromGroup(groupId);
         }
         groupRepository.delete(groupId);
+        if (questionnaireIds != null && !questionnaireIds.isEmpty()) {
+            questionnaireModelRepository.deleteOrphanedQuestionnaires(questionnaireIds);
+        }
     }
 
     @Transactional
@@ -94,8 +98,8 @@ public class GroupApiService implements GroupService {
     public void createGroup(Group group) {
         String groupId = group.getId();
         groupExistenceService.throwExceptionIfGroupAlreadyExist(groupId);
-        throwExceptionIfInvalidQuestionnairesBeforeSave(group.getId(), group.getQuestionnaireIds());
-        groupRepository.create(group);
+        throwExceptionIfQuestionnairesNotFound(group.getQuestionnaireIds());
+        groupRepository.create(group, groupKindProvider.getKind());
     }
 
     @Caching(evict = {
@@ -105,15 +109,14 @@ public class GroupApiService implements GroupService {
     public void updateGroup(Group group) {
         String groupId = group.getId();
         groupExistenceService.throwExceptionIfGroupNotExist(groupId);
-        throwExceptionIfInvalidQuestionnairesBeforeSave(groupId, group.getQuestionnaireIds());
+        throwExceptionIfQuestionnairesNotFound(group.getQuestionnaireIds());
         groupRepository.update(group);
     }
 
-    private void throwExceptionIfInvalidQuestionnairesBeforeSave(String groupId, Set<String> questionnaireIds) {
-        Long nbValidQuestionnaires = questionnaireModelRepository.countValidQuestionnaires(groupId, questionnaireIds);
-        if (questionnaireIds.size() != nbValidQuestionnaires) {
-            throw new QuestionnaireInvalidException(
-                    String.format("One or more questionnaires do not exist for group %s or are already linked with another group. Creation aborted.", groupId));
+    private void throwExceptionIfQuestionnairesNotFound(Set<String> questionnaireIds) {
+        Long count = questionnaireModelRepository.countExistingQuestionnaires(questionnaireIds);
+        if (questionnaireIds.size() != count) {
+            throw new QuestionnaireInvalidException("One or more questionnaires do not exist. Creation aborted.");
         }
     }
 }

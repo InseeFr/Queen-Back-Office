@@ -6,7 +6,10 @@ import fr.insee.queen.application.integration.controller.builder.dummy.Nomenclat
 import fr.insee.queen.application.integration.controller.builder.dummy.QuestionnaireFakeBuilder;
 import fr.insee.queen.application.integration.component.IntegrationComponent;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
+import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultsDto;
+import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
+import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,7 +60,7 @@ class IntegrationComponentTest {
     }
 
     @Test
-    @DisplayName("when integrating campaign result in errors, then do not process questionnaires")
+    @DisplayName("when integrating campaign in errors, then questionnaires are still processed and campaign reports the error")
     void integrate03() throws IOException {
         campaignBuilder.setResultIsInErrorState(true);
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
@@ -65,6 +68,32 @@ class IntegrationComponentTest {
         IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
         assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultError());
         assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
-        assertThat(result.getQuestionnaireModels()).isNull();
+        assertThat(result.getQuestionnaireModels()).isEqualTo(questionnaireBuilder.getResults());
+    }
+
+    @Test
+    @DisplayName("on integration, the campaign builder receives the ids of successfully integrated questionnaires")
+    void integrate04() throws IOException {
+        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
+        MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
+        integrationComponent.integrateContext(uploadedFile);
+        assertThat(campaignBuilder.getReceivedQuestionnaireIds())
+                .containsExactlyInAnyOrder("id-questionnaire1", "id-questionnaire2");
+    }
+
+    @Test
+    @DisplayName("when at least one questionnaire is in error, the campaign is not integrated")
+    void integrate05() throws IOException {
+        questionnaireBuilder.setOneResultInErrorState(true);
+        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
+        MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
+        IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
+
+        IntegrationResultUnitDto expectedCampaign = IntegrationResultUnitDto.integrationResultUnitError(
+                null, IntegrationResultLabel.CAMPAIGN_SKIPPED_QUESTIONNAIRE_ERRORS);
+        assertThat(result.getCampaign()).isEqualTo(expectedCampaign);
+        assertThat(result.getCampaign().getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(result.getQuestionnaireModels()).isEqualTo(questionnaireBuilder.getResults());
+        assertThat(campaignBuilder.getReceivedQuestionnaireIds()).isEmpty();
     }
 }

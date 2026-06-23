@@ -61,16 +61,4 @@ public interface GroupJpaRepository extends JpaRepository<GroupDB, String> {
      */
     @Query("SELECT c.id FROM GroupDB c")
     List<String> findAllGroupIds();
-
-
-    /**
-     * Retrieve group by questionnaire id
-     * @return the group id
-     */
-    @Query("""
-            select qm.group.id from QuestionnaireModelDB qm
-            where qm.id=:questionnaireId
-    """)
-    Optional<String> findGroupIdByQuestionnaireId(String questionnaireId);
-
 }

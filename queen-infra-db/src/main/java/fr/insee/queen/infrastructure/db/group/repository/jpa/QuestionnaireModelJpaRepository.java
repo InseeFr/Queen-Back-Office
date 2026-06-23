@@ -23,7 +23,7 @@ public interface QuestionnaireModelJpaRepository extends JpaRepository<Questionn
      * @param groupId group id
      * @return all questionnaire ids for a group
      */
-    @Query(value = "select qm.id from QuestionnaireModelDB qm where qm.group.id=:groupId")
+    @Query("select qm.id from GroupDB g join g.questionnaireModels qm where g.id = :groupId")
     List<String> findAllIdByGroupId(String groupId);
 
     /**
@@ -32,7 +32,7 @@ public interface QuestionnaireModelJpaRepository extends JpaRepository<Questionn
      * @param groupId group id
      * @return all questionnaire values for a group
      */
-    @Query(value = "select qm.value from QuestionnaireModelDB qm where qm.group.id=:groupId")
+    @Query("select qm.value from GroupDB g join g.questionnaireModels qm where g.id = :groupId")
     List<ObjectNode> findAllValueByGroupId(String groupId);
 
     /**
@@ -45,16 +45,12 @@ public interface QuestionnaireModelJpaRepository extends JpaRepository<Questionn
     Optional<ObjectNode> findQuestionnaireData(String questionnaireId);
 
     /**
-     * Count valid questionnaires for a group
-     * This is typically used to check if questionnaires can be associated on a group.
-     * A valid questionnaire is a questionnaire already linked to the group or a questionnaire with no group linked
+     * Count how many of the given questionnaire ids exist in database
      *
-     * @param groupId group id
-     * @param questionnaireIds questionnaire ids we want to check for the group
-     * @return number of valid questionnaires
+     * @param questionnaireIds questionnaire ids to check
+     * @return number of existing questionnaires
      */
-    @NativeQuery("select count(*) from questionnaire_model qm where qm.id in :questionnaireIds and (qm.survey_group_id is NULL or qm.survey_group_id=:groupId)")
-    Long countValidQuestionnairesByIds(String groupId, Set<String> questionnaireIds);
+    Long countByIdIn(Set<String> questionnaireIds);
 
     /**
      * Find questionnaires by ids
@@ -65,9 +61,19 @@ public interface QuestionnaireModelJpaRepository extends JpaRepository<Questionn
     Set<QuestionnaireModelDB> findByIdIn(Set<String> questionnaireIds);
 
     /**
-     * Delete all questionnaire by group id
+     * Find questionnaire ids that are no longer linked to any group
      *
-     * @param groupId group id
+     * @param questionnaireIds candidate questionnaire ids to check
+     * @return ids not present in survey_group_questionnaire_model
      */
-    void deleteAllByGroupId(String groupId);
+    @NativeQuery("""
+            select qm.id from questionnaire_model qm
+            where qm.id in :questionnaireIds
+            and not exists (
+                select 1 from survey_group_questionnaire_model sgqm
+                where sgqm.questionnaire_model_id = qm.id
+            )
+            """)
+    List<String> findOrphanedIds(Set<String> questionnaireIds);
+
 }

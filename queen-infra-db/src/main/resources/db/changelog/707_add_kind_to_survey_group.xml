@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Add the kind discriminator to survey_group.
+         Allowed values match the GroupKind enum: CAMPAIGN or PARTITION.
+         Existing rows are backfilled to CAMPAIGN. -->
+
+    <!-- 1. Add the column (nullable until backfilled) -->
+    <changeSet id="707-1-add-kind-column" author="davdarras">
+        <addColumn tableName="survey_group">
+            <column name="kind" type="VARCHAR(20)"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- 2. Backfill existing rows as CAMPAIGN -->
+    <changeSet id="707-2-backfill-kind-as-campaign" author="davdarras">
+        <sql>
+            UPDATE survey_group SET kind = 'CAMPAIGN' WHERE kind IS NULL;
+        </sql>
+    </changeSet>
+
+    <!-- 3. Set NOT NULL -->
+    <changeSet id="707-3-not-null-kind" author="davdarras">
+        <addNotNullConstraint
+            tableName="survey_group"
+            columnName="kind"
+            columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+</databaseChangeLog>

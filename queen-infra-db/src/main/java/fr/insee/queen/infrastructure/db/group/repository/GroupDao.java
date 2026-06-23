@@ -2,6 +2,7 @@ package fr.insee.queen.infrastructure.db.group.repository;
 
 import fr.insee.queen.domain.group.gateway.GroupRepository;
 import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.GroupKind;
 import fr.insee.queen.domain.group.model.GroupSummary;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
@@ -50,11 +51,9 @@ public class GroupDao implements GroupRepository {
 
     @Override
     @Transactional
-    public void create(Group group) {
+    public void create(Group group, GroupKind kind) {
         Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(group.getQuestionnaireIds());
-        GroupDB groupDB = new GroupDB(group.getId(), group.getLabel(), questionnaireModels);
-        questionnaireModels.parallelStream()
-                .forEach(questionnaireModel -> questionnaireModel.setGroup(groupDB));
+        GroupDB groupDB = new GroupDB(group.getId(), group.getLabel(), questionnaireModels, kind.name());
 
         ObjectNode metadataValue = group.getMetadata();
         if (metadataValue != null) {

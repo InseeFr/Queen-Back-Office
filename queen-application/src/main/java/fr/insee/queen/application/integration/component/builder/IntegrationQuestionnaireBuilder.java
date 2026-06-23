@@ -40,11 +40,11 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
     public static final String QUESTIONNAIRE_MODELS_JSON = "questionnaireModels.json";
 
     @Override
-    public List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile) {
-        return buildQuestionnaireModels(campaignId, integrationZipFile);
+    public List<IntegrationResultUnitDto> build(ZipFile integrationZipFile) {
+        return buildQuestionnaireModels(integrationZipFile);
     }
 
-    private List<IntegrationResultUnitDto> buildQuestionnaireModels(String campaignId, ZipFile zf) {
+    private List<IntegrationResultUnitDto> buildQuestionnaireModels(ZipFile zf) {
         try {
             schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, QUESTIONNAIRE_MODELS_JSON, SchemaType.QUESTIONNAIRE_INTEGRATION);
         } catch (IntegrationValidationException ex) {
@@ -72,7 +72,7 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
         for(QuestionnaireModelItem questionnaireModelItem : questionnaireModelItems) {
             try {
                 ObjectNode qmValue = readQuestionnaireStream(questionnaireModelItem, zf);
-                results.addAll(buildQuestionnaireModel(campaignId, questionnaireModelItem, qmValue));
+                results.addAll(buildQuestionnaireModel(questionnaireModelItem, qmValue));
             } catch (IntegrationValidationException ex) {
                 results.add(ex.getResultError());
             }
@@ -80,9 +80,8 @@ public class IntegrationQuestionnaireBuilder implements QuestionnaireBuilder {
         return results;
     }
 
-    private List<IntegrationResultUnitDto> buildQuestionnaireModel(String qmCampaignId, QuestionnaireModelItem questionnaireModelItem, ObjectNode qmValue) {
+    private List<IntegrationResultUnitDto> buildQuestionnaireModel(QuestionnaireModelItem questionnaireModelItem, ObjectNode qmValue) {
         QuestionnaireModelIntegrationData questionnaire = new QuestionnaireModelIntegrationData(questionnaireModelItem.id(),
-                qmCampaignId,
                 questionnaireModelItem.label(),
                 qmValue,
                 questionnaireModelItem.requiredNomenclatures());
