@@ -57,7 +57,6 @@ public class InterrogationBatchFakeService implements InterrogationBatchService 
         interrogationBatchUsed = Interrogation.create(interrogations.getFirst().id(),
                 interrogations.getFirst().surveyUnitId(),
                 interrogations.getFirst().personalization(),
-                interrogations.getFirst().comment(),
                 interrogations.getFirst().data(),
                 interrogations.getFirst().stateData());
     }

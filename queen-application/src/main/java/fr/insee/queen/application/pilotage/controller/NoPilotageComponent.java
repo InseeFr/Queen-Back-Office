@@ -1,7 +1,7 @@
 package fr.insee.queen.application.pilotage.controller;
 
-import fr.insee.queen.domain.campaign.service.CampaignService;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.group.service.GroupService;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
@@ -17,22 +17,22 @@ import java.util.List;
 @Component
 public class NoPilotageComponent implements PilotageComponent {
     private final InterrogationService interrogationService;
-    private final CampaignService campaignService;
+    private final GroupService groupService;
 
     @Override
-    public boolean isClosed(String campaignId) {
+    public boolean isClosed(String groupId) {
         return true;
     }
 
     @Override
-    public List<InterrogationSummary> getInterrogationsByCampaign(String campaignId) {
-        return interrogationService.findSummariesByCampaignId(campaignId);
+    public List<InterrogationSummary> getInterrogations(String groupId) {
+        return interrogationService.findSummariesByGroupId(groupId);
     }
 
     @Override
-    public List<PilotageCampaign> getInterviewerCampaigns() {
-        return campaignService.getAllCampaigns().stream()
-                .map(campaign -> new PilotageCampaign(campaign.getId(), campaign.getQuestionnaireIds().stream().toList()))
+    public List<PilotageGroup> getInterviewerGroups() {
+        return groupService.getAllGroups().stream()
+                .map(group -> new PilotageGroup(group.getId(), group.getQuestionnaireIds().stream().toList()))
                 .toList();
     }
 

@@ -25,19 +25,16 @@ public record InterrogationCreationInput(
         @NotNull
         @Schema(ref = SchemaType.Names.DATA)
         ObjectNode data,
-        @NotNull
-        ObjectNode comment,
         @Valid
         StateDataInput stateData) {
 
-    public static Interrogation toModel(InterrogationCreationInput interrogation, String campaignId) {
+    public static Interrogation toModel(InterrogationCreationInput interrogation, String groupId) {
         return new Interrogation(interrogation.id,
                 interrogation.surveyUnitId(),
-                campaignId,
+                groupId,
                 interrogation.questionnaireId(),
                 interrogation.personalization(),
                 interrogation.data(),
-                interrogation.comment(),
                 StateDataInput.toModel(interrogation.stateData()),
                 null);
     }

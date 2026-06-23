@@ -1,25 +1,16 @@
 package fr.insee.queen.application.interrogation.controller;
 
-import fr.insee.queen.application.campaign.component.MetadataConverter;
+import fr.insee.queen.application.group.component.MetadataConverter;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationBySurveyUnitDto;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationStateDto;
-import fr.insee.queen.application.interrogation.dto.output.QuestionnaireLinkDto;
+import fr.insee.queen.application.interrogation.dto.output.*;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
 import fr.insee.queen.application.interrogation.dto.input.StateDataInput;
 import fr.insee.queen.application.interrogation.dto.input.InterrogationCreationInput;
 import fr.insee.queen.application.interrogation.dto.input.InterrogationDataStateDataUpdateInput;
 import fr.insee.queen.application.interrogation.dto.input.InterrogationUpdateInput;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationDto;
-import fr.insee.queen.application.interrogation.dto.output.InterrogationMetadataDto;
-import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.interrogation.model.*;
-import fr.insee.queen.domain.interrogation.service.StateDataService;
 import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,13 +20,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Handle interrogations
@@ -50,8 +39,6 @@ public class InterrogationController {
     private final InterrogationService interrogationService;
     private final PilotageComponent pilotageComponent;
     private final MetadataConverter metadataConverter;
-    private final StateDataService stateDataService;
-    private final AuthenticationHelper authenticationUserHelper;
 
     /**
      * Retrieve all interrogations id
@@ -68,20 +55,20 @@ public class InterrogationController {
     /**
      * Retrieve interrogations filtered by state
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @param stateDataType state
      * @return all ids of interrogations
      */
     @Operation(summary = "Retrieve interrogations by state")
-    @GetMapping("/admin/campaign/{id}/interrogations")
+    @GetMapping("/admin/${application.group.path-singular}/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public List<InterrogationStateDto> getInterrogationsByState(
-            @IdValid @PathVariable("id") String campaignId,
-            @RequestParam(name="state") StateDataType stateDataType) {
+    public List<InterrogationStateResponse> getInterrogationsByState(
+            @IdValid @PathVariable("id") String groupId,
+            @RequestParam(required = false, name="state") StateDataType stateDataType) {
         return interrogationService
-                .getInterrogations(campaignId, stateDataType)
+                .getInterrogations(groupId, stateDataType)
                 .stream()
-                .map(InterrogationStateDto::fromModel)
+                .map(InterrogationStateResponse::fromModel)
                 .toList();
     }
 
@@ -89,17 +76,17 @@ public class InterrogationController {
      * Retrieve interrogations filtered by survey-unit
      *
      * @param surveyUnitId
-     * @return all {@link InterrogationBySurveyUnitDto}
+     * @return all {@link InterrogationBySurveyUnitResponse}
      */
     @Operation(summary = "Retrieve interrogations by survey-unit")
     @GetMapping("/survey-units/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public List<InterrogationBySurveyUnitDto> getInterrogationsBySurveyUnit(
+    public List<InterrogationBySurveyUnitResponse> getInterrogationsBySurveyUnit(
             @IdValid @PathVariable("id") String surveyUnitId) {
         return interrogationService
                 .findSummariesBySurveyUnitId(surveyUnitId)
                 .stream()
-                .map(InterrogationBySurveyUnitDto::fromModel)
+                .map(InterrogationBySurveyUnitResponse::fromModel)
                 .toList();
     }
 
@@ -114,39 +101,7 @@ public class InterrogationController {
     @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
     public InterrogationDto getInterrogationById(@IdValid @PathVariable(value = "id") String interrogationId) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
-        InterrogationSummary interrogationSummary = interrogationService.getSummaryById(interrogationId);
-
-        // if campaign sensitivity is OFF, return data
-        if(interrogationSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
-            return InterrogationDto.fromModel(interrogationService.getInterrogation(interrogationId));
-        }
-
-        // here, campaign sensitivity is ON !
-
-        // admin can see everything
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
-            return InterrogationDto.fromModel(interrogationService.getInterrogation(interrogationId));
-        }
-
-        // interviewer retrieve the dto with filled or empty data
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.SURVEY_UNIT)){
-            Interrogation su = interrogationService.getInterrogation(interrogationId);
-            StateData stateData = su.stateData();
-            if(stateData == null) {
-                return InterrogationDto.fromModel(su);
-            }
-
-            // survey is finished, not returning interrogation data
-            if(StateDataType.EXTRACTED.equals(stateData.state())
-                    || StateDataType.VALIDATED.equals(stateData.state())) {
-                return InterrogationDto.fromSensitiveModel(su);
-            }
-
-            return InterrogationDto.fromModel(su);
-        }
-
-        // reviewer cannot see data
-        throw new AccessDeniedException("Not authorized to see interrogation data");
+        return InterrogationDto.fromModel(interrogationService.getInterrogation(interrogationId));
     }
 
     /**
@@ -174,58 +129,24 @@ public class InterrogationController {
     @PutMapping("/interrogations/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_INTERVIEWER_PRIVILEGES)
     public void updateInterrogationById(@IdValid @PathVariable(value = "id") String interrogationId,
-                                     @Valid @RequestBody InterrogationUpdateInput interrogationUpdateInput) throws LockedResourceException {
+                                     @Valid @RequestBody InterrogationUpdateInput interrogationUpdateInput) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER);
-
-        InterrogationSummary interrogationSummary = interrogationService.getSummaryById(interrogationId);
-
-        // if campaign sensitivity is OFF, update data
-        if(interrogationSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
-            Interrogation interrogation = InterrogationUpdateInput.toModel(interrogationId, interrogationUpdateInput);
-            interrogationService.updateInterrogation(interrogation);
-            return;
-        }
-
-        // here, campaign sensitivity is ON !
-
-        // admin can see everything
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
-            Interrogation interrogation = InterrogationUpdateInput.toModel(interrogationId, interrogationUpdateInput);
-            interrogationService.updateInterrogation(interrogation);
-            return;
-        }
-
-        // interviewer can update data if survey is not ended
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER)){
-            Optional<StateDataType> validatedState = stateDataService
-                    .findStateData(interrogationId)
-                    .map(StateData::state)
-                    .filter(state -> StateDataType.EXTRACTED.equals(state)
-                            || StateDataType.VALIDATED.equals(state));
-
-            if (validatedState.isEmpty()) {
-                Interrogation interrogation = InterrogationUpdateInput.toModel(interrogationId, interrogationUpdateInput);
-                interrogationService.updateInterrogation(interrogation);
-                return;
-            }
-            throw new LockedResourceException(interrogationId);
-        }
-
-        throw new AccessDeniedException("Not authorized to update interrogation data");
+        Interrogation interrogation = InterrogationUpdateInput.toModel(interrogationId, interrogationUpdateInput);
+        interrogationService.updateInterrogation(interrogation);
     }
 
     /**
      * Create or update an interrogation
      *
-     * @param campaignId             campaign id
+     * @param groupId             group id
      * @param interrogationCreationInput interrogation data for creation
      */
     @Operation(summary = "Create/Update an interrogation")
-    @PostMapping({"/campaign/{id}/interrogation", "/campaigns/{id}/interrogation"})
+    @PostMapping({"/${application.group.path-singular}/{id}/interrogation", "/${application.group.path-plural}/{id}/interrogation"})
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public ResponseEntity<Void> createUpdateInterrogation(@IdValid @PathVariable(value = "id") String campaignId,
-                                                       @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
-        Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, campaignId);
+    public ResponseEntity<Void> createUpdateInterrogation(@IdValid @PathVariable(value = "id") String groupId,
+                                                          @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
+        Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, groupId);
         if (interrogationService.existsById(interrogationCreationInput.id())) {
             log.info("Update interrogation with id {}", interrogationCreationInput.id());
             interrogationService.updateInterrogation(interrogation);
@@ -238,47 +159,31 @@ public class InterrogationController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * Create or update an interrogation
+     *
+     * @param groupId             group id
+     * @param interrogationCreationInput interrogation data for creation
+     */
+    @Operation(summary = "Create an interrogation")
+    @PostMapping({"/${application.group.path-plural}/{id}/interrogations/create"})
+    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
+    public void createInterrogation(@IdValid @PathVariable(value = "id") String groupId,
+                                                          @Valid @RequestBody InterrogationCreationInput interrogationCreationInput) throws StateDataInvalidDateException {
+        Interrogation interrogation = InterrogationCreationInput.toModel(interrogationCreationInput, groupId);
+        log.info("Create interrogation with id {}", interrogationCreationInput.id());
+        interrogationService.createInterrogation(interrogation);
+        log.debug("Interrogation with id {} created", interrogationCreationInput.id());
+    }
+
     @Operation(summary = "Update interrogation updated data/state-data")
     @PatchMapping("/interrogations/{id}")
     @PreAuthorize(AuthorityPrivileges.HAS_SURVEY_UNIT_PRIVILEGES)
     public void updateInterrogationDataStateDataById(@IdValid @PathVariable(value = "id") String interrogationId,
-                                                  @Valid @RequestBody InterrogationDataStateDataUpdateInput interrogationUpdateInput) throws LockedResourceException {
+                                                  @Valid @RequestBody InterrogationDataStateDataUpdateInput interrogationUpdateInput) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER);
-
-        InterrogationSummary interrogationSummary = interrogationService.getSummaryById(interrogationId);
-
-        // if campaign sensitivity is OFF, update data
-        if(interrogationSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
-            StateData stateData = StateDataInput.toModel(interrogationUpdateInput.stateData());
-            interrogationService.updateInterrogation(interrogationId, interrogationUpdateInput.data(), stateData);
-            return;
-        }
-
-        // here, campaign sensitivity is ON !
-
-        // admin can do everything
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
-            StateData stateData = StateDataInput.toModel(interrogationUpdateInput.stateData());
-            interrogationService.updateInterrogation(interrogationId, interrogationUpdateInput.data(), stateData);
-            return;
-        }
-
-        // interviewer/interrogation can update data if survey is not ended
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.SURVEY_UNIT)){
-            Optional<StateDataType> validatedState = stateDataService
-                    .findStateData(interrogationId)
-                    .map(StateData::state)
-                    .filter(state -> StateDataType.EXTRACTED.equals(state)
-                            || StateDataType.VALIDATED.equals(state));
-
-            if (validatedState.isEmpty()) {
-                StateData stateData = StateDataInput.toModel(interrogationUpdateInput.stateData());
-                interrogationService.updateInterrogation(interrogationId, interrogationUpdateInput.data(), stateData);
-                return;
-            }
-            throw new LockedResourceException(interrogationId);
-        }
-        throw new AccessDeniedException("Not authorized to update interrogation data");
+        StateData stateData = StateDataInput.toModel(interrogationUpdateInput.stateData());
+        interrogationService.updateInterrogation(interrogationId, interrogationUpdateInput.data(), stateData);
     }
 
     /**

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @AllArgsConstructor
 @Validated
+@ConditionalOnProperty(name = "application.group.kind", havingValue = "CAMPAIGN", matchIfMissing = true)
 public class IntegrationController {
     private final IntegrationComponent integrationComponent;
 
@@ -36,27 +38,10 @@ public class IntegrationController {
      * @param file the integration zip file containing all infos about campaign/questionnaire/nomenclatures
      * @return {@link IntegrationResultsDto} the results of the integration
      */
-    @Operation(summary = "Integrates the context of a campaign (JSON version)")
+    @Operation(summary = "Integrates the context of a campaign")
     @PostMapping(path = "/campaign/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public IntegrationResultsDto integrateContext(@RequestParam("file") MultipartFile file) {
-        return integrationComponent.integrateContext(file, false);
-    }
-
-    /**
-     * @deprecated
-     * Integrate a full campaign (campaign/nomenclatures/questionnaires
-     * The results of the integration indicate the successful/failed integrations
-     * (the campaign integration can be successful nut not the questionnaire integration for example)
-     *
-     * @param file the integration zip file containing all infos about campaign/questionnaire/nomenclatures
-     * @return {@link IntegrationResultsDto} the results of the integration
-     */
-    @Operation(summary = "Integrates the context of a campaign (XML Version - will be removed in a future version)")
-    @PostMapping(path = "/campaign/xml/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    @Deprecated(since = "4.0.0")
-    public IntegrationResultsDto integrateXmlContext(@RequestParam("file") MultipartFile file) {
-        return integrationComponent.integrateContext(file, true);
+        return integrationComponent.integrateContext(file);
     }
 }

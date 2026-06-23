@@ -5,9 +5,6 @@ import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.InputStream;
-import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -63,16 +59,15 @@ class IntegrationIT {
                 .andExpect(status().isUnauthorized());
     }
 
-    @ParameterizedTest
-    @MethodSource("getPaths")
+    @Test
     @DisplayName("on integrate context, return integration state")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void integrateContext03(String internalZipPath, String urlPath) throws Exception {
-        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration" + internalZipPath + "/integration-component.zip");
+    void integrateContext03() throws Exception {
+        InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, zipInputStream
         );
 
-        MvcResult result = mockMvc.perform(multipart("/api/campaign" + urlPath + "/context")
+        MvcResult result = mockMvc.perform(multipart("/api/campaign/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -93,12 +88,5 @@ class IntegrationIT {
                     ]
                 }""";
         JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.NON_EXTENSIBLE);
-    }
-
-    private static Stream<Arguments> getPaths() {
-        return Stream.of(
-                Arguments.of("/json", ""),
-                Arguments.of("/xml", "/xml")
-        );
     }
 }

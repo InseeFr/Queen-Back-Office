@@ -1,12 +1,12 @@
 package fr.insee.queen.domain.interrogation.service;
 
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
-import fr.insee.queen.domain.campaign.service.MetadataService;
+import fr.insee.queen.domain.group.service.GroupExistenceService;
+import fr.insee.queen.domain.group.service.MetadataService;
 import fr.insee.queen.domain.common.cache.CacheName;
-import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.*;
+import fr.insee.queen.domain.interrogation.service.exception.InterrogationAlreadyExistException;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class InterrogationApiService implements InterrogationService {
     private final InterrogationRepository interrogationRepository;
     private final StateDataService stateDataService;
     private final DataService dataService;
-    private final CampaignExistenceService campaignExistenceService;
+    private final GroupExistenceService groupExistenceService;
     private final MetadataService metadataService;
     private final CacheManager cacheManager;
 
@@ -57,7 +57,7 @@ public class InterrogationApiService implements InterrogationService {
     @Override
     public void throwExceptionIfInterrogationExist(String interrogationId) {
         if (existsById(interrogationId)) {
-            throw new EntityAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, interrogationId));
+            throw new InterrogationAlreadyExistException(String.format(ALREADY_EXIST_MESSAGE, interrogationId));
         }
     }
 
@@ -68,9 +68,9 @@ public class InterrogationApiService implements InterrogationService {
     }
 
     @Override
-    public List<InterrogationSummary> findSummariesByCampaignId(String campaignId) {
-        campaignExistenceService.throwExceptionIfCampaignNotExist(campaignId);
-        return interrogationRepository.findAllSummaryByCampaignId(campaignId);
+    public List<InterrogationSummary> findSummariesByGroupId(String groupId) {
+        groupExistenceService.throwExceptionIfGroupNotExist(groupId);
+        return interrogationRepository.findAllSummaryByGroupId(groupId);
     }
 
     @Override
@@ -95,8 +95,8 @@ public class InterrogationApiService implements InterrogationService {
     }
 
     @Override
-    public List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType) {
-        return interrogationRepository.findAllByState(campaignId, stateDataType);
+    public List<InterrogationState> getInterrogations(String groupId, StateDataType stateDataType) {
+        return interrogationRepository.findAllByState(groupId, stateDataType);
     }
 
     @Transactional
@@ -139,7 +139,7 @@ public class InterrogationApiService implements InterrogationService {
     @CacheEvict(value = CacheName.INTERROGATION_EXIST, key = "#interrogation.id")
     public void createInterrogation(Interrogation interrogation) throws StateDataInvalidDateException {
         throwExceptionIfInterrogationExist(interrogation.id());
-        campaignExistenceService.throwExceptionIfCampaignNotLinkedToQuestionnaire(interrogation.campaignId(), interrogation.questionnaireId());
+        groupExistenceService.throwExceptionIfGroupNotLinkedToQuestionnaire(interrogation.groupId(), interrogation.questionnaireId());
         interrogationRepository.create(interrogation);
         StateData stateData = interrogation.stateData();
         if(stateData != null) {
@@ -186,7 +186,7 @@ public class InterrogationApiService implements InterrogationService {
     @Override
     public InterrogationDepositProof getInterrogationDepositProof(String interrogationId) {
         return interrogationRepository
-                .findWithCampaignAndStateById(interrogationId)
+                .findWithGroupAndStateById(interrogationId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, interrogationId)));
     }
 

@@ -27,12 +27,12 @@ public class DataFakeService implements DataService {
     }
 
     @Override
-    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+    public void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp) {
         // not used at this moment
     }
 
     @Override
-    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
+    public void cleanExtractedDataByIds(String groupId, List<String> interrogationIds) {
         // not used at this moment
     }
 }

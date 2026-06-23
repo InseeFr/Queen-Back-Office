@@ -1,8 +1,7 @@
 package fr.insee.queen.domain.interrogation.service.dummy;
 
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
+import fr.insee.queen.domain.group.model.GroupSummary;
 import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import lombok.Getter;
@@ -27,9 +26,8 @@ public class InterrogationFakeService implements InterrogationService {
 
     @Getter
     private final List<InterrogationSummary> interrogationSummaries = List.of(
-            new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id-1", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL)),
-            new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id-2", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL)),
-            new InterrogationSummary("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa03", "survey-unit-id-3", "questionnaire-id", new CampaignSummary("campaign-id2", "campaign-label", CampaignSensitivity.SENSITIVE))
+            new InterrogationSummary(INTERROGATION1_ID, "survey-unit-id-1", "questionnaire-id", new GroupSummary("group-id", "group-label")),
+            new InterrogationSummary(INTERROGATION2_ID, "survey-unit-id-2", "questionnaire-id", new GroupSummary("group-id", "group-label"))
     );
 
     @Override
@@ -53,7 +51,7 @@ public class InterrogationFakeService implements InterrogationService {
     }
 
     @Override
-    public List<InterrogationSummary> findSummariesByCampaignId(String campaignId) {
+    public List<InterrogationSummary> findSummariesByGroupId(String groupId) {
         return interrogationSummaries;
     }
 
@@ -86,13 +84,13 @@ public class InterrogationFakeService implements InterrogationService {
     public List<InterrogationSummary> findSummariesByIds(List<String> interrogationIds) {
         List<InterrogationSummary> interrogations = new ArrayList<>();
 
-        interrogationIds.forEach(interrogationId -> interrogations.add(new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL))));
+        interrogationIds.forEach(interrogationId -> interrogations.add(new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new GroupSummary("group-id", "group-label"))));
         return interrogations;
     }
 
     @Override
     public Optional<InterrogationSummary> findSummaryById(String interrogationId) {
-        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
+        InterrogationSummary interrogation = new InterrogationSummary(interrogationId, "su-id", "questionnaire-id", new GroupSummary("group-id", "group-label"));
         return Optional.of(interrogation);
     }
 
@@ -118,7 +116,7 @@ public class InterrogationFakeService implements InterrogationService {
 
     @Override
     public InterrogationSummary getSummaryById(String interrogationId) {
-        return new InterrogationSummary(INTERROGATION1_ID, "su-id", "questionnaire-id", new CampaignSummary("campaign-id", "campaign-label", CampaignSensitivity.NORMAL));
+        return new InterrogationSummary(INTERROGATION1_ID, "su-id", "questionnaire-id", new GroupSummary("group-id", "group-label"));
     }
 
 
@@ -130,13 +128,13 @@ public class InterrogationFakeService implements InterrogationService {
     @Override
     public List<Interrogation> findAllInterrogations() {
         return List.of(
-                new Interrogation(INTERROGATION1_ID, "survey-unit-id-1", "campaign-id", "questionnaire-id", null, null, null, null, null),
-                new Interrogation(INTERROGATION2_ID, "survey-unit-id-2", "campaign-id", "questionnaire-id", null, null, null, null, null)
+                new Interrogation(INTERROGATION1_ID, "survey-unit-id-1", "group-id", "questionnaire-id", null, null, null, null),
+                new Interrogation(INTERROGATION2_ID, "survey-unit-id-2", "group-id", "questionnaire-id", null, null, null, null)
         );
     }
 
     @Override
-    public List<InterrogationState> getInterrogations(String campaignId, StateDataType stateDataType) {
+    public List<InterrogationState> getInterrogations(String groupId, StateDataType stateDataType) {
         return null;
     }
 

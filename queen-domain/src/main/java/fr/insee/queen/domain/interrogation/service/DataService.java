@@ -11,7 +11,7 @@ public interface DataService {
 
     void updateCollectedData(String interrogationId, ObjectNode collectedData);
 
-    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
+    void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp);
 
-    void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
+    void cleanExtractedDataByIds(String groupId, List<String> interrogationIds);
 }

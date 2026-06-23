@@ -24,34 +24,36 @@ import java.util.regex.Pattern;
 public class PilotageHttpRepository implements PilotageRepository {
     public static final String API_HABILITATION = "/api/check-habilitation";
     public static final String API_PEARLJAM_SURVEYUNITS = "/api/interrogations";
-    public static final String API_PEARLJAM_CAMPAIGNS = "/campaigns/%s/ongoing";
     public static final String API_PEARLJAM_INTERVIEWER_CAMPAIGNS = "/api/interviewer/campaigns";
 
     @Value("${feature.pilotage.url}")
     private final String pilotageUrl;
     @Value("${feature.pilotage.alternative-habilitation.url}")
     private final String alternativeHabilitationServiceURL;
-    @Value("${feature.pilotage.alternative-habilitation.campaignids-regex}")
-    private final String campaignIdRegexWithAlternativeHabilitationService;
+    @Value("${feature.pilotage.alternative-habilitation.groupids-regex}")
+    private final String groupIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
     @Value("${feature.collection.mode:WEB}")
     private final CollectionEnvironmentEnum inputMode;
 
     @Override
-    public boolean isClosed(String campaignId) {
-        final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_CAMPAIGNS.formatted(campaignId);
+    public boolean isClosed(String groupId) {
+        final String uriPilotageFilter = UriComponentsBuilder.fromUriString(pilotageUrl)
+                .path("/campaigns/{id}/ongoing")
+                .buildAndExpand(groupId)
+                .toUriString();
 
         try {
-            ResponseEntity<PilotageCampaignEnabled> response =
+            ResponseEntity<PilotageGroupEnabled> response =
                     restTemplate.exchange(uriPilotageFilter, HttpMethod.GET,
                             HttpEntity.EMPTY,
-                            PilotageCampaignEnabled.class);
-            PilotageCampaignEnabled campaignEnabled = response.getBody();
-            if (campaignEnabled == null) {
+                            PilotageGroupEnabled.class);
+            PilotageGroupEnabled groupEnabled = response.getBody();
+            if (groupEnabled == null) {
                 log.error("Pilotage API does not have a body (was expecting a boolean value as response body");
                 throw new PilotageApiException();
             }
-            return !campaignEnabled.ongoing();
+            return !groupEnabled.ongoing();
         } catch (RestClientException e) {
             throw generateException(e);
         }
@@ -79,19 +81,19 @@ public class PilotageHttpRepository implements PilotageRepository {
     }
 
     @Override
-    public List<PilotageCampaign> getInterviewerCampaigns() {
+    public List<PilotageGroup> getInterviewerGroups() {
         try {
-            final String uriPilotageInterviewerCampaigns = pilotageUrl + API_PEARLJAM_INTERVIEWER_CAMPAIGNS;
+            final String uriPilotageInterviewer = pilotageUrl + API_PEARLJAM_INTERVIEWER_CAMPAIGNS;
 
-            ResponseEntity<List<PilotageCampaign>> response =
-                    restTemplate.exchange(uriPilotageInterviewerCampaigns, HttpMethod.GET,
+            ResponseEntity<List<PilotageGroup>> response =
+                    restTemplate.exchange(uriPilotageInterviewer, HttpMethod.GET,
                             HttpEntity.EMPTY,
-                            new ParameterizedTypeReference<List<PilotageCampaign>>() {});
+                            new ParameterizedTypeReference<List<PilotageGroup>>() {});
             log.debug("Pilotage API call returned {}", response.getStatusCode().value());
             return response.getBody();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             if(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
-                log.debug("Got a 404 status code, 0 campaigns returned");
+                log.debug("Got a 404 status code, 0 groups returned");
                 return new ArrayList<>();
             }
             throw generateException(ex);
@@ -162,30 +164,26 @@ public class PilotageHttpRepository implements PilotageRepository {
     private String buildWebHabilitationUrl(InterrogationSummary interrogation,
                                            PilotageRole role,
                                            String idep) {
-        String campaignId = interrogation.campaign().getId();
+        String groupId = interrogation.group().getId();
 
-        if (Pattern.matches(campaignIdRegexWithAlternativeHabilitationService, campaignId)) {
-            log.debug("Campaign {} uses alternative habilitation service {}", campaignId,
+        if (Pattern.matches(groupIdRegexWithAlternativeHabilitationService, groupId)) {
+            log.debug("Group {} uses alternative habilitation service {}", groupId,
                     alternativeHabilitationServiceURL);
 
-            return String.format(
-                    "%s?id=%s&role=%s&campaign=%s&idep=%s",
-                    alternativeHabilitationServiceURL,
-                    interrogation.id(),
-                    role.getExpectedRole(),
-                    campaignId,
-                    idep
-            );
+            return UriComponentsBuilder.fromUriString(alternativeHabilitationServiceURL)
+                    .queryParam("id", interrogation.id())
+                    .queryParam("role", role.getExpectedRole())
+                    .queryParam("campaign", groupId)
+                    .queryParam("idep", idep)
+                    .toUriString();
         }
 
-        return String.format(
-                "%s%s?id=%s&role=%s&idep=%s",
-                pilotageUrl,
-                API_HABILITATION,
-                interrogation.id(),
-                role.getExpectedRole(),
-                idep
-        );
+        return UriComponentsBuilder.fromUriString(pilotageUrl)
+                .path(API_HABILITATION)
+                .queryParam("id", interrogation.id())
+                .queryParam("role", role.getExpectedRole())
+                .queryParam("idep", idep)
+                .toUriString();
     }
 
     private boolean handleDenied(HttpStatusCodeException ex, String interrogationId) {

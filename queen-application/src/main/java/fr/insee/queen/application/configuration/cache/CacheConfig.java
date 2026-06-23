@@ -65,8 +65,8 @@ public class CacheConfig {
     }
 
     @Bean
-    protected CaffeineCache campaignsExistenceCache() {
-        return new CaffeineCache(CacheName.CAMPAIGN_EXIST,
+    protected CaffeineCache groupsExistenceCache() {
+        return new CaffeineCache(CacheName.GROUP_EXIST,
                 Caffeine.newBuilder()
                         .initialCapacity(10)
                         .maximumSize(100)
@@ -85,7 +85,7 @@ public class CacheConfig {
     }
 
     @Bean
-    protected CaffeineCache interrogationCampaignCache() {
+    protected CaffeineCache interrogationSummaryCache() {
         return new CaffeineCache(CacheName.INTERROGATION_SUMMARY,
                 Caffeine.newBuilder()
                         .initialCapacity(2000)

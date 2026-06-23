@@ -25,14 +25,13 @@ public record InterrogationBatchInput(
         @Schema(ref = SchemaType.Names.DATA)
         ObjectNode data) {
 
-    public static Interrogation toModel(InterrogationBatchInput interrogation, String campaignId) {
+    public static Interrogation toModel(InterrogationBatchInput interrogation, String groupId) {
         return new Interrogation(interrogation.id,
                 interrogation.surveyUnitId(),
-                campaignId,
+                groupId,
                 interrogation.questionnaireId(),
                 interrogation.personalization(),
                 interrogation.data(),
-                null,
                 null,
                 null);
     }

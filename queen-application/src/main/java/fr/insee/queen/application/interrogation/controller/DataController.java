@@ -1,23 +1,13 @@
 package fr.insee.queen.application.interrogation.controller;
 
-import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.auth.AuthorityPrivileges;
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.PilotageComponent;
-import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
-import fr.insee.queen.application.web.authentication.AuthenticationHelper;
 import fr.insee.queen.application.web.validation.IdValid;
 import fr.insee.queen.application.web.validation.json.JsonValid;
 import fr.insee.queen.application.web.validation.json.SchemaType;
-import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
-import fr.insee.queen.domain.interrogation.model.StateData;
-import fr.insee.queen.domain.interrogation.model.StateDataType;
-import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import fr.insee.queen.domain.interrogation.service.DataService;
-import fr.insee.queen.domain.interrogation.service.StateDataService;
-import fr.insee.queen.domain.interrogation.service.InterrogationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,13 +17,11 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * These endpoints handle the questionnaire form data of an interrogation
@@ -47,9 +35,6 @@ import java.util.Optional;
 public class DataController {
     private final DataService dataService;
     private final PilotageComponent pilotageComponent;
-    private final StateDataService stateDataService;
-    private final InterrogationService interrogationService;
-    private final AuthenticationHelper authenticationUserHelper;
 
     /**
      * Retrieve the questionnaire form data of an interrogation
@@ -63,37 +48,7 @@ public class DataController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.DATA))})
     public ObjectNode getDataByInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER, PilotageRole.REVIEWER);
-        InterrogationSummary interrogationSummary = interrogationService.getSummaryById(interrogationId);
-
-        // if campaign sensitivity is OFF, return data
-        if(interrogationSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
-            return dataService.getData(interrogationId);
-        }
-
-        // here, campaign sensitivity is ON !
-
-        // admin/reviewer can see data regardless sensitivity
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT, AuthorityRoleEnum.REVIEWER)){
-            return dataService.getData(interrogationId);
-        }
-
-        // interviewer retrieve the dto with filled or empty data
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.SURVEY_UNIT)){
-            Optional<StateDataType> validatedState = stateDataService
-                    .findStateData(interrogationId)
-                    .map(StateData::state)
-                    .filter(state -> StateDataType.EXTRACTED.equals(state)
-                            || StateDataType.VALIDATED.equals(state));
-
-            if (validatedState.isPresent()) {
-                return JsonNodeFactory.instance.objectNode();
-            }
-            // if no state data or if state not extracted/validated
-            return dataService.getData(interrogationId);
-        }
-
-        // reviewer cannot see data
-        throw new AccessDeniedException("Not authorized to see interrogation data");
+        return dataService.getData(interrogationId);
     }
 
 
@@ -115,69 +70,37 @@ public class DataController {
             ObjectNode dataValue,
             @IdValid
             @PathVariable(value = "id")
-            String interrogationId) throws LockedResourceException {
+            String interrogationId) {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER);
-
-        InterrogationSummary interrogationSummary = interrogationService.getSummaryById(interrogationId);
-
-        // if campaign sensitivity is OFF, update data
-        if(interrogationSummary.campaign().getSensitivity().equals(CampaignSensitivity.NORMAL)) {
-            dataService.saveData(interrogationId, dataValue);
-            return;
-        }
-
-        // here, campaign sensitivity is ON !
-
-        // admin can do everything
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.ADMIN, AuthorityRoleEnum.WEBCLIENT)){
-            dataService.saveData(interrogationId, dataValue);
-            return;
-        }
-
-        // interviewer/interrogation can update data if survey is not ended
-        if(authenticationUserHelper.hasRole(AuthorityRoleEnum.INTERVIEWER, AuthorityRoleEnum.SURVEY_UNIT)){
-            Optional<StateDataType> validatedState = stateDataService
-                    .findStateData(interrogationId)
-                    .map(StateData::state)
-                    .filter(state -> StateDataType.EXTRACTED.equals(state)
-                            || StateDataType.VALIDATED.equals(state));
-
-            if (validatedState.isEmpty()) {
-                dataService.saveData(interrogationId, dataValue);
-                return;
-            }
-
-            throw new LockedResourceException(interrogationId);
-        }
-        throw new AccessDeniedException("Not authorized to update interrogation data");
+        dataService.saveData(interrogationId, dataValue);
     }
 
     /**
-     * Clean all data from interrogations of a campaign with extracted state
+     * Clean all data from interrogations of a group with extracted state
      *
-     * @param campaignId the campaign id
+     * @param groupId the group id
      */
-    @Operation(summary = "Clean all data from interrogations of a campaign with extracted state")
-    @DeleteMapping("/admin/campaign/{id}/interrogations/data/extracted")
+    @Operation(summary = "Clean all data from interrogations of a group with extracted state")
+    @DeleteMapping("/admin/${application.group.path-singular}/{id}/interrogations/data/extracted")
     @PreAuthorize("hasRole('WEBCLIENT')")
-    public void cleanData(@IdValid @PathVariable(value = "id") String campaignId,
+    public void cleanData(@IdValid @PathVariable(value = "id") String groupId,
                           @NotNull @RequestParam("start") Long startTimestamp,
                           @NotNull @RequestParam("end") Long endTimestamp) {
-        dataService.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+        dataService.cleanExtractedData(groupId, startTimestamp, endTimestamp);
     }
 
     /**
-     * Clean data from extracted interrogations of a campaign, restricted to the provided ids
+     * Clean data from extracted interrogations of a group, restricted to the provided ids
      *
-     * @param campaignId        the campaign id
+     * @param groupId        the group id
      * @param interrogationIds  the interrogation ids to clean
      */
-    @Operation(summary = "Clean data from extracted interrogations of a campaign, filtered by ids")
-    @PostMapping("/admin/campaign/{id}/interrogations/data/extracted/clean")
+    @Operation(summary = "Clean data from extracted interrogations of a group, filtered by ids")
+    @PostMapping("/admin/${application.group.path-singular}/{id}/interrogations/data/extracted/clean")
     @PreAuthorize("hasRole('WEBCLIENT')")
     public void cleanExtractedDataByIds(
-            @IdValid @PathVariable(value = "id") String campaignId,
+            @IdValid @PathVariable(value = "id") String groupId,
             @NotEmpty @RequestBody List<String> interrogationIds) {
-        dataService.cleanExtractedDataByIds(campaignId, interrogationIds);
+        dataService.cleanExtractedDataByIds(groupId, interrogationIds);
     }
 }

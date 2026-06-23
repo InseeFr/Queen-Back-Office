@@ -3,15 +3,15 @@ package fr.insee.queen.domain.interrogation.service;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
-import fr.insee.queen.domain.campaign.model.CampaignSummary;
-import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
-import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
+import fr.insee.queen.domain.group.model.GroupSummary;
+import fr.insee.queen.domain.group.service.dummy.GroupExistenceFakeService;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.infrastructure.dummy.InterrogationFakeDao;
 import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.dummy.DataFakeService;
 import fr.insee.queen.domain.interrogation.service.dummy.MetadataFakeService;
 import fr.insee.queen.domain.interrogation.service.dummy.StateDataFakeService;
+import fr.insee.queen.domain.interrogation.service.exception.InterrogationAlreadyExistException;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,62 +32,59 @@ class InterrogationApiServiceTest {
     private InterrogationApiService interrogationApiService;
     private StateDataFakeService stateDataFakeService;
     private DataFakeService dataFakeService;
-    private CampaignExistenceFakeService campaignExistenceFakeService;
+    private GroupExistenceFakeService groupExistenceFakeService;
     private MetadataFakeService metadataFakeService;
     private InterrogationFakeDao interrogationFakeDao;
 
     private static final String QUESTIONNAIRE_ID = "questionnaire-id";
-    private static final String CAMPAIGN_ID = "campaign-id";
+    private static final String GROUP_ID = "group-id";
 
     @BeforeEach
     void init() {
         CacheManager cacheManager = new NoOpCacheManager();
         interrogationFakeDao = new InterrogationFakeDao();
         stateDataFakeService = new StateDataFakeService();
-        campaignExistenceFakeService = new CampaignExistenceFakeService();
+        groupExistenceFakeService = new GroupExistenceFakeService();
         dataFakeService = new DataFakeService();
         metadataFakeService = new MetadataFakeService();
         interrogationApiService = new InterrogationApiService(interrogationFakeDao, stateDataFakeService, dataFakeService,
-                campaignExistenceFakeService, metadataFakeService, cacheManager);
+                groupExistenceFakeService, metadataFakeService, cacheManager);
     }
 
     @Test
-    @DisplayName("On creating interrogation, check questionnaire is linked to campaign")
+    @DisplayName("On creating interrogation, check questionnaire is linked to group")
     void testCreate02() throws StateDataInvalidDateException {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", GROUP_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
         interrogationFakeDao.setInterrogationExist(false);
         interrogationApiService.createInterrogation(interrogation);
 
-        assertThat(campaignExistenceFakeService.isCheckCampaignLinkedToQuestionnaire()).isTrue();
+        assertThat(groupExistenceFakeService.isCheckGroupLinkedToQuestionnaire()).isTrue();
     }
 
     @Test
     @DisplayName("On creating interrogation, when interrogation exists, throw exception")
     void testCreate03() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", GROUP_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
         assertThatThrownBy(() -> interrogationApiService.createInterrogation(interrogation))
-                .isInstanceOf(EntityAlreadyExistException.class)
+                .isInstanceOf(InterrogationAlreadyExistException.class)
                 .hasMessage(String.format(InterrogationApiService.ALREADY_EXIST_MESSAGE, interrogation.id()));
     }
 
     @Test
     @DisplayName("On creating interrogation, when state data is null, don't save it")
     void testCreate04() throws StateDataInvalidDateException {
-        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", GROUP_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
                 null);
@@ -101,9 +98,8 @@ class InterrogationApiServiceTest {
     @DisplayName("On creating interrogation, when state data is not null, save it")
     void testCreate05() throws StateDataInvalidDateException {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", GROUP_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
@@ -117,9 +113,8 @@ class InterrogationApiServiceTest {
     @DisplayName("On updating interrogation, when interrogation not exist, throw exception")
     void testUpdate01() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", GROUP_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
@@ -134,9 +129,8 @@ class InterrogationApiServiceTest {
     @Test
     @DisplayName("On updating interrogation, when state data is null, don't save it")
     void testUpdate02() {
-        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", GROUP_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 null,
                 null);
@@ -149,9 +143,8 @@ class InterrogationApiServiceTest {
     @DisplayName("On updating interrogation, when state data is not null, save it")
     void testUpdate03() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", GROUP_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
@@ -164,9 +157,8 @@ class InterrogationApiServiceTest {
     @DisplayName("On updating interrogation, when date is invalid on state data, ignore the error")
     void testUpdate04() {
         StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
-        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", GROUP_ID, QUESTIONNAIRE_ID,
                 JsonNodeFactory.instance.arrayNode(),
-                JsonNodeFactory.instance.objectNode(),
                 JsonNodeFactory.instance.objectNode(),
                 stateData,
                 null);
@@ -236,11 +228,11 @@ class InterrogationApiServiceTest {
     @Test
     @DisplayName("Retrieve one interrogation summary by surveyUnitId")
     void findSummariesBySurveyUnitId() {
-        CampaignSummary campaignSummary = new CampaignSummary("campaignId", "label", null);
+        GroupSummary groupSummary = new GroupSummary("groupId", "label", null);
         InterrogationSummary interrogationSummary =
-                new InterrogationSummary("id","survey-unit-id1", "questionnaireId", campaignSummary);
+                new InterrogationSummary("id","survey-unit-id1", "questionnaireId", groupSummary);
         InterrogationSummary interrogationSummary2 =
-                new InterrogationSummary("id","survey-unit-id2", "questionnaireId", campaignSummary);
+                new InterrogationSummary("id","survey-unit-id2", "questionnaireId", groupSummary);
         interrogationFakeDao.setInterrogationSummaries(List.of(interrogationSummary, interrogationSummary2));
 
         List<InterrogationSummary> interrogationSummaries = interrogationApiService.findSummariesBySurveyUnitId("survey-unit-id1");
@@ -253,10 +245,10 @@ class InterrogationApiServiceTest {
     void findQuestionnaireLinksByInterrogationIds_should_return_questionnaire_links() {
         // Given
         List<String> interrogationIds = List.of("interro1", "interro2", "interro3");
-        CampaignSummary campaignSummary = new CampaignSummary("campaignId", "label", null);
-        InterrogationSummary summary1 = new InterrogationSummary("interro1", "su1", "quest1", campaignSummary);
-        InterrogationSummary summary2 = new InterrogationSummary("interro2", "su2", "quest2", campaignSummary);
-        InterrogationSummary summary3 = new InterrogationSummary("interro3", "su3", "quest1", campaignSummary);
+        GroupSummary groupSummary = new GroupSummary("groupId", "label", null);
+        InterrogationSummary summary1 = new InterrogationSummary("interro1", "su1", "quest1", groupSummary);
+        InterrogationSummary summary2 = new InterrogationSummary("interro2", "su2", "quest2", groupSummary);
+        InterrogationSummary summary3 = new InterrogationSummary("interro3", "su3", "quest1", groupSummary);
         interrogationFakeDao.setInterrogationSummaries(List.of(summary1, summary2, summary3));
 
         // When
@@ -277,9 +269,9 @@ class InterrogationApiServiceTest {
     void findQuestionnaireLinksByInterrogationIds_should_filter_out_nonexistent_interrogations() {
         // Given
         List<String> interrogationIds = List.of("interro1", "nonexistent", "interro2");
-        CampaignSummary campaignSummary = new CampaignSummary("campaignId", "label", null);
-        InterrogationSummary summary1 = new InterrogationSummary("interro1", "su1", "quest1", campaignSummary);
-        InterrogationSummary summary2 = new InterrogationSummary("interro2", "su2", "quest2", campaignSummary);
+        GroupSummary groupSummary = new GroupSummary("groupId", "label", null);
+        InterrogationSummary summary1 = new InterrogationSummary("interro1", "su1", "quest1", groupSummary);
+        InterrogationSummary summary2 = new InterrogationSummary("interro2", "su2", "quest2", groupSummary);
         interrogationFakeDao.setInterrogationSummaries(List.of(summary1, summary2));
 
         // When

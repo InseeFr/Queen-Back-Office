@@ -34,64 +34,42 @@ public class IntegrationComponent {
     private final QuestionnaireBuilder questionnaireBuilder;
     private final ApplicationProperties applicationProperties;
 
-    /**
-     * Try to do the full integration of a campaign.
-     * Return results about the integration of each component (campaign/questionnaires/nomenclatures)
-     *
-     * @param integrationFile integration file
-     * @param isXmlIntegration Is integration done with xml files
-     * @return {@link IntegrationResultsDto} integration results
-     */
-    public IntegrationResultsDto integrateContext(MultipartFile integrationFile, boolean isXmlIntegration) {
+    public IntegrationResultsDto integrateContext(MultipartFile integrationFile) {
         try {
             Path tempDirectoryPath = Path.of(applicationProperties.tempFolder());
             File zip = Files.createTempFile(tempDirectoryPath, UUID.randomUUID().toString(), ".temp").toFile();
-            return integrateContext(zip, integrationFile, isXmlIntegration);
+            return integrateContext(zip, integrationFile);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new IntegrationComponentException(e.getMessage());
         }
     }
 
-    /**
-     * Try to do the full integration of a campaign.
-     *
-     * @param integrationFile integration file
-     * @param isXmlIntegration Is integration done with xml files
-     * @return {@link IntegrationResultsDto} integration results
-     */
-    private IntegrationResultsDto integrateContext(File integrationFile, MultipartFile file, boolean isXmlIntegration) {
+    private IntegrationResultsDto integrateContext(File integrationFile, MultipartFile file) {
         try (FileOutputStream o = new FileOutputStream(integrationFile)) {
             IOUtils.copy(file.getInputStream(), o);
-            return doIntegration(integrationFile, isXmlIntegration);
+            return doIntegration(integrationFile);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new IntegrationComponentException(e.getMessage());
         }
     }
 
-    /**
-     * Try to do the full integration of a campaign.
-     *
-     * @param integrationFile integration file
-     * @param isXmlIntegration Is integration done with xml files
-     * @return {@link IntegrationResultsDto} integration results
-     */
-    private IntegrationResultsDto doIntegration(File integrationFile, boolean isXmlIntegration) {
+    private IntegrationResultsDto doIntegration(File integrationFile) {
         IntegrationResultsDto result = new IntegrationResultsDto();
 
         try (ZipFile zf = new ZipFile(integrationFile)) {
-            List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureBuilder.build(zf, isXmlIntegration);
+            List<IntegrationResultUnitDto> nomenclatureResults = nomenclatureBuilder.build(zf);
             result.setNomenclatures(nomenclatureResults);
 
-            IntegrationResultUnitDto campaignResult = campaignBuilder.build(zf, isXmlIntegration);
+            IntegrationResultUnitDto campaignResult = campaignBuilder.build(zf);
             result.setCampaign(campaignResult);
 
             if (campaignResult.getStatus() == IntegrationStatus.ERROR) {
                 return result;
             }
 
-            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(campaignResult.getId(), zf, isXmlIntegration);
+            List<IntegrationResultUnitDto> questionnaireResults = questionnaireBuilder.build(campaignResult.getId(), zf);
             result.setQuestionnaireModels(questionnaireResults);
 
             return result;
@@ -101,4 +79,3 @@ public class IntegrationComponent {
         }
     }
 }
-

@@ -2,7 +2,7 @@ package fr.insee.queen.application.integration.dto.input;
 
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.web.validation.IdValid;
-import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
+import fr.insee.queen.domain.group.model.QuestionnaireModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +28,7 @@ public record QuestionnaireModelIntegrationData(
             nomenclatureIds = new HashSet<>();
         }
 
-        return QuestionnaireModel.createQuestionnaireWithCampaign(
+        return QuestionnaireModel.createQuestionnaireWithGroup(
                 questionnaire.idQuestionnaireModel,
                 questionnaire.label,
                 questionnaire.value,

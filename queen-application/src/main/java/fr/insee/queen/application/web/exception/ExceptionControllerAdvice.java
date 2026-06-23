@@ -1,14 +1,14 @@
 package fr.insee.queen.application.web.exception;
 
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
-import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
 import fr.insee.queen.application.web.authentication.AuthenticationTokenException;
 import fr.insee.queen.application.web.validation.exception.JsonValidatorComponentInitializationException;
-import fr.insee.queen.domain.campaign.service.exception.CampaignDeletionException;
-import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuestionnaireException;
-import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
+import fr.insee.queen.domain.group.service.exception.GroupDeletionException;
+import fr.insee.queen.domain.group.service.exception.GroupNotLinkedToQuestionnaireException;
+import fr.insee.queen.domain.group.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.interrogation.service.exception.InterrogationAlreadyExistException;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.domain.interrogation.service.exception.MetadataValueNotFoundException;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 
@@ -113,6 +114,11 @@ public class ExceptionControllerAdvice {
         return generateResponseError(e, HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiError> noResourceFoundException(NoResourceFoundException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.NOT_FOUND, request, false);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> accessDeniedException(AccessDeniedException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.FORBIDDEN, request);
@@ -165,14 +171,6 @@ public class ExceptionControllerAdvice {
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request, ERROR_OCCURRED_LABEL);
     }
 
-    @ExceptionHandler(LockedResourceException.class)
-    public ResponseEntity<ApiError> lockedResourceException(LockedResourceException e, WebRequest request) {
-        log.info(e.getMessage());
-        HttpStatus status = HttpStatus.LOCKED;
-        ApiError error = errorComponent.buildApiErrorObject(request, status, e.getMessage());
-        return new ResponseEntity<>(error, status);
-    }
-
     @ExceptionHandler(HabilitationException.class)
     public ResponseEntity<ApiError> habilitationException(HabilitationException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.FORBIDDEN, request);
@@ -183,19 +181,24 @@ public class ExceptionControllerAdvice {
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler(CampaignDeletionException.class)
-    public ResponseEntity<ApiError> campaignDeletionException(CampaignDeletionException e, WebRequest request) {
-        return generateResponseError(e, HttpStatus.UNPROCESSABLE_CONTENT, request);
+    @ExceptionHandler(GroupDeletionException.class)
+    public ResponseEntity<ApiError> groupDeletionException(GroupDeletionException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
-    @ExceptionHandler(CampaignNotLinkedToQuestionnaireException.class)
-    public ResponseEntity<ApiError> campaignDeletionException(CampaignNotLinkedToQuestionnaireException e, WebRequest request) {
+    @ExceptionHandler(GroupNotLinkedToQuestionnaireException.class)
+    public ResponseEntity<ApiError> groupDeletionException(GroupNotLinkedToQuestionnaireException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(EntityAlreadyExistException.class)
     public ResponseEntity<ApiError> entityAlreadyExistException(EntityAlreadyExistException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(InterrogationAlreadyExistException.class)
+    public ResponseEntity<ApiError> interrogationAlreadyExistException(InterrogationAlreadyExistException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler(IntegrationComponentException.class)

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Service
@@ -41,21 +40,23 @@ public class StateDataApiService implements StateDataService {
         Optional<StateData> previousStateData = stateDataRepository.find(interrogationId);
 
         if(stateData.date() == null) {
-            long timestamp = ZonedDateTime.now(clock).toInstant().toEpochMilli();
+            long timestamp = clock.instant().toEpochMilli();
             stateData = new StateData(stateData.state(), timestamp, stateData.currentPage());
         }
 
         if (previousStateData.isEmpty()) {
-            log.info("Previous state data not found, new state data -> [{}, {}]", stateData.state().name(), stateData.date());
+            log.info("Previous state data not found, new state data -> [{}, {}, {}]", stateData.state().name(), stateData.date(), stateData.currentPage());
             stateDataRepository.save(interrogationId, stateData);
             return;
         }
 
-        log.info("Previous state data -> [{},{}], new state data -> [{}, {}]",
+        log.info("Previous state data -> [{}, {}, {}], new state data -> [{}, {}, {}]",
                 previousStateData.get().state() != null ? previousStateData.get().state().name() : null,
                 previousStateData.get().date(),
+                previousStateData.get().currentPage(),
                 stateData.state().name(),
-                stateData.date());
+                stateData.date(),
+                stateData.currentPage());
 
         // update only if incoming state-data is newer and verifyDate is true
         if (verifyDate) {

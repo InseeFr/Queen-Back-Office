@@ -16,7 +16,7 @@ public class QuestionnaireFakeBuilder implements QuestionnaireBuilder {
     );
 
     @Override
-    public List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile, boolean isXmlIntegration) {
+    public List<IntegrationResultUnitDto> build(String campaignId, ZipFile integrationZipFile) {
         return results;
     }
 }

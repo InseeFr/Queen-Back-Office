@@ -15,7 +15,6 @@ public class FixedTimeConfiguration {
     @Primary
     public Clock clock() {
         Instant fixedInstant = Instant.ofEpochMilli(1747395350727L);
-        ZoneId zoneId = ZoneId.of("Europe/Paris");
-        return Clock.fixed(fixedInstant, zoneId);
+        return Clock.fixed(fixedInstant, ZoneId.of("UTC"));
     }
 }

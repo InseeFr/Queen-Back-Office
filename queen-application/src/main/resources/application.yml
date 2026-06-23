@@ -19,7 +19,8 @@ application:
   # DO NOT USE THE DEFAULT TEMP DIRECTORY OF THE OS as it adresses some vulnerabilities.
   # Use a folder with permissions for the app only
   temp-folder:
-  campaign:
+  group:
+    kind: CAMPAIGN  # CAMPAIGN | PARTITION
     check-interrogations-on-delete: true
 
 feature:
@@ -41,11 +42,9 @@ feature:
     url:
     alternative-habilitation:
       url: http://alternative.url
-      campaignids-regex: ((edt)|(EDT))(\d|\S){1,}
+      groupids-regex: ((edt)|(EDT))(\d|\S){1,}
   cache:
     enabled: true
-  comments:
-    enabled: false
   interviewer-mode:
     enabled: false
 
@@ -81,6 +80,10 @@ spring:
         auto: validate
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+  jackson:
+    time-zone: UTC
   security:
     oauth2:
       resourceserver:

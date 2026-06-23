@@ -20,12 +20,12 @@ public interface InterrogationRepository {
     Optional<InterrogationSummary> findSummaryById(String interrogationId);
 
     /**
-     * Find all interrogation summary by campaign
+     * Find all interrogation summary by group
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @return List of {@link InterrogationSummary} interrogation summary
      */
-    List<InterrogationSummary> findAllSummaryByCampaignId(String campaignId);
+    List<InterrogationSummary> findAllSummaryByGroupId(String groupId);
 
     /**
      * Find all interrogation summary by survey-unit
@@ -52,12 +52,12 @@ public interface InterrogationRepository {
     Optional<Interrogation> find(String interrogationId);
 
     /**
-     * Retrieve an interrogation with campaign and state data linked (used for deposit proof)
+     * Retrieve an interrogation with group and state data linked (used for deposit proof)
      *
      * @param interrogationId interrogation id
      * @return {@link InterrogationDepositProof} interrogation
      */
-    Optional<InterrogationDepositProof> findWithCampaignAndStateById(String interrogationId);
+    Optional<InterrogationDepositProof> findWithGroupAndStateById(String interrogationId);
 
     /**
      * Find all interrogation ids
@@ -68,11 +68,11 @@ public interface InterrogationRepository {
 
     /**
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @param stateDataType state data type to filter
      * @return pages of interrogations with states
      */
-    List<InterrogationState> findAllByState(String campaignId, StateDataType stateDataType);
+    List<InterrogationState> findAllByState(String groupId, StateDataType stateDataType);
 
     /**
      * Find interrogations with state linked by ids
@@ -83,14 +83,14 @@ public interface InterrogationRepository {
     List<InterrogationState> findAllWithStateByIdIn(List<String> interrogationIds);
 
     /**
-     * Delete interrogations linked to a campaign
+     * Delete interrogations linked to a group
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      */
-    void deleteInterrogations(String campaignId);
+    void deleteInterrogations(String groupId);
 
     /**
-     * Delete interrogation (with data/paradatas/state-data/comment/interrogation temp zone)
+     * Delete interrogation (with data/paradatas/state-data/interrogation temp zone)
      *
      * @param interrogationId interrogation id
      */
@@ -112,14 +112,6 @@ public interface InterrogationRepository {
     void savePersonalization(String interrogationId, ArrayNode personalization);
 
     /**
-     * Save comment of an interrogation
-     *
-     * @param interrogationId interrogation id
-     * @param comment comment value
-     */
-    void saveComment(String interrogationId, ObjectNode comment);
-
-    /**
      * Save data of an interrogation
      *
      * @param interrogationId interrogation id
@@ -133,14 +125,6 @@ public interface InterrogationRepository {
      * @param partialCollectedDataNode partial data value
      */
     void updateCollectedData(String interrogationId, ObjectNode partialCollectedDataNode);
-
-    /**
-     * Find the comment of an interrogation
-     *
-     * @param interrogationId interrogation id
-     * @return the comment value
-     */
-    Optional<ObjectNode> findComment(String interrogationId);
 
     /**
      * Find the data of an interrogation
@@ -175,7 +159,7 @@ public interface InterrogationRepository {
     boolean exists(String interrogationId);
 
     /**
-     * Update interrogation infos (data/state-data/comment/personalization)
+     * Update interrogation infos (data/state-data/personalization)
      * @param interrogation interrogation to update
      */
     void update(Interrogation interrogation);
@@ -195,28 +179,28 @@ public interface InterrogationRepository {
     List<Interrogation> findAll();
 
     /**
-     * clear all extracted data for a campaign between 2 timestamps
+     * clear all extracted data for a group between 2 timestamps
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @param startTimestamp timestamp start
      * @param endTimestamp timestamp end
      */
-    void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
+    void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp);
 
     /**
-     * Clear extracted data for a campaign, restricted to the given interrogation ids.
-     * Only interrogations whose state is EXTRACTED and that belong to the campaign are affected.
+     * Clear extracted data for a group, restricted to the given interrogation ids.
+     * Only interrogations whose state is EXTRACTED and that belong to the group are affected.
      *
-     * @param campaignId       campaign id
+     * @param groupId       group id
      * @param interrogationIds interrogation ids to target
      */
-    void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
+    void cleanExtractedDataByIds(String groupId, List<String> interrogationIds);
 
     /**
-     * Check if interrogations exist for the campaign
+     * Check if interrogations exist for the group
      *
-     * @param campaignId campaign id
+     * @param groupId group id
      * @return true if interrogations exist, false otherwise
      */
-    boolean existsByCampaignId(String campaignId);
+    boolean existsByGroupId(String groupId);
 }

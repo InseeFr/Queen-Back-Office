@@ -10,10 +10,7 @@
     <description>Modules for queen back-office</description>
 
     <properties>
-        <!-- Project properties -->
-        <!-- About revision and changelist maven special properties:
-         https://maven.apache.org/guides/mini/guide-maven-ci-friendly.html -->
-        <revision>5.10.0</revision>
+        <revision>6.0.0</revision>
         <changelist></changelist>
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
