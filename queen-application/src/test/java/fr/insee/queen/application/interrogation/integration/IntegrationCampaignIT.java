@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class IntegrationIT {
+class IntegrationCampaignIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -85,7 +85,9 @@ class IntegrationIT {
         String content = result.getResponse().getContentAsString();
         String expectedResult = """
                 {
-                    "campaign": { "status":"ERROR", "cause":"Campaign not integrated because one or more questionnaire models failed to integrate" },
+                    "groups":[
+                        { "status":"ERROR", "cause":"Campaign not integrated because one or more questionnaire models failed to integrate" }
+                    ],
                     "nomenclatures":[
                         { "id":"cities2019", "status":"ERROR", "cause":"A nomenclature with id cities2019 already exists"},
                         { "id":"regions2019", "status":"ERROR", "cause":"Nomenclature file 'regions2019.json' could not be found in input zip" }

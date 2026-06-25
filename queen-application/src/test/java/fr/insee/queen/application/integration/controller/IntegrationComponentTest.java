@@ -1,13 +1,15 @@
 package fr.insee.queen.application.integration.controller;
 
 import fr.insee.queen.application.configuration.properties.ApplicationProperties;
-import fr.insee.queen.application.integration.controller.builder.dummy.CampaignFakeBuilder;
+import fr.insee.queen.application.configuration.properties.GroupKindProviderImpl;
+import fr.insee.queen.application.integration.controller.builder.dummy.GroupFakeBuilder;
 import fr.insee.queen.application.integration.controller.builder.dummy.NomenclatureFakeBuilder;
 import fr.insee.queen.application.integration.controller.builder.dummy.QuestionnaireFakeBuilder;
 import fr.insee.queen.application.integration.component.IntegrationComponent;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultsDto;
+import fr.insee.queen.domain.group.gateway.GroupKindProvider;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -30,15 +32,15 @@ class IntegrationComponentTest {
     private IntegrationComponent integrationComponent;
     private QuestionnaireFakeBuilder questionnaireBuilder;
     private NomenclatureFakeBuilder nomenclatureBuilder;
-    private CampaignFakeBuilder campaignBuilder;
+    private GroupFakeBuilder groupBuilder;
 
     @BeforeEach
     void init() {
         questionnaireBuilder = new QuestionnaireFakeBuilder();
         nomenclatureBuilder = new NomenclatureFakeBuilder();
-        campaignBuilder = new CampaignFakeBuilder();
+        groupBuilder = new GroupFakeBuilder();
         ApplicationProperties applicationProperties = new ApplicationProperties(null, null, null, null, null, System.getProperty("java.io.tmpdir"));
-        integrationComponent = new IntegrationComponent(nomenclatureBuilder, campaignBuilder, questionnaireBuilder, applicationProperties);
+        integrationComponent = new IntegrationComponent(nomenclatureBuilder, groupBuilder, questionnaireBuilder, applicationProperties, null);
     }
 
     @Test
@@ -54,7 +56,7 @@ class IntegrationComponentTest {
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
         IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
-        assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultSuccess());
+        assertThat(result.getGroups()).isEqualTo(groupBuilder.getResultsSuccess());
         assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
         assertThat(result.getQuestionnaireModels()).isEqualTo(questionnaireBuilder.getResults());
     }
@@ -62,11 +64,11 @@ class IntegrationComponentTest {
     @Test
     @DisplayName("when integrating campaign in errors, then questionnaires are still processed and campaign reports the error")
     void integrate03() throws IOException {
-        campaignBuilder.setResultIsInErrorState(true);
+        groupBuilder.setResultIsInErrorState(true);
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
         IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
-        assertThat(result.getCampaign()).isEqualTo(campaignBuilder.getResultError());
+        assertThat(result.getGroups()).isEqualTo(groupBuilder.getResultsError());
         assertThat(result.getNomenclatures()).isEqualTo(nomenclatureBuilder.getResults());
         assertThat(result.getQuestionnaireModels()).isEqualTo(questionnaireBuilder.getResults());
     }
@@ -77,7 +79,7 @@ class IntegrationComponentTest {
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-component.zip");
         MultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.APPLICATION_JSON_VALUE, zipInputStream);
         integrationComponent.integrateContext(uploadedFile);
-        assertThat(campaignBuilder.getReceivedQuestionnaireIds())
+        assertThat(groupBuilder.getReceivedQuestionnaireIds())
                 .containsExactlyInAnyOrder("id-questionnaire1", "id-questionnaire2");
     }
 
@@ -90,10 +92,10 @@ class IntegrationComponentTest {
         IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
 
         IntegrationResultUnitDto expectedCampaign = IntegrationResultUnitDto.integrationResultUnitError(
-                null, IntegrationResultLabel.CAMPAIGN_SKIPPED_QUESTIONNAIRE_ERRORS);
-        assertThat(result.getCampaign()).isEqualTo(expectedCampaign);
-        assertThat(result.getCampaign().getStatus()).isEqualTo(IntegrationStatus.ERROR);
+                null, IntegrationResultLabel.GROUPS_SKIPPED_QUESTIONNAIRE_ERRORS);
+        assertThat(result.getGroups().getFirst()).isEqualTo(expectedCampaign);
+        assertThat(result.getGroups().getFirst().getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(result.getQuestionnaireModels()).isEqualTo(questionnaireBuilder.getResults());
-        assertThat(campaignBuilder.getReceivedQuestionnaireIds()).isEmpty();
+        assertThat(groupBuilder.getReceivedQuestionnaireIds()).isEmpty();
     }
 }

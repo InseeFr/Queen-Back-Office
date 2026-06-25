@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @Validated
 @ConditionalOnProperty(name = "application.group.kind", havingValue = "CAMPAIGN", matchIfMissing = true)
-public class IntegrationController {
+public class IntegrationCampaignController {
     private final IntegrationComponent integrationComponent;
 
     /**

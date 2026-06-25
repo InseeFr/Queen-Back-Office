@@ -13,5 +13,5 @@ public class IntegrationResultLabel {
     public static final String FILE_NOT_FOUND = "No file %s found";
     public static final String NOMENCLATURE_ALREADY_EXISTS = "A nomenclature with id %s already exists";
     public static final String NOMENCLATURE_DO_NOT_EXIST = "The nomenclature '%s' does not exist";
-    public static final String CAMPAIGN_SKIPPED_QUESTIONNAIRE_ERRORS = "Campaign not integrated because one or more questionnaire models failed to integrate";
+    public static final String GROUPS_SKIPPED_QUESTIONNAIRE_ERRORS = "%s not integrated because one or more questionnaire models failed to integrate";
 }

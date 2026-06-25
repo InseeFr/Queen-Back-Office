@@ -30,7 +30,7 @@ feature:
 spring:
   docker:
     compose:
-      enabled: true
+      enabled: false
       file: compose.yml
       lifecycle-management: start-and-stop
       start:
