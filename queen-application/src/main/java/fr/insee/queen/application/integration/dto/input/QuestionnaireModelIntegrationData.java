@@ -14,8 +14,6 @@ import java.util.Set;
 public record QuestionnaireModelIntegrationData(
         @IdValid
         String idQuestionnaireModel,
-        @IdValid
-        String campaignId,
         @NotEmpty
         String label,
         @NotNull
@@ -27,12 +25,10 @@ public record QuestionnaireModelIntegrationData(
         if (nomenclatureIds == null) {
             nomenclatureIds = new HashSet<>();
         }
-
-        return QuestionnaireModel.createQuestionnaireWithGroup(
+        return QuestionnaireModel.create(
                 questionnaire.idQuestionnaireModel,
                 questionnaire.label,
                 questionnaire.value,
-                nomenclatureIds,
-                questionnaire.campaignId());
+                nomenclatureIds);
     }
 }

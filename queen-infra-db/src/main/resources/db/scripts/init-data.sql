@@ -8,14 +8,14 @@
 
 TRUNCATE TABLE interrogation_temp_zone, state_data, paradata_event,
     data, personalization, interrogation,
-    required_nomenclature, questionnaire_model, nomenclature,
+    required_nomenclature, survey_group_questionnaire_model, questionnaire_model, nomenclature,
     metadata, survey_group;
 
-INSERT INTO survey_group(id, label) VALUES
-  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020'),
-  ('VQS2021X00', 'Everyday life and health survey 2021'),
-  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web'),
-  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR');
+INSERT INTO survey_group(id, label, kind) VALUES
+  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'CAMPAIGN'),
+  ('VQS2021X00', 'Everyday life and health survey 2021', 'CAMPAIGN'),
+  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'CAMPAIGN'),
+  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', 'CAMPAIGN');
 
 --
 -- TOC entry 3406 (class 0 OID 16489)
@@ -48,13 +48,20 @@ INSERT INTO nomenclature(id, label, value) VALUES
 -- Data for Name: questionnaire_model; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES
-  ('QmWithoutCamp', 'Questionnaire with no campaign', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', NULL),
-  ('simpsons', 'Questionnaire about the Simpsons tv show', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'SIMPSONS2020X00'),
-  ('simpsonsV2', 'Questionnaire about the Simpsons tv show version 2', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'SIMPSONS2020X00'),
-  ('VQS2021X00', 'Questionnaire of the Everyday life and health survey 2021', '{"id": "k1g74VQS2bisqf2", "label": "Questionnaire simple rallye game", "modele": "VQS2021", "maxPage": "21", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.3.7", "generatingDate": "21-04-2022 13:17:27", "lunaticModelVersion": "2.2.10"}', 'VQS2021X00'),
-  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', '{"id": "kwdqpj7a", "label": "Enquête Logement - Partie 1", "modele": "m1", "maxPage": "184", "missing": false, "variables": []}', 'LOG2021X11Web'),
-  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', '{"id": "kwdqpj7a", "label": "Enquête Logement - Partie 1"}', 'LOG2021X11Tel');
+INSERT INTO questionnaire_model(id, label, value) VALUES
+  ('QmWithoutCamp', 'Questionnaire with no campaign', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}'),
+  ('simpsons', 'Questionnaire about the Simpsons tv show', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}'),
+  ('simpsonsV2', 'Questionnaire about the Simpsons tv show version 2', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}'),
+  ('VQS2021X00', 'Questionnaire of the Everyday life and health survey 2021', '{"id": "k1g74VQS2bisqf2", "label": "Questionnaire simple rallye game", "modele": "VQS2021", "maxPage": "21", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.3.7", "generatingDate": "21-04-2022 13:17:27", "lunaticModelVersion": "2.2.10"}'),
+  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', '{"id": "kwdqpj7a", "label": "Enquête Logement - Partie 1", "modele": "m1", "maxPage": "184", "missing": false, "variables": []}'),
+  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', '{"id": "kwdqpj7a", "label": "Enquête Logement - Partie 1"}');
+
+INSERT INTO survey_group_questionnaire_model (survey_group_id, questionnaire_model_id) VALUES
+  ('SIMPSONS2020X00', 'simpsons'),
+  ('SIMPSONS2020X00', 'simpsonsV2'),
+  ('VQS2021X00',      'VQS2021X00'),
+  ('LOG2021X11Web',   'LOG2021X11Web'),
+  ('LOG2021X11Tel',   'LOG2021X11Tel');
 
 --
 -- TOC entry 3405 (class 0 OID 16427)

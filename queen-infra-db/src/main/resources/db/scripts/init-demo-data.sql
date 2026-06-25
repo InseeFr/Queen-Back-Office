@@ -8,17 +8,17 @@
 
 TRUNCATE TABLE interrogation_temp_zone, state_data, paradata_event,
     data, personalization, interrogation,
-    required_nomenclature, questionnaire_model, nomenclature,
+    required_nomenclature, survey_group_questionnaire_model, questionnaire_model, nomenclature,
     metadata, survey_group;
 
-INSERT INTO survey_group(id, label) VALUES
-  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020'),
-  ('VQS2021X00', 'Everyday life and health survey 2021'),
-  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web'),
-  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR'),
-  ('AQV2022X00', 'Campagne qualité volaille en 2022'),
-  ('AQV2023X00', 'Campagne qualité volaille en 2023'),
-  ('AQV2024X00', 'Campagne qualité volaille en 2024');
+INSERT INTO survey_group(id, label, kind) VALUES
+  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'CAMPAIGN'),
+  ('VQS2021X00', 'Everyday life and health survey 2021', 'CAMPAIGN'),
+  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'CAMPAIGN'),
+  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', 'CAMPAIGN'),
+  ('AQV2022X00', 'Campagne qualité volaille en 2022', 'CAMPAIGN'),
+  ('AQV2023X00', 'Campagne qualité volaille en 2023', 'CAMPAIGN'),
+  ('AQV2024X00', 'Campagne qualité volaille en 2024', 'CAMPAIGN');
 
 
 --
@@ -56,7 +56,7 @@ INSERT INTO nomenclature(id, label, value) VALUES
 -- Data for Name: questionnaire_model; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'QmWithoutCamp',
   'Questionnaire with no campaign',
   $${
@@ -136,11 +136,10 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  NULL
+}$$
 );
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'simpsons',
   'Questionnaire about the Simpsons tv show',
   $${
@@ -220,11 +219,10 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  'SIMPSONS2020X00'
+}$$
 );
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'simpsonsV2',
   'Questionnaire about the Simpsons tv show version 2',
   $${
@@ -304,11 +302,10 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  'SIMPSONS2020X00'
+}$$
 );
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'VQS2021X00',
   'Questionnaire of the Everyday life and health survey 2021',
   $${
@@ -388,11 +385,10 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  'VQS2021X00'
+}$$
 );
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'LOG2021X11Web',
   'Enquête Logement 2022 - Séquence 1 - HR - Web',
   $${
@@ -472,11 +468,10 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  'LOG2021X11Web'
+}$$
 );
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'LOG2021X11Tel',
   'Enquête Logement 2022 - Séquence 1 - HR',
   $${
@@ -556,11 +551,10 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  'LOG2021X11Tel'
+}$$
 );
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'aqv2022x00',
   'qualité volaille en 2022',
   $${
@@ -640,11 +634,10 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  'AQV2022X00'
+}$$
 );
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'aqv2023x00',
   'qualité volaille en 2022',
   $${
@@ -724,11 +717,10 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  'AQV2023X00'
+}$$
 );
 
-INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
+INSERT INTO questionnaire_model(id, label, value) VALUES (
   'aqv2024x00',
   'qualité volaille en 2022',
   $${
@@ -808,9 +800,18 @@ INSERT INTO questionnaire_model(id, label, value, survey_group_id) VALUES (
   "enoCoreVersion": "3.33.0-SNAPSHOT.1",
   "generatingDate": "13-02-2025 13:41:02",
   "lunaticModelVersion": "3.15.3"
-}$$,
-  'AQV2024X00'
+}$$
 );
+
+INSERT INTO survey_group_questionnaire_model (survey_group_id, questionnaire_model_id) VALUES
+  ('SIMPSONS2020X00', 'simpsons'),
+  ('SIMPSONS2020X00', 'simpsonsV2'),
+  ('VQS2021X00',      'VQS2021X00'),
+  ('LOG2021X11Web',   'LOG2021X11Web'),
+  ('LOG2021X11Tel',   'LOG2021X11Tel'),
+  ('AQV2022X00',      'aqv2022x00'),
+  ('AQV2023X00',      'aqv2023x00'),
+  ('AQV2024X00',      'aqv2024x00');
 
 --
 -- TOC entry 3405 (class 0 OID 16427)

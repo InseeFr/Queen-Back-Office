@@ -47,21 +47,19 @@ public interface QuestionnaireModelRepository {
     void update(QuestionnaireModel questionnaireData);
 
     /**
-     * Count valid questionnaires for a group
-     * This is typically used to check if questionnaires can be associated on a group.
-     * A valid questionnaire is a questionnaire already linked to the group or a questionnaire with no group linked
+     * Count how many of the given questionnaire ids exist in database
      *
-     * @param groupId group id
-     * @param questionnaireIds questionnaire ids we want to check for the group
-     * @return number of valid questionnaires
+     * @param questionnaireIds questionnaire ids to check
+     * @return number of existing questionnaires
      */
-    Long countValidQuestionnaires(String groupId, Set<String> questionnaireIds);
+    Long countExistingQuestionnaires(Set<String> questionnaireIds);
 
     /**
-     * Delete all questionnaires in a group
-     * @param groupId group id
+     * Delete questionnaires from the given set that are no longer linked to any group
+     *
+     * @param questionnaireIds candidate questionnaire ids
      */
-    void deleteAllFromGroup(String groupId);
+    void deleteOrphanedQuestionnaires(Set<String> questionnaireIds);
 
     /**
      * Find data structure for all questionnaire of a group

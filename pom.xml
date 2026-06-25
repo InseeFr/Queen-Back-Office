@@ -20,9 +20,6 @@
 
         <!-- Version of dependencies shared across several modules -->
         <json-schema-validator.version>3.0.2</json-schema-validator.version>
-        <!-- !!! Temporary properties that overwrite Spring's managed dependency versions (for security reasons) !!! -->
-        <tomcat.version>11.0.22</tomcat.version>
-        <postgresql.version>42.7.11</postgresql.version>
 
         <!-- maven-surefire-plugin setting.
              Used for encoding with tests on windows (buggy windows components) -->
@@ -41,7 +38,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 

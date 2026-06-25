@@ -2,6 +2,7 @@ package fr.insee.queen.domain.group.gateway;
 
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.GroupKind;
 import fr.insee.queen.domain.group.model.GroupSummary;
 
 import java.util.List;
@@ -15,8 +16,9 @@ public interface GroupRepository {
     /**
      * Create group
      * @param group group to create
+     * @param kind group kind value (e.g. "CAMPAIGN" or "PARTITION")
      */
-    void create(Group group);
+    void create(Group group, GroupKind kind);
 
     /**
      * Check if group exists

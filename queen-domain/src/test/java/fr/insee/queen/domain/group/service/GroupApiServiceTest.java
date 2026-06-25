@@ -1,5 +1,6 @@
 package fr.insee.queen.domain.group.service;
 
+import fr.insee.queen.domain.group.gateway.GroupKindProvider;
 import fr.insee.queen.domain.group.gateway.GroupRepository;
 import fr.insee.queen.domain.group.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.domain.group.model.GroupSummary;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -37,6 +39,8 @@ class GroupApiServiceTest {
     private CacheManager cacheManager;
     @Mock
     private Cache dummyCache; // stub cache to avoid NPE, cache behavior is tested in integration tests
+    @Mock
+    private GroupKindProvider groupKindProvider;
 
     private GroupApiService service;
 
@@ -47,7 +51,8 @@ class GroupApiServiceTest {
                 interrogationRepository,
                 questionnaireModelRepository,
                 groupExistenceService,
-                cacheManager
+                cacheManager,
+                groupKindProvider
         );
     }
 
@@ -66,7 +71,7 @@ class GroupApiServiceTest {
         verify(interrogationRepository).deleteInterrogations(groupId);
         verify(interrogationRepository, never()).existsByGroupId(anyString());
 
-        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(questionnaireModelRepository, never()).deleteOrphanedQuestionnaires(any());
         verify(groupRepository).delete(groupId);
     }
 
@@ -86,7 +91,7 @@ class GroupApiServiceTest {
         verify(interrogationRepository, never()).deleteInterrogations(anyString());
 
         verify(groupRepository, never()).findWithQuestionnaireIds(anyString());
-        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(questionnaireModelRepository, never()).deleteOrphanedQuestionnaires(any());
         verify(groupRepository, never()).delete(anyString());
     }
 
@@ -107,7 +112,7 @@ class GroupApiServiceTest {
         verify(interrogationRepository).existsByGroupId(groupId);
         verify(interrogationRepository, never()).deleteInterrogations(anyString());
 
-        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(questionnaireModelRepository, never()).deleteOrphanedQuestionnaires(any());
         verify(groupRepository).delete(groupId);
     }
 
@@ -125,7 +130,7 @@ class GroupApiServiceTest {
 
         // Ensure no deletion occurs when group does not exist.
         verify(groupRepository, never()).delete(anyString());
-        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(questionnaireModelRepository, never()).deleteOrphanedQuestionnaires(any());
     }
 
     @Test
@@ -145,13 +150,13 @@ class GroupApiServiceTest {
 
         // Then
         verify(interrogationRepository).deleteInterrogations(groupId);
-        verify(questionnaireModelRepository).deleteAllFromGroup(groupId);
         verify(groupRepository).delete(groupId);
+        verify(questionnaireModelRepository).deleteOrphanedQuestionnaires(questionnaireIds);
 
-        // Ensure questionnaire cleanup happens before group deletion.
-        InOrder inOrder = inOrder(questionnaireModelRepository, groupRepository);
-        inOrder.verify(questionnaireModelRepository).deleteAllFromGroup(groupId);
+        // Ensure group is deleted before orphan questionnaire cleanup.
+        InOrder inOrder = inOrder(groupRepository, questionnaireModelRepository);
         inOrder.verify(groupRepository).delete(groupId);
+        inOrder.verify(questionnaireModelRepository).deleteOrphanedQuestionnaires(questionnaireIds);
     }
 
     @Test
@@ -167,7 +172,7 @@ class GroupApiServiceTest {
         service.delete(groupId, true);
 
         // Then
-        verify(questionnaireModelRepository, never()).deleteAllFromGroup(anyString());
+        verify(questionnaireModelRepository, never()).deleteOrphanedQuestionnaires(any());
         verify(groupRepository).delete(groupId);
     }
 }

@@ -34,7 +34,7 @@ public record QuestionnaireModelCreationData(
             nomenclatureIds = new HashSet<>();
         }
 
-        return QuestionnaireModel.createQuestionnaireWithoutGroup(
+        return QuestionnaireModel.create(
                 questionnaire.idQuestionnaireModel,
                 questionnaire.label,
                 questionnaire.value,

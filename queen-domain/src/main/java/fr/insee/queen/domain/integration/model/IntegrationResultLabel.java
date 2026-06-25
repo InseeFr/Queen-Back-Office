@@ -11,9 +11,7 @@ public class IntegrationResultLabel {
     public static final String ZIP_PARSING_ERROR = "Could not parse zip file '%s'";
     public static final String FILE_INVALID = "File %s does not fit the required template: %s";
     public static final String FILE_NOT_FOUND = "No file %s found";
-    public static final String GROUP_IDS_MISMATCH = "Questionnaire model has group id %s while group in zip has id %s";
     public static final String NOMENCLATURE_ALREADY_EXISTS = "A nomenclature with id %s already exists";
     public static final String NOMENCLATURE_DO_NOT_EXIST = "The nomenclature '%s' does not exist";
-    public static final String GROUP_DO_NOT_EXIST = "The group '%s' does not exist";
-    public static final String GROUP_ID_INCORRECT = "The group id is not defined";
+    public static final String CAMPAIGN_SKIPPED_QUESTIONNAIRE_ERRORS = "Campaign not integrated because one or more questionnaire models failed to integrate";
 }

@@ -43,9 +43,8 @@ class IntegrationQuestionnaireBuilderTest {
     void testQuestionnaireBuilder01() throws IOException {
         String questionnaireId1 = "simpsons-v1";
         String questionnaireId2 = "simpson-v2";
-        String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/valid-questionnaires.zip");
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(zipFile);
         IntegrationResultUnitDto result1 = IntegrationResultUnitDto.integrationResultUnitCreated(questionnaireId1);
         IntegrationResultUnitDto result2 = IntegrationResultUnitDto.integrationResultUnitCreated(questionnaireId2);
         assertThat(results)
@@ -58,10 +57,9 @@ class IntegrationQuestionnaireBuilderTest {
     @DisplayName("on building questionnaires, when questionnaire input invalid return integration error")
     void testQuestionnaireBuilder02() throws IOException {
         String questionnaireId = "simpsons%v1";
-        String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/invalid-input-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(zipFile);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -77,10 +75,9 @@ class IntegrationQuestionnaireBuilderTest {
     @Test
     @DisplayName("on building questionnaires, when questionnaire forgotten return integration error")
     void testQuestionnaireBuilder03() throws IOException {
-        String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/forgotten-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(zipFile);
         assertThat(results).hasSize(2);
         List<IntegrationResultUnitDto> resultErrors = results.stream()
                 .filter(result -> result.getStatus().equals(IntegrationStatus.ERROR))
@@ -95,10 +92,9 @@ class IntegrationQuestionnaireBuilderTest {
     @Test
     @DisplayName("on building questionnaires, when questionnaire missing return integration error")
     void testQuestionnaireBuilder04() throws IOException {
-        String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/xml-questionnaire-missing.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(zipFile);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto questionnaireResult = results.getFirst();
         assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
@@ -110,10 +106,9 @@ class IntegrationQuestionnaireBuilderTest {
     @Test
     @DisplayName("on building questionnaires, when malformed json questionnaire return integration error")
     void testQuestionnaireBuilder05() throws IOException {
-        String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/questionnaire-builder/malformed-questionnaires.zip");
 
-        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(campaignId, zipFile);
+        List<IntegrationResultUnitDto> results = questionnaireBuilder.build(zipFile);
         assertThat(results).hasSize(1);
         IntegrationResultUnitDto questionnaireResult = results.getFirst();
         assertThat(questionnaireResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);

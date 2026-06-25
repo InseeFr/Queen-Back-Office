@@ -45,7 +45,7 @@ class IntegrationCampaignBuilderTest {
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/valid-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
         Group campaignCreated = integrationFakeService.getGroupCreated();
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);
         assertThat(campaignResult.getId()).isEqualTo(campaignId);
@@ -59,7 +59,7 @@ class IntegrationCampaignBuilderTest {
         String campaignId = "%hello !";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/invalid-input-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isEqualTo(campaignId);
         assertThat(campaignResult.getCause()).contains("id: The identifier is invalid.");
@@ -71,7 +71,7 @@ class IntegrationCampaignBuilderTest {
     void testCampaignBuilder03() throws IOException {
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/forgotten-input-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isNull();
         assertThat(campaignResult.getCause())
@@ -83,7 +83,7 @@ class IntegrationCampaignBuilderTest {
     void testCampaignBuilder04() throws IOException {
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/campaign-missing.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile);
+        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
         assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(campaignResult.getId()).isNull();
         assertThat(campaignResult.getCause())

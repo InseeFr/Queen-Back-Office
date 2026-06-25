@@ -59,7 +59,7 @@ class QuestionnaireCacheIT {
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache01() {
         String questionnaireId = "questionnaire-cache-id";
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("cities2019", "regions2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("cities2019", "regions2019")));
     }
 
     @Test
@@ -71,10 +71,13 @@ class QuestionnaireCacheIT {
 
         ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("group/metadata/metadata.json");
         groupService.createGroup(new Group(groupId, "label",  new HashSet<>(), metadataNode));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("regions2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId, "label", JsonNodeFactory.instance.objectNode(), Set.of("regions2019")));
+
+        // attach the questionnaire to the group via the N:M join (owned by Group)
+        groupService.updateGroup(new Group(groupId, "label", Set.of(questionnaireId), metadataNode));
 
         // when updating questionnaire, cache is evicted
-        questionnaireModelService.updateQuestionnaire(QuestionnaireModel.createQuestionnaireWithGroup(questionnaireId, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019"), groupId));
+        questionnaireModelService.updateQuestionnaire(QuestionnaireModel.create(questionnaireId, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
@@ -101,8 +104,8 @@ class QuestionnaireCacheIT {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
 
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("cities2019")));
 
         String groupId = "group-with-questionnaires-cache-id";
         groupService.createGroup(new Group(groupId, "label",  Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
@@ -127,10 +130,10 @@ class QuestionnaireCacheIT {
         String questionnaireId3 = "questionnaire-cache-id3";
         String questionnaireId4 = "questionnaire-cache-id4";
 
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId3, "label3", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.createQuestionnaireWithoutGroup(questionnaireId4, "label4", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId3, "label3", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
+        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId4, "label4", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
 
         // create group and associate questionnaireId1 & questionnaireId2
         String groupId = "group-with-questionnaires-cache-id";

@@ -1,4 +1,4 @@
-package fr.insee.queen.application.configuration.properties;
+package fr.insee.queen.domain.group.model;
 
 public enum GroupKind {
     CAMPAIGN("campaign", "campaigns"),

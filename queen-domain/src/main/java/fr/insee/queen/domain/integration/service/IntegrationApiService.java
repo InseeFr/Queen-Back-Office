@@ -56,21 +56,10 @@ public class IntegrationApiService implements IntegrationService {
 
     @Override
     public List<IntegrationResult> create(QuestionnaireModel questionnaire) {
-        String groupId = questionnaire.getGroupId();
         String qmId = questionnaire.getId();
         boolean hasError = false;
 
         List<IntegrationResult> results = new ArrayList<>();
-        // Checking if group exists
-        if (!groupExistenceService.existsById(groupId)) {
-            hasError = true;
-            log.info("Cannot create Questionnaire model {}, group {} does not exist", qmId, groupId);
-            results.add(new IntegrationResult(
-                    qmId,
-                    IntegrationStatus.ERROR,
-                    String.format(IntegrationResultLabel.GROUP_DO_NOT_EXIST, groupId)));
-        }
-
         // Checking if required nomenclatures exist
         for (String nomenclatureId : questionnaire.getRequiredNomenclatureIds()) {
             if (!nomenclatureService.existsById(nomenclatureId)) {

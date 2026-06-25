@@ -123,7 +123,7 @@ class GroupIT {
     @Test
     void on_create_groups_when_group_invalid_identifier_return_400() throws Exception {
         MetadataCreationData metadata = new MetadataCreationData(JsonNodeFactory.instance.objectNode());
-        GroupCreationRequest group = new GroupCreationRequest("group_1234", "label group",  Set.of("simpsons", "simpsonsV2"), metadata);
+        GroupCreationRequest group = new GroupCreationRequest("group!1234", "label group",  Set.of("simpsons", "simpsonsV2"), metadata);
         mockMvc.perform(post("/api/campaigns")
                         .content(JsonTestHelper.getObjectAsJsonString(group))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -247,7 +247,7 @@ class GroupIT {
 
     @Test
     void on_create_group_when_group_invalid_identifier_return_400() throws Exception {
-        GroupCreationRequestV2 group = new GroupCreationRequestV2("group_1234", "label group",  Set.of("simpsons", "simpsonsV2"), null);
+        GroupCreationRequestV2 group = new GroupCreationRequestV2("group!1234", "label group",  Set.of("simpsons", "simpsonsV2"), null);
         mockMvc.perform(post("/api/campaign")
                         .content(JsonTestHelper.getObjectAsJsonString(group))
                         .contentType(MediaType.APPLICATION_JSON)

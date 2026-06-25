@@ -42,3 +42,7 @@ logs
 /.clinerules/build-config-fak.md
 /.clinerules/
 CLAUDE.md
+/.claude/settings.local.json
+/.chat/
+/.claude/settings.local.json
+/.chat/

@@ -59,7 +59,6 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
     })
     @Transactional
     public void updateQuestionnaire(QuestionnaireModel questionnaire) {
-        groupExistenceService.throwExceptionIfGroupNotExist(questionnaire.getGroupId());
         questionnaireModelExistenceService.throwExceptionIfQuestionnaireNotExist(questionnaire.getId());
 
         if (!nomenclatureService.areNomenclaturesValid(questionnaire.getRequiredNomenclatureIds())) {

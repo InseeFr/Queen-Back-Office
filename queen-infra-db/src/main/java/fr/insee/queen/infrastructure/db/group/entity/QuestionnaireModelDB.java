@@ -51,17 +51,4 @@ public class QuestionnaireModelDB {
             joinColumns = {@JoinColumn(name = "id_required_nomenclature")}, inverseJoinColumns = {@JoinColumn(name = "code")})
     private Set<NomenclatureDB> nomenclatures = new HashSet<>();
 
-    /**
-     * The group linked to the questionnaire
-     */
-    @ManyToOne
-    @JoinColumn(name = "survey_group_id")
-    private GroupDB group;
-
-    public QuestionnaireModelDB(String id, String label, ObjectNode value, Set<NomenclatureDB> nomenclatures) {
-        this.id = id;
-        this.label = label;
-        this.value = value;
-        this.nomenclatures = nomenclatures;
-    }
 }

@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -35,16 +36,16 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
     public static final String CAMPAIGN_JSON = "campaign.json";
 
     @Override
-    public IntegrationResultUnitDto build(ZipFile integrationZipFile) {
-        return buildCampaign(integrationZipFile);
+    public IntegrationResultUnitDto build(ZipFile integrationZipFile, Set<String> questionnaireIds) {
+        return buildCampaign(integrationZipFile, questionnaireIds);
     }
 
-    private IntegrationResultUnitDto buildCampaign(ZipFile zf) {
+    private IntegrationResultUnitDto buildCampaign(ZipFile zf, Set<String> questionnaireIds) {
         try {
             schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, CAMPAIGN_JSON, SchemaType.CAMPAIGN_INTEGRATION);
             ZipEntry zipCampaignFile = zf.getEntry(CAMPAIGN_JSON);
             CampaignIntegrationData campaign = mapper.readValue(zf.getInputStream(zipCampaignFile), CampaignIntegrationData.class);
-            return buildCampaign(campaign);
+            return buildCampaign(campaign, questionnaireIds);
         } catch (IntegrationValidationException ex) {
             return ex.getResultError();
         }  catch (JacksonException _) {
@@ -58,7 +59,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
         }
     }
 
-    private IntegrationResultUnitDto buildCampaign(CampaignIntegrationData campaign) {
+    private IntegrationResultUnitDto buildCampaign(CampaignIntegrationData campaign, Set<String> questionnaireIds) {
         Set<ConstraintViolation<CampaignIntegrationData>> violations = validator.validate(campaign);
         if (!violations.isEmpty()) {
             StringBuilder violationMessage = new StringBuilder();
@@ -71,7 +72,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             }
             return IntegrationResultUnitDto.integrationResultUnitError(campaign.id(), violationMessage.toString());
         }
-        IntegrationResult result = integrationService.create(CampaignIntegrationData.toModel(campaign));
+        IntegrationResult result = integrationService.create(CampaignIntegrationData.toModel(campaign, new HashSet<>(questionnaireIds)));
         return IntegrationResultUnitDto.fromModel(result);
     }
 }
