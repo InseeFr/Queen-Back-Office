@@ -7,6 +7,7 @@ import fr.insee.queen.application.integration.controller.builder.dummy.Questionn
 import fr.insee.queen.application.integration.component.IntegrationComponent;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultsDto;
+import fr.insee.queen.domain.common.model.CollectMode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +39,7 @@ class IntegrationComponentTest {
         questionnaireBuilder = new QuestionnaireFakeBuilder();
         nomenclatureBuilder = new NomenclatureFakeBuilder();
         campaignBuilder = new CampaignFakeBuilder();
-        ApplicationProperties applicationProperties = new ApplicationProperties(null, null, null, null, null, System.getProperty("java.io.tmpdir"));
+        ApplicationProperties applicationProperties = new ApplicationProperties(null, null, null, null, null, System.getProperty("java.io.tmpdir"), CollectMode.CAPI);
         integrationComponent = new IntegrationComponent(nomenclatureBuilder, campaignBuilder, questionnaireBuilder, applicationProperties);
     }
 
