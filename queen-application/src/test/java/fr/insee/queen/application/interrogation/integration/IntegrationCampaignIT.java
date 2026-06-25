@@ -49,7 +49,7 @@ class IntegrationCampaignIT {
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, "Hello, World!".getBytes()
         );
 
-        mockMvc.perform(multipart("/api/campaign/context")
+        mockMvc.perform(multipart("/api/campaigns/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
@@ -62,7 +62,7 @@ class IntegrationCampaignIT {
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, "Hello, World!".getBytes()
         );
 
-        mockMvc.perform(multipart("/api/campaign/context")
+        mockMvc.perform(multipart("/api/campaigns/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
@@ -77,7 +77,7 @@ class IntegrationCampaignIT {
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, zipInputStream
         );
 
-        MvcResult result = mockMvc.perform(multipart("/api/campaign/context")
+        MvcResult result = mockMvc.perform(multipart("/api/campaigns/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -112,7 +112,7 @@ class IntegrationCampaignIT {
                 "file", "nominal.zip", MediaType.APPLICATION_OCTET_STREAM_VALUE, buildNominalZip());
 
         // When
-        mockMvc.perform(multipart("/api/campaign/context")
+        mockMvc.perform(multipart("/api/campaigns/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
