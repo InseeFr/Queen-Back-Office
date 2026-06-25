@@ -10,6 +10,7 @@ import fr.insee.queen.application.integration.component.exception.IntegrationCom
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultsDto;
 import fr.insee.queen.domain.group.gateway.GroupKindProvider;
+import fr.insee.queen.domain.group.model.GroupKind;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +34,16 @@ class IntegrationComponentTest {
     private QuestionnaireFakeBuilder questionnaireBuilder;
     private NomenclatureFakeBuilder nomenclatureBuilder;
     private GroupFakeBuilder groupBuilder;
+    private GroupKindProvider groupKindProvider;
 
     @BeforeEach
     void init() {
         questionnaireBuilder = new QuestionnaireFakeBuilder();
         nomenclatureBuilder = new NomenclatureFakeBuilder();
         groupBuilder = new GroupFakeBuilder();
+        groupKindProvider = () -> GroupKind.CAMPAIGN;
         ApplicationProperties applicationProperties = new ApplicationProperties(null, null, null, null, null, System.getProperty("java.io.tmpdir"));
-        integrationComponent = new IntegrationComponent(nomenclatureBuilder, groupBuilder, questionnaireBuilder, applicationProperties, null);
+        integrationComponent = new IntegrationComponent(nomenclatureBuilder, groupBuilder, questionnaireBuilder, applicationProperties, groupKindProvider);
     }
 
     @Test
@@ -92,7 +95,7 @@ class IntegrationComponentTest {
         IntegrationResultsDto result = integrationComponent.integrateContext(uploadedFile);
 
         IntegrationResultUnitDto expectedCampaign = IntegrationResultUnitDto.integrationResultUnitError(
-                null, IntegrationResultLabel.GROUPS_SKIPPED_QUESTIONNAIRE_ERRORS);
+                null, IntegrationResultLabel.GROUPS_SKIPPED_QUESTIONNAIRE_ERRORS.formatted(GroupKind.CAMPAIGN.getForLabel()));
         assertThat(result.getGroups().getFirst()).isEqualTo(expectedCampaign);
         assertThat(result.getGroups().getFirst().getStatus()).isEqualTo(IntegrationStatus.ERROR);
         assertThat(result.getQuestionnaireModels()).isEqualTo(questionnaireBuilder.getResults());

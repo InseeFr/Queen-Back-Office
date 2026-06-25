@@ -21,6 +21,7 @@ import java.io.InputStream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,6 +63,7 @@ class IntegrationPartitionsIT {
 
     @Test
     @DisplayName("on integrate context, return integration state")
+    @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = BEFORE_TEST_METHOD)
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void integrateContext03() throws Exception {
         InputStream zipInputStream = getClass().getClassLoader().getResourceAsStream("data/integration/json/integration-partitions-component.zip");
@@ -78,17 +80,16 @@ class IntegrationPartitionsIT {
         String content = result.getResponse().getContentAsString();
         String expectedResult = """
         {
-            "groups":[
-                { "id":"SIMPSONS2023X0001", "status":"CREATED" },
-                { "id":"SIMPSONS2023X0002", "status":"CREATED" }
-            ],
+            "groups" : [ {
+                  "status" : "ERROR",
+                  "cause" : "Partitions not integrated because one or more questionnaire models failed to integrate"
+                } ],
             "nomenclatures":[
                 { "id":"cities2019", "status":"ERROR", "cause":"A nomenclature with id cities2019 already exists"},
                 { "id":"regions2019", "status":"ERROR", "cause":"Nomenclature file 'regions2019.json' could not be found in input zip" }
             ],
             "questionnaireModels":[
                 { "id":"simpsons-2023-v1", "status":"CREATED"},
-                { "id":"simpsons-2023-v1", "status":"UPDATED"},
                 { "id":"simpsons-2023-v2", "status":"ERROR", "cause":"Questionnaire model file 'simpsons-v2' could not be found in input zip" }
             ]
         }""";

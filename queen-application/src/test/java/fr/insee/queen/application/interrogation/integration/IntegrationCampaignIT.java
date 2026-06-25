@@ -116,8 +116,8 @@ class IntegrationCampaignIT {
                 )
                 // Then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.campaign.id").value("NOMINAL-GRP"))
-                .andExpect(jsonPath("$.campaign.status").value("CREATED"))
+                .andExpect(jsonPath("$.groups[0].id").value("NOMINAL-GRP"))
+                .andExpect(jsonPath("$.groups[0].status").value("CREATED"))
                 .andExpect(jsonPath("$.questionnaireModels[*].status",
                         Matchers.everyItem(Matchers.is("CREATED"))));
 

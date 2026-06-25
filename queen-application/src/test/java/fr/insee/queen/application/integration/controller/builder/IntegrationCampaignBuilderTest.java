@@ -47,7 +47,7 @@ class IntegrationCampaignBuilderTest {
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/valid-campaign.zip");
 
         List<IntegrationResultUnitDto> campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
-        Group campaignCreated = integrationFakeService.getGroupCreated();
+        Group campaignCreated = integrationFakeService.getGroupsCreated().getFirst();
         assertThat(campaignResult.getFirst().getStatus()).isEqualTo(IntegrationStatus.CREATED);
         assertThat(campaignResult.getFirst().getId()).isEqualTo(campaignId);
         assertThat(campaignCreated.getId()).isEqualTo("SIMPSONS2020X00");
