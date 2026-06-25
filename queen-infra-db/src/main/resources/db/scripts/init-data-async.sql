@@ -11,7 +11,7 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-INSERT INTO public.survey_group(id, label, kind) VALUES ('GEN2025A00', 'Asynchrone test', 'CAMPAIGN');
+INSERT INTO public.survey_group(id, label, kind, short_label) VALUES ('GEN2025A00', 'Asynchrone test', 'CAMPAIGN', 'GEN2025A00');
 
 --
 -- TOC entry 3406 (class 0 OID 16489)

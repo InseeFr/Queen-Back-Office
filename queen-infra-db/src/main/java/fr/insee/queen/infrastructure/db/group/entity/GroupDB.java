@@ -36,6 +36,9 @@ public class    GroupDB {
     @Column(name = "kind", nullable = false, length = 20)
     private String kind;
 
+    @Column(name = "short_label")
+    private String shortLabel;
+
     @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private MetadataDB metadata;
 
@@ -47,9 +50,10 @@ public class    GroupDB {
             inverseJoinColumns = @JoinColumn(name = "questionnaire_model_id"))
     private Set<QuestionnaireModelDB> questionnaireModels = new HashSet<>();
 
-    public GroupDB(String id, String label, Set<QuestionnaireModelDB> questionnaireModels, String kind) {
+    public GroupDB(String id, String label, String shortLabel, Set<QuestionnaireModelDB> questionnaireModels, String kind) {
         this.id = id;
         this.label = label;
+        this.shortLabel = shortLabel;
         this.questionnaireModels = questionnaireModels;
         this.kind = kind;
     }
