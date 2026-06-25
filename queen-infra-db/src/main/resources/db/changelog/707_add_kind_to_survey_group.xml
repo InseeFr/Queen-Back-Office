@@ -29,4 +29,29 @@
             columnDataType="VARCHAR(20)"/>
     </changeSet>
 
+    <!-- Add short_label to survey_group.
+         Business rule: shortLabel = provided value ?? group id. -->
+
+    <!-- 4. Add the column (nullable, no NOT NULL constraint) -->
+    <changeSet id="707-4-add-short-label-column" author="davdarras">
+        <addColumn tableName="survey_group">
+            <column name="short_label" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- 5. Backfill existing rows with their id -->
+    <changeSet id="707-5-backfill-short-label" author="davdarras">
+        <sql>
+            UPDATE survey_group SET short_label = id WHERE short_label IS NULL;
+        </sql>
+    </changeSet>
+
+    <!-- 6. Set NOT NULL -->
+    <changeSet id="707-6-not-null-short-label" author="davdarras">
+        <addNotNullConstraint
+            tableName="survey_group"
+            columnName="short_label"
+            columnDataType="VARCHAR(255)"/>
+    </changeSet>
+
 </databaseChangeLog>

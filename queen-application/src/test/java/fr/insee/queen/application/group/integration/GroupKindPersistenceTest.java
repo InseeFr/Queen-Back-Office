@@ -32,7 +32,7 @@ class GroupKindPersistenceTest {
     @DisplayName("Given a group with a kind value, when persisted and retrieved, the kind is preserved")
     void should_persist_kind_correctly(String kind) {
         // Given
-        GroupDB group = new GroupDB("kind-test-group", "Test Group", Set.of(), kind);
+        GroupDB group = new GroupDB("kind-test-group", "Test Group", "kind-test-group", Set.of(), kind);
 
         // When
         groupJpaRepository.save(group);

@@ -70,7 +70,7 @@ class IntegrationServiceTest {
     void testIntegrationGroup01() {
         groupExistenceService.setGroupExist(true);
 
-        Group group = new Group(GROUP_ID, LABEL, JsonNodeFactory.instance.objectNode());
+        Group group = new Group(GROUP_ID, LABEL, new HashSet<>(), JsonNodeFactory.instance.objectNode());
         IntegrationResult groupResult = integrationService.create(group);
         assertThat(groupResult.getStatus()).isEqualTo(IntegrationStatus.UPDATED);
         assertThat(groupResult.getId()).isEqualTo(GROUP_ID);
@@ -82,7 +82,7 @@ class IntegrationServiceTest {
     void testIntegrationGroup02() {
         groupExistenceService.setGroupExist(false);
 
-        Group group = new Group(GROUP_ID, LABEL, JsonNodeFactory.instance.objectNode());
+        Group group = new Group(GROUP_ID, LABEL, new HashSet<>(), JsonNodeFactory.instance.objectNode());
         IntegrationResult groupResult = integrationService.create(group);
 
         assertThat(groupResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);

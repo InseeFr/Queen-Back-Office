@@ -11,11 +11,11 @@ TRUNCATE TABLE interrogation_temp_zone, state_data, paradata_event,
     required_nomenclature, survey_group_questionnaire_model, questionnaire_model, nomenclature,
     metadata, survey_group;
 
-INSERT INTO survey_group(id, label, kind) VALUES
-  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'CAMPAIGN'),
-  ('VQS2021X00', 'Everyday life and health survey 2021', 'CAMPAIGN'),
-  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'CAMPAIGN'),
-  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', 'CAMPAIGN');
+INSERT INTO survey_group(id, label, kind, short_label) VALUES
+  ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'CAMPAIGN', 'SIMPSONS2020X00'),
+  ('VQS2021X00', 'Everyday life and health survey 2021', 'CAMPAIGN', 'VQS2021X00'),
+  ('LOG2021X11Web', 'Enquête Logement 2022 - Séquence 1 - HR - Web', 'CAMPAIGN', 'LOG2021X11Web'),
+  ('LOG2021X11Tel', 'Enquête Logement 2022 - Séquence 1 - HR', 'CAMPAIGN', 'LOG2021X11Tel');
 
 --
 -- TOC entry 3406 (class 0 OID 16489)

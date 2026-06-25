@@ -41,6 +41,7 @@ public class GroupDao implements GroupRepository {
         return Optional.of(new Group(
                 group.getId(),
                 group.getLabel(),
+                group.getShortLabel(),
                 group.getQuestionnaireModels()
                         .stream()
                         .map(QuestionnaireModelDB::getId)
@@ -53,7 +54,7 @@ public class GroupDao implements GroupRepository {
     @Transactional
     public void create(Group group, GroupKind kind) {
         Set<QuestionnaireModelDB> questionnaireModels = questionnaireModelJpaRepository.findByIdIn(group.getQuestionnaireIds());
-        GroupDB groupDB = new GroupDB(group.getId(), group.getLabel(), questionnaireModels, kind.name());
+        GroupDB groupDB = new GroupDB(group.getId(), group.getLabel(), group.getShortLabel(), questionnaireModels, kind.name());
 
         ObjectNode metadataValue = group.getMetadata();
         if (metadataValue != null) {
@@ -121,6 +122,7 @@ public class GroupDao implements GroupRepository {
         GroupDB groupDB = jpaRepository.findById(group.getId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Group %s not found", group.getId())));
         groupDB.setLabel(group.getLabel());
+        groupDB.setShortLabel(group.getShortLabel());
 
         ObjectNode metadataValue = group.getMetadata();
         MetadataDB metadata = groupDB.getMetadata();
