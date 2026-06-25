@@ -1,8 +1,8 @@
 package fr.insee.queen.domain.interrogation.service;
 
 import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
-import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationBatchRepository;
+import fr.insee.queen.domain.interrogation.model.Interrogation;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

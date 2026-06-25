@@ -7,6 +7,7 @@ import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.common.model.CollectMode;
 import fr.insee.queen.domain.interrogation.infrastructure.dummy.InterrogationFakeDao;
 import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.dummy.DataFakeService;
@@ -48,7 +49,7 @@ class InterrogationApiServiceTest {
         dataFakeService = new DataFakeService();
         metadataFakeService = new MetadataFakeService();
         interrogationApiService = new InterrogationApiService(interrogationFakeDao, stateDataFakeService, dataFakeService,
-                campaignExistenceFakeService, metadataFakeService, cacheManager);
+                campaignExistenceFakeService, metadataFakeService, cacheManager, CollectMode.CAPI);
     }
 
     @Test

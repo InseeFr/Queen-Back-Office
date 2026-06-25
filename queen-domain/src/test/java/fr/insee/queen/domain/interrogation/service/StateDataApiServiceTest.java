@@ -1,6 +1,7 @@
 package fr.insee.queen.domain.interrogation.service;
 
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.common.model.CollectMode;
 import fr.insee.queen.domain.interrogation.infrastructure.dummy.StateDataFakeDao;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
@@ -28,7 +29,7 @@ class StateDataApiServiceTest {
     @BeforeEach
     void init() {
         stateDataDao = new StateDataFakeDao();
-        stateDataService = new StateDataApiService(stateDataDao, fixedClock);
+        stateDataService = new StateDataApiService(stateDataDao, fixedClock, CollectMode.CAPI);
     }
 
     @Test

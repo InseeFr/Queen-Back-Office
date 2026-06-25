@@ -11,6 +11,7 @@ import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuest
 import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.domain.interrogation.service.exception.MetadataValueNotFoundException;
@@ -153,6 +154,12 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiError> noEntityFoundException(EntityNotFoundException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.NOT_FOUND, request, false);
+    }
+
+
+    @ExceptionHandler(StateDataInvalidTransitionException.class)
+    public ResponseEntity<ApiError> invalidTransitionException(StateDataInvalidTransitionException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.CONFLICT, request, true);
     }
 
     @ExceptionHandler(UpdateCollectedDataException.class)

@@ -6,9 +6,11 @@ import fr.insee.queen.domain.campaign.service.MetadataService;
 import fr.insee.queen.domain.common.cache.CacheName;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.common.model.CollectMode;
+import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
-import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
@@ -33,6 +35,7 @@ public class InterrogationApiService implements InterrogationService {
     private final CampaignExistenceService campaignExistenceService;
     private final MetadataService metadataService;
     private final CacheManager cacheManager;
+    private final CollectMode collectMode;
 
     @Override
     public boolean existsById(String interrogationId) {
@@ -101,16 +104,22 @@ public class InterrogationApiService implements InterrogationService {
 
     @Transactional
     @Override
-    public void updateInterrogation(Interrogation interrogation) {
+    public void updateInterrogation(Interrogation interrogation) throws StateDataInvalidTransitionException {
         throwExceptionIfInterrogationNotExist(interrogation.id());
         StateData newStateData = interrogation.stateData();
 
-        interrogationRepository.update(interrogation);
-        if (newStateData == null) {
-            return;
-        }
         try {
-            stateDataService.saveStateData(interrogation.id(), newStateData, true);
+            // CAPI mode: save collected data regardless of stateData
+            if (CollectMode.CAPI.equals(collectMode)) {
+                interrogationRepository.update(interrogation);
+                if (newStateData == null) return;
+                stateDataService.saveStateData(interrogation.id(), newStateData, true);
+            }
+            // CAWI mode and not EDT survey ???
+            if (CollectMode.CAWI.equals(collectMode)) {
+                stateDataService.saveStateData(interrogation.id(), newStateData, true);
+                interrogationRepository.update(interrogation);
+            }
         } catch (StateDataInvalidDateException ex) {
             // in the case of interrogation update, a problem with state data does not require to
             // rollback the other updates on interrogation
