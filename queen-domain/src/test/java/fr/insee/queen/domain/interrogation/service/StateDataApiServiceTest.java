@@ -3,9 +3,10 @@ package fr.insee.queen.domain.interrogation.service;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.common.model.CollectMode;
 import fr.insee.queen.domain.interrogation.infrastructure.dummy.StateDataFakeDao;
+import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
-import fr.insee.queen.domain.interrogation.model.StateData;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ class StateDataApiServiceTest {
 
     private StateDataFakeDao stateDataDao;
     private StateDataApiService stateDataService;
+    private StateDataApiService stateDataServiceCawi;
     private final String interrogationId = "11";
     private final Clock fixedClock = Clock.fixed(
             Instant.ofEpochSecond(1740601599),
@@ -30,6 +32,7 @@ class StateDataApiServiceTest {
     void init() {
         stateDataDao = new StateDataFakeDao();
         stateDataService = new StateDataApiService(stateDataDao, fixedClock, CollectMode.CAPI);
+        stateDataServiceCawi = new StateDataApiService(stateDataDao, fixedClock, CollectMode.CAWI);
     }
 
     @Test
@@ -94,6 +97,54 @@ class StateDataApiServiceTest {
     void testSave04() throws StateDataInvalidDateException {
         StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 800000L, "5");
         assertThat(stateDataUpdate.date()).isLessThanOrEqualTo(stateDataDao.getStateDataReturned().date());
+        stateDataService.saveStateData(interrogationId, stateDataUpdate, false);
+        assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
+    }
+
+    @Test
+    @DisplayName("CAWI: when previous state is VALIDATED, saving new state throws exception")
+    void testCawiSave01() {
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.VALIDATED, 90000000L, "2"));
+        StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 100000000L, "5");
+        assertThatThrownBy(() -> stateDataServiceCawi.saveStateData(interrogationId, stateDataUpdate, false))
+                .isInstanceOf(StateDataInvalidTransitionException.class)
+                .hasMessageContaining(StateDataApiService.INVALID_TRANSITION_MESSAGE);
+        assertThat(stateDataDao.getStateDataSaved()).isNull();
+    }
+
+    @Test
+    @DisplayName("CAWI: when previous state is EXTRACTED, saving new state throws exception")
+    void testCawiSave02() {
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.EXTRACTED, 90000000L, "2"));
+        StateData stateDataUpdate = new StateData(StateDataType.COMPLETED, 100000000L, "5");
+        assertThatThrownBy(() -> stateDataServiceCawi.saveStateData(interrogationId, stateDataUpdate, false))
+                .isInstanceOf(StateDataInvalidTransitionException.class);
+        assertThat(stateDataDao.getStateDataSaved()).isNull();
+    }
+
+    @Test
+    @DisplayName("CAWI: when previous state is INIT, saving new state is allowed")
+    void testCawiSave03() throws StateDataInvalidDateException, StateDataInvalidTransitionException {
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.INIT, 90000000L, "2"));
+        StateData stateDataUpdate = new StateData(StateDataType.COMPLETED, 100000000L, "5");
+        stateDataServiceCawi.saveStateData(interrogationId, stateDataUpdate, false);
+        assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
+    }
+
+    @Test
+    @DisplayName("CAWI: when previous state is COMPLETED, saving new state is allowed")
+    void testCawiSave04() throws StateDataInvalidDateException, StateDataInvalidTransitionException {
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.COMPLETED, 90000000L, "2"));
+        StateData stateDataUpdate = new StateData(StateDataType.VALIDATED, 100000000L, "5");
+        stateDataServiceCawi.saveStateData(interrogationId, stateDataUpdate, false);
+        assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
+    }
+
+    @Test
+    @DisplayName("CAPI: when previous state is VALIDATED, saving new state is allowed")
+    void testCapiSave01() throws StateDataInvalidDateException, StateDataInvalidTransitionException {
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.VALIDATED, 90000000L, "2"));
+        StateData stateDataUpdate = new StateData(StateDataType.INIT, 100000000L, "5");
         stateDataService.saveStateData(interrogationId, stateDataUpdate, false);
         assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
     }

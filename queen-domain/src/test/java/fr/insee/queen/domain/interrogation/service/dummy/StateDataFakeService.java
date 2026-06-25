@@ -3,6 +3,7 @@ package fr.insee.queen.domain.interrogation.service.dummy;
 import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.service.StateDataService;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,14 +18,20 @@ public class StateDataFakeService implements StateDataService {
     @Setter
     private boolean isDateInvalid = false;
 
+    @Setter
+    private boolean isTransitionInvalid = false;
+
     @Override
     public StateData getStateData(String interrogationId) {
         return null;
     }
 
     @Override
-    public void saveStateData(String interrogationId, StateData stateData, boolean verifyDate) throws StateDataInvalidDateException {
-        if(isDateInvalid) {
+    public void saveStateData(String interrogationId, StateData stateData, boolean verifyDate) throws StateDataInvalidDateException, StateDataInvalidTransitionException {
+        if (isTransitionInvalid) {
+            throw new StateDataInvalidTransitionException("Invalid transition");
+        }
+        if (isDateInvalid) {
             throw new StateDataInvalidDateException(ERROR_MESSAGE);
         }
         stateDataSaved = stateData;

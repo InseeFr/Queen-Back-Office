@@ -7,13 +7,13 @@ import fr.insee.queen.domain.campaign.model.CampaignSummary;
 import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
-import fr.insee.queen.domain.common.model.CollectMode;
 import fr.insee.queen.domain.interrogation.infrastructure.dummy.InterrogationFakeDao;
 import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.dummy.DataFakeService;
 import fr.insee.queen.domain.interrogation.service.dummy.MetadataFakeService;
 import fr.insee.queen.domain.interrogation.service.dummy.StateDataFakeService;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class InterrogationApiServiceTest {
         dataFakeService = new DataFakeService();
         metadataFakeService = new MetadataFakeService();
         interrogationApiService = new InterrogationApiService(interrogationFakeDao, stateDataFakeService, dataFakeService,
-                campaignExistenceFakeService, metadataFakeService, cacheManager, CollectMode.CAPI);
+                campaignExistenceFakeService, metadataFakeService, cacheManager);
     }
 
     @Test
@@ -159,6 +159,35 @@ class InterrogationApiServiceTest {
         interrogationApiService.updateInterrogation(interrogation);
         assertThat(interrogationFakeDao.getInterrogationUpdated()).isEqualTo(interrogation);
         assertThat(stateDataFakeService.getStateDataSaved()).isEqualTo(stateData);
+    }
+
+    @Test
+    @DisplayName("On updating interrogation, when state transition is invalid, throw exception without updating interrogation")
+    void testUpdate05() {
+        StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
+        Interrogation interrogation = new Interrogation("11", "survey-unit-id-11", CAMPAIGN_ID, QUESTIONNAIRE_ID,
+                JsonNodeFactory.instance.arrayNode(),
+                JsonNodeFactory.instance.objectNode(),
+                JsonNodeFactory.instance.objectNode(),
+                stateData,
+                null);
+        stateDataFakeService.setTransitionInvalid(true);
+        assertThatThrownBy(() -> interrogationApiService.updateInterrogation(interrogation))
+                .isInstanceOf(StateDataInvalidTransitionException.class);
+        assertThat(interrogationFakeDao.getInterrogationUpdated()).isNull();
+    }
+
+    @Test
+    @DisplayName("On updating interrogation data/stateData, when state transition is invalid, throw exception without saving data")
+    void testUpdateDataStateData05() {
+        StateData stateData = new StateData(StateDataType.VALIDATED, 800000L, "5");
+        ObjectNode data = JsonNodeFactory.instance.objectNode();
+        data.put("field1", 5);
+        String interrogationId = "11";
+        stateDataFakeService.setTransitionInvalid(true);
+        assertThatThrownBy(() -> interrogationApiService.updateInterrogation(interrogationId, data, stateData))
+                .isInstanceOf(StateDataInvalidTransitionException.class);
+        assertThat(dataFakeService.getDataSaved()).isNull();
     }
 
     @Test

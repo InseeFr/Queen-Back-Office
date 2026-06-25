@@ -4,7 +4,6 @@ import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.common.model.CollectMode;
 import fr.insee.queen.domain.interrogation.gateway.StateDataRepository;
 import fr.insee.queen.domain.interrogation.model.StateData;
-import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,7 @@ public class StateDataApiService implements StateDataService {
 
     public static final String NOT_FOUND_MESSAGE = "State data not found for interrogation %s";
     public static final String INVALID_DATE_MESSAGE = "Date for state data is invalid";
-    public static final String INVALID_TRANSITION_MESSAGE = "New state is forbidden according to preview state";
+    public static final String INVALID_TRANSITION_MESSAGE = "New state is forbidden according to previous state";
 
 
     @Override
@@ -59,8 +58,7 @@ public class StateDataApiService implements StateDataService {
 
         StateData existingPreviousStateData = previousStateData.get();
 
-        if (CollectMode.CAWI.equals(collectMode) &&
-                isBlockingState(existingPreviousStateData.state())) {
+        if (collectMode.blocksTransitionFrom(existingPreviousStateData.state())) {
             log.error("Invalid transition state: Previous state data : [{},{}, {}], new state data : [{}, {}, {}]",
                     existingPreviousStateData.state() != null ? existingPreviousStateData.state().name() : null,
                     existingPreviousStateData.date(),
@@ -91,7 +89,4 @@ public class StateDataApiService implements StateDataService {
         stateDataRepository.save(interrogationId, stateData);
     }
 
-    private boolean isBlockingState(StateDataType stateDataType) {
-        return StateDataType.VALIDATED.equals(stateDataType) || StateDataType.EXTRACTED.equals(stateDataType);
-    }
 }

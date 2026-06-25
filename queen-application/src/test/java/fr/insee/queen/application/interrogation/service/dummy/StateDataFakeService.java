@@ -4,6 +4,7 @@ import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.StateDataService;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,8 +39,8 @@ public class StateDataFakeService implements StateDataService {
     }
 
     @Override
-    public void saveStateData(String interrogationId, StateData stateData, boolean verifyDate) throws StateDataInvalidDateException {
-        if(isDateInvalid) {
+    public void saveStateData(String interrogationId, StateData stateData, boolean verifyDate) throws StateDataInvalidDateException, StateDataInvalidTransitionException {
+        if (isDateInvalid) {
             throw new StateDataInvalidDateException(ERROR_MESSAGE);
         }
         stateDataSaved = stateData;
