@@ -21,6 +21,8 @@ application:
   temp-folder:
   campaign:
     check-interrogations-on-delete: true
+  # collect-mode -> CAWI / CAPI, can't be null or blank? impact on stateData transition
+  collect-mode:
 
 feature:
   sensitive-data:

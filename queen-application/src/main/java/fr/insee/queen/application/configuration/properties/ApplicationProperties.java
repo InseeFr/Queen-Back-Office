@@ -1,6 +1,8 @@
 package fr.insee.queen.application.configuration.properties;
 
+import fr.insee.queen.domain.common.model.CollectMode;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -18,7 +20,9 @@ public record ApplicationProperties(
         @NotEmpty(message = "cors origins must be specified")
         List<String> corsOrigins,
         @NotEmpty(message = "Folder where temp files will be created cannot be empty.")
-        String tempFolder) {
+        String tempFolder,
+        @NotNull(message = "application.collect-mode (CAPI | CAWI)")
+        CollectMode collectMode) {
 
     @Override
     public boolean equals(Object o) {
