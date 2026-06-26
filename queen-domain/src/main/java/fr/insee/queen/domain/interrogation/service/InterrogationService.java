@@ -3,6 +3,7 @@ package fr.insee.queen.domain.interrogation.service;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public interface InterrogationService {
 
     void updateInterrogation(Interrogation interrogation);
 
-    void updateInterrogation(String interrogationId, ObjectNode data, StateData stateData);
+    void updateInterrogation(String interrogationId, ObjectNode data, StateData stateData) throws StateDataInvalidTransitionException;
 
     void createInterrogation(Interrogation interrogation) throws StateDataInvalidDateException;
 

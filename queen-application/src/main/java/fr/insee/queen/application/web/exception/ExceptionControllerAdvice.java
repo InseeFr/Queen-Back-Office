@@ -11,6 +11,7 @@ import fr.insee.queen.domain.campaign.service.exception.CampaignNotLinkedToQuest
 import fr.insee.queen.domain.campaign.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.domain.interrogation.service.exception.MetadataValueNotFoundException;
@@ -158,6 +159,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(UpdateCollectedDataException.class)
     public ResponseEntity<ApiError> updateCollectedDataException(UpdateCollectedDataException e, WebRequest request) {
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    @ExceptionHandler(StateDataInvalidTransitionException.class)
+    public ResponseEntity<ApiError> stateDataInvalidTransitionExceptionException(StateDataInvalidTransitionException e, WebRequest request) {
+        return generateResponseError(e, HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler(AuthenticationTokenException.class)
