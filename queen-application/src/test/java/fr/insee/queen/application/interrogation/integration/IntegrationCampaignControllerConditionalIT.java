@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = "application.group.kind=PARTITION")
-class IntegrationControllerConditionalIT {
+class IntegrationCampaignControllerConditionalIT {
 
     @Autowired
     private MockMvc mockMvc;

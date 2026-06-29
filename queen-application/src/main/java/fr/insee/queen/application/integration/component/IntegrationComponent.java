@@ -1,12 +1,13 @@
 package fr.insee.queen.application.integration.component;
 
 import fr.insee.queen.application.configuration.properties.ApplicationProperties;
+import fr.insee.queen.application.integration.component.builder.GroupBuilder;
 import fr.insee.queen.application.integration.component.builder.NomenclatureBuilder;
-import fr.insee.queen.application.integration.component.builder.CampaignBuilder;
 import fr.insee.queen.application.integration.component.builder.QuestionnaireBuilder;
 import fr.insee.queen.application.integration.component.exception.IntegrationComponentException;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultsDto;
+import fr.insee.queen.domain.group.gateway.GroupKindProvider;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,10 @@ import java.util.zip.ZipFile;
 @Transactional
 public class IntegrationComponent {
     private final NomenclatureBuilder nomenclatureBuilder;
-    private final CampaignBuilder campaignBuilder;
+    private final GroupBuilder groupBuilder;
     private final QuestionnaireBuilder questionnaireBuilder;
     private final ApplicationProperties applicationProperties;
+    private final GroupKindProvider groupKindProvider;
 
     public IntegrationResultsDto integrateContext(MultipartFile integrationFile) {
         try {
@@ -72,8 +74,11 @@ public class IntegrationComponent {
                     .anyMatch(r -> r.getStatus() == IntegrationStatus.ERROR);
 
             if (anyQuestionnaireInError) {
-                result.setCampaign(IntegrationResultUnitDto.integrationResultUnitError(
-                        null, IntegrationResultLabel.CAMPAIGN_SKIPPED_QUESTIONNAIRE_ERRORS));
+                result.setGroups(List.of(IntegrationResultUnitDto.integrationResultUnitError(
+                        null, IntegrationResultLabel.GROUPS_SKIPPED_QUESTIONNAIRE_ERRORS.formatted(
+                                groupKindProvider
+                                        .getKind()
+                                        .getForLabel()))));
                 return result;
             }
 
@@ -81,8 +86,8 @@ public class IntegrationComponent {
                     .map(IntegrationResultUnitDto::getId)
                     .collect(Collectors.toSet());
 
-            IntegrationResultUnitDto campaignResult = campaignBuilder.build(zf, questionnaireIds);
-            result.setCampaign(campaignResult);
+            List<IntegrationResultUnitDto> groupsResult = groupBuilder.build(zf, questionnaireIds);
+            result.setGroups(groupsResult);
 
             return result;
         } catch (IOException e) {

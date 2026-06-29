@@ -16,7 +16,7 @@ import java.util.List;
 @Schema(name = "IntegrationResults")
 public class IntegrationResultsDto {
     @JsonProperty
-    private IntegrationResultUnitDto campaign;
+    private List<IntegrationResultUnitDto> groups;
     @JsonProperty
     private List<IntegrationResultUnitDto> nomenclatures;
     @JsonProperty

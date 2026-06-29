@@ -9,15 +9,16 @@ import fr.insee.queen.domain.integration.model.IntegrationStatus;
 import fr.insee.queen.domain.integration.service.IntegrationService;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 public class IntegrationFakeService implements IntegrationService {
-    private Group groupCreated = null;
+    private List<Group> groupsCreated = new ArrayList<>();
 
     @Override
     public IntegrationResult create(Group group) {
-        groupCreated = group;
+        groupsCreated.add(group);
         return new IntegrationResult(group.getId(), IntegrationStatus.CREATED, null);
     }
 

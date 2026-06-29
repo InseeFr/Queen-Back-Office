@@ -18,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipFile;
 
@@ -45,10 +46,10 @@ class IntegrationCampaignBuilderTest {
         String campaignId = "SIMPSONS2020X00";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/valid-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
-        Group campaignCreated = integrationFakeService.getGroupCreated();
-        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.CREATED);
-        assertThat(campaignResult.getId()).isEqualTo(campaignId);
+        List<IntegrationResultUnitDto> campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
+        Group campaignCreated = integrationFakeService.getGroupsCreated().getFirst();
+        assertThat(campaignResult.getFirst().getStatus()).isEqualTo(IntegrationStatus.CREATED);
+        assertThat(campaignResult.getFirst().getId()).isEqualTo(campaignId);
         assertThat(campaignCreated.getId()).isEqualTo("SIMPSONS2020X00");
         assertThat(campaignCreated.getLabel()).isEqualTo("Enquête sur les simpsons 2020");
     }
@@ -59,11 +60,11 @@ class IntegrationCampaignBuilderTest {
         String campaignId = "%hello !";
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/invalid-input-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
-        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(campaignResult.getId()).isEqualTo(campaignId);
-        assertThat(campaignResult.getCause()).contains("id: The identifier is invalid.");
-        assertThat(campaignResult.getCause()).contains("label: must not be blank.");
+        List<IntegrationResultUnitDto> campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
+        assertThat(campaignResult.getFirst().getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(campaignResult.getFirst().getId()).isEqualTo(campaignId);
+        assertThat(campaignResult.getFirst().getCause()).contains("id: The identifier is invalid.");
+        assertThat(campaignResult.getFirst().getCause()).contains("label: must not be blank.");
     }
 
     @Test
@@ -71,10 +72,10 @@ class IntegrationCampaignBuilderTest {
     void testCampaignBuilder03() throws IOException {
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/forgotten-input-campaign.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
-        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(campaignResult.getId()).isNull();
-        assertThat(campaignResult.getCause())
+        List<IntegrationResultUnitDto> campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
+        assertThat(campaignResult.getFirst().getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(campaignResult.getFirst().getId()).isNull();
+        assertThat(campaignResult.getFirst().getCause())
                 .contains(String.format(IntegrationResultLabel.FILE_INVALID, IntegrationCampaignBuilder.CAMPAIGN_JSON, ""));
     }
 
@@ -83,10 +84,10 @@ class IntegrationCampaignBuilderTest {
     void testCampaignBuilder04() throws IOException {
         ZipFile zipFile = zipUtils.createZip("data/integration/json/campaign-builder/campaign-missing.zip");
 
-        IntegrationResultUnitDto campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
-        assertThat(campaignResult.getStatus()).isEqualTo(IntegrationStatus.ERROR);
-        assertThat(campaignResult.getId()).isNull();
-        assertThat(campaignResult.getCause())
+        List<IntegrationResultUnitDto> campaignResult = campaignBuilder.build(zipFile, java.util.Set.of());
+        assertThat(campaignResult.getFirst().getStatus()).isEqualTo(IntegrationStatus.ERROR);
+        assertThat(campaignResult.getFirst().getId()).isNull();
+        assertThat(campaignResult.getFirst().getCause())
                 .contains(String.format(IntegrationResultLabel.FILE_NOT_FOUND, IntegrationCampaignBuilder.CAMPAIGN_JSON));
     }
 }

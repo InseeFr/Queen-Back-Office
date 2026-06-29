@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -35,7 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class IntegrationIT {
+@TestPropertySource(properties = "application.group.kind=CAMPAIGN")
+class IntegrationCampaignIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,7 +49,7 @@ class IntegrationIT {
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, "Hello, World!".getBytes()
         );
 
-        mockMvc.perform(multipart("/api/campaign/context")
+        mockMvc.perform(multipart("/api/campaigns/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getNonAdminUser()))
                 )
@@ -60,7 +62,7 @@ class IntegrationIT {
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, "Hello, World!".getBytes()
         );
 
-        mockMvc.perform(multipart("/api/campaign/context")
+        mockMvc.perform(multipart("/api/campaigns/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser()))
                 )
@@ -75,7 +77,7 @@ class IntegrationIT {
         MockMultipartFile uploadedFile = new MockMultipartFile("file", "hello.txt", MediaType.MULTIPART_FORM_DATA_VALUE, zipInputStream
         );
 
-        MvcResult result = mockMvc.perform(multipart("/api/campaign/context")
+        MvcResult result = mockMvc.perform(multipart("/api/campaigns/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
@@ -85,7 +87,9 @@ class IntegrationIT {
         String content = result.getResponse().getContentAsString();
         String expectedResult = """
                 {
-                    "campaign": { "status":"ERROR", "cause":"Campaign not integrated because one or more questionnaire models failed to integrate" },
+                    "groups":[
+                        { "status":"ERROR", "cause":"Campaign not integrated because one or more questionnaire models failed to integrate" }
+                    ],
                     "nomenclatures":[
                         { "id":"cities2019", "status":"ERROR", "cause":"A nomenclature with id cities2019 already exists"},
                         { "id":"regions2019", "status":"ERROR", "cause":"Nomenclature file 'regions2019.json' could not be found in input zip" }
@@ -108,14 +112,14 @@ class IntegrationIT {
                 "file", "nominal.zip", MediaType.APPLICATION_OCTET_STREAM_VALUE, buildNominalZip());
 
         // When
-        mockMvc.perform(multipart("/api/campaign/context")
+        mockMvc.perform(multipart("/api/campaigns/context")
                         .file(uploadedFile)
                         .with(authentication(authenticatedUserTestHelper.getAdminUser()))
                 )
                 // Then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.campaign.id").value("NOMINAL-GRP"))
-                .andExpect(jsonPath("$.campaign.status").value("CREATED"))
+                .andExpect(jsonPath("$.groups[0].id").value("NOMINAL-GRP"))
+                .andExpect(jsonPath("$.groups[0].status").value("CREATED"))
                 .andExpect(jsonPath("$.questionnaireModels[*].status",
                         Matchers.everyItem(Matchers.is("CREATED"))));
 

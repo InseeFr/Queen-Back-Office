@@ -1,15 +1,17 @@
 package fr.insee.queen.domain.group.model;
 
 public enum GroupKind {
-    CAMPAIGN("campaign", "campaigns"),
-    PARTITION("partition", "partitions");
+    CAMPAIGN("campaign", "campaigns", "Campaign"),
+    PARTITION("partition", "partitions", "Partitions");
 
     private final String pathSingular;
     private final String pathPlural;
+    private final String forLabel;
 
-    GroupKind(String pathSingular, String pathPlural) {
+    GroupKind(String pathSingular, String pathPlural, String forLabel) {
         this.pathSingular = pathSingular;
         this.pathPlural = pathPlural;
+        this.forLabel = forLabel;
     }
 
     public String getPathSingular() {
@@ -18,5 +20,9 @@ public enum GroupKind {
 
     public String getPathPlural() {
         return pathPlural;
+    }
+
+    public String getForLabel() {
+        return forLabel;
     }
 }
