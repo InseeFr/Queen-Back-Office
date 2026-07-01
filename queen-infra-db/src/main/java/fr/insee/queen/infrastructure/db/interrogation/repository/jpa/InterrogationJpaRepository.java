@@ -46,6 +46,7 @@ public interface InterrogationJpaRepository extends JpaRepository<InterrogationD
     @Query("""
             select new fr.insee.queen.domain.interrogation.model.InterrogationPersonalization(
                 s.id,
+                s.group.id,
                 s.questionnaireModel.id,
                 s.personalization.value
             )

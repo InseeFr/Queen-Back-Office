@@ -194,7 +194,7 @@ public class InterrogationApiService implements InterrogationService {
     public InterrogationMetadata getInterrogationMetadata(String interrogationId) {
         InterrogationPersonalization interrogationPersonalization =
                 interrogationRepository.getInterrogationPersonalization(interrogationId);
-        ObjectNode metadata = metadataService.getMetadataByQuestionnaireId(interrogationPersonalization.questionnaireId());
+        ObjectNode metadata = metadataService.getMetadata(interrogationPersonalization.groupId());
 
         return InterrogationMetadata.create(interrogationPersonalization, metadata);
     }

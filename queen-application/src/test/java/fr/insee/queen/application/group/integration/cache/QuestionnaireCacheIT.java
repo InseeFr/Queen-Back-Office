@@ -76,21 +76,21 @@ class QuestionnaireCacheIT {
         // attach the questionnaire to the group via the N:M join (owned by Group)
         groupService.updateGroup(new Group(groupId, "label", Set.of(questionnaireId), metadataNode));
 
-        // when updating questionnaire, cache is evicted
+        // when updating questionnaire, questionnaire caches are evicted (metadata now belongs to the group, not the questionnaire)
         questionnaireModelService.updateQuestionnaire(QuestionnaireModel.create(questionnaireId, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId)).isNull();
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_METADATA)).get(groupId)).isNull();
 
         ObjectNode questionnaire = questionnaireModelService.getQuestionnaireData(questionnaireId);
         List<String> requiredNomenclatures = nomenclatureService.findRequiredNomenclatureByQuestionnaire(questionnaireId);
-        ObjectNode metadata = metadataService.getMetadataByQuestionnaireId(questionnaireId);
+        ObjectNode metadata = metadataService.getMetadata(groupId);
 
-        // when retrieving questionnaire, cache does contain the updated questionnaire
+        // when retrieving questionnaire and metadata, caches contain the updated values (keyed by questionnaireId / groupId respectively)
         ObjectNode questionnaireCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE).get(questionnaireId, ObjectNode.class));
         @SuppressWarnings("unchecked")
         List<String> requiredNomenclaturesCache = (List<String>) Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES).get(questionnaireId).get());
-        ObjectNode metadataCache = Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA).get(questionnaireId, ObjectNode.class));
+        ObjectNode metadataCache = Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_METADATA).get(groupId, ObjectNode.class));
 
         assertThat(questionnaire).isEqualTo(questionnaireCache);
         assertThat(requiredNomenclatures).isEqualTo(requiredNomenclaturesCache);
@@ -98,56 +98,62 @@ class QuestionnaireCacheIT {
     }
 
     @Test
-    @DisplayName("When deleting groups, handle cache eviction on associated questionnaires")
+    @DisplayName("When deleting groups, handle cache eviction on associated questionnaires and on group metadata")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache03() {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
+        String groupId = "group-with-questionnaires-cache-id";
 
+        ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("group/metadata/metadata.json");
         check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
         check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("cities2019")));
 
-        String groupId = "group-with-questionnaires-cache-id";
-        groupService.createGroup(new Group(groupId, "label",  Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode()));
+        groupService.createGroup(new Group(groupId, "label",  Set.of(questionnaireId1, questionnaireId2), metadataNode));
 
-        // when deleting group, associated questionnaires are evicted from cache
+        // populate GROUP_METADATA cache
+        metadataService.getMetadata(groupId);
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_METADATA)).get(groupId)).isNotNull();
+
+        // when deleting group, associated questionnaires and group metadata are evicted from cache
         groupService.delete(groupId, true);
 
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId1)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId1)).isNull();
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId1)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId2)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId2)).isNull();
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId2)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_METADATA)).get(groupId)).isNull();
     }
 
     @Test
-    @DisplayName("When updating group, handle cache eviction on all questionnaire metadatas")
+    @DisplayName("When updating group, group metadata cache entry is evicted")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
     void check_questionnaire_cache04() {
         String questionnaireId1 = "questionnaire-cache-id1";
         String questionnaireId2 = "questionnaire-cache-id2";
-        String questionnaireId3 = "questionnaire-cache-id3";
-        String questionnaireId4 = "questionnaire-cache-id4";
+        String groupId = "group-with-questionnaires-cache-id";
+        String otherGroupId = "other-group-cache-id";
 
+        ObjectNode metadataNode = JsonTestHelper.getResourceFileAsObjectNode("group/metadata/metadata.json");
         check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId1, "label1", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
         check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId2, "label2", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId3, "label3", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
-        check_questionnaire_cache_on_creation(QuestionnaireModel.create(questionnaireId4, "label4", JsonNodeFactory.instance.objectNode(), Set.of("regions2019", "cities2019")));
 
-        // create group and associate questionnaireId1 & questionnaireId2
-        String groupId = "group-with-questionnaires-cache-id";
-        Group group = new Group(groupId, "label",  Set.of(questionnaireId1, questionnaireId2), JsonNodeFactory.instance.objectNode());
+        Group group = new Group(groupId, "label",  Set.of(questionnaireId1, questionnaireId2), metadataNode);
         groupService.createGroup(group);
+        Group otherGroup = new Group(otherGroupId, "otherLabel", Set.of(questionnaireId1), metadataNode);
+        groupService.createGroup(otherGroup);
 
-        group = new Group(groupId, "labelUpdated",  Set.of(questionnaireId2), JsonNodeFactory.instance.objectNode());
-        // when deleting group, associated questionnaires are evicted from cache
-        groupService.updateGroup(group);
+        // populate GROUP_METADATA cache for both groups
+        metadataService.getMetadata(groupId);
+        metadataService.getMetadata(otherGroupId);
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_METADATA)).get(groupId)).isNotNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_METADATA)).get(otherGroupId)).isNotNull();
 
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId1)).isNull();
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId2)).isNull();
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId3)).isNull();
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId4)).isNull();
+        // when updating group, only its own GROUP_METADATA entry is evicted (targeted key eviction)
+        groupService.updateGroup(new Group(groupId, "labelUpdated", Set.of(questionnaireId2), metadataNode));
+
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_METADATA)).get(groupId)).isNull();
+        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.GROUP_METADATA)).get(otherGroupId)).isNotNull();
     }
 
     void check_questionnaire_cache_on_creation(QuestionnaireModel questionnaireData) {
@@ -156,7 +162,6 @@ class QuestionnaireCacheIT {
         // before creating questionnaire, cache does not contain the questionnaire
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE)).get(questionnaireId)).isNull();
         assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES)).get(questionnaireId)).isNull();
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
 
         questionnaireModelService.createQuestionnaire(questionnaireData);
         ObjectNode questionnaire = questionnaireModelService.getQuestionnaireData(questionnaireId);
@@ -169,6 +174,5 @@ class QuestionnaireCacheIT {
 
         assertThat(questionnaire).isEqualTo(questionnaireCache);
         assertThat(requiredNomenclatures).isEqualTo(requiredNomenclaturesCache);
-        assertThat(Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA)).get(questionnaireId)).isNull();
     }
 }

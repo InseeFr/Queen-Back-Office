@@ -27,46 +27,6 @@ class MetadataIT {
 
     private final AuthenticatedUserTestHelper authenticatedUserTestHelper = new AuthenticatedUserTestHelper();
 
-
-    @Test
-    void when_empty_or_no_metadata_by_questionnaire_return_empty_json_metadata() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/questionnaire/simpsonsV2/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
-                .andExpect(status().isOk())
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
-        String content = result.getResponse().getContentAsString();
-        JSONAssert.assertEquals("{}", content, JSONCompareMode.STRICT);
-    }
-
-    @Test
-    void on_get_metadata_by_questionnaire_retrieve_correct_metadata() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/questionnaire/LOG2021X11Web/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
-                .andExpect(status().isOk())
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
-        String content = result.getResponse().getContentAsString();
-        String expectedResult = JsonTestHelper.getResourceFileAsString("group/metadata/metadata.json");
-        JSONAssert.assertEquals(expectedResult, content, JSONCompareMode.STRICT);
-    }
-
-    @Test
-    void on_get_metadata_by_questionnaire_when_incorrect_identifier_questionnaire_format_id_return_400() throws Exception {
-        mockMvc.perform(get("/api/questionnaire/insert into plopés/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
-                .andExpect(status().isBadRequest())
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void on_get_metadata_by_questionnaire_when_non_existing_questionnaire_format_id_return_404() throws Exception {
-        mockMvc.perform(get("/api/questionnaire/QSJFDG12345/metadata")
-                        .with(authentication(authenticatedUserTestHelper.getInterrogationUser())))
-                .andExpect(status().isNotFound())
-                .andDo(MockMvcResultHandlers.print());
-    }
-
     @Test
     void when_empty_or_no_metadata_by_group_return_empty_json_metadata() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/campaign/SIMPSONS2020X00/metadata")
@@ -108,7 +68,7 @@ class MetadataIT {
 
     @Test
     void on_get_metadata_when_anonymous_access_return_401() throws Exception {
-        mockMvc.perform(get("/api/questionnaire/LOG2021X11Web/metadata")
+        mockMvc.perform(get("/api/campaign/LOG2021X11Web/metadata")
                         .with(authentication(authenticatedUserTestHelper.getNotAuthenticatedUser())))
                 .andExpect(status().isUnauthorized());
     }

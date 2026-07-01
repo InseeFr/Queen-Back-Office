@@ -45,18 +45,4 @@ public class MetadataController {
     public ObjectNode getMetadataByGroupId(@IdValid @PathVariable(value = "id") String groupId) {
         return metadataService.getMetadata(groupId);
     }
-
-    /**
-     * Retrieve the group metadata by the questionnaire id
-     *
-     * @param questionnaireId the id of the questionnaire
-     * @return the cmapaign metadata
-     */
-    @Operation(summary = "Get metadata for a questionnaire ")
-    @GetMapping(path = "/questionnaire/{id}/metadata")
-    @PreAuthorize(AuthorityPrivileges.HAS_USER_PRIVILEGES)
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(ref = SchemaType.Names.METADATA))})
-    public ObjectNode getMetadataByQuestionnaireId(@IdValid @PathVariable(value = "id") String questionnaireId) {
-        return metadataService.getMetadataByQuestionnaireId(questionnaireId);
-    }
 }

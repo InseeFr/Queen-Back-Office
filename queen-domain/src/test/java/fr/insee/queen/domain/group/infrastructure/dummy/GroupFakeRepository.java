@@ -67,14 +67,6 @@ public class GroupFakeRepository implements GroupRepository {
     }
 
     @Override
-    public Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId) {
-        if(metadata != null) {
-            return Optional.of(metadata);
-        }
-        return Optional.empty();
-    }
-
-    @Override
     public Optional<Group> findGroup(String groupId) {
         return Optional.empty();
     }

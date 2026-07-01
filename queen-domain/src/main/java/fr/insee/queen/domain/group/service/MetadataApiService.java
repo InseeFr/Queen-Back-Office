@@ -15,15 +15,9 @@ public class MetadataApiService implements MetadataService {
     private final GroupRepository groupRepository;
 
     @Override
+    @Cacheable(CacheName.GROUP_METADATA)
     public ObjectNode getMetadata(String groupId) {
         return groupRepository.findMetadataByGroupId(groupId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for group %s was not found", groupId)));
-    }
-
-    @Override
-    @Cacheable(CacheName.QUESTIONNAIRE_METADATA)
-    public ObjectNode getMetadataByQuestionnaireId(String questionnaireId) {
-        return groupRepository.findMetadataByQuestionnaireId(questionnaireId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Metadata for questionnaire %s was not found", questionnaireId)));
     }
 }

@@ -144,11 +144,6 @@ public class GroupDao implements GroupRepository {
     }
 
     @Override
-    public Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId) {
-        return jpaRepository.findMetadataByQuestionnaireId(questionnaireId);
-    }
-
-    @Override
     public List<String> getAllGroupIds() {
         return jpaRepository.findAllGroupIds();
     }
