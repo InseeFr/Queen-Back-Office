@@ -213,12 +213,13 @@ class InterrogationApiServiceTest {
 
         ArrayNode personalization = JsonNodeFactory.instance.arrayNode();
         InterrogationPersonalization interrogationPersonalization = new InterrogationPersonalization(
-                interrogationId, "questionnaire-id", personalization);
+                interrogationId, GROUP_ID, QUESTIONNAIRE_ID, personalization);
         interrogationFakeDao.setInterrogationPersonalization(interrogationPersonalization);
 
         InterrogationMetadata interrogationMetadata = interrogationApiService.getInterrogationMetadata(interrogationId);
         assertThat(interrogationMetadata.metadata()).isEqualTo(metadata);
         assertThat(interrogationMetadata.interrogationPersonalization()).isEqualTo(interrogationPersonalization);
+        assertThat(metadataFakeService.getRequestedGroupId()).isEqualTo(GROUP_ID);
     }
 
     static Stream<ObjectNode> nullOrEmpTyData() {

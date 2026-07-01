@@ -51,6 +51,7 @@ public class GroupApiService implements GroupService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = CacheName.GROUP_EXIST, key = "#groupId"),
+            @CacheEvict(value = CacheName.GROUP_METADATA, key = "#groupId"),
             @CacheEvict(value = CacheName.INTERROGATION_EXIST, allEntries = true),
             @CacheEvict(value = CacheName.INTERROGATION_SUMMARY, allEntries = true)
     })
@@ -78,8 +79,6 @@ public class GroupApiService implements GroupService {
             questionnaireIds.forEach(id -> {
                 Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_NOMENCLATURES))
                         .evict(id);
-                Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE_METADATA))
-                        .evict(id);
                 Objects.requireNonNull(cacheManager.getCache(CacheName.QUESTIONNAIRE))
                         .evict(id);
             });
@@ -103,7 +102,7 @@ public class GroupApiService implements GroupService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, allEntries = true),
+            @CacheEvict(value = CacheName.GROUP_METADATA, key = "#group.id"),
     })
     @Override
     public void updateGroup(Group group) {

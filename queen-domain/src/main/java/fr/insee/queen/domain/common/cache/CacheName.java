@@ -11,6 +11,6 @@ public class CacheName {
     public static final String INTERROGATION_SUMMARY = "interrogation-summary";
     public static final String QUESTIONNAIRE_NOMENCLATURES = "questionnaire-required-nomenclatures";
     public static final String NOMENCLATURE = "nomenclature";
-    public static final String QUESTIONNAIRE_METADATA = "metadata";
+    public static final String GROUP_METADATA = "metadata";
     public static final String HABILITATION = "habilitation";
 }

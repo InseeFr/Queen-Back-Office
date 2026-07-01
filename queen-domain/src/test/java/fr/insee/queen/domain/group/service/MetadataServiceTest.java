@@ -25,22 +25,6 @@ class MetadataServiceTest {
     }
 
     @Test
-    @DisplayName("When retrieving metadata for questionnaire, throws exception if metadata not found")
-    void testMetadataQuestionnaire01() {
-        groupRepository.setMetadata(null);
-        assertThatThrownBy(() -> metadataService.getMetadataByQuestionnaireId(GroupFakeRepository.QUESTIONNAIRE_LINKED_ID))
-                .isInstanceOf(EntityNotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("When retrieving metadata for questionnaire, return metadata")
-    void testMetadataQuestionnaire02() {
-        groupRepository.setMetadata(metadata);
-        assertThat(metadataService.getMetadataByQuestionnaireId(GroupFakeRepository.QUESTIONNAIRE_LINKED_ID))
-                .isEqualTo(metadata);
-    }
-
-    @Test
     @DisplayName("When retrieving metadata for group, throws exception if metadata not found")
     void testMetadataGroup01() {
         groupRepository.setMetadata(null);
@@ -52,7 +36,7 @@ class MetadataServiceTest {
     @DisplayName("When retrieving metadata for group, return metadata")
     void testMetadataGroup02() {
         groupRepository.setMetadata(metadata);
-        assertThat(metadataService.getMetadata(GroupFakeRepository.QUESTIONNAIRE_LINKED_ID))
+        assertThat(metadataService.getMetadata(GroupFakeRepository.GROUP_ID))
                 .isEqualTo(metadata);
     }
 }

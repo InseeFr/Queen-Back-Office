@@ -54,7 +54,6 @@ public class QuestionnaireModelApiService implements QuestionnaireModelService {
     @Override
     @Caching(evict = {
             @CacheEvict(value = CacheName.QUESTIONNAIRE_NOMENCLATURES, key = "#questionnaire.id"),
-            @CacheEvict(value = CacheName.QUESTIONNAIRE_METADATA, key = "#questionnaire.id"),
             @CacheEvict(value = CacheName.QUESTIONNAIRE, key = "#questionnaire.id"),
     })
     @Transactional

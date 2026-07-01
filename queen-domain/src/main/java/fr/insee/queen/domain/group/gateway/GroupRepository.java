@@ -66,14 +66,6 @@ public interface GroupRepository {
     Optional<ObjectNode> findMetadataByGroupId(String groupId);
 
     /**
-     * Retrieve the metadata json value of a group byt the questionnaire id
-     *
-     * @param questionnaireId questionnaire id
-     * @return {@link String} json metadata value
-     */
-    Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
-
-    /**
      * Find group
      *
      * @param groupId group id

@@ -44,18 +44,6 @@ public interface GroupJpaRepository extends JpaRepository<GroupDB, String> {
     Optional<ObjectNode> findMetadataByGroupId(String groupId);
 
     /**
-     * Retrieve the metadata json value of a group byt the questionnaire id
-     *
-     * @param questionnaireId questionnaire id
-     * @return {@link ObjectNode} json metadata value
-     */
-    @Query("""
-            select c.metadata.value
-            from GroupDB c INNER JOIN c.questionnaireModels qm
-            where qm.id=:questionnaireId""")
-    Optional<ObjectNode> findMetadataByQuestionnaireId(String questionnaireId);
-
-    /**
      * Retrieve all groups ids
      * @return {@link String} all groups ids
      */
