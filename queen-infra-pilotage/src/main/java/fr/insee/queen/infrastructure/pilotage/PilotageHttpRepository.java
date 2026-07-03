@@ -41,7 +41,7 @@ public class PilotageHttpRepository implements PilotageRepository {
     public boolean isClosed(String groupId) {
         GroupKind kind = groupKindProvider.getKind();
         final String uriPilotageFilter = UriComponentsBuilder.fromUriString(pilotageUrl)
-                .path("/%s/{id}/ongoing".formatted(kind.getPathPlural()))
+                .pathSegment(kind.getPathPlural(), "{id}", "ongoing")
                 .buildAndExpand(groupId)
                 .toUriString();
 
@@ -61,7 +61,13 @@ public class PilotageHttpRepository implements PilotageRepository {
         }
     }
 
+    /**
+     * TODO: get rid of this method after new synchronisation
+     * @deprecated this call should be remove after new pearl synchronisation
+     * @return pilotage interrogations for the current user
+     */
     @Override
+    @Deprecated(forRemoval = true)
     public List<PilotageInterrogation> getInterrogations() {
         try {
             final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_SURVEYUNITS;
