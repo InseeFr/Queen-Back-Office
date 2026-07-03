@@ -1,5 +1,7 @@
 package fr.insee.queen.infrastructure.pilotage;
 
+import fr.insee.queen.domain.group.gateway.GroupKindProvider;
+import fr.insee.queen.domain.group.model.GroupKind;
 import fr.insee.queen.domain.pilotage.gateway.PilotageRepository;
 import fr.insee.queen.domain.pilotage.model.*;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
@@ -33,13 +35,13 @@ public class PilotageHttpRepository implements PilotageRepository {
     @Value("${feature.pilotage.alternative-habilitation.groupids-regex}")
     private final String groupIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
-    @Value("${feature.collection.mode:WEB}")
-    private final CollectionEnvironmentEnum inputMode;
+    private final GroupKindProvider groupKindProvider;
 
     @Override
     public boolean isClosed(String groupId) {
+        GroupKind kind = groupKindProvider.getKind();
         final String uriPilotageFilter = UriComponentsBuilder.fromUriString(pilotageUrl)
-                .path("/campaigns/{id}/ongoing")
+                .path("/%s/{id}/ongoing".formatted(kind.getPathPlural()))
                 .buildAndExpand(groupId)
                 .toUriString();
 

@@ -73,7 +73,7 @@ public class PilotageApiService implements PilotageService {
 
         log.debug("Detail : {}", displayDetail(interrogations));
         List<String> interrogationIds = interrogations.stream()
-                .filter(interrogation -> groupId.equals(interrogation.group()))
+                .filter(interrogation -> groupId.equals(interrogation.campaign()))
                 .map(PilotageInterrogation::id)
                 .toList();
 
@@ -105,9 +105,9 @@ public class PilotageApiService implements PilotageService {
     private String displayDetail(List<PilotageInterrogation> interrogations) {
         Map<String, Integer> countInterrogationsByGroup = new HashMap<>();
         for (PilotageInterrogation interrogation : interrogations) {
-            String group = interrogation.group();
+            String group = interrogation.campaign();
             if(!countInterrogationsByGroup.containsKey(group)) {
-                countInterrogationsByGroup.put(interrogation.group(), 1);
+                countInterrogationsByGroup.put(interrogation.campaign(), 1);
                 continue;
             }
             int count = countInterrogationsByGroup.get(group) + 1;

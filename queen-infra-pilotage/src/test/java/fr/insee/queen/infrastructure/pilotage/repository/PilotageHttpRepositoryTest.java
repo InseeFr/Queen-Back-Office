@@ -1,6 +1,7 @@
 package fr.insee.queen.infrastructure.pilotage.repository;
 
-import fr.insee.queen.domain.pilotage.model.CollectionEnvironmentEnum;
+import fr.insee.queen.domain.group.gateway.GroupKindProvider;
+import fr.insee.queen.domain.group.model.GroupKind;
 import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
@@ -42,13 +43,14 @@ class PilotageHttpRepositoryTest {
         RestTemplate restTemplate = new RestTemplate();
         mockServer = MockRestServiceServer.createServer(restTemplate);
         String groupIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
+        GroupKindProvider provider = () -> GroupKind.CAMPAIGN;
 
         pilotageRepository = new PilotageHttpRepository(
                 pilotageUrl,
                 alternativeHabilitationServiceURL,
                 groupIdRegexWithAlternativeHabilitationService,
                 restTemplate,
-                CollectionEnvironmentEnum.WEB
+                provider
         );
     }
 
@@ -188,9 +190,9 @@ class PilotageHttpRepositoryTest {
     void testInterrogations01() throws URISyntaxException {
         String response = """
                 [
-                    { "group": "group-id1", "id": "interrogation-id1" },
-                    { "group": "group-id2", "id": "interrogation-id2" },
-                    { "group": "group-id3", "id": "interrogation-id3" }
+                    { "campaign": "group-id1", "id": "interrogation-id1" },
+                    { "campaign": "group-id2", "id": "interrogation-id2" },
+                    { "campaign": "group-id3", "id": "interrogation-id3" }
                 ]""";
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_SURVEYUNITS)))
@@ -202,9 +204,9 @@ class PilotageHttpRepositoryTest {
 
         List<PilotageInterrogation> interrogations = pilotageRepository.getInterrogations();
         assertThat(interrogations).hasSize(3);
-        assertThat(interrogations.get(0).group()).isEqualTo("group-id1");
-        assertThat(interrogations.get(1).group()).isEqualTo("group-id2");
-        assertThat(interrogations.get(2).group()).isEqualTo("group-id3");
+        assertThat(interrogations.get(0).campaign()).isEqualTo("group-id1");
+        assertThat(interrogations.get(1).campaign()).isEqualTo("group-id2");
+        assertThat(interrogations.get(2).campaign()).isEqualTo("group-id3");
         assertThat(interrogations.get(0).id()).isEqualTo("interrogation-id1");
         assertThat(interrogations.get(1).id()).isEqualTo("interrogation-id2");
         assertThat(interrogations.get(2).id()).isEqualTo("interrogation-id3");
