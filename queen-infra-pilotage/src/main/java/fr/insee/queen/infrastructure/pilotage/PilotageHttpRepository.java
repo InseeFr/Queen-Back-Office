@@ -41,7 +41,7 @@ public class PilotageHttpRepository implements PilotageRepository {
     public boolean isClosed(String groupId) {
         GroupKind kind = groupKindProvider.getKind();
         final String uriPilotageFilter = UriComponentsBuilder.fromUriString(pilotageUrl)
-                .pathSegment(kind.getPathPlural(), "{id}", "ongoing")
+                .pathSegment(kind.getPathPilotage(), "{id}", "ongoing")
                 .buildAndExpand(groupId)
                 .toUriString();
 
