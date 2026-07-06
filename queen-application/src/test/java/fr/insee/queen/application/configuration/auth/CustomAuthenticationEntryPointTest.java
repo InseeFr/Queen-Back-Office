@@ -57,7 +57,7 @@ class CustomAuthenticationEntryPointTest {
         entryPoint.commence(request, response, ex);
 
         // then
-        verify(logInterceptor).injectLogContext(request, "bob");
+        verify(logInterceptor).injectLogContext(request, CustomAuthenticationEntryPoint.UNAUTHORIZED_USER);
         verify(logInterceptor).clearLogContext();
 
         verify(response).setStatus(401);
@@ -83,7 +83,7 @@ class CustomAuthenticationEntryPointTest {
         entryPoint.commence(request, response, ex);
 
         // then
-        verify(logInterceptor).injectLogContext(request, "john");
+        verify(logInterceptor).injectLogContext(request, CustomAuthenticationEntryPoint.UNAUTHORIZED_USER);
         verify(logInterceptor).clearLogContext();
         verify(response).setStatus(401);
         verify(response).setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);

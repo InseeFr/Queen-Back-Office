@@ -9,7 +9,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import tools.jackson.databind.json.JsonMapper;
@@ -22,6 +21,7 @@ import java.net.URI;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final LogInterceptor logInterceptor;
     private final JsonMapper mapper;
+    public static final String UNAUTHORIZED_USER = "UNAUTHORIZED_USER";
 
     @Override
     public void commence(
@@ -29,14 +29,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             @NonNull HttpServletResponse response,
             AuthenticationException authException) throws IOException
     {
-        Authentication auth = authException.getAuthenticationRequest();
-        String userId = null;
-
-        if(auth != null) {
-            userId = auth.getName();
-        }
-
-        logInterceptor.injectLogContext(request, userId);
+        logInterceptor.injectLogContext(request, UNAUTHORIZED_USER);
         log.warn(authException.getMessage());
         logInterceptor.clearLogContext();
 
