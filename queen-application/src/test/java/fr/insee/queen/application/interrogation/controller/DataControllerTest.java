@@ -24,6 +24,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -238,6 +239,20 @@ class DataControllerTest {
         // then
         assertThat(pilotageFakeComponent.isChecked()).isTrue();
         assertThat(data).isEqualTo(interrogationData);
+    }
+
+    @Test
+    @DisplayName("Should delegate cleaning of extracted data by ids to data service")
+    void cleanExtractedDataByIds_delegates() {
+        // given
+        List<String> ids = List.of("11", "12", "13");
+
+        // when
+        dataController.cleanExtractedDataByIds("SIMPSONS2020X00", ids);
+
+        // then
+        assertThat(dataFakeService.getCleanedCampaignId()).isEqualTo("SIMPSONS2020X00");
+        assertThat(dataFakeService.getCleanedInterrogationIds()).containsExactlyElementsOf(ids);
     }
 
     private static Stream<Arguments> provideInterviewerAndSuUsers() {

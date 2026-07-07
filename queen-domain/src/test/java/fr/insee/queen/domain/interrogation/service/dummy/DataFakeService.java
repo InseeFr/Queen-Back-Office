@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.interrogation.service.DataService;
 import lombok.Getter;
 
+import java.util.List;
+
 public class DataFakeService implements DataService {
     @Getter
     private JsonNode dataSaved = null;
@@ -26,6 +28,11 @@ public class DataFakeService implements DataService {
 
     @Override
     public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+        // not used at this moment
+    }
+
+    @Override
+    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
         // not used at this moment
     }
 }

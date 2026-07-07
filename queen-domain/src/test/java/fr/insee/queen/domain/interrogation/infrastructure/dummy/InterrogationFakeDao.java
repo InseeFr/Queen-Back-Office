@@ -46,7 +46,10 @@ public class InterrogationFakeDao implements InterrogationRepository {
 
     @Override
     public List<InterrogationSummary> findAllSummaryByIdIn(List<String> interrogationIds) {
-        return null;
+            return interrogationSummaries
+                    .stream()
+                    .filter(summary -> interrogationIds.contains(summary.id()))
+                    .toList();
     }
 
     @Override
@@ -152,6 +155,18 @@ public class InterrogationFakeDao implements InterrogationRepository {
     @Override
     public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
         // not used at this moment
+    }
+
+    @Getter
+    private String cleanedCampaignId;
+
+    @Getter
+    private List<String> cleanedInterrogationIds;
+
+    @Override
+    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
+        this.cleanedCampaignId = campaignId;
+        this.cleanedInterrogationIds = interrogationIds;
     }
 
     @Override
