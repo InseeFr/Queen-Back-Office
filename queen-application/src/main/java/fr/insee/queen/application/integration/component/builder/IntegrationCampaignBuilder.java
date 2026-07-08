@@ -1,11 +1,10 @@
 package fr.insee.queen.application.integration.component.builder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterators;
 import fr.insee.queen.application.integration.component.builder.schema.SchemaComponent;
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
@@ -26,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import tools.jackson.core.JacksonException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -103,7 +103,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             log.info("Setting metadata for campaign {}", id);
             try {
                 metadataValue = convertMetadataValueToObjectNode(metadataTags.item(0));
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 log.error("Error when converting metadata", e);
                 return IntegrationResultUnitDto.integrationResultUnitError(null, e.getMessage());
             }
@@ -125,6 +125,11 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
         return buildCampaign(campaign);
     }
 
+    /**
+     * Parses the campaign metadata in the given zip and returns the interrogation status.
+     * @param zf Zip file that should contain a campaign JSON file.
+     * @return {@link IntegrationResultUnitDto}
+     */
     private IntegrationResultUnitDto buildCampaign(ZipFile zf) {
         try {
             schemaComponent.throwExceptionIfJsonDataFileNotValid(zf, CAMPAIGN_JSON, SchemaType.CAMPAIGN_INTEGRATION);
@@ -136,10 +141,14 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             return buildCampaign(campaign);
         } catch (IntegrationValidationException ex) {
             return ex.getResultError();
-        }  catch (IOException e) {
+        }  catch (JacksonException _) {
             return IntegrationResultUnitDto.integrationResultUnitError(
                     null,
-                    String.format(IntegrationResultLabel.JSON_PARSING_ERROR, CAMPAIGN_JSON));
+                    IntegrationResultLabel.JSON_PARSING_ERROR.formatted(CAMPAIGN_JSON));
+        } catch (IOException _) {
+            return IntegrationResultUnitDto.integrationResultUnitError(
+                    null,
+                    IntegrationResultLabel.ZIP_PARSING_ERROR.formatted(zf.getName()));
         }
     }
 
@@ -160,7 +169,7 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
         return IntegrationResultUnitDto.fromModel(result);
     }
 
-    private ObjectNode convertMetadataValueToObjectNode(Node xmlNode) throws JsonProcessingException {
+    private ObjectNode convertMetadataValueToObjectNode(Node xmlNode) throws JacksonException {
         String jsonString = XML.toJSONObject(toString(xmlNode)).toString();
         ObjectNode metadataObject = mapper.readValue(jsonString, ObjectNode.class);
         if (metadataObject.get(METADATA).isEmpty()) {
@@ -181,12 +190,12 @@ public class IntegrationCampaignBuilder implements CampaignBuilder {
             return arrNode;
         }
         if (node.isObject()) {
-            if (Iterators.size(node.elements()) == 1 && node.elements().next().isArray()) {
-                String keyName = node.fieldNames().next();
+            if (Iterators.size(node.values().iterator()) == 1 && node.values().iterator().next().isArray()) {
+                String keyName = node.propertyNames().iterator().next();
                 return removeArrayLevel(node.get(keyName), mapper);
             } else {
                 ObjectNode objNode = mapper.createObjectNode();
-                Iterator<Map.Entry<String, JsonNode>> it = node.fields();
+                Iterator<Map.Entry<String, JsonNode>> it = node.properties().iterator();
                 while (it.hasNext()) {
                     Map.Entry<String, JsonNode> e = it.next();
                     objNode.set(e.getKey(), removeArrayLevel(e.getValue(), mapper));

@@ -1,6 +1,6 @@
 package fr.insee.queen.jms.service.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import fr.insee.queen.jms.exception.PropertyException;
 
 /**
@@ -15,12 +15,12 @@ public class PropertyValidator {
      */
     public static String textValue(JsonNode node, String field) throws PropertyException {
         JsonNode n = node.get(field);
-        if (n == null || n.isNull() || n.asText().equals("null")) {
+        if (n == null || n.isNull() || n.asString().equals("null")) {
             throw new PropertyException("Missing or null field : '" + field + "'");
         }
-        if (!n.isTextual()) {
+        if (!n.isString()) {
             throw new PropertyException("The field '" + field + "' must be a string (type found : " + n.getNodeType() + ")");
         }
-        return n.asText();
+        return n.asString();
     }
 }

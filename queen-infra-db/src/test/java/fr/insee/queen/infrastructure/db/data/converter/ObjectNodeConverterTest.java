@@ -3,8 +3,8 @@ package fr.insee.queen.infrastructure.db.data.converter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +50,7 @@ class ObjectNodeConverterTest {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.get("key").asText()).isEqualTo("value");
+        assertThat(result.get("key").asString()).isEqualTo("value");
     }
 
     @Test

@@ -68,8 +68,8 @@ spring:
     hibernate:
       ddl-auto: none
       naming:
-        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl # CamelCaseToUnderscoresNamingStrategy is deprecated in Hibernate 7+
+        implicit-strategy: org.springframework.boot.hibernate.SpringImplicitNamingStrategy
     properties:
       id:
         new_generator_mappings: true
@@ -110,7 +110,7 @@ springdoc:
 #Actuator Metrics
 management:
   endpoints:
-    enabled-by-default: false
+    access.default: none
     web:
       discovery:
         enabled: false

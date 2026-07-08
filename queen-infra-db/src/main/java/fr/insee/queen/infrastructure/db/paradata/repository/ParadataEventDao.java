@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.paradata.repository;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import fr.insee.queen.domain.paradata.gateway.ParadataEventRepository;
 import fr.insee.queen.infrastructure.db.paradata.repository.jpa.ParadataEventJpaRepository;

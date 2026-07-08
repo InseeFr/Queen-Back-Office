@@ -8,6 +8,7 @@ public class IntegrationResultLabel {
     public static final String NOMENCLATURE_FILE_NOT_FOUND = "Nomenclature file '%s' could not be found in input zip";
     public static final String QUESTIONNAIRE_FILE_NOT_FOUND = "Questionnaire model file '%s' could not be found in input zip";
     public static final String JSON_PARSING_ERROR = "Could not parse json in file '%s'";
+    public static final String ZIP_PARSING_ERROR = "Could not parse zip file '%s'";
     public static final String FILE_INVALID = "File %s does not fit the required template: %s";
     public static final String FILE_NOT_FOUND = "No file %s found";
     public static final String CAMPAIGN_IDS_MISMATCH = "Questionnaire model has campaign id %s while campaign in zip has id %s";

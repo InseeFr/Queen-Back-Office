@@ -1,12 +1,5 @@
 package fr.insee.queen.jms.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import fr.insee.queen.jms.model.ResponseCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,18 +8,26 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.jms.core.JmsTemplate;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Locale;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(OutputCaptureExtension.class)
+@ExtendWith(MockitoExtension.class)
 class InterrogationReplyQueuePublisherTest {
 
     @Mock
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     @Mock
     private JmsTemplate jmsQueuePublisher;
@@ -37,8 +38,7 @@ class InterrogationReplyQueuePublisherTest {
     @BeforeEach
     void setUp() {
         Locale.setDefault(Locale.US);
-        MockitoAnnotations.openMocks(this);
-        surveyUnitReplyQueuePublisher = new InterrogationReplyQueuePublisher(objectMapper, jmsQueuePublisher);
+        surveyUnitReplyQueuePublisher = new InterrogationReplyQueuePublisher(jsonMapper, jmsQueuePublisher);
     }
 
     @Test
@@ -52,7 +52,7 @@ class InterrogationReplyQueuePublisherTest {
         String jsonResponse = "{\"code\":\""
                 + responseCode.getCode() + "\",\"message\":\""
                 + responseCode.name() + "\"}";
-        when(objectMapper.writeValueAsString(responseMessage)).thenReturn(jsonResponse);
+        when(jsonMapper.writeValueAsString(responseMessage)).thenReturn(jsonResponse);
 
         // When
         surveyUnitReplyQueuePublisher.send(replyQueue, correlationId, responseMessage);
@@ -69,7 +69,7 @@ class InterrogationReplyQueuePublisherTest {
         String replyQueue = "replyQueue";
         String correlationId = "12345";
         JMSOutputMessage responseMessage = JMSOutputMessage.createResponse(ResponseCode.CREATED);
-        when(objectMapper.writeValueAsString(responseMessage)).thenThrow(JsonProcessingException.class);
+        when(jsonMapper.writeValueAsString(responseMessage)).thenThrow(JacksonException.class);
 
         // When
         surveyUnitReplyQueuePublisher.send(replyQueue, correlationId, responseMessage);

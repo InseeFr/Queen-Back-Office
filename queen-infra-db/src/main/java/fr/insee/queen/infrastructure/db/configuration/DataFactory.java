@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.configuration;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.data.entity.ciphered.CipheredDataDB;
 import fr.insee.queen.infrastructure.db.data.entity.unciphered.UncipheredDataDB;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;

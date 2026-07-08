@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.interrogationtempzone.repository;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.interrogationtempzone.gateway.InterrogationTempZoneRepository;
 import fr.insee.queen.domain.interrogationtempzone.model.InterrogationTempZone;
 import fr.insee.queen.infrastructure.db.interrogationtempzone.repository.jpa.InterrogationTempZoneJpaRepository;

@@ -1,9 +1,9 @@
 package fr.insee.queen.application.campaign.component;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.interrogation.dto.output.*;
 import fr.insee.queen.domain.interrogation.service.exception.MetadataValueNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -49,15 +49,15 @@ public class MetadataComponentConverter implements MetadataConverter {
 
     private List<MetadataVariableDto> getVariables(ArrayNode variablesNode) {
         List<MetadataVariableDto> variables = new ArrayList<>();
-        Iterator<JsonNode> iteratorVariables = variablesNode.elements();
+        Iterator<JsonNode> iteratorVariables = variablesNode.values().iterator();
         while(iteratorVariables.hasNext()) {
             JsonNode variableNode = iteratorVariables.next();
             JsonNode nameNode = variableNode.get(METADATA_VARIABLE_NAME);
-            if(METADATA_OBJECTIVES.equals(nameNode.textValue()) || METADATA_LABEL.equals(nameNode.textValue())) {
+            if(METADATA_OBJECTIVES.equals(nameNode.asString()) || METADATA_LABEL.equals(nameNode.asString())) {
                 continue;
             }
             JsonNode valueNode = variableNode.get(METADATA_VARIABLE_VALUE);
-            variables.add(new MetadataVariableDto(nameNode.textValue(), mapper.convertValue(valueNode, Object.class)));
+            variables.add(new MetadataVariableDto(nameNode.asString(), mapper.convertValue(valueNode, Object.class)));
         }
         return variables;
     }
@@ -65,13 +65,13 @@ public class MetadataComponentConverter implements MetadataConverter {
     private LogoDtos getLogos(ArrayNode metadataLogosNode) {
         LogoDto mainLogo = null;
         List<LogoDto> secondaryLogos = new ArrayList<>();
-        Iterator<JsonNode> iteratorMetadataLogosNode = metadataLogosNode.elements();
+        Iterator<JsonNode> iteratorMetadataLogosNode = metadataLogosNode.values().iterator();
 
         while(iteratorMetadataLogosNode.hasNext()) {
             JsonNode variableNode = iteratorMetadataLogosNode.next();
             JsonNode urlNode = variableNode.get(METADATA_LOGO_URL);
             JsonNode labelNode = variableNode.get(METADATA_LOGO_LABEL);
-            LogoDto logo = new LogoDto(urlNode.textValue(), labelNode.textValue());
+            LogoDto logo = new LogoDto(urlNode.asString(), labelNode.asString());
             if(mainLogo == null) {
                 mainLogo = logo;
                 continue;
@@ -91,14 +91,14 @@ public class MetadataComponentConverter implements MetadataConverter {
     private QuestionnaireContextDto extractMetadataContext(ObjectNode metadata) {
         JsonNode metadataValue = metadata.get(METADATA_CONTEXT);
 
-        if(metadataValue == null || !metadataValue.isTextual()) {
+        if(metadataValue == null || !metadataValue.isString()) {
             throw new MetadataValueNotFoundException(METADATA_CONTEXT);
         }
-        return QuestionnaireContextDto.getQuestionnaireContext(metadataValue.textValue());
+        return QuestionnaireContextDto.getQuestionnaireContext(metadataValue.asString());
     }
 
     private String extractMetadataVariable(JsonNode metadataVariables, String metadataKey) {
-        Iterator<JsonNode> iteratorVariables = metadataVariables.elements();
+        Iterator<JsonNode> iteratorVariables = metadataVariables.values().iterator();
         while(iteratorVariables.hasNext()) {
             JsonNode variable = iteratorVariables.next();
 
@@ -106,15 +106,15 @@ public class MetadataComponentConverter implements MetadataConverter {
                 throw new MetadataValueNotFoundException(metadataKey);
             }
             JsonNode name = variable.get(METADATA_VARIABLE_NAME);
-            if(!metadataKey.equals(name.textValue())) {
+            if(!metadataKey.equals(name.asString())) {
                 continue;
             }
 
             JsonNode value = variable.get(METADATA_VARIABLE_VALUE);
-            if(!value.isTextual()) {
+            if(!value.isString()) {
                 throw new MetadataValueNotFoundException(metadataKey);
             }
-            return value.textValue();
+            return value.asString();
         }
         throw new MetadataValueNotFoundException(metadataKey);
     }

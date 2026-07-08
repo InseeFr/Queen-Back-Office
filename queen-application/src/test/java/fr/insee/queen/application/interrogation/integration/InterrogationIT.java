@@ -1,7 +1,8 @@
 package fr.insee.queen.application.interrogation.integration;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import fr.insee.queen.application.interrogation.dto.input.StateDataTypeInput;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
 
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -49,7 +50,7 @@ class InterrogationIT {
     @Test
     @DisplayName("Should return interrogations with states")
     void on_get_interrogations_return_interrogations() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new JsonMapper();
         String expectedFirstResult = """
         {
                 "id":"517046b6-bd88-47e0-838e-00d03461f592",
@@ -282,7 +283,7 @@ class InterrogationIT {
     @Test
     @DisplayName("Should return interrogations by surveyUnit")
     void on_get_interrogations_return_interrogations_by_survey_unit() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new JsonMapper();
         String expectedFirstResult = """
         {
                 "interrogationId":"517046b6-bd88-47e0-838e-00d03461f592",
