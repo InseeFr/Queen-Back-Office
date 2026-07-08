@@ -14,18 +14,14 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 
-import java.util.Date;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -222,10 +218,10 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
-    @DisplayName("On StateDataInvalidTransitionException, return HTTP 409 CONFLICT with the ApiError built by errorComponent")
+    @DisplayName("On StateDataInvalidTransitionException, return HTTP 409 CONFLICT with the exception message as detail")
     void should_return_conflict_when_state_data_invalid_transition() {
         // Given
-        StateDataInvalidTransitionException ex = new StateDataInvalidTransitionException("Invalid transition");
+        StateDataInvalidTransitionException ex = new StateDataInvalidTransitionException(StateDataApiService.INVALID_TRANSITION_MESSAGE);
 
         // When
         ProblemDetail pd = advice.stateDataInvalidTransitionExceptionException(ex);
@@ -233,7 +229,6 @@ class ExceptionControllerAdviceTest {
         // Then
         assertThat(pd.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
         assertThat(pd.getDetail()).isEqualTo(StateDataApiService.INVALID_TRANSITION_MESSAGE);
-
     }
 }
 

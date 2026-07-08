@@ -144,7 +144,7 @@ public class InterrogationFakeService implements InterrogationService {
                         summary.id(),
                         summary.surveyUnitId(),
                         summary.questionnaireId(),
-                        summary.campaign().getId(),
+                        summary.group().getId(),
                         stateDataFakeService.getStateData(summary.id())))
                 .toList();
     }

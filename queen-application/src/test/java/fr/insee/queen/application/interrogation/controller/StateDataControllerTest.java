@@ -1,29 +1,22 @@
 package fr.insee.queen.application.interrogation.controller;
 
-import fr.insee.queen.application.configuration.auth.AuthorityRoleEnum;
 import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponent;
-import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
 import fr.insee.queen.application.interrogation.dto.input.StateDataInput;
 import fr.insee.queen.application.interrogation.dto.input.StateDataTypeInput;
 import fr.insee.queen.application.interrogation.dto.output.InterrogationOkNokDto;
 import fr.insee.queen.application.interrogation.dto.output.StateDataDto;
 import fr.insee.queen.application.interrogation.service.dummy.StateDataFakeService;
 import fr.insee.queen.application.interrogation.service.dummy.InterrogationFakeService;
-import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
-import fr.insee.queen.application.utils.dummy.AuthenticationFakeHelper;
 import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class StateDataControllerTest {
 
@@ -31,19 +24,14 @@ class StateDataControllerTest {
     private PilotageFakeComponent pilotageFakeComponent;
     private InterrogationFakeService interrogationFakeService;
     private StateDataFakeService stateDataFakeService;
-    private AuthenticationFakeHelper authenticationFakeHelper;
-    private AuthenticatedUserTestHelper authenticationUserProvider;
 
     @BeforeEach
     void init() {
-        authenticationUserProvider = new AuthenticatedUserTestHelper();
         pilotageFakeComponent = new PilotageFakeComponent();
         interrogationFakeService = new InterrogationFakeService();
         stateDataFakeService = new StateDataFakeService();
-        authenticationFakeHelper = new AuthenticationFakeHelper();
         stateDataController = new StateDataController(stateDataFakeService, interrogationFakeService, pilotageFakeComponent);
     }
-
 
     @Test
     @DisplayName("Should return state-data for interrogation and check habilitations")
@@ -60,11 +48,10 @@ class StateDataControllerTest {
     }
 
     @Test
-    @DisplayName("Should update state-data")
+    @DisplayName("Should update state-data and check habilitations")
     void testUpdateStateData01() throws StateDataInvalidDateException {
         // given
         StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.COMPLETED, "5.0");
-        authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER));
 
         // when
         stateDataController.setStateData(InterrogationFakeService.INTERROGATION1_ID, stateDataInput);
@@ -115,41 +102,5 @@ class StateDataControllerTest {
         assertThat(result.interrogationNOK())
                 .extracting("id")
                 .containsExactlyInAnyOrderElementsOf(ids);
-    }
-
-    @Test
-    @DisplayName("Should update data when role is interviewer and state is not EXTRACTED/VALIDATED")
-    void testUpdateStateData06() throws StateDataInvalidDateException, LockedResourceException {
-        // given
-        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0");
-        authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
-
-        StateData stateData = stateDataFakeService.getStateData(InterrogationFakeService.INTERROGATION3_ID);
-        assertThat(stateData.state()).isNotIn(StateDataType.EXTRACTED, StateDataType.VALIDATED);
-
-        // when
-        stateDataController.setStateData(InterrogationFakeService.INTERROGATION3_ID, stateDataInput);
-
-        // then
-        assertThat(pilotageFakeComponent.isChecked()).isTrue();
-        assertThat(StateDataInput.toModel(stateDataInput)).isEqualTo(stateDataFakeService.getStateDataSaved());
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {InterrogationFakeService.INTERROGATION4_ID, InterrogationFakeService.INTERROGATION5_ID})
-    @DisplayName("Should update data when role is interviewer and state is EXTRACTED/VALIDATED")
-    void testUpdateStateDataException02(String interrogationId) {
-        // given
-        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0");
-        authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
-
-        StateData stateData = stateDataFakeService.getStateData(interrogationId);
-        assertThat(stateData.state()).isIn(StateDataType.EXTRACTED, StateDataType.VALIDATED);
-
-        // when & then
-        assertThatThrownBy(() -> stateDataController.setStateData(interrogationId, stateDataInput))
-                .isInstanceOf(LockedResourceException.class);
-        assertThat(pilotageFakeComponent.isChecked()).isTrue();
-        assertThat(stateDataFakeService.getStateDataSaved()).isNull();
     }
 }

@@ -169,7 +169,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(StateDataInvalidTransitionException.class)
-    public ProblemDetail stateDataInvalidTransitionExceptionException(StateDataInvalidTransitionException e, WebRequest request) {
+    public ProblemDetail stateDataInvalidTransitionExceptionException(StateDataInvalidTransitionException e) {
         return generateResponseError(e, HttpStatus.CONFLICT);
     }
 
