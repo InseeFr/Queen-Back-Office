@@ -151,4 +151,29 @@ class StateDataApiServiceTest {
         // Then
         assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "VALIDATED", "EXTRACTED"})
+    @DisplayName("On saving new state data, when previous state is VALIDATED or EXTRACTED, throw error")
+    void testSaveInvalidTransitionState(String stateData) {
+        // Given
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.valueOf(stateData), 800000L, "validationPage"));
+        StateData stateDataUpdate = new StateData(StateDataType.INIT, 800000L, "5");
+        // When
+        Executable executable = () -> stateDataService.saveStateData(interrogationId, stateDataUpdate, false, true);
+        // Then
+        assertThrows(StateDataInvalidTransitionException.class, executable);
+    }
+
+    @Test
+    @DisplayName("On saving new state data, when previous state is other than VALIDATED or EXTRACT, don't throw error")
+    void testSaveInvalidTransitionState() {
+        // Given
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.INIT, 800001L, "welcomePage"));
+        StateData stateDataUpdate = new StateData(StateDataType.INIT, 800000L, "5");
+        // When
+        Executable executable = () -> stateDataService.saveStateData(interrogationId, stateDataUpdate, false, true);
+        // Then
+        assertDoesNotThrow(executable);
+    }
 }
