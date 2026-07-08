@@ -9,6 +9,7 @@ import fr.insee.queen.domain.interrogation.model.*;
 import fr.insee.queen.domain.interrogation.service.exception.InterrogationAlreadyExistException;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
@@ -110,7 +111,7 @@ public class InterrogationApiService implements InterrogationService {
             return;
         }
         try {
-            stateDataService.saveStateData(interrogation.id(), newStateData, true);
+            stateDataService.saveStateData(interrogation.id(), newStateData, true, false);
         } catch (StateDataInvalidDateException ex) {
             // in the case of interrogation update, a problem with state data does not require to
             // rollback the other updates on interrogation
@@ -120,17 +121,18 @@ public class InterrogationApiService implements InterrogationService {
 
     @Transactional
     @Override
-    public void updateInterrogation(String interrogationId, ObjectNode collectedDataToUpdate, StateData stateData) {
-        if(collectedDataToUpdate != null && ! collectedDataToUpdate.isEmpty()) {
-            dataService.updateCollectedData(interrogationId, collectedDataToUpdate);
-        }
-
+    public void updateInterrogation(String interrogationId, ObjectNode collectedDataToUpdate, StateData stateData) throws StateDataInvalidTransitionException {
         try {
-            stateDataService.saveStateData(interrogationId, stateData, false);
+            stateDataService.saveStateData(interrogationId, stateData, false, true);
         } catch (StateDataInvalidDateException ex) {
             // in the case of interrogation update, a problem with state collectedDataToUpdate does not require to
             // rollback the other updates on interrogation
             log.warn(String.format("%s - %s", interrogationId, ex.getMessage()));
+        }
+
+        // StateDataInvalidTransitionException (unchecked) propagates before collected data write
+        if (collectedDataToUpdate != null && !collectedDataToUpdate.isEmpty()) {
+            dataService.updateCollectedData(interrogationId, collectedDataToUpdate);
         }
     }
 
@@ -143,7 +145,7 @@ public class InterrogationApiService implements InterrogationService {
         interrogationRepository.create(interrogation);
         StateData stateData = interrogation.stateData();
         if(stateData != null) {
-            stateDataService.saveStateData(interrogation.id(), interrogation.stateData(), false);
+            stateDataService.saveStateData(interrogation.id(), interrogation.stateData(), false, false);
         }
     }
 

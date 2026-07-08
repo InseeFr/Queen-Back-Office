@@ -1,16 +1,15 @@
 package fr.insee.queen.application.web.exception;
 
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.interrogation.service.StateDataApiService;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import fr.insee.queen.infrastructure.depositproof.exception.DepositProofException;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
+import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -217,4 +216,20 @@ class ExceptionControllerAdviceTest {
                 .contains("expected types")
                 .contains("[line: 4, column: 12]");
     }
+
+    @Test
+    @DisplayName("On StateDataInvalidTransitionException, return HTTP 409 CONFLICT with the exception message as detail")
+    void should_return_conflict_when_state_data_invalid_transition() {
+        // Given
+        StateDataInvalidTransitionException ex = new StateDataInvalidTransitionException(StateDataApiService.INVALID_TRANSITION_MESSAGE);
+
+        // When
+        ProblemDetail pd = advice.stateDataInvalidTransitionExceptionException(ex);
+
+        // Then
+        assertThat(pd.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
+        assertThat(pd.getDetail()).isEqualTo(StateDataApiService.INVALID_TRANSITION_MESSAGE);
+    }
 }
+
+

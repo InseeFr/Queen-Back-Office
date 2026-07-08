@@ -64,7 +64,7 @@ public class StateDataController {
     public void setStateData(@IdValid @PathVariable(value = "id") String interrogationId,
                              @Valid @RequestBody StateDataInput stateDataInputDto) throws StateDataInvalidDateException {
         pilotageComponent.checkHabilitations(interrogationId, PilotageRole.INTERVIEWER);
-        stateDataService.saveStateData(interrogationId, StateDataInput.toModel(stateDataInputDto), false);
+        stateDataService.saveStateData(interrogationId, StateDataInput.toModel(stateDataInputDto), false, false);
     }
 
     /**

@@ -138,7 +138,15 @@ public class InterrogationFakeService implements InterrogationService {
 
     @Override
     public List<InterrogationState> findWithStateByIds(List<String> interrogations) {
-        return null;
+        return interrogationSummaries.stream()
+                .filter(summary -> interrogations.contains(summary.id()))
+                .map(summary -> new InterrogationState(
+                        summary.id(),
+                        summary.surveyUnitId(),
+                        summary.questionnaireId(),
+                        summary.group().getId(),
+                        stateDataFakeService.getStateData(summary.id())))
+                .toList();
     }
 
     @Override

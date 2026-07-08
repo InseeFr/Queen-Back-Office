@@ -38,7 +38,7 @@ public class StateDataFakeService implements StateDataService {
     }
 
     @Override
-    public void saveStateData(String interrogationId, StateData stateData, boolean verifyDate) throws StateDataInvalidDateException {
+    public void saveStateData(String interrogationId, StateData stateData, boolean verifyDate, boolean verifyTransition) throws StateDataInvalidDateException {
         if(isDateInvalid) {
             throw new StateDataInvalidDateException(ERROR_MESSAGE);
         }

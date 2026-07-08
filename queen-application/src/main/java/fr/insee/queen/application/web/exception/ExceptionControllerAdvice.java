@@ -8,6 +8,7 @@ import fr.insee.queen.domain.group.service.exception.GroupNotLinkedToQuestionnai
 import fr.insee.queen.domain.group.service.exception.QuestionnaireInvalidException;
 import fr.insee.queen.domain.common.exception.EntityAlreadyExistException;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import fr.insee.queen.domain.interrogation.service.exception.InterrogationAlreadyExistException;
 import fr.insee.queen.domain.pilotage.service.exception.HabilitationException;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
@@ -103,7 +104,7 @@ public class ExceptionControllerAdvice {
             errorMessage = overrideErrorMessage;
         }
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, errorMessage);
-        
+
         if(problemType != null) {
             problemDetail.setType(problemType);
         }
@@ -165,6 +166,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(UpdateCollectedDataException.class)
     public ProblemDetail updateCollectedDataException(UpdateCollectedDataException e) {
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(StateDataInvalidTransitionException.class)
+    public ProblemDetail stateDataInvalidTransitionExceptionException(StateDataInvalidTransitionException e) {
+        return generateResponseError(e, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(AuthenticationTokenException.class)
