@@ -13,9 +13,11 @@ import fr.insee.queen.domain.interrogation.service.dummy.DataFakeService;
 import fr.insee.queen.domain.interrogation.service.dummy.MetadataFakeService;
 import fr.insee.queen.domain.interrogation.service.dummy.StateDataFakeService;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
+import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidTransitionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.cache.CacheManager;
@@ -26,6 +28,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 class InterrogationApiServiceTest {
 
@@ -306,5 +310,23 @@ class InterrogationApiServiceTest {
 
         // Then
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("On updating interrogation, when state data is valid (transition), not save it and throw error")
+    void testUpdateDataStateData_transition() {
+        // Given
+        stateDataFakeService.setTransitionInvalid(true);
+        DataFakeService mockDataService = mock(DataFakeService.class);
+        StateData stateData = new StateData(StateDataType.INIT, 800000L, "5");
+        ObjectNode collectedData = JsonNodeFactory.instance.objectNode();
+        collectedData.put("field1", 5);
+        String interrogationId = "11";
+        // When
+        Executable executable = () -> interrogationApiService.updateInterrogation(interrogationId, collectedData, stateData);
+        // Then error
+        assertThrows(StateDataInvalidTransitionException.class, executable);
+        // and updateCollectedData is not called
+        verify(mockDataService, never()).updateCollectedData(interrogationId, collectedData);
     }
 }
