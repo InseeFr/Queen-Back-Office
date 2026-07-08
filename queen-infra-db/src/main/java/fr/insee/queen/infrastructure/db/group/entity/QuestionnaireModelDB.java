@@ -1,0 +1,54 @@
+package fr.insee.queen.infrastructure.db.group.entity;
+
+import tools.jackson.databind.node.ObjectNode;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Questionnaire entity
+ */
+@Entity
+@Table(name = "questionnaire_model")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class QuestionnaireModelDB {
+    /**
+     * questionnaire id
+     */
+    @Id
+    @Column(length = 50)
+    private String id;
+
+    /**
+     * questionnaire label
+     */
+    @Column(nullable = false)
+    private String label;
+
+    /**
+     * the data structure of the questionnaire (json format)
+     */
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private ObjectNode value;
+
+    /**
+     * required nomenclatures for the questionnaire
+     */
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.LAZY)
+    @JoinTable(name = "required_nomenclature",
+            joinColumns = {@JoinColumn(name = "id_required_nomenclature")}, inverseJoinColumns = {@JoinColumn(name = "code")})
+    private Set<NomenclatureDB> nomenclatures = new HashSet<>();
+
+}

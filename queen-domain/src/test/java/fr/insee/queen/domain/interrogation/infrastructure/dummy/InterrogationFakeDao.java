@@ -34,7 +34,7 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
-    public List<InterrogationSummary> findAllSummaryByCampaignId(String campaignId) {
+    public List<InterrogationSummary> findAllSummaryByGroupId(String groupId) {
         return null;
     }
 
@@ -58,7 +58,7 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
-    public Optional<InterrogationDepositProof> findWithCampaignAndStateById(String interrogationId) {
+    public Optional<InterrogationDepositProof> findWithGroupAndStateById(String interrogationId) {
         return Optional.empty();
     }
 
@@ -68,7 +68,7 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
-    public List<InterrogationState> findAllByState(String campaignId, StateDataType stateDataType) {
+    public List<InterrogationState> findAllByState(String groupId, StateDataType stateDataType) {
         return null;
     }
 
@@ -78,7 +78,7 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
-    public void deleteInterrogations(String campaignId) {
+    public void deleteInterrogations(String groupId) {
         // not used at this moment for unit tests
     }
 
@@ -98,11 +98,6 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
-    public void saveComment(String interrogationId, ObjectNode comment) {
-        // not used at this moment for unit tests
-    }
-
-    @Override
     public void saveData(String interrogationId, ObjectNode data) {
         // not used at this moment for unit tests
     }
@@ -110,11 +105,6 @@ public class InterrogationFakeDao implements InterrogationRepository {
     @Override
     public void updateCollectedData(String interrogationId, ObjectNode partialCollectedDataNode) {
         // not used at this moment for unit tests
-    }
-
-    @Override
-    public Optional<ObjectNode> findComment(String interrogationId) {
-        return Optional.empty();
     }
 
     @Override
@@ -153,24 +143,24 @@ public class InterrogationFakeDao implements InterrogationRepository {
     }
 
     @Override
-    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
+    public void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp) {
         // not used at this moment
     }
 
     @Getter
-    private String cleanedCampaignId;
+    private String cleanedGroupId;
 
     @Getter
     private List<String> cleanedInterrogationIds;
 
     @Override
-    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
-        this.cleanedCampaignId = campaignId;
+    public void cleanExtractedDataByIds(String groupId, List<String> interrogationIds) {
+        this.cleanedGroupId = groupId;
         this.cleanedInterrogationIds = interrogationIds;
     }
 
     @Override
-    public boolean existsByCampaignId(String campaignId) {
+    public boolean existsByGroupId(String groupId) {
         return false;
     }
 }

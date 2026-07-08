@@ -10,11 +10,6 @@
         "label": {
             "type": "string"
         },
-        "sensitivity": {
-            "type": "string",
-            "enum": ["NORMAL", "SENSITIVE"],
-            "description": "Specifies the sensitivity level of the campaign."
-        },
         "metadata": {
             "$ref": "schema.metadata.json#"
         }

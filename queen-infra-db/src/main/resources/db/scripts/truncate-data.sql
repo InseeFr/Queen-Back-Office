@@ -1,6 +1,6 @@
 --changeset davdarras:empty-data context:test
 
-TRUNCATE TABLE public.interrogation_temp_zone, public.state_data, public.paradata_event,
-    public.data, public.comment, public.personalization, public.interrogation,
-    public.required_nomenclature, public.questionnaire_model, public.nomenclature,
-    public.metadata, public.campaign;
+TRUNCATE TABLE interrogation_temp_zone, state_data, paradata_event,
+    data, personalization, interrogation,
+    required_nomenclature, survey_group_questionnaire_model, questionnaire_model, nomenclature,
+    metadata, survey_group;

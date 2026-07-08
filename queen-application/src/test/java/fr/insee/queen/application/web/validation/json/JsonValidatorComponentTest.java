@@ -202,14 +202,13 @@ class JsonValidatorComponentTest {
         String interrogationTempZoneJson = JsonTestHelper.getResourceFileAsString("json-schema-validation/interrogationtempzone/invalid-types.json");
         JsonNode interrogationTempZoneNode = mapper.readValue(interrogationTempZoneJson, JsonNode.class);
         List<Error> errors = validatorComponent.validate(SchemaType.INTERROGATION_TEMP_ZONE, interrogationTempZoneNode);
-        assertThat(errors).hasSize(7);
-        assertBadType(errors.get(0), "/comment");
-        assertBadType(errors.get(1), "/questionnaireId");
-        assertBadType(errors.get(2), "/stateData/date");
-        assertBadEnum(errors.get(3), "/stateData/state");
-        assertBadType(errors.get(4), "/stateData/currentPage");
-        assertForbiddenProperty(errors.get(5), "/stateData", "forbidden-property");
-        assertForbiddenProperty(errors.get(6), "", "forbidden-property");
+        assertThat(errors).hasSize(6);
+        assertBadType(errors.get(0), "/questionnaireId");
+        assertBadType(errors.get(1), "/stateData/date");
+        assertBadEnum(errors.get(2), "/stateData/state");
+        assertBadType(errors.get(3), "/stateData/currentPage");
+        assertForbiddenProperty(errors.get(4), "/stateData", "forbidden-property");
+        assertForbiddenProperty(errors.get(5), "", "forbidden-property");
     }
 
     @Test

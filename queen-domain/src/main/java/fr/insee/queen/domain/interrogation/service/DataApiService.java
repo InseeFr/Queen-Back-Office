@@ -37,14 +37,14 @@ public class DataApiService implements DataService {
 
     @Override
     @Transactional
-    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
-        interrogationRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    public void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp) {
+        interrogationRepository.cleanExtractedData(groupId, startTimestamp, endTimestamp);
     }
 
     @Override
     @Transactional
-    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
-        interrogationRepository.cleanExtractedDataByIds(campaignId, interrogationIds);
+    public void cleanExtractedDataByIds(String groupId, List<String> interrogationIds) {
+        interrogationRepository.cleanExtractedDataByIds(groupId, interrogationIds);
     }
 
 

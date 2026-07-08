@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.TimeZone;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +30,8 @@ public class PDFDepositProofService implements DepositProofService {
     @Override
     public PdfDepositProof generateDepositProof(String userId, String interrogationId, String surveyUnitCompositeName) {
         InterrogationDepositProof interrogation = interrogationService.getInterrogationDepositProof(interrogationId);
-        String campaignId = interrogation.campaign().getId();
-        String campaignLabel = interrogation.campaign().getLabel();
+        String groupId = interrogation.group().getId();
+        String groupLabel = interrogation.group().getLabel();
         String surveyUnitId = interrogation.surveyUnitId();
         String surveyUnitCompositeNameLabel = decodeSurveyUnitCompositeName(surveyUnitCompositeName);
         String date = "";
@@ -43,13 +43,13 @@ public class PDFDepositProofService implements DepositProofService {
         if (Arrays.asList(StateDataType.EXTRACTED, StateDataType.VALIDATED).contains(interrogation.stateData().state())) {
             LocalDateTime stateDate =
                     LocalDateTime.ofInstant(Instant.ofEpochMilli(interrogation.stateData().date()),
-                            TimeZone.getDefault().toZoneId());
+                            ZoneId.of("UTC"));
             date = dateFormat.format(stateDate);
         }
-        String filename = String.format("%s_%s_%s.pdf", campaignId, surveyUnitId, userId);
+        String filename = String.format("%s_%s_%s.pdf", groupId, surveyUnitId, userId);
 
 
-        File depositProof = depositProofGeneration.generateDepositProof(date, campaignLabel, userId, surveyUnitCompositeNameLabel);
+        File depositProof = depositProofGeneration.generateDepositProof(date, groupLabel, userId, surveyUnitCompositeNameLabel);
         return new PdfDepositProof(filename, depositProof);
     }
 

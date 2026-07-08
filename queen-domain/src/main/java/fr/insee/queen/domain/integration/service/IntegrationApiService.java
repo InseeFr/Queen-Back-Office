@@ -1,12 +1,12 @@
 package fr.insee.queen.domain.integration.service;
 
-import fr.insee.queen.domain.campaign.model.Campaign;
-import fr.insee.queen.domain.campaign.model.Nomenclature;
-import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
+import fr.insee.queen.domain.group.model.Group;
+import fr.insee.queen.domain.group.model.Nomenclature;
+import fr.insee.queen.domain.group.model.QuestionnaireModel;
 import fr.insee.queen.domain.integration.model.IntegrationResult;
 import fr.insee.queen.domain.integration.model.IntegrationResultLabel;
 import fr.insee.queen.domain.integration.model.IntegrationStatus;
-import fr.insee.queen.domain.campaign.service.*;
+import fr.insee.queen.domain.group.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,24 +20,24 @@ import java.util.List;
 @Slf4j
 @Transactional
 public class IntegrationApiService implements IntegrationService {
-    private final CampaignService campaignService;
-    private final CampaignExistenceService campaignExistenceService;
+    private final GroupService groupService;
+    private final GroupExistenceService groupExistenceService;
     private final QuestionnaireModelExistenceService questionnaireModelExistenceService;
     private final QuestionnaireModelService questionnaireModelService;
     private final NomenclatureService nomenclatureService;
 
     @Override
-    public IntegrationResult create(Campaign campaign) {
-        String id = campaign.getId();
+    public IntegrationResult create(Group group) {
+        String id = group.getId();
 
-        if (campaignExistenceService.existsById(id)) {
-            log.info("Updating campaign {}", id);
-            campaignService.updateCampaign(campaign);
+        if (groupExistenceService.existsById(id)) {
+            log.info("Updating group {}", id);
+            groupService.updateGroup(group);
             return new IntegrationResult(id, IntegrationStatus.UPDATED, null);
         }
 
-        log.info("Creating campaign {}", id);
-        campaignService.createCampaign(campaign);
+        log.info("Creating group {}", id);
+        groupService.createGroup(group);
         return new IntegrationResult(id, IntegrationStatus.CREATED, null);
     }
 
@@ -56,21 +56,10 @@ public class IntegrationApiService implements IntegrationService {
 
     @Override
     public List<IntegrationResult> create(QuestionnaireModel questionnaire) {
-        String campaignId = questionnaire.getCampaignId();
         String qmId = questionnaire.getId();
         boolean hasError = false;
 
         List<IntegrationResult> results = new ArrayList<>();
-        // Checking if campaign exists
-        if (!campaignExistenceService.existsById(campaignId)) {
-            hasError = true;
-            log.info("Cannot create Questionnaire model {}, campaign {} does not exist", qmId, campaignId);
-            results.add(new IntegrationResult(
-                    qmId,
-                    IntegrationStatus.ERROR,
-                    String.format(IntegrationResultLabel.CAMPAIGN_DO_NOT_EXIST, campaignId)));
-        }
-
         // Checking if required nomenclatures exist
         for (String nomenclatureId : questionnaire.getRequiredNomenclatureIds()) {
             if (!nomenclatureService.existsById(nomenclatureId)) {

@@ -4,6 +4,6 @@ public record InterrogationState(
         String id,
         String surveyUnitId,
         String questionnaireId,
-        String campaignId,
+        String groupId,
         StateData stateData) {
 }

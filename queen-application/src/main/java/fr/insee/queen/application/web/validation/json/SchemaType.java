@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum SchemaType {
     CAMPAIGN_INTEGRATION(Names.CAMPAIGN_INTEGRATION),
+    PARTITIONS_INTEGRATION(Names.PARTITIONS_INTEGRATION),
     NOMENCLATURE_INTEGRATION(Names.NOMENCLATURE_INTEGRATION),
     QUESTIONNAIRE_INTEGRATION(Names.QUESTIONNAIRE_INTEGRATION),
     DATA(Names.DATA),
@@ -17,6 +18,7 @@ public enum SchemaType {
 
     public static class Names {
         public static final String CAMPAIGN_INTEGRATION = "schema.campaign-integration.json";
+        public static final String PARTITIONS_INTEGRATION = "schema.partitions-integration.json";
         public static final String QUESTIONNAIRE_INTEGRATION = "schema.questionnaire-integration.json";
         public static final String NOMENCLATURE_INTEGRATION = "schema.nomenclature-integration.json";
         public static final String DATA = "schema.data.json";

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Drop FK constraints referencing the campaign table before renaming -->
+    <changeSet id="705-1-drop-fk-interrogation-campaign" author="davdarras">
+        <dropForeignKeyConstraint baseTableName="interrogation" constraintName="FK5npgv34xrt4sot2mv05ij3tse"/>
+    </changeSet>
+
+    <changeSet id="705-2-drop-fk-metadata-campaign" author="davdarras">
+        <dropForeignKeyConstraint baseTableName="metadata" constraintName="FK13bif89tkws06lu6kdo3nye0t"/>
+    </changeSet>
+
+    <changeSet id="705-3-drop-fk-questionnaire-model-campaign" author="davdarras">
+        <dropForeignKeyConstraint baseTableName="questionnaire_model" constraintName="FKpps5mdanjpiyufudkdkqyvoh3"/>
+    </changeSet>
+
+    <!-- Rename table campaign → survey_group -->
+    <changeSet id="705-4-rename-table-campaign-to-survey-group" author="davdarras">
+        <renameTable oldTableName="campaign" newTableName="survey_group"/>
+    </changeSet>
+
+    <!-- Rename PK constraint -->
+    <changeSet id="705-5-rename-pk-constraint" author="davdarras">
+        <sql dbms="postgresql">ALTER TABLE survey_group RENAME CONSTRAINT "campaignPK" TO survey_group_pk;</sql>
+    </changeSet>
+
+    <!-- Rename campaign_id → survey_group_id on each referencing table -->
+    <changeSet id="705-6-rename-column-interrogation-campaign-id" author="davdarras">
+        <renameColumn tableName="interrogation" oldColumnName="campaign_id" newColumnName="survey_group_id" columnDataType="VARCHAR(50)"/>
+    </changeSet>
+
+    <changeSet id="705-7-rename-column-metadata-campaign-id" author="davdarras">
+        <renameColumn tableName="metadata" oldColumnName="campaign_id" newColumnName="survey_group_id" columnDataType="VARCHAR(50)"/>
+    </changeSet>
+
+    <changeSet id="705-8-rename-column-questionnaire-model-campaign-id" author="davdarras">
+        <renameColumn tableName="questionnaire_model" oldColumnName="campaign_id" newColumnName="survey_group_id" columnDataType="VARCHAR(50)"/>
+    </changeSet>
+
+    <!-- Recreate FK constraints with explicit names pointing to survey_group -->
+    <changeSet id="705-9-add-fk-interrogation-survey-group" author="davdarras">
+        <addForeignKeyConstraint
+            baseTableName="interrogation"
+            baseColumnNames="survey_group_id"
+            referencedTableName="survey_group"
+            referencedColumnNames="id"
+            constraintName="fk_interrogation_survey_group"/>
+    </changeSet>
+
+    <changeSet id="705-10-add-fk-metadata-survey-group" author="davdarras">
+        <addForeignKeyConstraint
+            baseTableName="metadata"
+            baseColumnNames="survey_group_id"
+            referencedTableName="survey_group"
+            referencedColumnNames="id"
+            constraintName="fk_metadata_survey_group"/>
+    </changeSet>
+
+    <changeSet id="705-11-add-fk-questionnaire-model-survey-group" author="davdarras">
+        <addForeignKeyConstraint
+            baseTableName="questionnaire_model"
+            baseColumnNames="survey_group_id"
+            referencedTableName="survey_group"
+            referencedColumnNames="id"
+            constraintName="fk_questionnaire_model_survey_group"/>
+    </changeSet>
+
+</databaseChangeLog>

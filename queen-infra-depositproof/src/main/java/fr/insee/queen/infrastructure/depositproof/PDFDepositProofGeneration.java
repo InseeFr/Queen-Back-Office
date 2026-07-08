@@ -21,10 +21,10 @@ public class PDFDepositProofGeneration implements DepositProofGeneration {
     private final FoToPDF foToPDFComponent;
 
     @Override
-    public File generateDepositProof(String date, String campaignLabel, String userId, String surveyUnitCompositeName) {
+    public File generateDepositProof(String date, String groupLabel, String userId, String surveyUnitCompositeName) {
         File pdfFile;
         try {
-            File foFile = foGenerationComponent.generateFo(date, campaignLabel, userId, surveyUnitCompositeName);
+            File foFile = foGenerationComponent.generateFo(date, groupLabel, userId, surveyUnitCompositeName);
             pdfFile = foToPDFComponent.transformFoToPdf(foFile);
             Files.delete(foFile.toPath());
         } catch (IOException ex) {

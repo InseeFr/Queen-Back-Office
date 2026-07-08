@@ -22,8 +22,6 @@ feature:
     enabled: false
   cache:
     enabled: false
-  comments:
-    enabled: true
   interviewer-mode:
     enabled: true
 

@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "type": "object",
+    "required": ["ids", "label"],
+    "properties": {
+        "ids": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "label": {
+            "type": "string"
+        },
+        "metadata": {
+            "$ref": "schema.metadata.json#"
+        }
+    }
+}

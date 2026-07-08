@@ -23,12 +23,12 @@ class DataApiServiceTest {
     @Test
     @DisplayName("cleanExtractedDataByIds should delegate to the interrogation repository with the same arguments")
     void cleanExtractedDataByIds_delegates_to_repository() {
-        String campaignId = "SIMPSONS2020X00";
+        String groupId = "SIMPSONS2020X00";
         List<String> interrogationIds = List.of("11", "12", "13");
 
-        dataApiService.cleanExtractedDataByIds(campaignId, interrogationIds);
+        dataApiService.cleanExtractedDataByIds(groupId, interrogationIds);
 
-        assertThat(interrogationFakeDao.getCleanedCampaignId()).isEqualTo(campaignId);
+        assertThat(interrogationFakeDao.getCleanedGroupId()).isEqualTo(groupId);
         assertThat(interrogationFakeDao.getCleanedInterrogationIds()).containsExactlyElementsOf(interrogationIds);
     }
 }

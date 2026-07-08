@@ -11,7 +11,7 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-INSERT INTO public.campaign VALUES ('GEN2025A00', 'Asynchrone test', 'NORMAL');
+INSERT INTO public.survey_group(id, label, kind, short_label) VALUES ('GEN2025A00', 'Asynchrone test', 'CAMPAIGN', 'GEN2025A00');
 
 --
 -- TOC entry 3406 (class 0 OID 16489)
@@ -27,5 +27,8 @@ INSERT INTO public.metadata VALUES ('6ce93fc8-1abd-4da3-b251-805943948954', '{}'
 -- Data for Name: questionnaire_model; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.questionnaire_model VALUES ('quest_model_entreprise_generique_2025', 'Questionnaire about the Simpsons tv show', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}', 'GEN2025A00');
+INSERT INTO public.questionnaire_model(id, label, value) VALUES ('quest_model_entreprise_generique_2025', 'Questionnaire about the Simpsons tv show', '{"id": "i6vwi2506qf2mms", "label": "Questionnaire SIMPSONS 20201215", "modele": "SIMPSONS", "maxPage": "37", "missing": true, "variables": [], "pagination": "question", "enoCoreVersion": "2.2.11", "generatingDate": "16-09-2021 09:08:11", "lunaticModelVersion": "2.2.3"}');
+
+INSERT INTO public.survey_group_questionnaire_model (survey_group_id, questionnaire_model_id) VALUES
+  ('GEN2025A00', 'quest_model_entreprise_generique_2025');
 

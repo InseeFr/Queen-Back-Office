@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Handle full integration of a campaign (campaign/questionnaires/nomenclatures)
+ * Handle integration of a campaign or partitions
  */
 @RestController
 @Tag(name = "01. Integrations", description = "Endpoints for integration")
@@ -29,34 +29,16 @@ public class IntegrationController {
     private final IntegrationComponent integrationComponent;
 
     /**
-     * Integrate a full campaign (campaign/nomenclatures/questionnaires
+     * Integrate a campaign (campaign/nomenclatures/questionnaires) or partitions (partitions/nomenclatures/questionnaires)
      * The results of the integration indicate the successful/failed integrations
-     * (the campaign integration can be successful nut not the questionnaire integration for example)
      *
-     * @param file the integration zip file containing all infos about campaign/questionnaire/nomenclatures
+     * @param file the integration zip file containing all infos about 'campaign or partitions'/questionnaire/nomenclatures
      * @return {@link IntegrationResultsDto} the results of the integration
      */
-    @Operation(summary = "Integrates the context of a campaign (JSON version)")
-    @PostMapping(path = "/campaign/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Integrates the context of a campaign")
+    @PostMapping(path = "/${application.group.path-plural}/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     public IntegrationResultsDto integrateContext(@RequestParam("file") MultipartFile file) {
-        return integrationComponent.integrateContext(file, false);
-    }
-
-    /**
-     * @deprecated
-     * Integrate a full campaign (campaign/nomenclatures/questionnaires
-     * The results of the integration indicate the successful/failed integrations
-     * (the campaign integration can be successful nut not the questionnaire integration for example)
-     *
-     * @param file the integration zip file containing all infos about campaign/questionnaire/nomenclatures
-     * @return {@link IntegrationResultsDto} the results of the integration
-     */
-    @Operation(summary = "Integrates the context of a campaign (XML Version - will be removed in a future version)")
-    @PostMapping(path = "/campaign/xml/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    @Deprecated(since = "4.0.0")
-    public IntegrationResultsDto integrateXmlContext(@RequestParam("file") MultipartFile file) {
-        return integrationComponent.integrateContext(file, true);
+        return integrationComponent.integrateContext(file);
     }
 }

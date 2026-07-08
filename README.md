@@ -109,10 +109,6 @@ feature:
   cache:
     enabled: true
   
-  # enable comment endpoints
-  comments:
-    enabled: true
-  
   # enable interviewer features
   interviewer-mode:
     enabled: false
@@ -170,10 +166,6 @@ feature:
   cache:
     enabled: true
   
-  # enable comment endpoints
-  comments:
-    enabled: true
-  
   # enable interviewer features
   interviewer-mode:
     enabled: true
@@ -207,10 +199,6 @@ feature:
 - Data
 	- `GET /interrogations/{id}/data` : Retrieve the data of an interrogation
 	- `PUT /interrogations/{id}/data` : Update the data of an interrogation
-
-- Comment
-	- `GET /interrogations/{id}/comment` : Retrieve the comment of an interrogation
-	- `PUT /interrogations/{id}/comment` : Update the comment of an interrogation
 
 - Nomenclatures
 	- `GET /questionnaire/{id}/required-nomenclatures` : Retrieve all required nomenclatures of a questionnaire

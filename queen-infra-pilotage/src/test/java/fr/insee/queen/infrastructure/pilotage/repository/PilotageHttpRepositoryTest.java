@@ -1,7 +1,7 @@
 package fr.insee.queen.infrastructure.pilotage.repository;
 
 import fr.insee.queen.domain.pilotage.model.CollectionEnvironmentEnum;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.infrastructure.pilotage.PilotageHttpRepository;
@@ -33,32 +33,33 @@ class PilotageHttpRepositoryTest {
     private PilotageHttpRepository pilotageRepository;
     private final String pilotageUrl = "http://www.pilotage.com";
     private final String alternativeHabilitationServiceURL = "http://www.pilotage-alternative.com";
+    private final String ongoingPath =  "/campaigns/%s/ongoing";
     private MockRestServiceServer mockServer;
-    private final String campaignId = "campaign-id";
+    private final String groupId = "group-id";
 
     @BeforeEach
     void init() {
         RestTemplate restTemplate = new RestTemplate();
         mockServer = MockRestServiceServer.createServer(restTemplate);
-        String campaignIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
+        String groupIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
 
         pilotageRepository = new PilotageHttpRepository(
                 pilotageUrl,
                 alternativeHabilitationServiceURL,
-                campaignIdRegexWithAlternativeHabilitationService,
+                groupIdRegexWithAlternativeHabilitationService,
                 restTemplate,
                 CollectionEnvironmentEnum.WEB
         );
     }
 
     @Test
-    @DisplayName("On retrieving campaigns return campaigns")
-    void testInterviewerCampaigns01() throws URISyntaxException {
-        String campaignsResponse = """
+    @DisplayName("On retrieving groups return groups")
+    void testInterviewerGroups01() throws URISyntaxException {
+        String groupsResponse = """
                 [
-                    { "id": "campaign-id-1" },
-                    { "id": "campaign-id-2" },
-                    { "id": "campaign-id-3" }
+                    { "id": "group-id-1" },
+                    { "id": "group-id-2" },
+                    { "id": "group-id-3" }
                 ]""";
 
         mockServer.expect(ExpectedCount.once(),
@@ -66,22 +67,22 @@ class PilotageHttpRepositoryTest {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(campaignsResponse)
+                        .body(groupsResponse)
                 );
 
-        List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns();
+        List<PilotageGroup> groups = pilotageRepository.getInterviewerGroups();
         mockServer.verify();
 
-        assertThat(campaigns).hasSize(3);
-        assertThat(campaigns.get(0).id()).isEqualTo("campaign-id-1");
-        assertThat(campaigns.get(1).id()).isEqualTo("campaign-id-2");
-        assertThat(campaigns.get(2).id()).isEqualTo("campaign-id-3");
+        assertThat(groups).hasSize(3);
+        assertThat(groups.get(0).id()).isEqualTo("group-id-1");
+        assertThat(groups.get(1).id()).isEqualTo("group-id-2");
+        assertThat(groups.get(2).id()).isEqualTo("group-id-3");
 
     }
 
     @Test
-    @DisplayName("On retrieving campaigns, when status not found return empty campaigns")
-    void testInterviewerCampaigns02() throws URISyntaxException {
+    @DisplayName("On retrieving groups, when status not found return empty groups")
+    void testInterviewerGroups02() throws URISyntaxException {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_INTERVIEWER_CAMPAIGNS)))
                 .andExpect(method(HttpMethod.GET))
@@ -89,14 +90,14 @@ class PilotageHttpRepositoryTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        List<PilotageCampaign> campaigns = pilotageRepository.getInterviewerCampaigns();
+        List<PilotageGroup> groups = pilotageRepository.getInterviewerGroups();
         mockServer.verify();
-        assertThat(campaigns).isEmpty();
+        assertThat(groups).isEmpty();
     }
 
     @Test
-    @DisplayName("On retrieving campaigns, when error status throws Exception")
-    void testInterviewerCampaigns03() throws URISyntaxException {
+    @DisplayName("On retrieving groups, when error status throws Exception")
+    void testInterviewerGroups03() throws URISyntaxException {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_INTERVIEWER_CAMPAIGNS)))
                 .andExpect(method(HttpMethod.GET))
@@ -104,80 +105,80 @@ class PilotageHttpRepositoryTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.getInterviewerCampaigns())
+        assertThatThrownBy(() -> pilotageRepository.getInterviewerGroups())
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
 
     @DisplayName("Given the server not responding, when retrieving campaings, throw exception")
     @Test
-    void testInterviewerCampaignsNetworkError() throws URISyntaxException {
+    void testInterviewerGroupsNetworkError() throws URISyntaxException {
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_INTERVIEWER_CAMPAIGNS)))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withException(new IOException("message")));
 
-        assertThatThrownBy(() -> pilotageRepository.getInterviewerCampaigns())
+        assertThatThrownBy(() -> pilotageRepository.getInterviewerGroups())
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
 
-    @DisplayName("On checking if campaign closed, return campaign status")
+    @DisplayName("On checking if group closed, return group status")
     @ParameterizedTest
     @ValueSource(strings = { "true", "false"})
-    void testCampaignIsClosed01(String status) throws URISyntaxException {
-        String campaignResponse = "{ \"ongoing\": \"" + status + "\" }";
+    void testGroupIsClosed01(String status) throws URISyntaxException {
+        String groupResponse = "{ \"ongoing\": \"" + status + "\" }";
         mockServer.expect(ExpectedCount.once(),
-                        requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_CAMPAIGNS.formatted(campaignId))))
+                        requestTo(new URI(pilotageUrl + ongoingPath.formatted(groupId))))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(campaignResponse)
+                        .body(groupResponse)
                 );
 
-        boolean isClosed = pilotageRepository.isClosed(campaignId);
+        boolean isClosed = pilotageRepository.isClosed(groupId);
         mockServer.verify();
         assertThat(isClosed).isEqualTo(!Boolean.parseBoolean(status));
     }
 
-    @DisplayName("Given the server not responding, when checking if campaign closed, throw exception")
+    @DisplayName("Given the server not responding, when checking if group closed, throw exception")
     @Test
-    void testCampaignIsClosedNetworkError() throws URISyntaxException {
+    void testGroupIsClosedNetworkError() throws URISyntaxException {
         mockServer.expect(ExpectedCount.once(),
-                        requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_CAMPAIGNS.formatted(campaignId))))
+                        requestTo(new URI(pilotageUrl + ongoingPath.formatted(groupId))))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withException(new IOException("message")));
 
-        assertThatThrownBy(() -> pilotageRepository.isClosed(campaignId))
+        assertThatThrownBy(() -> pilotageRepository.isClosed(groupId))
                 .isInstanceOf(PilotageApiException.class);
     }
 
-    @DisplayName("On checking campaign closed, when response is null throw exception")
+    @DisplayName("On checking group closed, when response is null throw exception")
     @Test
-    void testCampaignIsClosed02() throws URISyntaxException {
+    void testGroupIsClosed02() throws URISyntaxException {
         mockServer.expect(ExpectedCount.once(),
-                        requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_CAMPAIGNS.formatted(campaignId))))
+                        requestTo(new URI(pilotageUrl + ongoingPath.formatted(groupId))))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.isClosed(campaignId))
+        assertThatThrownBy(() -> pilotageRepository.isClosed(groupId))
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
 
-    @DisplayName("On checking campaign closed, when check api result in error, then throw exception")
+    @DisplayName("On checking group closed, when check api result in error, then throw exception")
     @Test
-    void testCampaignIsClosed03() throws URISyntaxException {
+    void testGroupIsClosed03() throws URISyntaxException {
         mockServer.expect(ExpectedCount.once(),
-                        requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_CAMPAIGNS.formatted(campaignId))))
+                        requestTo(new URI(pilotageUrl + ongoingPath.formatted(groupId))))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
-        assertThatThrownBy(() -> pilotageRepository.isClosed(campaignId))
+        assertThatThrownBy(() -> pilotageRepository.isClosed(groupId))
                 .isInstanceOf(PilotageApiException.class);
         mockServer.verify();
     }
@@ -187,9 +188,9 @@ class PilotageHttpRepositoryTest {
     void testInterrogations01() throws URISyntaxException {
         String response = """
                 [
-                    { "campaign": "campaign-id1", "id": "interrogation-id1" },
-                    { "campaign": "campaign-id2", "id": "interrogation-id2" },
-                    { "campaign": "campaign-id3", "id": "interrogation-id3" }
+                    { "group": "group-id1", "id": "interrogation-id1" },
+                    { "group": "group-id2", "id": "interrogation-id2" },
+                    { "group": "group-id3", "id": "interrogation-id3" }
                 ]""";
         mockServer.expect(ExpectedCount.once(),
                         requestTo(new URI(pilotageUrl + PilotageHttpRepository.API_PEARLJAM_SURVEYUNITS)))
@@ -201,9 +202,9 @@ class PilotageHttpRepositoryTest {
 
         List<PilotageInterrogation> interrogations = pilotageRepository.getInterrogations();
         assertThat(interrogations).hasSize(3);
-        assertThat(interrogations.get(0).campaign()).isEqualTo("campaign-id1");
-        assertThat(interrogations.get(1).campaign()).isEqualTo("campaign-id2");
-        assertThat(interrogations.get(2).campaign()).isEqualTo("campaign-id3");
+        assertThat(interrogations.get(0).group()).isEqualTo("group-id1");
+        assertThat(interrogations.get(1).group()).isEqualTo("group-id2");
+        assertThat(interrogations.get(2).group()).isEqualTo("group-id3");
         assertThat(interrogations.get(0).id()).isEqualTo("interrogation-id1");
         assertThat(interrogations.get(1).id()).isEqualTo("interrogation-id2");
         assertThat(interrogations.get(2).id()).isEqualTo("interrogation-id3");

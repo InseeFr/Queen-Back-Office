@@ -2,7 +2,7 @@ package fr.insee.queen.application.integration.dto.input;
 
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.web.validation.IdValid;
-import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
+import fr.insee.queen.domain.group.model.QuestionnaireModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,8 +14,6 @@ import java.util.Set;
 public record QuestionnaireModelIntegrationData(
         @IdValid
         String idQuestionnaireModel,
-        @IdValid
-        String campaignId,
         @NotEmpty
         String label,
         @NotNull
@@ -27,12 +25,10 @@ public record QuestionnaireModelIntegrationData(
         if (nomenclatureIds == null) {
             nomenclatureIds = new HashSet<>();
         }
-
-        return QuestionnaireModel.createQuestionnaireWithCampaign(
+        return QuestionnaireModel.create(
                 questionnaire.idQuestionnaireModel,
                 questionnaire.label,
                 questionnaire.value,
-                nomenclatureIds,
-                questionnaire.campaignId());
+                nomenclatureIds);
     }
 }
