@@ -5,6 +5,8 @@ import fr.insee.queen.application.pilotage.controller.dummy.PilotageFakeComponen
 import fr.insee.queen.application.interrogation.controller.exception.LockedResourceException;
 import fr.insee.queen.application.interrogation.dto.input.StateDataInput;
 import fr.insee.queen.application.interrogation.dto.input.StateDataTypeInput;
+import fr.insee.queen.application.interrogation.dto.output.InterrogationOkNokDto;
+import fr.insee.queen.application.interrogation.dto.output.StateDataDto;
 import fr.insee.queen.application.interrogation.service.dummy.StateDataFakeService;
 import fr.insee.queen.application.interrogation.service.dummy.InterrogationFakeService;
 import fr.insee.queen.application.utils.AuthenticatedUserTestHelper;
@@ -24,6 +26,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +53,80 @@ class StateDataControllerTest {
 
 
     @Test
+    @DisplayName("Should return state-data for interrogation and check habilitations")
+    void testGetStateData01() {
+        // when
+        StateDataDto stateData = stateDataController.getStateDataByInterrogation(InterrogationFakeService.INTERROGATION1_ID);
+
+        // then
+        StateData expected = stateDataFakeService.getStateData(InterrogationFakeService.INTERROGATION1_ID);
+        assertThat(pilotageFakeComponent.isChecked()).isTrue();
+        assertThat(stateData.state()).isEqualTo(expected.state());
+        assertThat(stateData.date()).isEqualTo(expected.date());
+        assertThat(stateData.currentPage()).isEqualTo(expected.currentPage());
+    }
+
+    @Test
+    @DisplayName("Should update state-data when campaign sensitivity is NORMAL, whatever the user role")
+    void testUpdateStateData01() throws StateDataInvalidDateException, LockedResourceException {
+        // given
+        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.COMPLETED, "5.0");
+        authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER));
+        InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION1_ID);
+        assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.NORMAL);
+
+        // when
+        stateDataController.setStateData(InterrogationFakeService.INTERROGATION1_ID, stateDataInput);
+
+        // then
+        assertThat(pilotageFakeComponent.isChecked()).isTrue();
+        assertThat(StateDataInput.toModel(stateDataInput)).isEqualTo(stateDataFakeService.getStateDataSaved());
+    }
+
+    @Test
+    @DisplayName("Should split known and unknown interrogation ids into OK and NOK lists")
+    void testGetStateDataByInterrogations01() {
+        // given
+        String unknownId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa99";
+        List<String> ids = List.of(
+                InterrogationFakeService.INTERROGATION1_ID,
+                InterrogationFakeService.INTERROGATION2_ID,
+                unknownId);
+
+        // when
+        InterrogationOkNokDto result = stateDataController.getStateDataByInterrogations(ids);
+
+        // then
+        assertThat(result.interrogationOK())
+                .extracting("id")
+                .containsExactlyInAnyOrder(
+                        InterrogationFakeService.INTERROGATION1_ID,
+                        InterrogationFakeService.INTERROGATION2_ID);
+        assertThat(result.interrogationOK())
+                .extracting(dto -> dto.stateData().state())
+                .containsExactlyInAnyOrder(StateDataType.INIT, StateDataType.VALIDATED);
+        assertThat(result.interrogationNOK())
+                .extracting("id")
+                .containsExactly(unknownId);
+    }
+
+    @Test
+    @DisplayName("Should return only NOK entries when no interrogation is found")
+    void testGetStateDataByInterrogations02() {
+        // given
+        List<String> ids = List.of("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa98", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa99");
+
+        // when
+        InterrogationOkNokDto result = stateDataController.getStateDataByInterrogations(ids);
+
+        // then
+        assertThat(result.interrogationOK()).isEmpty();
+        assertThat(result.interrogationNOK())
+                .extracting("id")
+                .containsExactlyInAnyOrderElementsOf(ids);
+    }
+
+    @Test
     @DisplayName("Should throw exception when role is reviewer and campaign is sensitive")
     void testUpdateStateDataException() {
         // given
@@ -67,10 +144,10 @@ class StateDataControllerTest {
     @ParameterizedTest
     @MethodSource("provideAdminAndWebclientUsers")
     @DisplayName("Should update data when campaign is sensitive and role is admin/webclient")
-    void testUpdateStateData04() throws StateDataInvalidDateException, LockedResourceException {
+    void testUpdateStateData04(Authentication auth) throws StateDataInvalidDateException, LockedResourceException {
         // given
         StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0");
-        authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
+        authenticationFakeHelper.setAuthenticationUser(auth);
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
 

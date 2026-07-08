@@ -13,7 +13,7 @@
         <!-- Project properties -->
         <!-- About revision and changelist maven special properties:
          https://maven.apache.org/guides/mini/guide-maven-ci-friendly.html -->
-        <revision>5.10.0</revision>
+        <revision>5.10.1</revision>
         <changelist></changelist>
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 

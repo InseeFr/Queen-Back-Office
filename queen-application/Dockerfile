@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25.0.2_10-jre-jammy
+FROM eclipse-temurin:25.0.3_9-jre-jammy
 
 WORKDIR /opt/app
 
@@ -13,6 +13,6 @@ RUN groupadd -g "$JAVA_USER_ID" "$JAVA_USER" && \
     mkdir -p /opt/app/temp-files && \
     chown -R "$JAVA_USER":"$JAVA_USER" /opt/app
 
-USER $JAVA_USER
+USER $JAVA_USER_ID
 
 ENTRYPOINT ["java", "-jar", "/opt/app/app.jar"]
