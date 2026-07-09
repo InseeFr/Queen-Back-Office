@@ -1,9 +1,10 @@
 package fr.insee.queen.application.interrogation.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.campaign.component.MetadataComponentConverter;
 import fr.insee.queen.application.interrogation.dto.output.*;
 import fr.insee.queen.domain.interrogation.service.exception.MetadataValueNotFoundException;
@@ -27,7 +28,7 @@ class MetadataConverterTest {
 
     @BeforeEach
     void init() {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new JsonMapper();
         metadataConverter = new MetadataComponentConverter(mapper);
     }
 

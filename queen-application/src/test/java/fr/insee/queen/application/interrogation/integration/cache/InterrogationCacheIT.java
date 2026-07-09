@@ -1,6 +1,6 @@
 package fr.insee.queen.application.interrogation.integration.cache;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.JsonNodeFactory;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.domain.campaign.service.CampaignApiService;
 import fr.insee.queen.domain.common.cache.CacheName;

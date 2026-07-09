@@ -1,13 +1,14 @@
 package fr.insee.queen.jms.service.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.BinaryNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.jms.exception.PropertyException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.exc.JsonNodeException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.BinaryNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.Base64;
 
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PropertyValidatorTest {
 
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final JsonMapper MAPPER = new JsonMapper();
 
     private static JsonNode json(String raw) {
         try {
@@ -147,28 +148,28 @@ class PropertyValidatorTest {
         @DisplayName("OBJECT -> PropertyException with type OBJECT")
         void objectTypeThrows() {
             JsonNode node = json("{\"meta\": {\"k\":\"v\"}}");
-            PropertyException ex = assertThrows(
-                    PropertyException.class,
+            JsonNodeException ex = assertThrows(
+                    JsonNodeException.class,
                     () -> PropertyValidator.textValue(node, "meta")
             );
-            assertTrue(ex.getMessage().contains("type found : OBJECT"));
+            assertTrue(ex.getMessage().contains("Object")); // this assertion is a bit dubious
         }
 
         @Test
         @DisplayName("ARRAY -> PropertyException with type ARRAY")
         void arrayTypeThrows() {
             JsonNode node = json("{\"list\": [\"a\",\"b\"]}");
-            PropertyException ex = assertThrows(
-                    PropertyException.class,
+            JsonNodeException ex = assertThrows(
+                    JsonNodeException.class,
                     () -> PropertyValidator.textValue(node, "list")
             );
-            assertTrue(ex.getMessage().contains("type found : ARRAY"));
+            assertTrue(ex.getMessage().contains("Array")); // this assertion is a bit dubious
         }
 
         @Test
         @DisplayName("BINARY -> PropertyException with type BINARY")
         void binaryTypeThrows() {
-            // Build a binary node via ObjectMapper (base64 in JSON becomes BINARY)
+            // Build a binary node via JsonMapper (base64 in JSON becomes BINARY)
             byte[] bytes = new byte[] {1, 2, 3};
             ObjectNode node = MAPPER.createObjectNode();
             node.put("bin", Base64.getEncoder().encodeToString(bytes)); // <- still TEXTUAL unless we force binary

@@ -1,9 +1,10 @@
 package fr.insee.queen.infrastructure.db.data.repository.jpa;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
         UPDATE data
             SET value = '{}'::jsonb
             WHERE interrogation_id IN (
@@ -53,12 +54,12 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND sd.date BETWEEN :startTimestamp AND :endTimestamp
             );
-    """, nativeQuery = true)
+    """)
     void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
 
     @Transactional
     @Modifying
-    @Query(value = """
+    @NativeQuery("""
         UPDATE data
             SET value = '{}'::jsonb
             WHERE interrogation_id IN (
@@ -68,6 +69,6 @@ public interface DataJpaRepository extends JpaRepository<DataDB, UUID>, DataRepo
                 WHERE su.campaign_id = :campaignId AND sd.state = 'EXTRACTED'
                 AND su.id IN (:interrogationIds)
             );
-    """, nativeQuery = true)
+    """)
     void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
 }

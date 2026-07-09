@@ -54,14 +54,12 @@ spring:
     contexts: test
     defaultSchema: public
     change-log: classpath:db/integration-test.xml
+  servlet:
+    encoding: #force charset for mockmvc
+          charset: UTF-8
+          force: true
 logging:
   appender: CONSOLE
   level:
     root: INFO
     liquibase: INFO
-#force charset for mockmvc
-server:
-  servlet:
-    encoding:
-      charset: UTF-8
-      force: true

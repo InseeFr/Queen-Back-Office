@@ -1,6 +1,6 @@
 package fr.insee.queen.application.interrogationtempzone.dto.output;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.web.validation.json.SchemaType;
 import fr.insee.queen.domain.interrogationtempzone.model.InterrogationTempZone;
 import io.swagger.v3.oas.annotations.media.Schema;

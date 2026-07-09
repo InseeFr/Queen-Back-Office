@@ -1,7 +1,5 @@
 package fr.insee.queen.application.campaign.integration.cache;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.application.configuration.ScriptConstants;
 import fr.insee.queen.application.utils.JsonTestHelper;
 import fr.insee.queen.domain.campaign.model.Campaign;
@@ -12,7 +10,6 @@ import fr.insee.queen.domain.campaign.service.MetadataService;
 import fr.insee.queen.domain.campaign.service.NomenclatureService;
 import fr.insee.queen.domain.campaign.service.QuestionnaireModelService;
 import fr.insee.queen.domain.common.cache.CacheName;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -68,7 +66,7 @@ class QuestionnaireCacheIT {
     @Test
     @DisplayName("When updating questionnaire, cache is handled")
     @Sql(value = ScriptConstants.REINIT_SQL_SCRIPT, executionPhase = AFTER_TEST_METHOD)
-    void check_questionnaire_cache02() throws IOException {
+    void check_questionnaire_cache02() {
         String questionnaireId = "questionnaire-cache-id";
         String campaignId = "campaign-cache-id";
 

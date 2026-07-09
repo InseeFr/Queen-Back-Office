@@ -1,8 +1,6 @@
 package fr.insee.queen.application.integration.component.builder.schema;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import fr.insee.queen.application.integration.component.exception.IntegrationValidationException;
 import fr.insee.queen.application.integration.dto.output.IntegrationResultUnitDto;
 import fr.insee.queen.application.web.validation.json.JsonValidatorComponent;
@@ -12,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -24,7 +25,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -76,19 +77,23 @@ public class SchemaIntegrationComponent implements SchemaComponent {
         JsonNode jsonNode;
         try {
             jsonNode = mapper.readTree(zipFile.getInputStream(zipJsonFile));
-        } catch (IOException ex) {
+        } catch (JacksonException ex) {
             IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(null,
-                    String.format(IntegrationResultLabel.FILE_INVALID, fileName, ex.getMessage()));
+                    IntegrationResultLabel.FILE_INVALID.formatted(fileName, ex.getMessage()));
+            throw new IntegrationValidationException(resultError);
+        } catch (IOException e) {
+            IntegrationResultUnitDto resultError = IntegrationResultUnitDto.integrationResultUnitError(null,
+                    (IntegrationResultLabel.ZIP_PARSING_ERROR + "%nError message: %s").formatted(fileName, e.getMessage()));
             throw new IntegrationValidationException(resultError);
         }
 
-        Set<ValidationMessage> errors = jsonValidator.validate(schemaType, jsonNode);
+        List<Error> errors = jsonValidator.validate(schemaType, jsonNode);
         if(errors.isEmpty()) {
             return;
         }
 
         StringBuilder messageBuilder = new StringBuilder();
-        for(ValidationMessage errorMessage : errors) {
+        for(Error errorMessage : errors) {
             messageBuilder.append(errorMessage.getMessage());
             messageBuilder.append(". ");
         }

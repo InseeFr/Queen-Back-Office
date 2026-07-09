@@ -1,6 +1,6 @@
 package fr.insee.queen.infrastructure.db.campaign.repository;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.gateway.QuestionnaireModelRepository;
 import fr.insee.queen.domain.campaign.model.QuestionnaireModel;
 import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;

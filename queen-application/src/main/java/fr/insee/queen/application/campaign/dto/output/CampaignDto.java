@@ -2,7 +2,7 @@ package fr.insee.queen.application.campaign.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.campaign.model.Campaign;
 import fr.insee.queen.domain.campaign.model.CampaignSensitivity;
 import io.swagger.v3.oas.annotations.media.Schema;

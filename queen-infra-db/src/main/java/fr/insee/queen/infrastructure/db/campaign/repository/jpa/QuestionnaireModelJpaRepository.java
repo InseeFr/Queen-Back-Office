@@ -1,8 +1,9 @@
 package fr.insee.queen.infrastructure.db.campaign.repository.jpa;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -52,7 +53,7 @@ public interface QuestionnaireModelJpaRepository extends JpaRepository<Questionn
      * @param questionnaireIds questionnaire ids we want to check for the campaign
      * @return number of valid questionnaires
      */
-    @Query(value = "select count(*) from questionnaire_model qm where qm.id in :questionnaireIds and (qm.campaign_id is NULL or qm.campaign_id=:campaignId)", nativeQuery = true)
+    @NativeQuery("select count(*) from questionnaire_model qm where qm.id in :questionnaireIds and (qm.campaign_id is NULL or qm.campaign_id=:campaignId)")
     Long countValidQuestionnairesByIds(String campaignId, Set<String> questionnaireIds);
 
     /**
