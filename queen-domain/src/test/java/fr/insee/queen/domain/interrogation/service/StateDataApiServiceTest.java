@@ -127,4 +127,28 @@ class StateDataApiServiceTest {
         // Then
         assertDoesNotThrow(executable);
     }
+
+    @Test
+    @DisplayName("On saving new state data, when previous state is null, save without throwing")
+    void testSaveWhenPreviousStateIsNull() throws StateDataInvalidDateException {
+        // Given
+        stateDataDao.setStateDataReturned(new StateData(null, 800001L, "welcomePage"));
+        StateData stateDataUpdate = new StateData(StateDataType.INIT, 800000L, "5");
+        // When
+        stateDataService.saveStateData(interrogationId, stateDataUpdate, false, false);
+        // Then
+        assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
+    }
+
+    @Test
+    @DisplayName("On saving new state data with verifyDate, when previous date is null, save without throwing")
+    void testSaveWhenPreviousDateIsNullAndVerifyDate() throws StateDataInvalidDateException {
+        // Given
+        stateDataDao.setStateDataReturned(new StateData(StateDataType.INIT, null, "welcomePage"));
+        StateData stateDataUpdate = new StateData(StateDataType.INIT, 800000L, "5");
+        // When
+        stateDataService.saveStateData(interrogationId, stateDataUpdate, true, false);
+        // Then
+        assertThat(stateDataUpdate).isEqualTo(stateDataDao.getStateDataSaved());
+    }
 }

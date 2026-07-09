@@ -3,6 +3,7 @@ package fr.insee.queen.infrastructure.db.data.repository.jpa;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -51,4 +52,13 @@ public interface DataRepository {
      * @param endTimestamp end timestamp
      */
     void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp);
+
+    /**
+     * clean extracted data for a campaign, restricted to the given interrogation ids.
+     * Implemented by the JPA adapters (ciphered / unciphered).
+     *
+     * @param campaignId campaign id
+     * @param interrogationIds interrogation ids to target
+     */
+     void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds);
 }
