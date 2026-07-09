@@ -10,6 +10,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,10 +35,12 @@ public class AuthenticationFakeHelper implements AuthenticationHelper {
 
     @Override
     public boolean hasRole(AuthorityRoleEnum... roles) {
+        Set<String> targetAuthorities = Arrays.stream(roles)
+                .flatMap(role -> Stream.of(role.name(), role.securityRole()))
+                .collect(Collectors.toSet());
         return getAuthenticationPrincipal().getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .map(AuthorityRoleEnum::fromAuthority)
-                .anyMatch(role -> Arrays.asList(roles).contains(role));
+                .anyMatch(targetAuthorities::contains);
     }
 }
