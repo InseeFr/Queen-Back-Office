@@ -12,11 +12,11 @@
 	<description>API for Queen/Stromae</description>
 
 	<properties>
-		<caffeine.version>3.2.3</caffeine.version>
+		<caffeine.version>3.2.4</caffeine.version>
 		<springdoc.version>3.0.3</springdoc.version>
-		<commons-io.version>2.21.0</commons-io.version>
+		<commons-io.version>2.22.0</commons-io.version>
 		<org-json.version>20240303</org-json.version>
-		<guava.version>33.5.0-jre</guava.version>
+		<guava.version>33.6.0-jre</guava.version>
 	</properties>
 
 	<dependencies>

@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Version of dependencies shared across several modules -->
-        <json-schema-validator.version>3.0.2</json-schema-validator.version>
+        <json-schema-validator.version>3.0.6</json-schema-validator.version>
         <!-- !!! Temporary properties that overwrite Spring's managed dependency versions (for security reasons) !!! -->
         <tomcat.version>11.0.22</tomcat.version>
         <postgresql.version>42.7.11</postgresql.version>
@@ -111,7 +111,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.14</version>
+                        <version>0.8.15</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
