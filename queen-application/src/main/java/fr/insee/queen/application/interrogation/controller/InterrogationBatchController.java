@@ -33,16 +33,16 @@ public class InterrogationBatchController {
     /**
      * Create or update an interrogation
      *
-     * @param campaignId             campaign id
+     * @param groupId             group id
      * @param interrogationBatchInputs interrogations data for creation
      */
     @Operation(summary = "Create/Update interrogations")
-    @PostMapping("/campaigns/{id}/interrogations")
+    @PostMapping("/${application.group.path-plural}/{id}/interrogations")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
-    public void createUpdateInterrogations(@IdValid @PathVariable(value = "id") String campaignId,
+    public void createUpdateInterrogations(@IdValid @PathVariable(value = "id") String groupId,
                                                           @NotEmpty @Valid @RequestBody List<InterrogationBatchInput> interrogationBatchInputs) {
         List<Interrogation> interrogations = interrogationBatchInputs.stream()
-                .map(interrogationBatchInput -> InterrogationBatchInput.toModel(interrogationBatchInput, campaignId))
+                .map(interrogationBatchInput -> InterrogationBatchInput.toModel(interrogationBatchInput, groupId))
                 .toList();
         interrogationBatchService.saveInterrogations(interrogations);
     }

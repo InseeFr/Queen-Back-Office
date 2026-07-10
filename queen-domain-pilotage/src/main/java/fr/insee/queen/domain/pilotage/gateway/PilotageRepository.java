@@ -1,7 +1,7 @@
 package fr.insee.queen.domain.pilotage.gateway;
 
 import fr.insee.queen.domain.pilotage.model.PermissionEnum;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.model.PilotageInterrogation;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface PilotageRepository {
     /**
-     * Check if the campaign is closed
-     * @param campaignId campaign id
+     * Check if the group is closed
+     * @param groupId group id
      * @return true if closed, false otherwise
      */
-    boolean isClosed(String campaignId);
+    boolean isClosed(String groupId);
 
     /**
      * Retrieve interrogations linked to a user
@@ -24,10 +24,10 @@ public interface PilotageRepository {
     List<PilotageInterrogation> getInterrogations();
 
     /**
-     * Retrieve campaigns where user is interviewer
-     * @return List of {@link PilotageCampaign} campaigns
+     * Retrieve groups where user is interviewer
+     * @return List of {@link PilotageGroup} groups
      */
-    List<PilotageCampaign> getInterviewerCampaigns();
+    List<PilotageGroup> getInterviewerGroups();
 
     boolean hasHabilitation(InterrogationSummary interrogation, PilotageRole role, String idep);
     boolean hasPermission(InterrogationSummary interrogation, PermissionEnum permission);

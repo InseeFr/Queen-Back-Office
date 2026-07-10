@@ -21,7 +21,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.web.client.RestTemplate;
@@ -43,13 +45,20 @@ public class OidcSecurityConfiguration {
      * Configure spring security filter chain to handle OIDC authentication
      *
      * @param http Http Security Object
+     * @param customAuthenticationEntrypoint handler handling errors on unauthorized access
+     * @param customAccessDeniedHandler handler handling errors on access denied
+     * @param oidcProperties oidc properties
+     * @param roleProperties role properties
      * @return the spring security filter
-     * @throws Exception exception
      */
     @Bean
     @Order(2)
+    @SuppressWarnings("java:S4502")
     protected SecurityFilterChain filterChain(HttpSecurity http,
-                                              OidcProperties oidcProperties, RoleProperties roleProperties) throws Exception {
+                                              AuthenticationEntryPoint customAuthenticationEntrypoint,
+                                              AccessDeniedHandler customAccessDeniedHandler,
+                                              OidcProperties oidcProperties,
+                                              RoleProperties roleProperties) {
         return http
                 .securityMatcher("/**")
                 .csrf(AbstractHttpConfigurer::disable)
@@ -68,7 +77,12 @@ public class OidcSecurityConfiguration {
                         .authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter(oidcProperties, roleProperties))))
+                .oauth2ResourceServer(
+                        oauth2 ->
+                                oauth2
+                                        .accessDeniedHandler(customAccessDeniedHandler)
+                                        .authenticationEntryPoint(customAuthenticationEntrypoint)
+                                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter(oidcProperties, roleProperties))))
                 .build();
     }
 

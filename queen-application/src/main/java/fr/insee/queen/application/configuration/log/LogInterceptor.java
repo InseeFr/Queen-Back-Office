@@ -8,34 +8,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.UUID;
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class LogInterceptor implements HandlerInterceptor {
     private final AuthenticationHelper authenticationHelper;
+    private static final String ANONYMOUS_ID = "ANONYMOUSUSER";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) {
-        String fishTag = UUID.randomUUID().toString();
-        String method = request.getMethod();
-        String operationPath = request.getRequestURI();
-
-        Authentication authentication = authenticationHelper.getAuthenticationPrincipal();
-
-        String userId = authentication.getName().toUpperCase();
-
-        MDC.put("id", fishTag);
-        MDC.put("path", operationPath);
-        MDC.put("method", method);
-        MDC.put("user", userId);
-
-        log.info("[{}] {} {}", userId, method, operationPath);
+    public boolean preHandle(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) {
+        injectLogContext(request);
         return true;
     }
 
@@ -48,6 +34,33 @@ public class LogInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler,
                                 Exception exception) {
+        clearLogContext();
+    }
+
+    public void injectLogContext(HttpServletRequest request) {
+        Authentication auth = authenticationHelper.getAuthenticationPrincipal();
+        String userId = auth != null ? auth.getName() : null;
+        injectLogContext(request, userId);
+    }
+
+    public void injectLogContext(HttpServletRequest request, String userId) {
+        if(userId == null) {
+            userId = ANONYMOUS_ID;
+        }
+
+        String fishTag = UUID.randomUUID().toString();
+        String method = request.getMethod();
+        String operationPath = request.getRequestURI();
+
+        MDC.put("id", fishTag);
+        MDC.put("path", operationPath);
+        MDC.put("method", method);
+        MDC.put("user", userId.toUpperCase());
+
+        log.info("[{}] {} {}", userId, method, operationPath);
+    }
+
+    public void clearLogContext() {
         MDC.clear();
     }
 }

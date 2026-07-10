@@ -10,10 +10,7 @@
     <description>Modules for queen back-office</description>
 
     <properties>
-        <!-- Project properties -->
-        <!-- About revision and changelist maven special properties:
-         https://maven.apache.org/guides/mini/guide-maven-ci-friendly.html -->
-        <revision>5.10.1</revision>
+        <revision>6.1.2</revision>
         <changelist></changelist>
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
@@ -23,9 +20,6 @@
 
         <!-- Version of dependencies shared across several modules -->
         <json-schema-validator.version>3.0.2</json-schema-validator.version>
-        <!-- !!! Temporary properties that overwrite Spring's managed dependency versions (for security reasons) !!! -->
-        <tomcat.version>11.0.22</tomcat.version>
-        <postgresql.version>42.7.11</postgresql.version>
 
         <!-- maven-surefire-plugin setting.
              Used for encoding with tests on windows (buggy windows components) -->

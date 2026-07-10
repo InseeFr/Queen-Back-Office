@@ -29,8 +29,8 @@ class InterrogationUnCipherIT {
     }
 
     @Test
-    void on_get_interrogations_by_campaign_return_interrogations() throws Exception {
-        interrogationTests.on_get_interrogations_by_campaign_return_interrogations();
+    void on_get_interrogations_by_group_return_interrogations() throws Exception {
+        interrogationTests.on_get_interrogations_by_group_return_interrogations();
     }
 
     @Test

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Service
@@ -44,12 +43,12 @@ public class StateDataApiService implements StateDataService {
         Optional<StateData> previousStateData = stateDataRepository.find(interrogationId);
 
         if(stateData.date() == null) {
-            long timestamp = ZonedDateTime.now(clock).toInstant().toEpochMilli();
+            long timestamp = clock.instant().toEpochMilli();
             stateData = new StateData(stateData.state(), timestamp, stateData.currentPage());
         }
 
         if (previousStateData.isEmpty()) {
-            log.info("Previous state data not found, new state data -> [{}, {}]", stateData.state().name(), stateData.date());
+            log.info("Previous state data not found, new state data -> [{}, {}, {}]", stateData.state().name(), stateData.date(), stateData.currentPage());
             stateDataRepository.save(interrogationId, stateData);
             return;
         }

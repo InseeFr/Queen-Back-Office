@@ -32,6 +32,8 @@ spring:
         auto: validate
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
   artemis:
     mode: native
     broker-url:

@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         )
 })
 @EntityScan(basePackages = {
-        "fr.insee.queen.infrastructure.db.campaign",
+        "fr.insee.queen.infrastructure.db.group",
         "fr.insee.queen.infrastructure.db.paradata",
         "fr.insee.queen.infrastructure.db.interrogationtempzone",
         "fr.insee.queen.infrastructure.db.interrogation",

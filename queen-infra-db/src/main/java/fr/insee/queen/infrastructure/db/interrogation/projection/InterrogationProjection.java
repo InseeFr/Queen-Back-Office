@@ -9,11 +9,10 @@ import fr.insee.queen.domain.interrogation.model.Interrogation;
 public record InterrogationProjection(
         String id,
         String surveyUnitId,
-        String campaignId,
+        String groupId,
         String questionnaireId,
         ArrayNode personalization,
         ObjectNode data,
-        ObjectNode comment,
         StateDataType state,
         Long date,
         String currentPage) {
@@ -25,11 +24,10 @@ public record InterrogationProjection(
         }
         return new Interrogation(projection.id(),
                 projection.surveyUnitId(),
-                projection.campaignId(),
+                projection.groupId(),
                 projection.questionnaireId(),
                 projection.personalization(),
                 projection.data(),
-                projection.comment(),
                 stateDataModel,
                 null);
     }

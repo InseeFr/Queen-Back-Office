@@ -1,11 +1,11 @@
 package fr.insee.queen.domain.pilotage.service;
 
-import fr.insee.queen.domain.campaign.service.dummy.CampaignExistenceFakeService;
-import fr.insee.queen.domain.campaign.service.dummy.QuestionnaireModelFakeService;
+import fr.insee.queen.domain.group.service.dummy.GroupExistenceFakeService;
+import fr.insee.queen.domain.group.service.dummy.QuestionnaireModelFakeService;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
 import fr.insee.queen.domain.interrogation.service.dummy.InterrogationFakeService;
 import fr.insee.queen.domain.pilotage.infrastructure.dummy.PilotageFakeRepository;
-import fr.insee.queen.domain.pilotage.model.PilotageCampaign;
+import fr.insee.queen.domain.pilotage.model.PilotageGroup;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PilotageServiceTest {
     private PilotageApiService pilotageService;
-    private CampaignExistenceFakeService campaignExistenceService;
+    private GroupExistenceFakeService groupExistenceService;
     private PilotageFakeRepository pilotageRepository;
     private QuestionnaireModelFakeService questionnaireModelFakeService;
 
@@ -26,64 +26,64 @@ class PilotageServiceTest {
     void init() {
         InterrogationFakeService interrogationService = new InterrogationFakeService();
         pilotageRepository = new PilotageFakeRepository();
-        campaignExistenceService = new CampaignExistenceFakeService();
+        groupExistenceService = new GroupExistenceFakeService();
         questionnaireModelFakeService = new QuestionnaireModelFakeService();
-        pilotageService = new PilotageApiService(interrogationService, campaignExistenceService, pilotageRepository, questionnaireModelFakeService);
+        pilotageService = new PilotageApiService(interrogationService, groupExistenceService, pilotageRepository, questionnaireModelFakeService);
     }
 
     @Test
-    @DisplayName("On check if campaign closed, check campaign existence")
-    void testCampaignIsClosed() {
+    @DisplayName("On check if group closed, check group existence")
+    void testGroupIsClosed() {
         pilotageService.isClosed("11");
-        assertThat(campaignExistenceService.isCheckCampaignExist()).isTrue();
-        assertThat(pilotageRepository.isWentThroughIsClosedCampaign()).isTrue();
+        assertThat(groupExistenceService.isCheckGroupExist()).isTrue();
+        assertThat(pilotageRepository.isWentThroughIsClosedGroup()).isTrue();
     }
 
     @Test
-    @DisplayName("On retrieving interviewer campaigns throw exception if campaigns are null")
-    void testGetInterviewerCampaigns01() {
-        pilotageRepository.setNullInterviewerCampaigns(true);
-        assertThatThrownBy(() -> pilotageService.getInterviewerCampaigns())
+    @DisplayName("On retrieving interviewer groups throw exception if groups are null")
+    void testGetInterviewerGroups01() {
+        pilotageRepository.setNullInterviewerGroups(true);
+        assertThatThrownBy(() -> pilotageService.getInterviewerGroups())
                 .isInstanceOf(PilotageApiException.class);
     }
 
     @Test
-    @DisplayName("On retrieving interviewer campaigns return campaigns")
-    void testGetInterviewerCampaigns02() {
-        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
-        assertThat(campaigns).hasSize(2);
-        assertThat(campaigns.getFirst().id()).isEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
+    @DisplayName("On retrieving interviewer groups return groups")
+    void testGetInterviewerGroups02() {
+        List<PilotageGroup> groups = pilotageService.getInterviewerGroups();
+        assertThat(groups).hasSize(2);
+        assertThat(groups.getFirst().id()).isEqualTo(PilotageFakeRepository.INTERVIEWER_GROUP1_ID);
     }
 
     @Test
-    @DisplayName("Should not retrieve unexisting campaigns in DB")
-    void testGetInterviewerCampaigns03() {
-        questionnaireModelFakeService.setCampaignIdNotFound(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
-        List<PilotageCampaign> campaigns = pilotageService.getInterviewerCampaigns();
-        assertThat(campaigns).hasSize(1);
-        assertThat(campaigns.getFirst().id()).isNotEqualTo(PilotageFakeRepository.INTERVIEWER_CAMPAIGN1_ID);
+    @DisplayName("Should not retrieve unexisting groups in DB")
+    void testGetInterviewerGroups03() {
+        questionnaireModelFakeService.setGroupIdNotFound(PilotageFakeRepository.INTERVIEWER_GROUP1_ID);
+        List<PilotageGroup> groups = pilotageService.getInterviewerGroups();
+        assertThat(groups).hasSize(1);
+        assertThat(groups.getFirst().id()).isNotEqualTo(PilotageFakeRepository.INTERVIEWER_GROUP1_ID);
     }
 
     @Test
-    @DisplayName("On retrieving interrogations by campaign, when current interrogation is null return empty collection")
-    void testGetInterrogationsByCampaign_01() {
+    @DisplayName("On retrieving interrogations by group, when current interrogation is null return empty collection")
+    void testGetInterrogations_01() {
         pilotageRepository.setNullCurrentInterrogation(true);
-        List<InterrogationSummary> interrogations = pilotageService.getInterrogationsByCampaign("campaign-id");
+        List<InterrogationSummary> interrogations = pilotageService.getInterrogations("group-id");
         assertThat(interrogations).isEmpty();
     }
 
     @Test
-    @DisplayName("On retrieving interrogations by campaign check campaign existence")
-    void testGetInterrogationsByCampaign_02() {
+    @DisplayName("On retrieving interrogations by group check group existence")
+    void testGetInterrogations_02() {
         pilotageRepository.setNullCurrentInterrogation(true);
-        pilotageService.getInterrogationsByCampaign("campaign-id");
-        assertThat(campaignExistenceService.isCheckCampaignExist()).isTrue();
+        pilotageService.getInterrogations("group-id");
+        assertThat(groupExistenceService.isCheckGroupExist()).isTrue();
     }
 
     @Test
-    @DisplayName("On retrieving interrogations by campaign, return interrogations for a campaign")
-    void testGetInterrogationsByCampaign_03() {
-        List<InterrogationSummary> interrogations = pilotageService.getInterrogationsByCampaign(PilotageFakeRepository.CURRENT_SU_CAMPAIGN1_ID);
+    @DisplayName("On retrieving interrogations by group, return interrogations for a group")
+    void testGetInterrogations_03() {
+        List<InterrogationSummary> interrogations = pilotageService.getInterrogations(PilotageFakeRepository.CURRENT_SU_GROUP1_ID);
         assertThat(interrogations).hasSize(2);
         assertThat(interrogations.get(0).id()).isEqualTo(PilotageFakeRepository.INTERROGATION1_ID);
         assertThat(interrogations.get(1).id()).isEqualTo(PilotageFakeRepository.INTERROGATION3_ID);

@@ -30,4 +30,12 @@
     <include file="changelog/700_events.xml" relativeToChangelogFile="true"/>
 	<include file="changelog/701_add_constraint_not_null_sensitivity.xml" relativeToChangelogFile="true" />
 	<include file="changelog/702_drop_events.xml" relativeToChangelogFile="true" />
+	<include file="changelog/703_drop_comment_table.sql" relativeToChangelogFile="true" />
+	<include file="changelog/704_drop_sensitivity.sql" relativeToChangelogFile="true" />
+	<!-- Rename table campaign → survey_group and FK columns campaign_id → group_id -->
+	<include file="changelog/705_rename_campaign_to_survey_group.xml" relativeToChangelogFile="true" />
+	<!-- Move questionnaire_model FK from questionnaire_model→survey_group to survey_group→questionnaire_model -->
+	<include file="changelog/706_survey_group_questionnaire_model.xml" relativeToChangelogFile="true" />
+	<!-- Add kind discriminator (CAMPAIGN | PARTITION) to survey_group -->
+	<include file="changelog/707_add_kind_to_survey_group.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

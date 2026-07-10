@@ -1,6 +1,6 @@
 package fr.insee.queen.domain.interrogation.service;
 
-import fr.insee.queen.domain.campaign.service.CampaignExistenceService;
+import fr.insee.queen.domain.group.service.GroupExistenceService;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationBatchRepository;
 import lombok.NonNull;
@@ -15,13 +15,13 @@ import java.util.List;
 class InterrogationBatchApiService implements InterrogationBatchService {
 
     private final InterrogationBatchRepository batchRepository;
-    private final CampaignExistenceService campaignExistenceService;
+    private final GroupExistenceService groupExistenceService;
 
     @Transactional
     @Override
     public void saveInterrogations(List<Interrogation> interrogations) {
         Interrogation interrogation = interrogations.getFirst();
-        campaignExistenceService.throwExceptionIfCampaignNotLinkedToQuestionnaire(interrogation.campaignId(), interrogation.questionnaireId());
+        groupExistenceService.throwExceptionIfGroupNotLinkedToQuestionnaire(interrogation.groupId(), interrogation.questionnaireId());
         batchRepository.upsertAll(interrogations);
     }
 

@@ -4,25 +4,22 @@ import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import fr.insee.queen.domain.interrogation.model.*;
-import fr.insee.queen.infrastructure.db.campaign.entity.CampaignDB;
-import fr.insee.queen.infrastructure.db.campaign.entity.QuestionnaireModelDB;
-import fr.insee.queen.infrastructure.db.campaign.repository.jpa.CampaignJpaRepository;
-import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireModelJpaRepository;
+import fr.insee.queen.infrastructure.db.group.entity.GroupDB;
+import fr.insee.queen.infrastructure.db.group.entity.QuestionnaireModelDB;
+import fr.insee.queen.infrastructure.db.group.repository.jpa.GroupJpaRepository;
+import fr.insee.queen.infrastructure.db.group.repository.jpa.QuestionnaireModelJpaRepository;
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
+import org.springframework.transaction.annotation.Transactional;
 import fr.insee.queen.infrastructure.db.interrogation.entity.*;
 import fr.insee.queen.infrastructure.db.interrogation.projection.InterrogationProjection;
 import fr.insee.queen.infrastructure.db.interrogation.repository.jpa.*;
 import fr.insee.queen.infrastructure.db.configuration.DataFactory;
 import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import java.util.stream.Collectors;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -34,13 +31,11 @@ import java.util.Optional;
 public class InterrogationDao implements InterrogationRepository {
 
     private final InterrogationJpaRepository crudRepository;
-    private final CommentJpaRepository commentRepository;
     private final PersonalizationJpaRepository personalizationRepository;
     private final DataRepository dataRepository;
-    private final CampaignJpaRepository campaignRepository;
+    private final GroupJpaRepository groupRepository;
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final DataFactory dataFactory;
-    private final EntityManager entityManager;
 
     @Override
     public Optional<InterrogationSummary> findSummaryById(String interrogationId) {
@@ -48,8 +43,8 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public List<InterrogationSummary> findAllSummaryByCampaignId(String campaignId) {
-        return crudRepository.findAllSummaryByCampaignId(campaignId);
+    public List<InterrogationSummary> findAllSummaryByGroupId(String groupId) {
+        return crudRepository.findAllSummaryByGroupId(groupId);
     }
 
     @Override
@@ -69,8 +64,8 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public Optional<InterrogationDepositProof> findWithCampaignAndStateById(String interrogationId) {
-        return crudRepository.findWithCampaignAndStateById(interrogationId);
+    public Optional<InterrogationDepositProof> findWithGroupAndStateById(String interrogationId) {
+        return crudRepository.findWithGroupAndStateById(interrogationId);
     }
 
     @Override
@@ -79,8 +74,11 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public List<InterrogationState> findAllByState(String campaignId, StateDataType state) {
-        return crudRepository.findAllByState(campaignId, state);
+    public List<InterrogationState> findAllByState(String groupId, StateDataType state) {
+        if(state == null) {
+            return crudRepository.findAllByGroupWithoutState(groupId);
+        }
+        return crudRepository.findAllByGroupAndState(groupId, state);
     }
 
     @Override
@@ -89,8 +87,8 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public void deleteInterrogations(String campaignId) {
-        crudRepository.deleteInterrogations(campaignId);
+    public void deleteInterrogations(String groupId) {
+        crudRepository.deleteInterrogations(groupId);
     }
 
     @Override
@@ -100,16 +98,14 @@ public class InterrogationDao implements InterrogationRepository {
 
     @Override
     public void create(Interrogation interrogation) {
-        CampaignDB campaign = campaignRepository.getReferenceById(interrogation.campaignId());
+        GroupDB group = groupRepository.getReferenceById(interrogation.groupId());
         QuestionnaireModelDB questionnaire = questionnaireModelRepository.getReferenceById(interrogation.questionnaireId());
-        InterrogationDB interrogationDB = new InterrogationDB(interrogation.id(), interrogation.surveyUnitId(), campaign, questionnaire, interrogation.correlationId());
+        InterrogationDB interrogationDB = new InterrogationDB(interrogation.id(), interrogation.surveyUnitId(), group, questionnaire, interrogation.correlationId());
         DataDB dataDB = dataFactory.buildData(interrogation.data(), interrogationDB);
-        CommentDB commentDB = new CommentDB(interrogation.comment(), interrogationDB);
         if (interrogation.personalization() != null) {
             PersonalizationDB personalizationDB = new PersonalizationDB(interrogation.personalization(), interrogationDB);
             interrogationDB.setPersonalization(personalizationDB);
         }
-        interrogationDB.setComment(commentDB);
         interrogationDB.setData(dataDB);
         interrogationDB.setCorrelationId(interrogation.correlationId());
         crudRepository.save(interrogationDB);
@@ -130,20 +126,6 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public void saveComment(String interrogationId, ObjectNode comment) {
-        if (comment == null) {
-            return;
-        }
-
-        int countUpdated = commentRepository.updateComment(interrogationId, comment);
-        if (countUpdated == 0) {
-            InterrogationDB interrogation = crudRepository.getReferenceById(interrogationId);
-            CommentDB commentDB = new CommentDB(comment, interrogation);
-            commentRepository.save(commentDB);
-        }
-    }
-
-    @Override
     public void saveData(String interrogationId, ObjectNode data) {
         if (data == null) {
             return;
@@ -159,11 +141,6 @@ public class InterrogationDao implements InterrogationRepository {
     @Override
     public void updateCollectedData(String interrogationId, ObjectNode partialCollectedDataNode) {
         dataRepository.updateCollectedData(interrogationId, partialCollectedDataNode);
-    }
-
-    @Override
-    public Optional<ObjectNode> findComment(String interrogationId) {
-        return commentRepository.findComment(interrogationId);
     }
 
     @Override
@@ -187,12 +164,11 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
+    @Transactional
     public void update(Interrogation interrogation) {
-        String interrogationId = interrogation.id();
-        save(interrogation.id(), interrogation.surveyUnitId(), interrogation.campaignId(), interrogation.questionnaireId());
-        savePersonalization(interrogationId, interrogation.personalization());
-        saveComment(interrogationId, interrogation.comment());
-        saveData(interrogationId, interrogation.data());
+        crudRepository.updateFields(interrogation.id(), interrogation.surveyUnitId(), interrogation.groupId(), interrogation.questionnaireId());
+        savePersonalization(interrogation.id(), interrogation.personalization());
+        saveData(interrogation.id(), interrogation.data());
     }
 
     @Override
@@ -210,48 +186,18 @@ public class InterrogationDao implements InterrogationRepository {
     }
 
     @Override
-    public void cleanExtractedData(String campaignId, Long startTimestamp, Long endTimestamp) {
-        dataRepository.cleanExtractedData(campaignId, startTimestamp, endTimestamp);
+    public void cleanExtractedData(String groupId, Long startTimestamp, Long endTimestamp) {
+        dataRepository.cleanExtractedData(groupId, startTimestamp, endTimestamp);
     }
 
     @Override
-    public void cleanExtractedDataByIds(String campaignId, List<String> interrogationIds) {
-        dataRepository.cleanExtractedDataByIds(campaignId, interrogationIds);
+    public void cleanExtractedDataByIds(String groupId, List<String> interrogationIds) {
+        dataRepository.cleanExtractedDataByIds(groupId, interrogationIds);
     }
 
     @Override
-    public boolean existsByCampaignId(String campaignId) {
-        return crudRepository.existsByCampaignId(campaignId);
+    public boolean existsByGroupId(String groupId) {
+        return crudRepository.existsByGroupId(groupId);
     }
 
-    private void save(String interrogationId, String surveyUnitId, String campaignId, String questionnaireId) {
-        Map<String, Object> fieldsToUpdate = new LinkedHashMap<>();
-        if (campaignId != null) {
-            fieldsToUpdate.put("campaign_id", campaignId);
-        }
-
-        if (questionnaireId != null) {
-            fieldsToUpdate.put("questionnaire_model_id", questionnaireId);
-        }
-
-        if (surveyUnitId != null) {
-            fieldsToUpdate.put("survey_unit_id", surveyUnitId);
-        }
-
-        if (fieldsToUpdate.isEmpty()) {
-            return;
-        }
-
-        String fields = fieldsToUpdate.keySet()
-                .stream()
-                .map(key -> key + " = :" + key)
-                .collect(Collectors.joining(", "));
-        String sql = String.format("UPDATE interrogation SET %s WHERE id = :interrogationId", fields);
-
-        var query = entityManager.createNativeQuery(sql);
-        fieldsToUpdate.forEach(query::setParameter);
-        query.setParameter("interrogationId", interrogationId);
-
-        query.executeUpdate();
-    }
 }

@@ -29,7 +29,7 @@ class StateDataApiServiceTest {
     private final String interrogationId = "11";
     private final Clock fixedClock = Clock.fixed(
             Instant.ofEpochSecond(1740601599),
-            ZoneId.systemDefault());
+            ZoneId.of("UTC"));
 
     @BeforeEach
     void init() {

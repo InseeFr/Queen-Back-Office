@@ -34,12 +34,12 @@ class PilotageHttpRepositoryPermissionTest {
     void init() {
         RestTemplate restTemplate = new RestTemplate();
         mockServer = MockRestServiceServer.createServer(restTemplate);
-        String campaignIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
+        String groupIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
 
         pilotageRepository = new PilotageHttpRepository(
                 pilotageUrl,
                 alternativeHabilitationServiceURL,
-                campaignIdRegexWithAlternativeHabilitationService,
+                groupIdRegexWithAlternativeHabilitationService,
                 restTemplate,
                 CollectionEnvironmentEnum.WEB
         );
