@@ -58,7 +58,7 @@ class InterrogationReplyQueuePublisherTest {
         surveyUnitReplyQueuePublisher.send(replyQueue, correlationId, responseMessage);
 
         // Then
-        assertThat(output).contains("Command " + correlationId + " - sent");
+        assertThat(output).contains("Command '" + correlationId + "' - sent");
         verify(jmsQueuePublisher).send(eq(replyQueue), any());
     }
 
@@ -75,7 +75,7 @@ class InterrogationReplyQueuePublisherTest {
         surveyUnitReplyQueuePublisher.send(replyQueue, correlationId, responseMessage);
 
         // Then
-        assertThat(output).contains("Command " + correlationId + " - Unable to process json response");
+        assertThat(output).contains("Command '" + correlationId + "' - Unable to process json response");
         // Ensure that the message was not sent because of the exception
         verify(jmsQueuePublisher, never()).send(anyString(), any());
     }

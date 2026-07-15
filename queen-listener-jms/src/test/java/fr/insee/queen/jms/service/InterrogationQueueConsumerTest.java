@@ -1,15 +1,14 @@
 package fr.insee.queen.jms.service;
 
 import fr.insee.queen.domain.interrogation.model.Interrogation;
+import fr.insee.queen.jms.mapper.PersonalizationMapper;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import fr.insee.queen.jms.model.ResponseCode;
 import fr.insee.queen.jms.service.stub.InterrogationBatchFakeService;
 import fr.insee.queen.jms.service.stub.InterrogationFakePublisher;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
-import jakarta.jms.Session;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,14 +26,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(OutputCaptureExtension.class)
 @ExtendWith(MockitoExtension.class)
 class InterrogationQueueConsumerTest {
+    private PersonalizationMapper personalizationMapper;
     private InterrogationQueueConsumer consumer;
     private InterrogationFakePublisher publisher;
     private final JsonMapper mapper = new JsonMapper();
     private InterrogationBatchFakeService interrogationBatchFakeService;
     @Mock
     private Message commandMessage;
-    @Mock
-    private Session session;
 
     private String additionalFieldCommand = "";
     private String additionalFieldInterrogation = "";
@@ -43,171 +41,196 @@ class InterrogationQueueConsumerTest {
     private final String questionnaireId = "questionnaire-id";
     private final String correlationId = "c7f0a0b1-9d8c-4e7f-b6a5-1234567890ab";
     private final String replyTo = "queueResponse";
+    private final String questionnaireData = "{}";
 
     private final String defaultBody = """
-                                            {
-                                              "_id": {
-                                                "$oid": "651a2f9c4d3e2b1a0f9c8d7e"
-                                              },
-                                              "processInstanceID": "9f2c9f4a-5a2b-4f0e-9a6f-2c8f0c3a1d55",
-                                              %s
-                                              "inProgress": true,
-                                              "payload": {
-                                                "partitionId": "3d3f6a2b-8d4d-4d7a-9c0b-1a2b3c4d5e6f",
-                                                %s
-                                                "interrogationId": "%s",
-                                                "surveyUnitId": "%s",
-                                                "originId": "552100123",
-                                                "parentId": "11111111-2222-3333-4444-555555555555",
-                                                "childIds": [
-                                                  "66666666-7777-8888-9999-000000000000",
-                                                  "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-                                                ],
-                                                "displayName": "12345678900011",
-                                                "corporateName": "Société Exemple SA",
-                                                "unitLabel": "établissement",
-                                                "ape": "62.01Z",
-                                                "legalCategory": "5710",
-                                                "turnover": "1500000",
-                                                "workforce": "42",
-                                                "managementId": "OPALE-DEM-75",
-                                                "ssech": "SSECH-01",
-                                                "noGrap": "12",
-                                                "noLog": "03",
-                                                "comment": "Contact préférable le matin.",
-                                                "cityCode": "75120",
-                                                "extCoverPageData": {
-                                                  "whoAnswers1": "Le dirigeant ou son représentant",
-                                                  "whoAnswers2": "Service comptable si nécessaire",
-                                                  "whoAnswers3": "Répondre sous 10 jours"
-                                                },
-                                                "extPostCollectionData": {},
-                                                "extFaData": {},
-                                                "questionnaires": [
-                                                  {
-                                                    "questionnaireModelId": "%s",
-                                                    "questionningData": {
-                                                      "prefill_year": 2024,
-                                                      "language": "fr"
-                                                    }
-                                                  }
-                                                ],
-                                                "communicationPersos": [
-                                                  {
-                                                    "communicationId": "2d2ab0b2-7e9f-4b2a-8e61-8f8c1d1f2a3b",
-                                                    "extCommunicationData": [
-                                                      {
-                                                        "key": "RAISON_SOCIALE",
-                                                        "value": "Société Exemple SA",
-                                                        "type": "string"
-                                                      },
-                                                      {
-                                                        "key": "EMAIL_VALIDE",
-                                                        "value": true,
-                                                        "type": "boolean"
-                                                      }
-                                                    ]
-                                                  },
-                                                  {
-                                                    "communicationId": "9b8a7c6d-5e4f-4321-98ab-0123456789ab",
-                                                    "extCommunicationData": [
-                                                      {
-                                                        "key": "SIREN",
-                                                        "value": "123456789",
-                                                        "type": "string"
-                                                      }
-                                                    ]
-                                                  }
-                                                ],
-                                                "address": {
-                                                  "streetNumber": "10",
-                                                  "repetitionIndex": "",
-                                                  "streetType": "rue",
-                                                  "streetName": "de la République",
-                                                  "addressSupplement": "Bâtiment B",
-                                                  "cityName": "Paris",
-                                                  "zipCode": "75011",
-                                                  "cedexCode": "",
-                                                  "cedexName": "",
-                                                  "specialDistribution": "",
-                                                  "countryCode": "FR",
-                                                  "countryName": "France"
-                                                },
-                                                "addressComplement": {
-                                                  "building": "B",
-                                                  "floor": "3",
-                                                  "staircase": "Escalier 2",
-                                                  "door": "3B",
-                                                  "elevator": true,
-                                                  "cityPriorityDistrict": false
-                                                },
-                                                "contacts": [
-                                                  {
-                                                    "contactId": "e3f1b1c2-d3a4-45ef-9a10-b2c3d4e5f6a7",
-                                                    "gender": "MME",
-                                                    "firstName": "Claire",
-                                                    "lastName": "Martin",
-                                                    "dateOfBirth": "1987-04-12",
-                                                    "function": "Responsable administratif",
-                                                    "businessName": "Société Exemple SA",
-                                                    "contactRank": 1,
-                                                    "phoneNumbers": [
-                                                      {
-                                                        "source": "ADMINISTRATIVE",
-                                                        "favorite": true,
-                                                        "number": "+33 1 23 45 67 89"
-                                                      },
-                                                      {
-                                                        "source": "INTERVIEWER",
-                                                        "favorite": false,
-                                                        "number": "+33 6 12 34 56 78"
-                                                      }
-                                                    ],
-                                                    "email": "claire.martin@example.com",
-                                                    "address": {
-                                                      "streetNumber": "10",
-                                                      "repetitionIndex": "",
-                                                      "streetType": "rue",
-                                                      "streetName": "de la République",
-                                                      "addressSupplement": "",
-                                                      "cityName": "Paris",
-                                                      "zipCode": "75011",
-                                                      "cedexCode": "",
-                                                      "cedexName": "",
-                                                      "specialDistribution": "",
-                                                      "countryCode": "FR",
-                                                      "countryName": "France"
-                                                    },
-                                                    "webConnectionId": "WEB-PORTAL-USER-001"
-                                                  }
-                                                ]
-                                              },
-                                              "CampaignID": "ECO-ENT-2025",
-                                              "correlationID": "%s",
-                                              "questionnaireID": "Q-ECO-ENT-2025-V1",
-                                              "done": false,
-                                              "dateCreation": "2025-10-01T13:45:30Z",
-                                              "replyTo": "%s"
-                                            }
-                                            """;
+    {
+      %s
+      "correlationId": "%s",
+      "replyTo": "%s",
+      "processInstanceId": "019a5931-5951-7dd2-aa53-28c0cd92d569",
+      "target": "QUESTIONNAIRE-API-WEB",
+      "operation": "CREATE",
+      "payload": {
+        %s
+        "partitionId": "123e4567-e89b-12d3-a456-426614174000",
+        "id": "%s",
+        "technicalSurveyUnitId": "123e4567-e89b-12d3-a456-426614174002",
+        "originId": "410241145",
+        "parentId": "123e4567-e89b-12d3-a456-426614174003",
+        "childIds": [
+          "123e4567-e89b-12d3-a456-426614174004",
+          "123e4567-e89b-12d3-a456-426614174005"
+        ],
+        "usualSurveyUnitId": "%s",
+        "corporateName": "CAFET'INSEE LILLE",
+        "unitLabel": "établissement",
+        "ape": "9499Z",
+        "legalCategory": "Association déclarée",
+        "turnover": "",
+        "workforce": "",
+        "managementId": "82",
+        "subSampleIdentifier": "02",
+        "clusterIdentifier": "",
+        "dwellingIdentifier": "",
+        "comment": "Cho n'marche po, pis in n'sait po pourquo",
+        "cityCode": "92049",
+        "extCoverPageData": {
+          "whoAnswers1": "Pierre",
+          "whoAnswers2": "Paul",
+          "whoAnswers3": "Jack"
+        },
+        "extPostCollectionData": {
+          "someKey": "someValue"
+        },
+        "extFaData": {
+          "surface": "149",
+          "identifiant_strate": "up_01031_NP",
+          "statut_occupation": "P",
+          "nb_pers_log": "4",
+          "someKey": "someValue"
+        },
+        "questionnaires": [
+          {
+            "collectionInstrumentId": "%s",
+            "mode": "CAWI",
+            "data": %s
+          }
+        ],
+        "personalizedCommunications": [
+          {
+            "communicationId": "68893406-b88f-49bb-badd-677c4e73324f",
+            "extCommunicationData": [
+              {
+                "key": "noticeLetterIntroduction",
+                "type": "string",
+                "value": "Pierre est sélectionné"
+              }
+            ]
+          }
+        ],
+        "address": {
+          "streetNumber": "130",
+          "repetitionIndex": "",
+          "streetType": "avenue",
+          "streetName": "du president John Fitzgerald Kennedy",
+          "addressSupplement": "",
+          "cityName": "Lille",
+          "zipCode": "59800",
+          "businessZipCode": "",
+          "businessZipCodeName": "",
+          "specialDistribution": "",
+          "countryCode": "",
+          "countryName": "France"
+        },
+        "addressComplement": {
+          "building": "Bâtiment A",
+          "floor": "3ème",
+          "staircase": "Escalier B",
+          "door": "Porte 2",
+          "elevator": true,
+          "cityPriorityDistrict": false
+        },
+        "contacts": [
+          {
+            "id": "123e4567-e89b-12d3-a456-426614174006",
+            "gender": "M",
+            "firstName": "Jean",
+            "lastName": "Dupont",
+            "dateOfBirth": "1985-06-15",
+            "function": "Comptable",
+            "businessName": "Raison sociale contact 1",
+            "rank": 1,
+            "phoneNumbers": [
+              {
+                "source": "DIRECTORY",
+                "favorite": false,
+                "number": "+33123456789"
+              },
+              {
+                "source": "INTERVIEWER",
+                "favorite": true,
+                "number": "+33198765432"
+              }
+            ],
+            "email": "jean.dupont@example.com",
+            "address": {
+              "streetNumber": "88",
+              "repetitionIndex": "",
+              "streetType": "avenue",
+              "streetName": "Verdier",
+              "addressSupplement": "",
+              "cityName": "Montrouge",
+              "zipCode": "92120",
+              "businessZipCode": "",
+              "businessZipCodeName": "",
+              "specialDistribution": "",
+              "countryCode": "",
+              "countryName": "France"
+            },
+            "webConnectionId": "CMPTCT1"
+          },
+          {
+            "id": "123e4567-e89b-12d3-a456-426614174007",
+            "gender": "MME",
+            "firstName": "Marie",
+            "lastName": "Durand",
+            "dateOfBirth": "1990-08-20",
+            "function": "Assistante",
+            "businessName": "Raison sociale contact 2",
+            "rank": 2,
+            "phoneNumbers": [
+              {
+                "source": "ADMINISTRATIVE",
+                "favorite": false,
+                "number": "+33234567890"
+              },
+              {
+                "source": "DIRECTORY",
+                "favorite": true,
+                "number": "+33209876543"
+              }
+            ],
+            "email": "marie.durand@example.com",
+            "address": {
+              "streetNumber": "15",
+              "repetitionIndex": "",
+              "streetType": "rue",
+              "streetName": "du general Hulot",
+              "addressSupplement": "",
+              "cityName": "Nancy",
+              "zipCode": "54000",
+              "businessZipCode": "",
+              "businessZipCodeName": "",
+              "specialDistribution": "",
+              "countryCode": "",
+              "countryName": "France"
+            },
+            "webConnectionId": "CMPTCT2"
+          }
+        ]
+      },
+      "aggregateType": "INTERROGATION"
+    }""";
 
     @BeforeEach
     void setup() {
+        personalizationMapper = new PersonalizationMapper(mapper);
         Locale.setDefault(Locale.US);
         interrogationBatchFakeService = new InterrogationBatchFakeService();
         publisher = new InterrogationFakePublisher();
-        consumer = new InterrogationQueueConsumer(mapper, publisher, interrogationBatchFakeService);
+        consumer = new InterrogationQueueConsumer(mapper, publisher, interrogationBatchFakeService, personalizationMapper);
     }
 
     @Test
     @DisplayName("Should create interrogation when message is valid")
     void ok() throws JMSException {
         // Given
-        String ok = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String ok = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData);
         when(commandMessage.getBody(String.class)).thenReturn(ok);
 
         // When
-        consumer.createInterrogation(commandMessage, session);
+        consumer.createInterrogation(commandMessage);
 
         // Then
         Interrogation interrogationBatchUsed = interrogationBatchFakeService.getInterrogationBatchUsed();
@@ -225,137 +248,51 @@ class InterrogationQueueConsumerTest {
     }
 
     @Test
-    @DisplayName("Should log error when additional field command")
-    @Disabled("'additionalProperty' is missing in Command JSON schema.")
-    void ShouldLogErrorWhenAdditionalFieldCommand(CapturedOutput output) throws JMSException {
-        // Given
-        additionalFieldCommand = "\"newFieldCommand\": true,";
-        String additionalFieldCommandMessage = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
-        // When and Then
-        // this test should fail since there is no "additionalProperties" in Command schema of modelefiliere 1.1.2-SNAPSHOT
-        // Note: "additionalProperties" default to true when missing in a JSON schema.
-        checkInvalidMessageError(additionalFieldCommandMessage, "IOException : Unrecognized field \"newFieldCommand\"", output);
-    }
-
-    @Disabled
-    @Test
-    @DisplayName("Should log error when additional field interrogation")
-    void ShouldLogErrorWhenAdditionalFieldInterrogation(CapturedOutput output) throws JMSException {
-        // Given
-        additionalFieldInterrogation = "\"newFieldInterrogation\": true,";
-        String additionalFieldInterrogationMessage = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
-        // When and Then
-        checkInvalidMessageError(additionalFieldInterrogationMessage, "$.payload: property 'newFieldInterrogation' is not defined in the schema and the schema does not allow additional properties", output);
-    }
-
-    @Test
     @DisplayName("Should log error when no correlation id in command message")
     void shouldLogErrorWhenNoCorrelationId(CapturedOutput output) throws JMSException {
         // Given
-        String invalidMessage = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, null, replyTo);
+        String invalidMessage = defaultBody.formatted(additionalFieldCommand, null, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData);
         // When and Then
-        checkInvalidMessageError(invalidMessage, "PropertyException : Missing or null field : 'correlationID'", output);
+        checkInvalidMessageError(invalidMessage, "Cannot process message !!! Exception : Missing or null field : 'correlationId'", output);
     }
 
     @Test
     @DisplayName("Should log error when no reply to in command message")
     void shouldLogErrorWhenNoReplyTo(CapturedOutput output) throws JMSException {
         // Given
-        String noReplyToMessage = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, null);
+        String noReplyToMessage = defaultBody.formatted(additionalFieldCommand, correlationId, null, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData);
         // When and Then
-        checkInvalidMessageError(noReplyToMessage, "PropertyException : Missing or null field : 'replyTo'", output);
+        checkInvalidMessageError(noReplyToMessage, "Cannot process message !!! Exception : Missing or null field : 'replyTo'", output);
     }
 
     @Test
     @DisplayName("Should log error when invalid json in command message")
     void shouldLogErrorWhenInvalidJsonMessageCommandMessage(CapturedOutput output) throws JMSException {
         // Given
-        String messagesBroker = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId + "\\", surveyUnitId, questionnaireId, correlationId, replyTo);
+        String messagesBroker = defaultBody.formatted(additionalFieldCommand, correlationId + "\\", replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData);
         when(commandMessage.getBody(String.class)).thenReturn(messagesBroker);
 
         // When
-        consumer.createInterrogation(commandMessage, session);
+        consumer.createInterrogation(commandMessage);
 
         // Then
         assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
-        assertThat(output).containsAnyOf(
-                "ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- JsonSchemaValidator",
-                "ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- IOException"
-        );
+        assertThat(output).contains("ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- Cannot process message !!!");
     }
 
     @Test
     @DisplayName("Should log error when invalid json in interrogation")
     void shouldLogErrorWhenInvalidJsonMessageInterrogation(CapturedOutput output) throws JMSException {
         // Given
-        String messagesBroker = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId + "\\", correlationId, replyTo);
+        String messagesBroker = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId + "\\", questionnaireData);
         when(commandMessage.getBody(String.class)).thenReturn(messagesBroker);
 
         // When
-        consumer.createInterrogation(commandMessage, session);
+        consumer.createInterrogation(commandMessage);
 
         // Then
         assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
-        assertThat(output).containsAnyOf(
-                "ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- JsonSchemaValidator",
-                "ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- IOException"
-        );
-    }
-
-    @Disabled
-    @Test
-    @DisplayName("Should log error when jms exception")
-    void shouldLogErrorWhenJMSException(CapturedOutput output) throws JMSException {
-        // Given
-        String exceptionMessage = "jms exception";
-        when(commandMessage.getBody(String.class)).thenThrow(new JMSException(exceptionMessage));
-
-        // When
-        consumer.createInterrogation(commandMessage, session);
-
-        // Then
-        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
-        assertThat(output).contains(exceptionMessage);
-    }
-
-    @Disabled
-    @Test
-    @DisplayName("Should publisher send business error when survey unit id is invalid")
-    void shouldLogErrorWhenInvalidSurveyUnitId() throws JMSException {
-        // Given
-        String messageNoSurveyUnitId = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, null, questionnaireId, correlationId, replyTo);
-        when(commandMessage.getBody(String.class)).thenReturn(messageNoSurveyUnitId);
-
-        // When
-        consumer.createInterrogation(commandMessage, session);
-
-        // Then
-        JMSOutputMessage responseMessage = publisher.getResponseSent();
-        String correlationPublisherId = publisher.getCorrelationIdUsed();
-        String replyQueue = publisher.getReplyQueueUsed();
-        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
-        assertThat(correlationPublisherId).isEqualTo(correlationId);
-        assertThat(replyQueue).isEqualTo("queueResponse");
-        assertThat(responseMessage.code()).isEqualTo(ResponseCode.TECHNICAL_ERROR.getCode());
-    }
-
-    @Disabled
-    @Test
-    @DisplayName("Should publisher send business error when interrogation command exception")
-    void shouldSendBusinessErrorWhenSurveyUnitCommandException() throws JMSException {
-        // Given
-        interrogationBatchFakeService.setShouldThrowInterrogationBatchException(true);
-        String message = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, null, questionnaireId, correlationId, replyTo);
-        when(commandMessage.getBody(String.class)).thenReturn(message);
-
-        // When
-        consumer.createInterrogation(commandMessage, session);
-
-        JMSOutputMessage responseMessage = publisher.getResponseSent();
-        String replyQueue = publisher.getReplyQueueUsed();
-        assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
-        assertThat(replyQueue).isEqualTo("queueResponse");
-        assertThat(responseMessage.code()).isEqualTo(ResponseCode.TECHNICAL_ERROR.getCode());
+        assertThat(output).contains("ERROR fr.insee.queen.jms.service.InterrogationQueueConsumer -- Cannot process message !!!");
     }
 
     private void checkInvalidMessageError(String invalidMessage, String invalidPropertyName, CapturedOutput output) throws JMSException {
@@ -363,7 +300,7 @@ class InterrogationQueueConsumerTest {
         when(commandMessage.getBody(String.class)).thenReturn(invalidMessage);
 
         // When
-        consumer.createInterrogation(commandMessage, session);
+        consumer.createInterrogation(commandMessage);
 
         // Then
         String expectedLogMessage = invalidPropertyName.formatted();
@@ -375,11 +312,11 @@ class InterrogationQueueConsumerTest {
     void throwInterrogationBatchException(CapturedOutput output) throws JMSException {
         // Given
         interrogationBatchFakeService.setShouldThrowInterrogationBatchException(true);
-        String msg = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String msg = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData);
         when(commandMessage.getBody(String.class)).thenReturn(msg);
 
         // When
-        consumer.createInterrogation(commandMessage, session);
+        consumer.createInterrogation(commandMessage);
 
         // Then
         JMSOutputMessage response = publisher.getResponseSent();
@@ -394,11 +331,11 @@ class InterrogationQueueConsumerTest {
     void throwSchemaValidationException(CapturedOutput output) throws JMSException {
         // Given
         interrogationBatchFakeService.setShouldThrowSchemaValidationException(true);
-        String msg = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String msg = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData);
         when(commandMessage.getBody(String.class)).thenReturn(msg);
 
         // When
-        consumer.createInterrogation(commandMessage, session);
+        consumer.createInterrogation(commandMessage);
 
         // Then
         JMSOutputMessage response = publisher.getResponseSent();
@@ -413,11 +350,11 @@ class InterrogationQueueConsumerTest {
     void throwEntityNotFoundException(CapturedOutput output) throws JMSException {
         // Given
         interrogationBatchFakeService.setShouldThrowEntityNotFoundException(true);
-        String msg = defaultBody.formatted(additionalFieldCommand, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, correlationId, replyTo);
+        String msg = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData);
         when(commandMessage.getBody(String.class)).thenReturn(msg);
 
         // When
-        consumer.createInterrogation(commandMessage, session);
+        consumer.createInterrogation(commandMessage);
 
         // Then
         JMSOutputMessage response = publisher.getResponseSent();
@@ -425,5 +362,119 @@ class InterrogationQueueConsumerTest {
         assertThat(publisher.getReplyQueueUsed()).isEqualTo(replyTo);
         assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
         assertThat(output).contains("EntityNotFoundException");
+    }
+
+    @Test
+    @DisplayName("Should send BUSINESS_ERROR when no CAWI questionnaire is present")
+    void shouldSendBusinessErrorWhenNoCawiQuestionnaire() throws JMSException {
+        // Given
+        String body = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData)
+                .replace("\"mode\": \"CAWI\"", "\"mode\": \"CAPI\"");
+        when(commandMessage.getBody(String.class)).thenReturn(body);
+
+        // When
+        consumer.createInterrogation(commandMessage);
+
+        // Then
+        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
+        JMSOutputMessage response = publisher.getResponseSent();
+        assertThat(response.code()).isEqualTo(ResponseCode.BUSINESS_ERROR.getCode());
+        assertThat(response.message()).contains("has no CAWI questionnaire");
+        assertThat(publisher.getReplyQueueUsed()).isEqualTo(replyTo);
+        assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
+    }
+
+    @Test
+    @DisplayName("Should send BUSINESS_ERROR when multiple CAWI questionnaires are present")
+    void shouldSendBusinessErrorWhenMultipleCawiQuestionnaires() throws JMSException {
+        // Given: prepend a second CAWI questionnaire before the existing one
+        String secondCawi = "{\"collectionInstrumentId\": \"other-id\", \"mode\": \"CAWI\", \"data\": {}},";
+        String body = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData)
+                .replace("\"questionnaires\": [\n", "\"questionnaires\": [\n" + secondCawi + "\n");
+        when(commandMessage.getBody(String.class)).thenReturn(body);
+
+        // When
+        consumer.createInterrogation(commandMessage);
+
+        // Then
+        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
+        JMSOutputMessage response = publisher.getResponseSent();
+        assertThat(response.code()).isEqualTo(ResponseCode.BUSINESS_ERROR.getCode());
+        assertThat(response.message()).contains("should not have 2 CAWI questionnaires");
+        assertThat(publisher.getReplyQueueUsed()).isEqualTo(replyTo);
+        assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
+    }
+
+    @Test
+    @DisplayName("Should send TECHNICAL_ERROR when interrogationId is absent in payload")
+    void shouldSendTechnicalErrorWhenInterrogationIdIsNull(CapturedOutput output) throws JMSException {
+        // Given — id absent (not required by schema) → null after deserialization → triggers toInterrogation guard
+        String body = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData)
+                .replace("\"id\": \"" + interrogationId + "\",", "");
+        when(commandMessage.getBody(String.class)).thenReturn(body);
+
+        // When
+        consumer.createInterrogation(commandMessage);
+
+        // Then
+        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
+        JMSOutputMessage response = publisher.getResponseSent();
+        assertThat(response.code()).isEqualTo(ResponseCode.TECHNICAL_ERROR.getCode());
+        assertThat(output).contains("InterrogationId is null");
+    }
+
+    @Test
+    @DisplayName("Should send TECHNICAL_ERROR when partitionId is null in payload")
+    void shouldSendTechnicalErrorWhenPartitionIdIsNull(CapturedOutput output) throws JMSException {
+        // Given — partitionId is required+uuid in schema, null fails type check → SchemaValidationException
+        String body = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData)
+                .replace("\"partitionId\": \"123e4567-e89b-12d3-a456-426614174000\"", "\"partitionId\": null");
+        when(commandMessage.getBody(String.class)).thenReturn(body);
+
+        // When
+        consumer.createInterrogation(commandMessage);
+
+        // Then
+        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
+        JMSOutputMessage response = publisher.getResponseSent();
+        assertThat(response.code()).isEqualTo(ResponseCode.TECHNICAL_ERROR.getCode());
+        assertThat(output).contains("JsonSchemaValidator");
+    }
+
+    @Test
+    @DisplayName("Should send TECHNICAL_ERROR when questionnaire data is absent")
+    void shouldSendTechnicalErrorWhenDataIsNotAnObject(CapturedOutput output) throws JMSException {
+        // Given — data absent (optional in schema) → getData() returns null → fails instanceof ObjectNode in toInterrogation
+        String body = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData)
+                .replaceAll(",\\s*\"data\":\\s*\\{\\}", "");
+        when(commandMessage.getBody(String.class)).thenReturn(body);
+
+        // When
+        consumer.createInterrogation(commandMessage);
+
+        // Then
+        assertThat(interrogationBatchFakeService.getInterrogationBatchUsed()).isNull();
+        JMSOutputMessage response = publisher.getResponseSent();
+        assertThat(response.code()).isEqualTo(ResponseCode.TECHNICAL_ERROR.getCode());
+        assertThat(output).contains("interrogation data is malformed");
+    }
+
+    @Test
+    @DisplayName("Should send TECHNICAL_ERROR when an unexpected runtime exception is thrown")
+    void shouldSendTechnicalErrorOnUnexpectedException(CapturedOutput output) throws JMSException {
+        // Given
+        interrogationBatchFakeService.setShouldThrowRuntimeException(true);
+        String msg = defaultBody.formatted(additionalFieldCommand, correlationId, replyTo, additionalFieldInterrogation, interrogationId, surveyUnitId, questionnaireId, questionnaireData);
+        when(commandMessage.getBody(String.class)).thenReturn(msg);
+
+        // When
+        consumer.createInterrogation(commandMessage);
+
+        // Then
+        JMSOutputMessage response = publisher.getResponseSent();
+        assertThat(response.code()).isEqualTo(ResponseCode.TECHNICAL_ERROR.getCode());
+        assertThat(publisher.getReplyQueueUsed()).isEqualTo(replyTo);
+        assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
+        assertThat(output).contains("Exception :");
     }
 }

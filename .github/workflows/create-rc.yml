@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: install model filiere
-        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+        run: mvn install:install-file -Dfile="$(pwd)/libs/modelefiliere-3.0.0-rc.4-springboot4.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=3.0.0-rc.4-springboot4 -Dpackaging=jar -DgeneratePom=true
 
       - name: Get version
         id: version
@@ -88,7 +88,7 @@ jobs:
           java-version: "25"
 
       - name: install model filiere
-        run: mvn install:install-file -Dfile="$(pwd)/queen-listener-jms/libs/modelefiliere-1.1.2-SNAPSHOT.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=1.1.2-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+        run: mvn install:install-file -Dfile="$(pwd)/libs/modelefiliere-3.0.0-rc.4-springboot4.jar" -DgroupId=fr.insee -DartifactId=modelefiliere -Dversion=3.0.0-rc.4-springboot4 -Dpackaging=jar -DgeneratePom=true
 
       - name: Build API
         run: mvn package -Dchangelist=-rc --no-transfer-progress

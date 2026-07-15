@@ -29,12 +29,4 @@ public record Interrogation(
         return new Interrogation(id, surveyUnitId, null, null,
                 personalization, data, stateData, null);
     }
-
-    public static Interrogation createFromAsync(String id, String surveyUnitId, ArrayNode personalization,
-                                       ObjectNode data,
-                                       StateData stateData, UUID  correlationId) {
-        return new Interrogation(id, surveyUnitId, null,
-                null, personalization, data,
-                stateData, correlationId);
-    }
 }

@@ -46,16 +46,18 @@ class PropertyValidatorTest {
         }
 
         @Test
-        @DisplayName("Accepts empty string (current behavior)")
-        void acceptsEmptyStringCurrently() throws Exception {
+        @DisplayName("Empty string -> PropertyException")
+        void emptyStringThrowsPropertyException() {
             // Given a JSON node with an empty string property
             JsonNode node = json("{\"empty\":\"\"}");
 
             // When calling textValue
-            String value = PropertyValidator.textValue(node, "empty");
-
-            // Then it should return an empty string without throwing an exception
-            assertEquals("", value);
+            // Then it should throw because blank strings are treated as missing
+            PropertyException ex = assertThrows(
+                    PropertyException.class,
+                    () -> PropertyValidator.textValue(node, "empty")
+            );
+            assertEquals("The field 'empty' must not be empty", ex.getMessage());
         }
     }
 

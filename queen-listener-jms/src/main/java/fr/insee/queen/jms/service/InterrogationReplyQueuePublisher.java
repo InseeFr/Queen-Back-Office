@@ -18,14 +18,14 @@ public class InterrogationReplyQueuePublisher implements InterrogationResponsePu
     private final JmsTemplate jmsQueuePublisher;
 
     public void send(String replyQueue, String correlationId, JMSOutputMessage responseMessage) {
-        log.info("Command {} - reply to queue {} - response code: {} - response message: {} - ",
+        log.info("Command {} - reply to queue '{}' - response code: {} - response message: {} - ",
                 correlationId, replyQueue, responseMessage.code(), responseMessage.message());
 
         String jsonResponse;
         try {
             jsonResponse = jsonMapper.writeValueAsString(responseMessage);
         } catch (JacksonException e) {
-            log.error("Command {} - Unable to process json response", correlationId);
+            log.error("Command '{}' - Unable to process json response", correlationId, e);
             return;
         }
 
@@ -35,6 +35,6 @@ public class InterrogationReplyQueuePublisher implements InterrogationResponsePu
             objectMessage.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
             return objectMessage;
         });
-        log.info("Command {} - sent", correlationId);
+        log.info("Command '{}' - sent", correlationId);
     }
 }
