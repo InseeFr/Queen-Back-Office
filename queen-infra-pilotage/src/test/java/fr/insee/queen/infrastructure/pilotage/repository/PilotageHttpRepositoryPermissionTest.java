@@ -1,7 +1,8 @@
 package fr.insee.queen.infrastructure.pilotage.repository;
 
+import fr.insee.queen.domain.group.gateway.GroupKindProvider;
+import fr.insee.queen.domain.group.model.GroupKind;
 import fr.insee.queen.domain.interrogation.model.InterrogationSummary;
-import fr.insee.queen.domain.pilotage.model.CollectionEnvironmentEnum;
 import fr.insee.queen.domain.pilotage.model.PermissionEnum;
 import fr.insee.queen.domain.pilotage.service.exception.PilotageApiException;
 import fr.insee.queen.infrastructure.pilotage.PilotageHttpRepository;
@@ -32,6 +33,7 @@ class PilotageHttpRepositoryPermissionTest {
 
     @BeforeEach
     void init() {
+        GroupKindProvider provider = () ->  GroupKind.PARTITION;
         RestTemplate restTemplate = new RestTemplate();
         mockServer = MockRestServiceServer.createServer(restTemplate);
         String groupIdRegexWithAlternativeHabilitationService = "((edt)|(EDT))(\\d|\\S){1,}";
@@ -41,7 +43,7 @@ class PilotageHttpRepositoryPermissionTest {
                 alternativeHabilitationServiceURL,
                 groupIdRegexWithAlternativeHabilitationService,
                 restTemplate,
-                CollectionEnvironmentEnum.WEB
+                provider
         );
     }
 

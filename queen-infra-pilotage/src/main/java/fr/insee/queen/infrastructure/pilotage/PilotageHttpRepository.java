@@ -1,5 +1,7 @@
 package fr.insee.queen.infrastructure.pilotage;
 
+import fr.insee.queen.domain.group.gateway.GroupKindProvider;
+import fr.insee.queen.domain.group.model.GroupKind;
 import fr.insee.queen.domain.pilotage.gateway.PilotageRepository;
 import fr.insee.queen.domain.pilotage.model.*;
 import fr.insee.queen.domain.pilotage.service.PilotageRole;
@@ -33,13 +35,13 @@ public class PilotageHttpRepository implements PilotageRepository {
     @Value("${feature.pilotage.alternative-habilitation.groupids-regex}")
     private final String groupIdRegexWithAlternativeHabilitationService;
     private final RestTemplate restTemplate;
-    @Value("${feature.collection.mode:WEB}")
-    private final CollectionEnvironmentEnum inputMode;
+    private final GroupKindProvider groupKindProvider;
 
     @Override
     public boolean isClosed(String groupId) {
+        GroupKind kind = groupKindProvider.getKind();
         final String uriPilotageFilter = UriComponentsBuilder.fromUriString(pilotageUrl)
-                .path("/campaigns/{id}/ongoing")
+                .pathSegment(kind.getPathPilotage(), "{id}", "ongoing")
                 .buildAndExpand(groupId)
                 .toUriString();
 
@@ -59,7 +61,13 @@ public class PilotageHttpRepository implements PilotageRepository {
         }
     }
 
+    /**
+     * TODO: get rid of this method after new synchronisation
+     * @deprecated this call should be remove after new pearl synchronisation
+     * @return pilotage interrogations for the current user
+     */
     @Override
+    @Deprecated(forRemoval = true)
     public List<PilotageInterrogation> getInterrogations() {
         try {
             final String uriPilotageFilter = pilotageUrl + API_PEARLJAM_SURVEYUNITS;

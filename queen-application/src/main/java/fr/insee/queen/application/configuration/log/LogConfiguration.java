@@ -2,6 +2,7 @@ package fr.insee.queen.application.configuration.log;
 
 import fr.insee.queen.application.configuration.auth.CustomAccessDeniedHandler;
 import fr.insee.queen.application.configuration.auth.CustomAuthenticationEntryPoint;
+import fr.insee.queen.application.configuration.properties.OidcProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,10 @@ public class LogConfiguration {
 
     @Bean
     public AuthenticationEntryPoint customAuthenticationEntryPoint(JsonMapper mapper,
-                                                                   LogInterceptor logInterceptor) {
-        return new CustomAuthenticationEntryPoint(logInterceptor, mapper);
+                                                                   LogInterceptor logInterceptor,
+                                                                   OidcProperties oidcProperties) {
+        InvalidTokenUserExtractor invalidTokenUserExtractor = new InvalidTokenUserExtractor(oidcProperties.principalAttribute());
+        return new CustomAuthenticationEntryPoint(invalidTokenUserExtractor, logInterceptor, mapper);
     }
 
     @Bean
