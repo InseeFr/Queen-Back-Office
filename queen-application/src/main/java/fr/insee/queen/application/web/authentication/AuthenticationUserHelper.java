@@ -10,6 +10,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -29,12 +32,14 @@ public class AuthenticationUserHelper implements AuthenticationHelper {
     }
 
     public boolean hasRole(AuthorityRoleEnum... roles) {
+        Set<String> targetAuthorities = Arrays.stream(roles)
+                .flatMap(role -> Stream.of(role.name(), role.securityRole()))
+                .collect(Collectors.toSet());
         return getAuthenticationPrincipal()
                 .getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .map(AuthorityRoleEnum::fromAuthority)
-                .anyMatch(role -> Arrays.asList(roles).contains(role));
+                .anyMatch(targetAuthorities::contains);
     }
 }
 
