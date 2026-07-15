@@ -27,7 +27,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import tools.jackson.core.exc.StreamReadException;
@@ -63,11 +63,11 @@ public class ExceptionControllerAdvice {
      *
      * @param ex      Exception catched
      * @param status  status linked with this exception
-     * @param shouldGenerateLog    should generate log
+     * @param shouldGenerateStackTraceLog    should generate stack trace log
      * @return the apierror object with linked status code
      */
-    private ProblemDetail generateResponseError(Exception ex, HttpStatus status, boolean shouldGenerateLog) {
-        return generateResponseError(ex, status, null, null, shouldGenerateLog);
+    private ProblemDetail generateResponseError(Exception ex, HttpStatus status, boolean shouldGenerateStackTraceLog) {
+        return generateResponseError(ex, status, null, null, shouldGenerateStackTraceLog);
     }
 
     /**
@@ -128,15 +128,13 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleMethodArgumentNotValid(
-            MethodArgumentNotValidException e,
-            WebRequest request) {
+            MethodArgumentNotValidException e) {
         return generateResponseError(e, HttpStatus.BAD_REQUEST, "Invalid parameters");
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail handleConstraintViolation(
-            ConstraintViolationException e,
-            WebRequest request) {
+            ConstraintViolationException e) {
         return generateResponseError(e, HttpStatus.BAD_REQUEST, "Invalid data");
     }
 
@@ -170,7 +168,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(StateDataInvalidTransitionException.class)
     public ProblemDetail stateDataInvalidTransitionExceptionException(StateDataInvalidTransitionException e) {
-        return generateResponseError(e, HttpStatus.CONFLICT);
+        return generateResponseError(e, HttpStatus.CONFLICT, false);
     }
 
     @ExceptionHandler(AuthenticationTokenException.class)
@@ -235,12 +233,19 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(StateDataInvalidDateException.class)
     public ProblemDetail stateDataException(StateDataInvalidDateException e) {
-        return generateResponseError(e, HttpStatus.CONFLICT);
+        return generateResponseError(e, HttpStatus.CONFLICT, false);
     }
 
     @ExceptionHandler(RestClientException.class)
     public ProblemDetail exceptions(RestClientException e) {
         return generateResponseError(e, HttpStatus.INTERNAL_SERVER_ERROR, ERROR_OCCURRED_LABEL);
+    }
+
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    public ProblemDetail asyncRequestNotUsable(AsyncRequestNotUsableException e) {
+        // a problem detail is returned but client will not receive the response as the request is not usable anymore
+        // client disconnected, broken pipe, ...
+        return generateResponseError(e, HttpStatus.CONFLICT, false);
     }
 
     @ExceptionHandler(Exception.class)
