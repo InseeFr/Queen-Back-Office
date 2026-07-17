@@ -44,13 +44,13 @@ public class InterrogationQueueConsumer {
     public void createInterrogation(Message message) {
         JsonNode root;
         String replyQueue;
-        String correlationId;
+        UUID correlationId;
 
         try {
             root = jsonMapper.readTree(message.getBody(String.class));
             replyQueue = textValue(root, "replyTo");
-            correlationId = textValue(root, "correlationId");
-        } catch (JacksonException | PropertyException | JMSException ex) {
+            correlationId = UUID.fromString(textValue(root, "correlationId"));
+        } catch (JacksonException | PropertyException | IllegalArgumentException | JMSException ex) {
             log.error("Cannot process message !!! Exception : {}", ex.getMessage(), ex);
             return;
         }
@@ -72,7 +72,7 @@ public class InterrogationQueueConsumer {
                     jsonMapper
             );
             QuestionnaireDto questionnaire = extractCawiQuestionnaire(interrogationCommand);
-            Interrogation interrogation = toInterrogation(command, interrogationCommand, questionnaire, correlationId);
+            Interrogation interrogation = toInterrogation(correlationId, interrogationCommand, questionnaire);
             interrogationBatchService.saveInterrogation(interrogation);
 
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.CREATED);
@@ -112,10 +112,9 @@ public class InterrogationQueueConsumer {
         return cawiQuestionnaires.getFirst();
     }
 
-    private Interrogation toInterrogation(CommandRequestDto command,
+    private Interrogation toInterrogation(UUID correlationId,
                                           InterrogationDto interrogationCommand,
-                                          QuestionnaireDto questionnaire,
-                                          String correlationId) throws ValidationException{
+                                          QuestionnaireDto questionnaire) throws ValidationException{
         UUID interrogationId = interrogationCommand.getId();
         if (interrogationId == null) {
             throw new ValidationException("InterrogationId is null for correlation ID %s".formatted(correlationId));
@@ -136,6 +135,6 @@ public class InterrogationQueueConsumer {
                 personalizationArrayNode,
                 data,
                 null,
-                command.getCorrelationId());
+                correlationId);
     }
 }

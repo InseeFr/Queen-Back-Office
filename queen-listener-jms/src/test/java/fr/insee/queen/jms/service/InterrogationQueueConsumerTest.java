@@ -19,6 +19,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Locale;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -39,7 +40,7 @@ class InterrogationQueueConsumerTest {
     private final String interrogationId = "a1b2c3d4-e5f6-4789-abcd-112233445566";
     private final String surveyUnitId = "0f1e2d3c-4b5a-6978-9123-abcdefabcdef";
     private final String questionnaireId = "questionnaire-id";
-    private final String correlationId = "c7f0a0b1-9d8c-4e7f-b6a5-1234567890ab";
+    private final UUID correlationId = UUID.fromString("c7f0a0b1-9d8c-4e7f-b6a5-1234567890ab");
     private final String replyTo = "queueResponse";
     private final String questionnaireData = "{}";
 
@@ -241,7 +242,7 @@ class InterrogationQueueConsumerTest {
 
         JMSOutputMessage responseMessage = publisher.getResponseSent();
         String replyQueue = publisher.getReplyQueueUsed();
-        assertThat(publisher.getCorrelationIdUsed()).isEqualTo("c7f0a0b1-9d8c-4e7f-b6a5-1234567890ab");
+        assertThat(publisher.getCorrelationIdUsed()).isEqualTo(correlationId);
         assertThat(replyQueue).isEqualTo("queueResponse");
         assertThat(responseMessage.code()).isEqualTo(ResponseCode.CREATED.getCode());
         assertThat(responseMessage.message()).isEqualTo(ResponseCode.CREATED.name());
