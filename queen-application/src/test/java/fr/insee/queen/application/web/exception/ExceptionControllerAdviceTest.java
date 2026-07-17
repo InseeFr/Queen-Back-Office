@@ -14,6 +14,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import tools.jackson.core.exc.StreamReadException;
@@ -109,7 +110,7 @@ class ExceptionControllerAdviceTest {
         MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
 
         // When
-        ProblemDetail pd = advice.handleMethodArgumentNotValid(ex, null);
+        ProblemDetail pd = advice.handleMethodArgumentNotValid(ex);
 
         // Then
         assertThat(pd.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -123,7 +124,7 @@ class ExceptionControllerAdviceTest {
         ConstraintViolationException ex = new ConstraintViolationException("violation", Set.of());
 
         // When
-        ProblemDetail pd = advice.handleConstraintViolation(ex, null);
+        ProblemDetail pd = advice.handleConstraintViolation(ex);
 
         // Then
         assertThat(pd.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -215,6 +216,21 @@ class ExceptionControllerAdviceTest {
                 .contains("Error when deserializing JSON")
                 .contains("expected types")
                 .contains("[line: 4, column: 12]");
+    }
+
+    @Test
+    @DisplayName("AsyncRequestNotUsableException → 409 CONFLICT with exception message (client disconnected)")
+    void asyncRequestNotUsable_returns_409() {
+        // Given
+        AsyncRequestNotUsableException ex = mock(AsyncRequestNotUsableException.class);
+        when(ex.getMessage()).thenReturn("client disconnected");
+
+        // When
+        ProblemDetail pd = advice.asyncRequestNotUsable(ex);
+
+        // Then
+        assertThat(pd.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
+        assertThat(pd.getDetail()).isEqualTo("client disconnected");
     }
 
     @Test

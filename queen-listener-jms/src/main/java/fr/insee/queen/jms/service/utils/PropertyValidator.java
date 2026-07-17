@@ -8,19 +8,28 @@ import fr.insee.queen.jms.exception.PropertyException;
  * if the property is not found, an exception is raised
  */
 public class PropertyValidator {
+    private PropertyValidator() {
+        throw new  IllegalStateException("Utility class");
+    }
+
     /**
-     * @param node the node
+     * @param rootNode the node
      * @param field the key for node
      * @throws PropertyException exception raised when property is invalid
      */
-    public static String textValue(JsonNode node, String field) throws PropertyException {
-        JsonNode n = node.get(field);
-        if (n == null || n.isNull() || n.asString().equals("null")) {
+    public static String textValue(JsonNode rootNode, String field) throws PropertyException {
+        JsonNode fieldNode = rootNode.get(field);
+        if (fieldNode == null || fieldNode.isNull() || fieldNode.asString().equals("null")) {
             throw new PropertyException("Missing or null field : '" + field + "'");
         }
-        if (!n.isString()) {
-            throw new PropertyException("The field '" + field + "' must be a string (type found : " + n.getNodeType() + ")");
+
+        if (!fieldNode.isString()) {
+            throw new PropertyException("The field '" + field + "' must be a string (type found : " + fieldNode.getNodeType() + ")");
         }
-        return n.asString();
+        String fieldValue = fieldNode.asString();
+        if(fieldValue.isBlank()) {
+            throw new PropertyException("The field '" + field + "' must not be empty");
+        }
+        return fieldNode.asString();
     }
 }

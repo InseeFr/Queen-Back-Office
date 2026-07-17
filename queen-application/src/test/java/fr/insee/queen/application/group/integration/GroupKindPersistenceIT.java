@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @SpringBootTest
 @Transactional
-class GroupKindPersistenceTest {
+class GroupKindPersistenceIT {
 
     @Autowired
     private GroupJpaRepository groupJpaRepository;

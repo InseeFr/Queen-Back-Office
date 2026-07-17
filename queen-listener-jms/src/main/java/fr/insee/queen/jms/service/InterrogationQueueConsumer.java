@@ -1,31 +1,32 @@
 package fr.insee.queen.jms.service;
 
+import fr.insee.queen.jms.exception.ValidationException;
+import fr.insee.modelefiliere.*;
+import jakarta.jms.JMSException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
-import tools.jackson.databind.node.ObjectNode;
 import fr.insee.jms.validation.JsonSchemaValidator;
 import fr.insee.jms.validation.SchemaType;
-import fr.insee.modelefiliere.CommandDto;
 import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 import fr.insee.queen.domain.interrogation.service.InterrogationBatchService;
 import fr.insee.queen.domain.interrogation.service.exception.InterrogationBatchException;
 import fr.insee.queen.jms.exception.PropertyException;
 import fr.insee.queen.jms.exception.SchemaValidationException;
-import fr.insee.queen.jms.model.InterrogationAsyncInput;
+import fr.insee.queen.jms.mapper.PersonalizationMapper;
 import fr.insee.queen.jms.model.JMSOutputMessage;
 import fr.insee.queen.jms.model.ResponseCode;
-import jakarta.jms.JMSException;
 import jakarta.jms.Message;
-import jakarta.jms.Session;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import static fr.insee.queen.jms.service.utils.PropertyValidator.textValue;
@@ -37,62 +38,103 @@ public class InterrogationQueueConsumer {
     private final JsonMapper jsonMapper;
     private final InterrogationResponsePublisher replyQueuePublisher;
     private final InterrogationBatchService interrogationBatchService;
+    private final PersonalizationMapper personalizationMapper;
 
     @JmsListener(destination = "${broker.queue.interrogation.request}")
-    public void createInterrogation(Message message, Session session) throws JMSException {
-        String replyQueue=null;
-        String correlationId=null;
+    public void createInterrogation(Message message) {
+        JsonNode root;
+        String replyQueue;
+        UUID correlationId;
+
+        try {
+            root = jsonMapper.readTree(message.getBody(String.class));
+            replyQueue = textValue(root, "replyTo");
+            correlationId = UUID.fromString(textValue(root, "correlationId"));
+        } catch (JacksonException | PropertyException | IllegalArgumentException | JMSException ex) {
+            log.error("Cannot process message !!! Exception : {}", ex.getMessage(), ex);
+            return;
+        }
+
         JMSOutputMessage responseMessage;
         try {
-            String jsonString = message.getBody(String.class);
-            // ---
-            JsonNode root = jsonMapper.readTree(jsonString);
-
-            replyQueue = textValue(root, "replyTo");
-            correlationId = textValue(root, "correlationID");
-
-            CommandDto command = JsonSchemaValidator.readAndValidateFromClasspath(
+            CommandRequestDto command = JsonSchemaValidator.readAndValidateFromClasspath(
                     root,
                     SchemaType.PROCESS_MESSAGE.getSchemaFileName(),
-                    CommandDto.class,
+                    CommandRequestDto.class,
                     jsonMapper
             );
             log.debug(command.toString());
 
-            // TODO personalization
-            ArrayNode personalization = jsonMapper.createArrayNode();
-
-            // TODO identifier le questionnaire de manière unique
-            ObjectNode data = jsonMapper.convertValue(command.getPayload().get("TODO"), ObjectNode.class);
-
-            Interrogation interrogation = InterrogationAsyncInput.toModel(new InterrogationAsyncInput(command.getPayload().get("interrogationId").toString(),
-                                                                                            command.getPayload().get("surveyUnitId").toString(),
-                                                                                            "questionnaireId",
-                                                                                            personalization,
-                                                                                            data,
-                                                                                            UUID.randomUUID()), "CampaignId");
-
-            // TODO saveInterrogation
+            InterrogationDto interrogationCommand = JsonSchemaValidator.readAndValidateFromClasspath(
+                    root.get("payload"),
+                    SchemaType.INTERROGATION.getSchemaFileName(),
+                    InterrogationDto.class,
+                    jsonMapper
+            );
+            QuestionnaireDto questionnaire = extractCawiQuestionnaire(interrogationCommand);
+            Interrogation interrogation = toInterrogation(correlationId, interrogationCommand, questionnaire);
             interrogationBatchService.saveInterrogation(interrogation);
 
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.CREATED);
 
         } catch (InterrogationBatchException ibe) {
-            log.error("InterrogationBatchException : {}", ibe.getMessage());
+            log.error("InterrogationBatchException : {}", ibe.getMessage(), ibe);
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.BUSINESS_ERROR, ibe.getMessage());
         } catch (SchemaValidationException jsv) {
-            log.error("JsonSchemaValidator : {}", jsv.getMessage());
+            log.error("JsonSchemaValidator : {}", jsv.getMessage(), jsv);
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.TECHNICAL_ERROR, jsv.getMessage());
         } catch (JacksonException | IOException ioe) {
-            log.error("IOException : {}", ioe.getMessage());
+            log.error("IOException : {}", ioe.getMessage(), ioe);
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.TECHNICAL_ERROR, ioe.getMessage());
-        }catch (EntityNotFoundException enfe) {
-            log.error("EntityNotFoundException : {}", enfe.getMessage());
+        } catch (EntityNotFoundException enfe) {
+            log.error("EntityNotFoundException : {}", enfe.getMessage(), enfe);
             responseMessage = JMSOutputMessage.createResponse(ResponseCode.NOT_FOUND, enfe.getMessage());
-        } catch (PropertyException pe) {
-            log.error("PropertyException : {}", pe.getMessage());
-            responseMessage = JMSOutputMessage.createResponse(ResponseCode.TECHNICAL_ERROR, pe.getMessage());
+        } catch (ValidationException ex) {
+            log.error("ValidationException : {}", ex.getMessage(), ex);
+            responseMessage = JMSOutputMessage.createResponse(ResponseCode.TECHNICAL_ERROR, ex.getMessage());
+        } catch (Exception ex) {
+            log.error("Exception : {}", ex.getMessage(), ex);
+            responseMessage = JMSOutputMessage.createResponse(ResponseCode.TECHNICAL_ERROR, ex.getMessage());
         }
         replyQueuePublisher.send(replyQueue, correlationId, responseMessage);
+    }
+
+    private QuestionnaireDto extractCawiQuestionnaire(InterrogationDto interrogationCommand) {
+        List<QuestionnaireDto> cawiQuestionnaires = interrogationCommand.getQuestionnaires().stream()
+                .filter(q -> ModeDto.CAWI.equals(q.getMode()))
+                .toList();
+        if (cawiQuestionnaires.isEmpty()) {
+            throw new InterrogationBatchException("Interrogation %s has no CAWI questionnaire".formatted(interrogationCommand.getId()));
+        }
+        if (cawiQuestionnaires.size() > 1) {
+            throw new InterrogationBatchException("Interrogation %s should not have 2 CAWI questionnaires".formatted(interrogationCommand.getId()));
+        }
+        return cawiQuestionnaires.getFirst();
+    }
+
+    private Interrogation toInterrogation(UUID correlationId,
+                                          InterrogationDto interrogationCommand,
+                                          QuestionnaireDto questionnaire) throws ValidationException{
+        UUID interrogationId = interrogationCommand.getId();
+        if (interrogationId == null) {
+            throw new ValidationException("InterrogationId is null for correlation ID %s".formatted(correlationId));
+        }
+        UUID partitioningId = interrogationCommand.getPartitionId();
+        if (partitioningId == null) {
+            throw new ValidationException("partitioning id is null for correlation ID %s".formatted(correlationId));
+        }
+        if (!(questionnaire.getData() instanceof ObjectNode data)) {
+            throw new ValidationException("interrogation data is malformed for correlation ID %s".formatted(correlationId));
+        }
+        ArrayNode personalizationArrayNode = personalizationMapper.toArrayNode(interrogationCommand);
+        return new Interrogation(
+                interrogationId.toString(),
+                interrogationCommand.getUsualSurveyUnitId(),
+                partitioningId.toString(),
+                questionnaire.getCollectionInstrumentId(),
+                personalizationArrayNode,
+                data,
+                null,
+                correlationId);
     }
 }

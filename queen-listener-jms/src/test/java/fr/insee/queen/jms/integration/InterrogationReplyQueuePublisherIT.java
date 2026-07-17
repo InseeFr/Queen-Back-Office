@@ -37,21 +37,19 @@ class InterrogationReplyQueuePublisherIT {
 
     @Test
     void send_should_publish_ObjectMessage_with_correlationId_and_json_payload() throws Exception {
-        // Arrange
-        String correlationId = UUID.randomUUID().toString();
-        // Adaptez si votre JMSOutputMessage a un autre constructeur
+        // Given
+        UUID correlationId = UUID.randomUUID();
         JMSOutputMessage response = new JMSOutputMessage(200, "OK");
 
-        // Act
+        // When
         publisher.send(REPLY_QUEUE, correlationId, response);
 
-        // Assert : on lit brut le message déposé sur la file
+        // Then
         Message msg = jmsTemplate.receive(REPLY_QUEUE);
         assertThat(msg).as("Le message doit être présent dans la file").isNotNull();
-        assertThat(msg.getJMSCorrelationID()).isEqualTo(correlationId);
+        assertThat(msg.getJMSCorrelationID()).isEqualTo(correlationId.toString());
         assertThat(msg.getJMSDeliveryMode()).isEqualTo(DeliveryMode.PERSISTENT);
 
-        // Le publisher envoie un ObjectMessage contenant une String JSON
         assertThat(msg).isInstanceOf(ObjectMessage.class);
         String json = (String) ((ObjectMessage) msg).getObject();
 

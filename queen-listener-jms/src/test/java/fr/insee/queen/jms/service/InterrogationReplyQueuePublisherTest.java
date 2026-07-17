@@ -16,6 +16,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Locale;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,7 +47,7 @@ class InterrogationReplyQueuePublisherTest {
     void shouldLogInfoAndSendMessageSuccessfully(CapturedOutput output) throws Exception {
         // Given
         String replyQueue = "replyQueue";
-        String correlationId = "12345";
+        UUID correlationId = UUID.randomUUID();
         ResponseCode responseCode = ResponseCode.CREATED;
         JMSOutputMessage responseMessage = JMSOutputMessage.createResponse(responseCode);
         String jsonResponse = "{\"code\":\""
@@ -58,7 +59,7 @@ class InterrogationReplyQueuePublisherTest {
         surveyUnitReplyQueuePublisher.send(replyQueue, correlationId, responseMessage);
 
         // Then
-        assertThat(output).contains("Command " + correlationId + " - sent");
+        assertThat(output).contains("Command '" + correlationId + "' - sent");
         verify(jmsQueuePublisher).send(eq(replyQueue), any());
     }
 
@@ -67,7 +68,7 @@ class InterrogationReplyQueuePublisherTest {
     void shouldLogErrorWhenJsonProcessingExceptionOccurs(CapturedOutput output) throws Exception {
         // Given
         String replyQueue = "replyQueue";
-        String correlationId = "12345";
+        UUID correlationId = UUID.randomUUID();
         JMSOutputMessage responseMessage = JMSOutputMessage.createResponse(ResponseCode.CREATED);
         when(jsonMapper.writeValueAsString(responseMessage)).thenThrow(JacksonException.class);
 
@@ -75,7 +76,7 @@ class InterrogationReplyQueuePublisherTest {
         surveyUnitReplyQueuePublisher.send(replyQueue, correlationId, responseMessage);
 
         // Then
-        assertThat(output).contains("Command " + correlationId + " - Unable to process json response");
+        assertThat(output).contains("Command '" + correlationId + "' - Unable to process json response");
         // Ensure that the message was not sent because of the exception
         verify(jmsQueuePublisher, never()).send(anyString(), any());
     }
