@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -90,6 +91,50 @@ class QuestionnaireLeafStatesUpdatedEventConsumerTest {
         assertThat(savedStateData.leafStates()).hasSize(2);
         assertThat(savedStateData.leafStates().get(0).state()).isEqualTo("INIT");
         assertThat(savedStateData.leafStates().get(1).state()).isEqualTo("COMPLETED");
+    }
+
+    @Test
+    void shouldKeepLeafStateWithNullStateAtItsPositionInTheList() throws StateDataInvalidDateException {
+        // Given a leaf nobody has started yet, sent between two started leaves.
+        // leafStates is positional (no leaf identifier): dropping an entry would shift
+        // every following leaf onto the wrong person in the articulation table.
+        StateData existingStateData = new StateData(StateDataType.INIT, OLD_TIME, "3");
+        when(stateDataService.findStateData(INTERROGATION_ID)).thenReturn(Optional.of(existingStateData));
+
+        EventPayloadLeafStatesInnerDto startedLeaf = new EventPayloadLeafStatesInnerDto();
+        startedLeaf.setState(EventPayloadLeafStatesInnerDto.StateEnum.INIT);
+        startedLeaf.setDate(Instant.ofEpochMilli(LEAF_STATE_DATE));
+
+        EventPayloadLeafStatesInnerDto notStartedLeaf = new EventPayloadLeafStatesInnerDto();
+        notStartedLeaf.setState(null);
+        notStartedLeaf.setDate(Instant.ofEpochMilli(LEAF_STATE_DATE + 1000));
+
+        EventPayloadLeafStatesInnerDto completedLeaf = new EventPayloadLeafStatesInnerDto();
+        completedLeaf.setState(EventPayloadLeafStatesInnerDto.StateEnum.COMPLETED);
+        completedLeaf.setDate(Instant.ofEpochMilli(LEAF_STATE_DATE + 2000));
+
+        EventPayloadDto payload = new EventPayloadDto();
+        payload.setInterrogationId(INTERROGATION_ID);
+        payload.setLeafStates(List.of(startedLeaf, notStartedLeaf, completedLeaf));
+
+        EventDto eventDto = new EventDto();
+        eventDto.setEventType(EventDto.EventTypeEnum.QUESTIONNAIRE_LEAF_STATES_UPDATED);
+        eventDto.setCorrelationId(CORRELATION_ID);
+        eventDto.setPayload(payload);
+
+        // When
+        consumer.consume(eventDto);
+
+        // Then
+        ArgumentCaptor<StateData> stateDataCaptor = ArgumentCaptor.forClass(StateData.class);
+        verify(stateDataService).saveStateData(eq(INTERROGATION_ID), stateDataCaptor.capture(), eq(false));
+
+        assertThat(stateDataCaptor.getValue().leafStates())
+                .extracting(LeafState::state, LeafState::date)
+                .containsExactly(
+                        tuple("INIT", LEAF_STATE_DATE),
+                        tuple(null, LEAF_STATE_DATE + 1000),
+                        tuple("COMPLETED", LEAF_STATE_DATE + 2000));
     }
 
     @Test

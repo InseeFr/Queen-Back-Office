@@ -18,7 +18,10 @@ public class LeafStateDB {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 20)
+    /**
+     * The state of the leaf, null meaning the leaf has not been started yet
+     */
+    @Column(length = 20)
     private String state;
 
     @Column(nullable = false)

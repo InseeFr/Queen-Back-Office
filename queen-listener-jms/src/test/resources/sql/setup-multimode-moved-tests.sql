@@ -4,8 +4,8 @@ DELETE FROM outbox;
 DELETE FROM inbox;
 
 -- Clean up existing test interrogations
-DELETE FROM state_data WHERE interrogation_id IN ('MOVED-001', 'MOVED-NEW-001', 'MOVED-LOCKED-001', 'MOVED-UNLOCKED-001', 'INT-001', 'INT-002', 'INT-003', 'SUB-001', 'LEAF-001', 'MULTI-1', 'MULTI-2', 'MULTI-3', 'DUP-001');
-DELETE FROM interrogation WHERE id IN ('MOVED-001', 'MOVED-NEW-001', 'MOVED-LOCKED-001', 'MOVED-UNLOCKED-001', 'INT-001', 'INT-002', 'INT-003', 'SUB-001', 'LEAF-001', 'MULTI-1', 'MULTI-2', 'MULTI-3', 'DUP-001');
+DELETE FROM state_data WHERE interrogation_id IN ('MOVED-001', 'MOVED-NEW-001', 'MOVED-LOCKED-001', 'MOVED-UNLOCKED-001', 'INT-001', 'INT-002', 'INT-003', 'SUB-001', 'LEAF-001', 'LEAF-NULL-001', 'MULTI-1', 'MULTI-2', 'MULTI-3', 'DUP-001');
+DELETE FROM interrogation WHERE id IN ('MOVED-001', 'MOVED-NEW-001', 'MOVED-LOCKED-001', 'MOVED-UNLOCKED-001', 'INT-001', 'INT-002', 'INT-003', 'SUB-001', 'LEAF-001', 'LEAF-NULL-001', 'MULTI-1', 'MULTI-2', 'MULTI-3', 'DUP-001');
 
 -- Insert test campaign if not exists
 INSERT INTO campaign(id, label, sensitivity)
@@ -29,6 +29,7 @@ VALUES
     ('INT-003', 'SU-INT-003', 'TEST-CAMPAIGN', 'test-questionnaire', null, false),
     ('SUB-001', 'SU-SUB-001', 'TEST-CAMPAIGN', 'test-questionnaire', null, false),
     ('LEAF-001', 'SU-LEAF-001', 'TEST-CAMPAIGN', 'test-questionnaire', null, false),
+    ('LEAF-NULL-001', 'SU-LEAF-NULL-001', 'TEST-CAMPAIGN', 'test-questionnaire', null, false),
     ('MULTI-1', 'SU-MULTI-1', 'TEST-CAMPAIGN', 'test-questionnaire', null, false),
     ('MULTI-2', 'SU-MULTI-2', 'TEST-CAMPAIGN', 'test-questionnaire', null, false),
     ('MULTI-3', 'SU-MULTI-3', 'TEST-CAMPAIGN', 'test-questionnaire', null, false),
@@ -45,3 +46,7 @@ VALUES (gen_random_uuid(), '1', extract(epoch from now()) * 1000, 'INIT', 'MOVED
 -- Insert initial state data for MOVED-UNLOCKED-001 (unlocked interrogation)
 INSERT INTO state_data(id, current_page, date, state, interrogation_id)
 VALUES (gen_random_uuid(), '1', extract(epoch from now()) * 1000, 'INIT', 'MOVED-UNLOCKED-001');
+
+-- Insert initial state data for LEAF-NULL-001 (leaf states carrying a null state)
+INSERT INTO state_data(id, current_page, date, state, interrogation_id)
+VALUES (gen_random_uuid(), '1', extract(epoch from now()) * 1000, 'INIT', 'LEAF-NULL-001');

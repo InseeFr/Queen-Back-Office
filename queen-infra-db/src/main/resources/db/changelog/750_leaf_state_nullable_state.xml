@@ -1,0 +1,15 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <!--
+        A leaf state of null means "not started", the same convention as state_data.state,
+        which is nullable. The producer (Lunatic / stromae-dsfr) legitimately sends
+        "state": null for a leaf nobody has started yet, so the NOT NULL constraint
+        rejected valid events.
+    -->
+    <changeSet author="Emmanuel Demey" id="750-1">
+        <dropNotNullConstraint tableName="leaf_state" columnName="state" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+</databaseChangeLog>

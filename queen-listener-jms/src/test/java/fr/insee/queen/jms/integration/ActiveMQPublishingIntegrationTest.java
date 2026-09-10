@@ -2,6 +2,7 @@ package fr.insee.queen.jms.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.insee.queen.domain.interrogation.model.LeafState;
 import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.StateDataService;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.awaitility.Awaitility.await;
 
 /**
@@ -726,6 +729,65 @@ class ActiveMQPublishingIntegrationTest extends AbstractIntegrationTest {
         // Verify outbox event is marked as processed
         OutboxDB processed = eventsJpaRepository.findById(eventId).orElseThrow();
         assertThat(processed.getProcessedDate()).isNotNull();
+    }
+
+    @Test
+    void shouldPersistLeafStateWithNullStateWhenLeafIsNotStarted() {
+        // Given: an interrogation with state data but no leaf state yet
+        String interrogationId = "LEAF-NULL-001";
+
+        var initialState = stateDataService.findStateData(interrogationId);
+        assertThat(initialState).isPresent();
+        assertThat(initialState.get().leafStates()).isEmpty();
+
+        // When: an event carries a leaf whose state is null (leaf not started yet)
+        UUID eventId = UUID.randomUUID();
+        long notStartedLeafDate = System.currentTimeMillis() - 10000;
+        long completedLeafDate = System.currentTimeMillis() - 5000;
+
+        ObjectNode payload = createEventPayload(
+                "QUESTIONNAIRE_LEAF_STATES_UPDATED",
+                "QUESTIONNAIRE",
+                builder -> {
+                    builder.put("interrogationId", interrogationId);
+                    builder.put("mode", "CAWI");
+
+                    var leafStatesArray = objectMapper.createArrayNode();
+
+                    var notStartedLeaf = objectMapper.createObjectNode();
+                    notStartedLeaf.putNull("state");
+                    notStartedLeaf.put("date", Instant.ofEpochMilli(notStartedLeafDate).toString());
+                    leafStatesArray.add(notStartedLeaf);
+
+                    var completedLeaf = objectMapper.createObjectNode();
+                    completedLeaf.put("state", "COMPLETED");
+                    completedLeaf.put("date", Instant.ofEpochMilli(completedLeafDate).toString());
+                    leafStatesArray.add(completedLeaf);
+
+                    builder.set("leafStates", leafStatesArray);
+                }
+        );
+
+        OutboxDB outboxEvent = new OutboxDB(eventId, payload);
+        outboxEvent.setCreatedDate(LocalDateTime.now());
+        eventsJpaRepository.save(outboxEvent);
+
+        // Then: both leaves are persisted, the not started one keeping its null state
+        await()
+                .atMost(25, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    var updatedState = stateDataService.findStateData(interrogationId);
+                    assertThat(updatedState).isPresent();
+                    assertThat(updatedState.get().leafStates()).hasSize(2);
+                });
+
+        var leafStates = stateDataService.findStateData(interrogationId).orElseThrow().leafStates();
+        assertThat(leafStates)
+                .extracting(LeafState::state, LeafState::date)
+                .containsExactlyInAnyOrder(
+                        tuple(null, notStartedLeafDate),
+                        tuple("COMPLETED", completedLeafDate));
     }
 
     @Test
