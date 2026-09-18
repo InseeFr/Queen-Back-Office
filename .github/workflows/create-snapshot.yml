@@ -11,6 +11,7 @@ jobs:
     outputs:
       branch: ${{ steps.extract_branch.outputs.branch }}
       clean_branch: ${{ steps.extract_branch.outputs.clean_branch }}
+      snapshot-version: ${{ steps.version-step.outputs.version }}
     steps:
       - name: Extract branch name
         shell: bash
@@ -26,6 +27,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.extract_branch.outputs.branch }}
+
+      - name: Get source version
+        id: version-step
+        run: echo "version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -44,6 +49,12 @@ jobs:
         with:
           name: app-jar
           path: queen-application/target/*.jar
+
+      - name: Upload JMS jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: jms-jar
+          path: queen-listener-jms/target/*.jar
 
   docker:
     needs:
@@ -64,5 +75,31 @@ jobs:
           name: inseefr/queen-back-office
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          tags: "snapshot-${{ needs.build-snapshot.outputs.clean_branch }}"
+          tags: ${{ needs.build-snapshot.outputs.snapshot-version }}
           workdir: queen-application
+
+  docker-jms:
+    needs:
+      - build-snapshot
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: listener-jms
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download uploaded jar
+        uses: actions/download-artifact@v4
+        with:
+          name: jms-jar
+          path: queen-listener-jms/target/
+
+      - name: Publish to Docker Hub
+        uses: elgohr/Publish-Docker-Github-Action@v5
+        with:
+          name: inseefr/queen-back-office
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          default_branch: ${{ github.ref }}
+          tags: ${{ needs.build-snapshot.outputs.snapshot-version }}-jms
+          workdir: queen-listener-jms
