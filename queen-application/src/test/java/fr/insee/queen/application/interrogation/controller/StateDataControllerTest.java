@@ -53,7 +53,7 @@ class StateDataControllerTest {
     @DisplayName("Should throw exception when role is reviewer and campaign is sensitive")
     void testUpdateStateDataException() {
         // given
-        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0");
+        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0", null);
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -69,7 +69,7 @@ class StateDataControllerTest {
     @DisplayName("Should update data when campaign is sensitive and role is admin/webclient")
     void testUpdateStateData04() throws StateDataInvalidDateException, LockedResourceException {
         // given
-        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0");
+        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0", null);
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -87,7 +87,7 @@ class StateDataControllerTest {
     @DisplayName("Should update data when campaign is sensitive and role is interviewer/interrogation")
     void testUpdateStateData05(Authentication auth) throws StateDataInvalidDateException, LockedResourceException {
         // given
-        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0");
+        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0", null);
         authenticationFakeHelper.setAuthenticationUser(auth);
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -104,7 +104,7 @@ class StateDataControllerTest {
     @DisplayName("Should update data when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
     void testUpdateStateData06() throws StateDataInvalidDateException, LockedResourceException {
         // given
-        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0");
+        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0", null);
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -125,7 +125,7 @@ class StateDataControllerTest {
     @DisplayName("Should update data when campaign is sensitive, role is interviewer and state is EXTRACTED/VALIDATED")
     void testUpdateStateDataException02(String interrogationId) {
         // given
-        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0");
+        StateDataInput stateDataInput = new StateDataInput(StateDataTypeInput.INIT, "1.0", null);
         authenticationFakeHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(interrogationId);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);

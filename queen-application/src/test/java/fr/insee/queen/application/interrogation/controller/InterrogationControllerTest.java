@@ -60,7 +60,7 @@ class InterrogationControllerTest {
     @DisplayName("Should throw exception when role is reviewer and campaign is sensitive")
     void testDiffUpdateInterrogationException() {
         // given
-        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0"));
+        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0", null));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.REVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -77,7 +77,7 @@ class InterrogationControllerTest {
     void testDiffUpdateInterrogationException02(String interrogationId) {
 
         // given
-        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0"));
+        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0", null));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(interrogationId);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -96,7 +96,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation when campaign is sensitive and role is admin/webclient")
     void testDiffUpdateInterrogation04() throws LockedResourceException {
         // given
-        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0"));
+        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0", null));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAdminUser());
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -118,7 +118,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation when campaign is sensitive and role is interviewer/interrogation")
     void testDiffUpdateInterrogation05(Authentication auth) throws LockedResourceException {
         // given
-        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0"));
+        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0", null));
         authenticatedUserHelper.setAuthenticationUser(auth);
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
@@ -139,7 +139,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation when campaign is sensitive, role is interviewer and state is not EXTRACTED/VALIDATED")
     void testDiffUpdateInterrogation06() throws LockedResourceException {
         // given
-        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0"));
+        InterrogationDataStateDataUpdateInput suInput = new InterrogationDataStateDataUpdateInput(null, new StateDataInput(StateDataTypeInput.INIT, "2.0", null));
         authenticatedUserHelper.setAuthenticationUser(authenticationUserProvider.getAuthenticatedUser(AuthorityRoleEnum.INTERVIEWER));
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION3_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.SENSITIVE);
