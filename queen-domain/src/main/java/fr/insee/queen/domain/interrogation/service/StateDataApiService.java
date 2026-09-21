@@ -42,7 +42,7 @@ public class StateDataApiService implements StateDataService {
 
         if(stateData.date() == null) {
             long timestamp = ZonedDateTime.now(clock).toInstant().toEpochMilli();
-            stateData = new StateData(stateData.state(), timestamp, stateData.currentPage());
+            stateData = new StateData(stateData.state(), timestamp, stateData.currentPage(), stateData.leafStates());
         }
 
         if (previousStateData.isEmpty()) {

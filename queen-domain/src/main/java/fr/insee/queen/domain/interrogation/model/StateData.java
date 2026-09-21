@@ -9,6 +9,6 @@ public record StateData(
         List<LeafState> leafStates) {
 
     public StateData(StateDataType state, Long date, String currentPage) {
-        this(state, date, currentPage, List.of());
+        this(state, date, currentPage, null);
     }
 }
