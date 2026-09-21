@@ -6,6 +6,8 @@ import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
 
+import java.util.List;
+
 public record InterrogationProjection(
         String id,
         String surveyUnitId,
@@ -34,5 +36,31 @@ public record InterrogationProjection(
                 stateDataModel,
                 null,
                 projection.locked());
+    }
+
+    public static Interrogation withLeafStates(Interrogation interrogation, List<LeafStateProjection> leafStates) {
+        if (leafStates == null || leafStates.isEmpty()) return interrogation;
+
+        StateData stateDataModel = interrogation.stateData();
+        if (stateDataModel == null) return interrogation;
+
+        stateDataModel = new StateData(
+                stateDataModel.state(),
+                stateDataModel.date(),
+                stateDataModel.currentPage(),
+                leafStates.stream()
+                        .map(LeafStateProjection::toModel)
+                        .toList());
+
+        return new Interrogation(interrogation.id(),
+                interrogation.surveyUnitId(),
+                interrogation.campaignId(),
+                interrogation.questionnaireId(),
+                interrogation.personalization(),
+                interrogation.data(),
+                interrogation.comment(),
+                stateDataModel,
+                null,
+                interrogation.locked());
     }
 }

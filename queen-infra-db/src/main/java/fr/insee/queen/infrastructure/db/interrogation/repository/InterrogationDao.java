@@ -11,6 +11,7 @@ import fr.insee.queen.infrastructure.db.campaign.repository.jpa.QuestionnaireMod
 import fr.insee.queen.infrastructure.db.data.entity.common.DataDB;
 import fr.insee.queen.infrastructure.db.interrogation.entity.*;
 import fr.insee.queen.infrastructure.db.interrogation.projection.InterrogationProjection;
+import fr.insee.queen.infrastructure.db.interrogation.projection.LeafStateProjection;
 import fr.insee.queen.infrastructure.db.interrogation.repository.jpa.*;
 import fr.insee.queen.infrastructure.db.configuration.DataFactory;
 import fr.insee.queen.infrastructure.db.data.repository.jpa.DataRepository;
@@ -41,6 +42,7 @@ public class InterrogationDao implements InterrogationRepository {
     private final QuestionnaireModelJpaRepository questionnaireModelRepository;
     private final DataFactory dataFactory;
     private final EntityManager entityManager;
+    private final LeafStateJpaRepository leafStateRepository;
 
     @Override
     public Optional<InterrogationSummary> findSummaryById(String interrogationId) {
@@ -64,8 +66,10 @@ public class InterrogationDao implements InterrogationRepository {
 
     @Override
     public Optional<Interrogation> find(String interrogationId) {
+        List<LeafStateProjection> leafStates = leafStateRepository.findByInterrogationId(interrogationId);
         return crudRepository.findOneById(interrogationId)
-                .map(InterrogationProjection::toModel);
+                .map(InterrogationProjection::toModel)
+                .map(i -> InterrogationProjection.withLeafStates(i, leafStates));
     }
 
     @Override
@@ -85,14 +89,50 @@ public class InterrogationDao implements InterrogationRepository {
 
     @Override
     public List<Interrogation> findAllByState(StateDataType state) {
-        return crudRepository.findAllInterrogationsByState(state).stream()
+        List<InterrogationProjection> projections = crudRepository.findAllInterrogationsByState(state);
+
+        List<String> interrogationIds = projections.stream()
+                .map(InterrogationProjection::id)
+                .toList();
+
+        Map<String, List<LeafStateProjection>> leafStatesByInterrogationId = leafStateRepository
+                .findByInterrogationIdIn(interrogationIds).stream()
+                .collect(Collectors.groupingBy(LeafStateProjection::interrogationId));
+
+        return projections.stream()
                 .map(InterrogationProjection::toModel)
+                .map(interrogation -> InterrogationProjection.withLeafStates(
+                        interrogation,
+                        leafStatesByInterrogationId.getOrDefault(interrogation.id(), List.of())))
                 .toList();
     }
 
     @Override
     public List<InterrogationState> findAllWithStateByIdIn(List<String> interrogationIds) {
-        return crudRepository.findAllWithStateByIdIn(interrogationIds);
+        List<InterrogationState> interrogationStates = crudRepository.findAllWithStateByIdIn(interrogationIds);
+
+        Map<String, List<LeafStateProjection>> leafStatesByInterrogationId = leafStateRepository
+                .findByInterrogationIdIn(interrogationIds).stream()
+                .collect(Collectors.groupingBy(LeafStateProjection::interrogationId));
+
+        return interrogationStates.stream()
+                .map(state -> new InterrogationState(
+                        state.id(),
+                        state.surveyUnitId(),
+                        state.questionnaireId(),
+                        state.questionnaireId(),
+                        state.stateData() != null
+                                ?
+                                new StateData(
+                                        state.stateData().state(),
+                                        state.stateData().date(),
+                                        state.stateData().currentPage(),
+                                        leafStatesByInterrogationId.getOrDefault(state.id(), List.of()).stream()
+                                                .map(LeafStateProjection::toModel)
+                                                .toList())
+                                : null))
+                .toList();
+
     }
 
     @Override
@@ -204,15 +244,37 @@ public class InterrogationDao implements InterrogationRepository {
 
     @Override
     public List<Interrogation> find(List<String> interrogationIds) {
-        return crudRepository.findInterrogationsByIdIn(interrogationIds).stream()
+        List<InterrogationProjection> projections = crudRepository.findInterrogationsByIdIn(interrogationIds);
+
+        Map<String, List<LeafStateProjection>> leafStatesByInterrogationId = leafStateRepository
+                .findByInterrogationIdIn(interrogationIds).stream()
+                .collect(Collectors.groupingBy(LeafStateProjection::interrogationId));
+
+        return projections.stream()
                 .map(InterrogationProjection::toModel)
+                .map(interrogation -> InterrogationProjection.withLeafStates(
+                        interrogation,
+                        leafStatesByInterrogationId.getOrDefault(interrogation.id(), List.of())))
                 .toList();
     }
 
     @Override
     public List<Interrogation> findAll() {
-        return crudRepository.findAllInterrogations().stream()
+        List<InterrogationProjection> projections = crudRepository.findAllInterrogations();
+
+        List<String> interrogationIds = projections.stream()
+                .map(InterrogationProjection::id)
+                .toList();
+
+        Map<String, List<LeafStateProjection>> leafStatesByInterrogationId = leafStateRepository
+                .findByInterrogationIdIn(interrogationIds).stream()
+                .collect(Collectors.groupingBy(LeafStateProjection::interrogationId));
+
+        return projections.stream()
                 .map(InterrogationProjection::toModel)
+                .map(interrogation -> InterrogationProjection.withLeafStates(
+                        interrogation,
+                        leafStatesByInterrogationId.getOrDefault(interrogation.id(), List.of())))
                 .toList();
     }
 
