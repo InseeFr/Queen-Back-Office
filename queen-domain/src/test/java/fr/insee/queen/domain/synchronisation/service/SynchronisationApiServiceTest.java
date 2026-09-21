@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.insee.modelefiliere.EventDto;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 import fr.insee.queen.domain.interrogation.gateway.StateDataRepository;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
@@ -77,6 +78,7 @@ class SynchronisationApiServiceTest {
         );
 
         when(synchronisationRepository.synchronise(interrogationId)).thenReturn(expectedInterrogation);
+        when(interrogationRepository.find(interrogationId)).thenReturn(Optional.of(expectedInterrogation));
 
         // when
         synchronisationApiService.synchronise(interrogationId);
@@ -126,6 +128,7 @@ class SynchronisationApiServiceTest {
         );
 
         when(synchronisationRepository.synchronise(interrogationId)).thenReturn(interrogation);
+        when(interrogationRepository.find(interrogationId)).thenReturn(Optional.of(interrogation));
 
         // when
         synchronisationApiService.synchronise(interrogationId);
@@ -159,6 +162,7 @@ class SynchronisationApiServiceTest {
         );
 
         when(synchronisationRepository.synchronise(interrogationId)).thenReturn(interrogation);
+        when(interrogationRepository.find(interrogationId)).thenReturn(Optional.of(interrogation));
 
         // when
         synchronisationApiService.synchronise(interrogationId);

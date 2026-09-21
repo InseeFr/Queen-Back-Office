@@ -3,6 +3,7 @@ package fr.insee.queen.domain.synchronisation.service;
 import fr.insee.modelefiliere.EventDto;
 import fr.insee.modelefiliere.EventPayloadDto;
 import fr.insee.modelefiliere.ModeDto;
+import fr.insee.queen.domain.common.exception.EntityNotFoundException;
 import fr.insee.queen.domain.interrogation.gateway.InterrogationRepository;
 import fr.insee.queen.domain.interrogation.gateway.StateDataRepository;
 import fr.insee.queen.domain.interrogation.model.Interrogation;
@@ -35,14 +36,14 @@ public class SynchronisationApiService implements SynchronisationService {
     }
 
     @Override
-    public void synchronise(String interrogationId) {
+    public Interrogation synchronise(String interrogationId) {
         log.info("Synchronising interrogation {}", interrogationId);
 
         Interrogation interrogation = synchronisationRepository.synchronise(interrogationId);
 
         if (interrogation == null) {
             log.warn("No interrogation found for id {}", interrogationId);
-            return;
+            return null;
         }
 
         // Persist data
@@ -61,6 +62,9 @@ public class SynchronisationApiService implements SynchronisationService {
         publishSwitchCapiEvent(interrogationId);
 
         log.info("Synchronisation completed for interrogation {}", interrogationId);
+        return interrogationRepository
+                .find(interrogationId)
+                .orElseThrow(()-> new EntityNotFoundException(String.format("Interrogation %s was not found", interrogationId)));
     }
 
     private void publishSwitchCapiEvent(String interrogationId) {

@@ -1,5 +1,7 @@
 package fr.insee.queen.domain.synchronisation.service;
 
+import fr.insee.queen.domain.interrogation.model.Interrogation;
+
 public interface SynchronisationService {
-    void synchronise(String interrogationId);
+    Interrogation synchronise(String interrogationId);
 }

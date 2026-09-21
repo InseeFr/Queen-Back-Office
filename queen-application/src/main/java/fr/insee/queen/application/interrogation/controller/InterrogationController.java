@@ -326,7 +326,7 @@ public class InterrogationController {
     @PostMapping("/interrogations/{id}/synchronize")
     @PreAuthorize(AuthorityPrivileges.HAS_ADMIN_PRIVILEGES)
     @ResponseStatus(HttpStatus.OK)
-    public void synchronizeInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
-        synchronisationService.synchronise(interrogationId);
+    public InterrogationDto synchronizeInterrogation(@IdValid @PathVariable(value = "id") String interrogationId) {
+        return InterrogationDto.fromModel(synchronisationService.synchronise(interrogationId));
     }
 }
