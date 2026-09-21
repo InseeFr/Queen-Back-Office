@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 /**
  * Abstract base class for event consumers that refresh the state data date.
@@ -61,12 +62,13 @@ public abstract class AbstractStateDataRefreshEventConsumer implements EventCons
                 // Keep existing state and currentPage, only update date
                 StateData existing = existingStateData.get();
                 newStateData = new StateData(
-                    existing.state(),
-                    currentDate,
-                    existing.currentPage()
+                        existing.state(),
+                        currentDate,
+                        existing.currentPage(),
+                        existing.leafStates()
                 );
                 log.info("Updated date for existing state {} for interrogation: {}",
-                    existing.state(), interrogationId);
+                        existing.state(), interrogationId);
 
                 // Save the state data
                 stateDataService.saveStateData(interrogationId, newStateData, false);
@@ -74,7 +76,6 @@ public abstract class AbstractStateDataRefreshEventConsumer implements EventCons
                 log.info("{} event with correlationId {} processed successfully - interrogation {} state data refreshed",
                         getEventType(), eventDto.getCorrelationId(), interrogationId);
             }
-
 
 
         } catch (StateDataInvalidDateException e) {

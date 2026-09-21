@@ -1,6 +1,7 @@
 package fr.insee.queen.jms.service.consummers;
 
 import fr.insee.modelefiliere.EventDto;
+import fr.insee.queen.domain.interrogation.model.LeafState;
 import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.StateDataService;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * Abstract base class for event consumers that update state data.
@@ -66,15 +68,34 @@ public abstract class AbstractStateDataEventConsumer implements EventConsumer {
             // Get current date
             Long currentDate = ZonedDateTime.now(clock).toInstant().toEpochMilli();
 
-            // Create new state data with specified state type
-            StateData newStateData = new StateData(
-                getStateDataType(),
-                currentDate,
-                "1"
-            );
+            var existingStateData = stateDataService.findStateData(interrogationId);
 
-            // Save the updated state data
-            stateDataService.saveStateData(interrogationId, newStateData, false);
+            if (existingStateData.isPresent()) {
+                StateData existing = existingStateData.get();
+
+                StateData newStateData = new StateData(
+                        // use the extends class
+                        getStateDataType(),
+                        currentDate,
+                        // use existing currentPage
+                        existing.currentPage(),
+                        // use existing leafStates
+                        existing.leafStates()
+                );
+
+                // Save the updated state data
+                stateDataService.saveStateData(interrogationId, newStateData, false);
+            } else {
+                // Create new state data with specified state type
+                StateData newStateData = new StateData(
+                        getStateDataType(),
+                        currentDate,
+                        "1"
+                );
+
+                // Save the updated state data
+                stateDataService.saveStateData(interrogationId, newStateData, false);
+            }
 
             log.info("{} event with correlationId {} processed successfully - interrogation {} updated to {}",
                 getEventType(), eventDto.getCorrelationId(), interrogationId, getStateDataType());
