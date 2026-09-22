@@ -163,7 +163,7 @@ class InterrogationControllerTest {
     @DisplayName("Should update interrogation and transform state-data to null if state from input state data is null")
     void testUpdateInterrogation01() throws LockedResourceException {
         // given
-        StateDataForInterrogationUpdateInput stateData = new StateDataForInterrogationUpdateInput(null, 123456789L, "2.3");
+        StateDataForInterrogationUpdateInput stateData = new StateDataForInterrogationUpdateInput(null, 123456789L, "2.3", null);
         InterrogationUpdateInput suInput = new InterrogationUpdateInput(null, null, null, stateData, null);
         InterrogationSummary interrogationSummary = interrogationFakeService.getSummaryById(InterrogationFakeService.INTERROGATION1_ID);
         assertThat(interrogationSummary.campaign().getSensitivity()).isEqualTo(CampaignSensitivity.NORMAL);

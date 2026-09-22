@@ -1,6 +1,5 @@
 package fr.insee.queen.application.interrogation.dto.output;
 
-import fr.insee.queen.domain.interrogation.model.LeafState;
 import fr.insee.queen.domain.interrogation.model.StateData;
 import fr.insee.queen.domain.interrogation.model.StateDataType;
 import io.swagger.v3.oas.annotations.media.Schema;
