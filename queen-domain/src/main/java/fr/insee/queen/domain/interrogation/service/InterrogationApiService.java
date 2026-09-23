@@ -110,12 +110,12 @@ public class InterrogationApiService implements InterrogationService {
         throwExceptionIfInterrogationNotExist(interrogation.id());
         StateData newStateData = interrogation.stateData();
 
-        interrogationRepository.update(interrogation);
         if (newStateData == null) {
             return;
         }
         try {
             stateDataService.saveStateData(interrogation.id(), newStateData, true);
+            interrogationRepository.update(interrogation);
         } catch (StateDataInvalidDateException ex) {
             // in the case of interrogation update, a problem with state data does not require to
             // rollback the other updates on interrogation
