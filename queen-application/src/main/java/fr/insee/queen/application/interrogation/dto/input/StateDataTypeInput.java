@@ -7,7 +7,8 @@ public enum StateDataTypeInput {
     COMPLETED(StateDataType.COMPLETED),
     VALIDATED(StateDataType.VALIDATED),
     TOEXTRACT(StateDataType.TOEXTRACT),
-    EXTRACTED(StateDataType.EXTRACTED);
+    EXTRACTED(StateDataType.EXTRACTED),
+    IS_MOVED(StateDataType.IS_MOVED);
 
     private final StateDataType stateDataType;
 
