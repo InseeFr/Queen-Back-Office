@@ -28,4 +28,9 @@ public class QuestionnaireInitEventConsumer extends AbstractStateDataEventConsum
     protected StateDataType getStateDataType() {
         return StateDataType.INIT;
     }
+
+    @Override
+    protected boolean shouldCleanLeafStates() {
+        return false;
+    }
 }

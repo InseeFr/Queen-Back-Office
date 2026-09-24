@@ -27,4 +27,9 @@ public class QuestionnaireValidatedEventConsumer extends AbstractStateDataEventC
     protected StateDataType getStateDataType() {
         return StateDataType.VALIDATED;
     }
+
+    @Override
+    protected boolean shouldCleanLeafStates() {
+        return false;
+    }
 }

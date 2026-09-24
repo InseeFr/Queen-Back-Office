@@ -36,6 +36,8 @@ public abstract class AbstractStateDataEventConsumer implements EventConsumer {
      */
     protected abstract StateDataType getStateDataType();
 
+    protected abstract boolean shouldCleanLeafStates();
+
     @Override
     public void consume(EventDto eventDto) {
         // Only process events of the specified type
@@ -79,8 +81,8 @@ public abstract class AbstractStateDataEventConsumer implements EventConsumer {
                         currentDate,
                         // use existing currentPage
                         existing.currentPage(),
-                        // use existing leafStates
-                        existing.leafStates()
+                        // use the extends class and existing leafStates
+                        shouldCleanLeafStates() ? null : existing.leafStates()
                 );
 
                 // Save the updated state data

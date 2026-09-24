@@ -36,6 +36,11 @@ public class QuestionnaireMovedEventConsumer extends AbstractStateDataEventConsu
     }
 
     @Override
+    protected boolean shouldCleanLeafStates() {
+        return true;
+    }
+
+    @Override
     public boolean canConsume(String interrogationId) {
         try {
             Interrogation interrogation = interrogationService.getInterrogation(interrogationId);

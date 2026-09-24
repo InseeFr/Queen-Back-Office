@@ -27,4 +27,9 @@ public class QuestionnaireCompletedEventConsumer extends AbstractStateDataEventC
     protected StateDataType getStateDataType() {
         return StateDataType.COMPLETED;
     }
+
+    @Override
+    protected boolean shouldCleanLeafStates() {
+        return false;
+    }
 }
