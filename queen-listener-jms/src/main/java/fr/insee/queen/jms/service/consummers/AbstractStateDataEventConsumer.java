@@ -75,6 +75,11 @@ public abstract class AbstractStateDataEventConsumer implements EventConsumer {
             if (existingStateData.isPresent()) {
                 StateData existing = existingStateData.get();
 
+                if(StateDataType.IS_MOVED.equals(existing.state())){
+                    // Actual state is IS_MOVED -> skip
+                    return;
+                }
+
                 StateData newStateData = new StateData(
                         // use the extends class
                         getStateDataType(),

@@ -4,6 +4,7 @@ import fr.insee.modelefiliere.EventDto;
 import fr.insee.modelefiliere.EventPayloadLeafStatesInnerDto;
 import fr.insee.queen.domain.interrogation.model.LeafState;
 import fr.insee.queen.domain.interrogation.model.StateData;
+import fr.insee.queen.domain.interrogation.model.StateDataType;
 import fr.insee.queen.domain.interrogation.service.StateDataService;
 import fr.insee.queen.domain.interrogation.service.exception.StateDataInvalidDateException;
 import fr.insee.queen.jms.service.EventConsumer;
@@ -49,6 +50,11 @@ public class QuestionnaireLeafStatesUpdatedEventConsumer implements EventConsume
 
             if (existingStateData.isPresent()) {
                 StateData existing = existingStateData.get();
+
+                if(StateDataType.IS_MOVED.equals(existing.state())){
+                    // Actual state is IS_MOVED -> skip
+                    return;
+                }
 
                 List<LeafState> leafStates = convertLeafStates(payload.getLeafStates());
 

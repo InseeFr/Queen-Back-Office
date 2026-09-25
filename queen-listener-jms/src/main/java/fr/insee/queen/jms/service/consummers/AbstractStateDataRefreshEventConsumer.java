@@ -59,8 +59,14 @@ public abstract class AbstractStateDataRefreshEventConsumer implements EventCons
 
             StateData newStateData;
             if (existingStateData.isPresent()) {
-                // Keep existing state and currentPage, only update date
+
                 StateData existing = existingStateData.get();
+                
+                if(StateDataType.IS_MOVED.equals(existing.state())){
+                    // Actual state is IS_MOVED -> skip
+                    return;
+                }
+                // Keep existing state and currentPage, only update date
                 newStateData = new StateData(
                         existing.state(),
                         currentDate,
