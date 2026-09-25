@@ -61,7 +61,7 @@ public abstract class AbstractStateDataRefreshEventConsumer implements EventCons
             if (existingStateData.isPresent()) {
 
                 StateData existing = existingStateData.get();
-                
+
                 if(StateDataType.IS_MOVED.equals(existing.state())){
                     // Actual state is IS_MOVED -> skip
                     return;
